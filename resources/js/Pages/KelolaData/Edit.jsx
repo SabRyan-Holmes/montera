@@ -1,0 +1,433 @@
+// import InputError from "@/Components/InputError";
+// import TextInput from "@/Components/TextInput";
+import {
+    TextInput,
+    InputError,
+    SecondaryButton,
+    InputLabel,
+} from "@/Components";
+import Authenticated from "@/Layouts/AuthenticatedLayout";
+import { useForm } from "@inertiajs/react";
+import React, { useEffect } from "react";
+import { FaEdit } from "react-icons/fa";
+// import { FaUserEdit } from "react-icons/fa";
+import { FaDatabase } from "react-icons/fa6";
+import { FaSave, FaUserEdit } from "react-icons/fa";
+import { RiArrowGoBackFill } from "react-icons/ri";
+import Swal from "sweetalert2";
+
+// import Swal from 'sweetalert2/dist/sweetalert2.js'
+// import 'sweetalert2/src/sweetalert2.scss'
+
+export default function Edit({ auth, pegawai, title, flash }) {
+    const { data, setData, patch, processing, errors, reset } = useForm({
+        "Nomor Seri Karpeg": pegawai["Nomor Seri Karpeg"],
+        "Pangkat/Golongan Ruangan/TMT": pegawai["Pangkat/Golongan Ruangan/TMT"],
+        Pendidikan: pegawai["Pendidikan"],
+        "Jabatan/TMT": pegawai["Jabatan/TMT"],
+        "Masa Kerja Golongan": pegawai["Masa Kerja Golongan"],
+        "Unit Kerja": pegawai["Unit Kerja"],
+        Daerah: pegawai["Daerah"],
+    });
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+
+    useEffect(() => {
+        if (flash.message) {
+            // Swal.fire({
+            //     title: "Berhasil!",
+            //     text: flash.message,
+            //     icon: "success",
+            //     iconColor: "#50C878",
+            //     confirmButtonText: "Oke",
+            //     confirmButtonColor: "#2D95C9",
+            // });
+            Toast.fire({
+                icon: "success",
+                title: "Data Pegawai Berhasil Diupdate!!"
+              });
+        }
+    }, [flash.message]);
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        patch(route("pegawai.update", pegawai));
+    };
+
+    console.log("isi data", data);
+    return (
+        <Authenticated
+            user={auth.user}
+            title={title}
+            current={route().current("cetak_dokumen.index")}
+        >
+            <section className="m-10 laptop:h-full h-full mb-24">
+                <div className="flex justify-between">
+                    <div className="breadcrumbs mt-2 text-sm">
+                        <ul>
+                            <li>
+                                <a
+                                    href={route("pegawai.index")}
+                                    className="gap-2"
+                                >
+                                    <FaDatabase className="h-4 w-4 stroke-current" />
+                                    <span>Kelola Data</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <span className="inline-flex items-center gap-2">
+                                    {pegawai.Nama}
+                                </span>
+                            </li>
+
+                            <li>
+                                <span className="inline-flex items-center gap-2">
+                                    <FaUserEdit className="h-4 w-4 stroke-current" />
+
+                                    {title}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <SecondaryButton
+                        onClick={() => window.history.back()}
+                        className="bg-secondary/5 capitalize "
+                    >
+                        <span>Kembali</span>
+                        <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
+                    </SecondaryButton>
+                </div>
+
+                <h1 className="mt-5 mb-10 text-3xl capitalize">{title}</h1>
+
+                <div className="overflow-x-auto">
+                    <form onSubmit={submit}>
+                        <table className="table text-base table-auto ">
+                            {/* head */}
+                            <thead>
+                                <tr className="text-lg bg-primary/70">
+                                    <th colSpan={2}>Detail Pegawai</th>
+                                    {/* <th>Name</th>
+                            <th>Job</th>
+                            <th>Favorite Color</th> */}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {/* row 1 */}
+                                <tr className="border">
+                                    <td className="">Nama</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            id="Nama"
+                                            type="text"
+                                            name="Nama"
+                                            value={pegawai.Nama}
+                                            disabled
+                                            className="h-9 w-96 px-2 border-gradient disabled:text-accent hover:cursor-not-allowed  "
+
+                                            // onChange={(e) => setData('nama', e.target.value)}
+                                        />
+
+                                        <InputError
+                                            message={errors.Nama}
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                {/* row 2 */}
+                                <tr className="border">
+                                    <td className="">NIP/NRP</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            id="NIP/NRP"
+                                            type="text"
+                                            name="NIP/NRP"
+                                            value={pegawai["NIP/NRP"]}
+                                            disabled
+                                            className="h-9 w-96 px-2 border-gradient disabled:text-accent hover:cursor-not-allowed  "
+
+                                            // onChange={(e) => setData('nama', e.target.value)}
+                                        />
+
+                                        <InputError
+                                            message={errors["NIP/NRP"]}
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                {/* row 3 */}
+                                <tr className="border">
+                                    <td className="">NOMOR SERI KARPEG</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            id="nama"
+                                            type="text"
+                                            name="Nomor Seri Karpeg"
+                                            defaultValue={
+                                                pegawai["Nomor Seri Karpeg"]
+                                            }
+                                            className="h-9 w-96 px-2 border-gradient placeholder:text-accent   "
+                                            placeholder="input disini"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Nomor Seri Karpeg",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors["Nomor Seri Karpeg"]
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">
+                                        PANGKAT/GOLONGAN Ruangan/TMT
+                                    </td>
+
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Pangkat/Golongan Ruangan/TMT"
+                                            defaultValue={
+                                                data[
+                                                    "Pangkat/Golongan Ruangan/TMT"
+                                                ]
+                                            }
+                                            className="h-9 w-96 px-2 border-gradient   "
+                                            placeholder="input disini"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Pangkat/Golongan Ruangan/TMT",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors[
+                                                    "Pangkat/Golongan Ruangan/TMT"
+                                                ]
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="border">
+                                        TEMPAT/TANGGAL LAHIR
+                                    </td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Tempat/Tanggal Lahir"
+                                            value={
+                                                pegawai["Tempat/Tanggal Lahir"]
+                                            }
+                                            disabled
+                                            className="h-9 w-96 px-2 border-gradient disabled:text-accent hover:cursor-not-allowed  "
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Tempat/Tanggal Lahir",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors["Tempat/Tanggal Lahir"]
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">JENIS KELAMIN</td>
+
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Jenis Kelamin"
+                                            value={pegawai["Jenis Kelamin"]}
+                                            className="h-9 w-96 px-2 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
+                                            disabled
+                                            placeholder="input disini"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">PENDIDIKAN</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Pendidikan"
+                                            className="h-9 w-[30rem] px-2  placeholder:text-accent "
+                                            defaultValue={pegawai["Pendidikan"]}
+                                            placeholder="Masukkan Pendidikan. contoh: S1 Manajemen"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Pendidikan",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={errors["Pendidikan"]}
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">JABATAN/TMT</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Jabatan/TMT"
+                                            className="h-9 w-[30rem] px-2  placeholder:text-accent "
+                                            defaultValue={
+                                                pegawai["Jabatan/TMT"]
+                                            }
+                                            placeholder="Masukkan Jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Jabatan/TMT",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={errors["Jabatan/TMT"]}
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">MASA KERJA GOLONGAN</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Masa Kerja Golongan"
+                                            className="h-9 w-[30rem] px-2  placeholder:text-accent "
+                                            defaultValue={
+                                                pegawai["Masa Kerja Golongan"]
+                                            }
+                                            placeholder="Masukkan Masa Kerja Golongan. contoh: 2 TAHUN 3 BULAN  "
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Masa Kerja Golongan",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors["Masa Kerja Golongan"]
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">UNIT KERJA</td>
+                                    <td className="border-x flex">
+                                        <TextInput
+                                            type="text"
+                                            name="Unit Kerja"
+                                            defaultValue={pegawai["Unit Kerja"]}
+                                            className="h-9 w-[30rem] px-2  placeholder:text-accent "
+                                            placeholder="Masukkan Unit Kerja. contoh: BPS Kabupaten Batang Hari"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Unit Kerja",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <InputError
+                                            message={errors["Unit Kerja"]}
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr className="border">
+                                    <td className="">ASAL DAERAH BPS</td>
+
+                                    <td className="border-x flex">
+                                        <select
+                                            className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                            name="Daerah"
+                                            defaultValue={pegawai.Daerah}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Daerah",
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            <option
+                                                disabled
+                                                value={null}
+                                                className=""
+                                            >
+                                                Pilih Asal Daerah BPS
+                                            </option>
+                                            <option>PROVINSI JAMBI</option>
+                                            <option>KOTA JAMBI</option>
+                                            <option>KERINCI</option>
+                                            <option>MUARO JAMBI</option>
+                                            <option>BATANG HARI</option>
+                                            <option>SAROLANGUN</option>
+                                            <option>TANJAB BARAT</option>
+                                            <option>TANJAB TIMUR</option>
+                                            <option>MERANGIN</option>
+                                            <option>SUNGAI PENUH</option>
+                                            <option>BUNGO</option>
+                                            <option>TEBO</option>
+                                        </select>
+
+                                        <InputError
+                                            message={errors["Daerah"]}
+                                            className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div className="w-full flex justify-center my-4   ">
+                            <button
+                                type="submit"
+                                className="action-btn text-base bg-hijau/15 border border-hijau/20 text-hijau px-3 gap-3"
+                            >
+                                <span>Update Data</span>
+                                <FaSave className="w-4 h-5 fill-hijau" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </Authenticated>
+    );
+}

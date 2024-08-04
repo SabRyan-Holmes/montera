@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: "Inder", "Signika";
+    @apply text-slate-700;
+}
+
+/* Ensure the spinner controls are always visible */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Remove default spinner in Firefox */
+}
+
+.btn-glass {
+    @apply btn glass bg-orange-400 text-orange-800 mt-3  hover:bg-primary hover:scale-105 text-lg;
+}
+
+.btn-glass2 {
+    @apply btn glass bg-gradient-to-br from-orange-300 via-emerald-400/40 text-orange-800 mt-3  hover:bg-secondary hover:scale-105 text-lg;
+}
+
+.progress-bar {
+    transform-origin: 0%;
+    @apply fixed top-0 left-0 right-0 h-[10px] bg-gradient-to-br from-primary to-secondary z-[99999];
+}
+
+.gradient-base {
+    @apply bg-gradient-to-b from-orange-50 to-secondary opacity-100;
+}
+
+.gradient-white-base {
+    @apply bg-gradient-to-b from-orange-50 to-white opacity-100;
+}
+
+.gradient-primary {
+    @apply bg-gradient-to-br from-primary from-30% via-50% to-10%  via-hijau to-secondary opacity-100;
+}
+
+.gradient-sidebar {
+    @apply bg-gradient-to-b from-primary/50 to-secondary opacity-100;
+}
+
+.gradient-bps {
+    @apply bg-gradient-to-r from-primary from-30% via-50% to-10%  via-hijau to-secondary opacity-100;
+}
+
+.text-gradient {
+    @apply bg-clip-text text-transparent;
+}
+
+.button-glass {
+    @apply bg-red-400  btn glass scale-75 items-center border border-transparent rounded-md font-semibold text-lg  text-white hover:bg-primary focus:bg-orange-600 active:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150;
+}
+
+.border-card {
+    @apply border-t-secondary border-l-secondary border-r-primary/45 border-b-primary/45 focus:border-none focus:border-primary border focus:ring-yellow-600;
+}
+
+.border-gradient {
+    @apply bg-slate-100/60 border-t-primary border-l-primary border-r-secondary border-b-hijau focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary;
+}
+
+.large-primary-button {
+    @apply mx-auto w-full py-2 rounded-lg mb-4 glass bg-primary text-secondary hover:bg-primary focus:bg-orange-600 active:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150;
+}
+.main-container {
+    background-color: rgb(46 56 77 / 30%);
+    z-index: 0;
+}
+.modal-container {
+    width: 670px;
+    height: 400px;
+    gap: 20px;
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 1px solid var(--gh-grey-4);
+    border-radius: 4px;
+    outline: 0;
+    padding: 8px 24px;
+    margin: 0 auto;
+}
+
+.modal-button-cancel {
+    background-color: var(--gh-blue-1);
+    color: var(--gh-blue-9);
+    margin-left: 20px;
+}
+
+.button-correct {
+    @apply bg-emerald-500/90  inline-flex scale-[0.78] btn glass items-center px-4 py-2 h-5  border border-transparent rounded-md font-semibold text-lg  text-white hover:bg-primary focus:bg-emerald-600 active:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150;
+}
+
+.button-incorrect {
+    @apply bg-red-500/90 inline-flex scale-[0.78] btn glass items-center px-4 py-2 h-5  border border-transparent rounded-md font-semibold text-lg  text-white hover:bg-primary focus:bg-red-600 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150;
+}
+
+.action-btn {
+    @apply rounded-lg inline-flex items-center border  shadow-md p-1 px-2;
+}

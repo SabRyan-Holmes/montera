@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Pegawai extends Model
+{
+    use HasFactory;
+    protected $guarded = ['id'];
+
+    public function scopeFilter(Builder $query, array $filters): void
+    {
+        // Search By Nama & NIP
+        $query->when(
+            $filters['search'] ?? false,
+            fn ($query, $search) =>
+            $query->where('Nama', 'like', '%' . $search . '%')
+                ->orWhere('NIP/NRP', 'like', '%' . $search . '%')
+        );
+
+        // Berdasarkan Jabatan
+        $query->when(
+            $filters['byJabatan'] ?? false,
+            fn ($query, $byJabatan) =>
+            $query->where('Jabatan/TMT', $byJabatan)
+        );
+
+        // Berdasarkan Daerah
+        $query->when(
+            $filters['byDaerah'] ?? false,
+            fn ($query, $byDaerah) =>
+            $query->where('Daerah', $byDaerah)
+        );
+    }
+
+    // public function scopeFilter(Builder $query, array $filters): void
+    // {
+    //     // Search By Nama & NIP
+    //     // $query->where('Nama', 'like', '%' . request('search') . '%')->orWhere('NIP/NRP', 'like', '%' . request('search') . '%');
+
+    //     if (isset($filters['search']) ? $filters['search'] : false) {
+
+    //         $query->where('Nama', 'like', '&' . request('search') . '%')->orWhere('NI[/NRP', 'like', '%', request('search') . '%');
+    //     }
+    // }
+}
