@@ -6,7 +6,8 @@ use Inertia\Inertia;
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
 
 class CetakDokumenController extends Controller
 {
@@ -54,19 +55,33 @@ class CetakDokumenController extends Controller
 
     public function cetak(Request $request)
     {
-        // dd($request);
-        $pdf = Pdf::loadView('pdf/pak', [
-            "title" => "Dokumen PAK",
-            "pegawai" => "pegawai"
-        ])->setPaper('F4', 'portrait')->setWarnings(false);
-        return $pdf->stream();
+        Session::put('data', $request->all());
+        return redirect()->route('cetak_dokumen.view-pak');
+        // $data = $request->all();
+        // // dd($request->all());
+        // // return Redirect::route('cetak_dokumen.view-pak')->with(['data' => $data]);
+        // $pdf = Pdf::loadView('pdf/pak', [
+        //     "title" => "Dokumen PAK",
+        //     "data" => $data
+        // ])->setPaper('F4', 'portrait')->setWarnings(false);
+        // return $pdf->stream('dokumen_pak.pdf');
+        // exit();
+    }
 
+    public function view_pak(Request $request)
+    {
+          // Ambil data dari session
+          $data = Session::get('data');
 
-        // return view('pak', [
-        //     "title" => "Single Post",
-        //     "active" => "posts",
-        //     // "post" => $post
-        // ]);
+          // Buat PDF
+          $pdf = Pdf::loadView('pdf.pak', [
+              "title" => "Dokumen PAK",
+              "pegawai" => "pegawai",
+              "data" => $data, // Kirim data ke view
+          ])->setPaper('F4', 'portrait')->setWarnings(false);
+
+          // Stream PDF
+          return $pdf->stream('dokumen_pak.pdf');
     }
 
     // public function by_jabatan (Pegawai $pegawai) {

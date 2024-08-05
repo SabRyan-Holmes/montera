@@ -117,6 +117,32 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
         });
     }, [jakk_lama, jakk_baru]);
 
+    // Logika Kelebihan/Kekurangan  AK Kredit Untuk Kenaikan Pangkat
+    useEffect(() => {
+        const pangkatKeker = parseFloat(
+            data.jakk["jumlah"] - data.pangkat
+        ).toFixed(2);
+        console.log("isi pangkat keker");
+        console.log(pangkatKeker);
+        setData({
+            ...data,
+            pangkat_keker: pangkatKeker,
+        });
+        data.pangkat_keker = pangkatKeker;
+    }, [jakk_jumlah, data.pangkat]);
+
+    // Logika Kelebihan/Kekurangan  AK Kredit Untuk Kenaikan Jabatan
+    useEffect(() => {
+        const jabatanKeker = parseFloat(
+            data.jakk["jumlah"] - data.jabatan
+        ).toFixed(2);
+        setData({
+            ...data,
+            jabatan_keker: jabatanKeker,
+        });
+        data.jabatan_keker = jabatanKeker;
+    }, [jakk_jumlah, data.jabatan]);
+
     return (
         <table className="table text-base">
             {/* head */}
@@ -606,28 +632,88 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                     </td>
 
                     <td className="border text-center" colSpan={2}>
-                        {/* TODO: Select Input antara 50,100, 150 */}_
+                        <select
+                            name="pangkat"
+                            id="pangkat"
+                            className="w-24 px-1 rounded-md text-center border-gradient"
+                            defaultValue={data.pangkat}
+                            onChange={(e) => {
+                                setData("pangkat", e.target.value);
+                            }}
+                        >
+                            <option value="100">100</option>
+                            <option value="50">50</option>
+                            <option value="150">150</option>
+                        </select>
                     </td>
                     <td className="border text-center" colSpan={2}>
-                        {/* TODO: Select Input antara 100, 200, 450 */}_
+                        <select
+                            name="jabatan"
+                            id="jabatan"
+                            className="w-24 px-1 rounded-md text-center border-gradient"
+                            defaultValue={data.jabatan}
+                            onChange={(e) => {
+                                setData("jabatan", e.target.value);
+                            }}
+                        >
+                            <option value="100">100</option>
+                            <option value="200">200</option>
+                            <option value="450">450</option>
+                        </select>
                     </td>
                 </tr>
                 {/* row 8 */}
                 <tr className="text-xs capitalize  text-slate-600 font-semibold border-separate space-x-0 text-left">
                     <td colSpan={2} className="uppercase text-left">
-                        Kelebihan/Kekurangan*{")"} Angka Kredit yang harus
-                        dipenuhi untuk kenikan Jabatan
+                        {data.pangkat_keker > 0 ? (
+                            <span>
+                                Kelebihan/ <s>Kekurangan</s>
+                            </span>
+                        ) : (
+                            <span>
+                                <s>Kelebihan</s> /Kekurangan'
+                            </span>
+                        )}
+
+                        <span>*{")"}</span>
+                        <span>
+                            Angka Kredit yang harus dipenuhi untuk kenaikan
+                            Pangkat
+                        </span>
                     </td>
-                    <td className="border text-center" colSpan={2}>
-                        _
+                    <td className="border text-center text-lg" colSpan={2} rowSpan={2}>
+                        {Math.abs(data.pangkat_keker)}
                     </td>
-                    <td className="border text-center" colSpan={2}>
-                        _
+                    <td className="border text-center text-lg" colSpan={2} rowSpan={2}>
+                        {Math.abs(data.jabatan_keker)}
+                    </td>
+                </tr>
+                {/* row 8 */}
+                <tr className="text-xs capitalize  text-slate-600 font-semibold border-separate space-x-0 text-left">
+                    <td colSpan={2} className="uppercase text-left">
+                        {data.jabatan_keker > 0 ? (
+                            <span>
+                                Kelebihan/ <s>Kekurangan</s>
+                            </span>
+                        ) : (
+                            <span>
+                                <s>Kelebihan</s> /Kekurangan'
+                            </span>
+                        )}
+
+                        <span>*{")"}</span>
+                        <span>
+                            Angka Kredit yang harus dipenuhi untuk kenaikan
+                            Jabatan
+                        </span>
                     </td>
                 </tr>
                 {/* row 9 */}
                 <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0 text-left">
-                    <span className="ml-5">...</span>
+                    <td className="ml-5" colSpan={6}>
+                        Belum Dapat dipertimbangkan untuk kenaikan pangkat
+                        setingkat lebih tinggi
+                    </td>
                 </tr>
             </tbody>
             {/* Tebusan */}

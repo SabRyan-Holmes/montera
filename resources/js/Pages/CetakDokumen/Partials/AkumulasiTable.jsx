@@ -1,18 +1,46 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useState } from "react";
 
-export default function AkumulasiTable({ data, setData, pegawai, akNormatif }) {
+export default function AkumulasiTable({
+    data,
+    setData,
+    pegawai,
+    akNormatif,
+    predikat,
+}) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {
             e.preventDefault();
         }
     };
-    // SetPresentase
+    // SetPredikat
     const [presentase1, setPresentase1] = useState(100);
 
     // Jabatan untuk sesuai Koefisien Pertahun
     const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
+
+    const bulan = {
+        1: "Januari",
+        2: "Februari",
+        3: "Maret",
+        4: "April",
+        5: "Mei",
+        6: "Juni",
+        7: "Juli",
+        8: "Agustus",
+        9: "September",
+        10: "Oktober",
+        11: "November",
+        12: "Desember",
+    };
+
+
+    var jumlahAkKredit = parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
+    console.log('jumlahAkKredit')
+    console.log(jumlahAkKredit)
+
+    data.jumlah_ak_kredit = jumlahAkKredit;
 
     return (
         <table className="table text-base">
@@ -54,47 +82,83 @@ export default function AkumulasiTable({ data, setData, pegawai, akNormatif }) {
                         Angka Kredit Yang Didapat
                     </td>
                 </tr>
-                <tr className="border">
-                    <td>Tahun</td>
-                    <td>Periodik(Bulan)</td>
-                    <td>Predikat</td>
-                    <td>Presentase</td>
+                <tr className="border text-center">
+                    <td className="border">Tahun</td>
+                    <td className="border">Periodik(Bulan)</td>
+                    <td className="border">Predikat</td>
+                    <td className="border">Presentase</td>
                 </tr>
             </thead>
             <tbody className="border">
                 <tr className="text-center">
-                    <td className="border"> _</td>
+                    <td className="border">1</td>
+                    <td className="border ">2</td>
+                    <td className="border ">3</td>
+                    <td className="border ">4</td>
+                    <td className="border ">5</td>
+                    <td className="border text-center ">6</td>
+                </tr>
+                <tr className="text-center">
+                    <td className="border">
+                        <TextInput
+                            id="tahun_terakhir"
+                            type="text"
+                            name="tahun_terakhir"
+                            placeholder="2023"
+                            maxLength={4}
+                            onKeyPress={handleKeyPress}
+                            className="w-16"
+                            onChange={(e) =>
+                                setData("tahun_terakhir", e.target.value)
+                            }
+                        />
+                    </td>
                     <td className="border ">_</td>
                     <td className="border ">_</td>
                     <td className="border ">_</td>
                     <td className="border ">_</td>
                     <td className="border text-center ">
                         <TextInput
-                            id="angka_kredit"
-                            name="angka_kredit"
+                            id="ak_terakhir"
+                            name="ak_terakhir"
                             min={0}
                             max={100}
                             step={0.1}
                             type="number"
                             className="placeholder:text-accent text-center"
-                            autoComplete="username"
                             placeholder="0,0"
-                            onChange={(e) =>
-                                setData("angka_kredit", e.target.value)
-                            }
+                            defaultValue = {data.ak_terakhir}
+                            // FIXME : Somehow angka kredit ikut berubah pas ak_terakhir berubah
+                            // onChange={(e) =>
+                            //     setData("ak_terakhir", e.target.value)
+                            // }
                         />
-
-                        {/* <InputError message={errors.email} className="mt-2" /> */}
                     </td>
                 </tr>
                 <tr className="border uppercase text-center">
-                    {/* TODO: Bikin lebih Dinamsi */}
-                    <td className="border">{"2023"}</td>
-                    <td className="border ">{"Januari - Desember"}</td>
-                    <td className="border">{"Sangat Baik"}</td>
-                    <td className="border">{"150%"}</td>
-                    <td className="border">{"18.7"}</td>
-                    <td className="border">{"18.7"}</td>
+                    {/* TODO: Bikin lebih Dinamis */}
+                    <td className="border">
+                        <TextInput
+                            id="tahun_ini"
+                            type="text"
+                            name="tahun_ini"
+                            placeholder="tahun"
+                            maxlength={4}
+                            onKeyPress={handleKeyPress}
+                            className="w-16"
+                            onChange={(e) =>
+                                setData("tahun_ini", e.target.value)
+                            }
+                        />
+                    </td>
+                    <td className="border ">
+                        {bulan[data.periode_mulai]}-
+                        {bulan[data.periode_berakhir]}
+                    </td>
+                    <td className="border">{predikat[data.presentase]}</td>
+                    <td className="border">{data.presentase}</td>
+                    <td className="border">{data.ak_normatif}</td>
+                    <td className="border">{data['angka_kredit']}</td>
                 </tr>
                 <tr className="border uppercase">
                     <td
@@ -103,7 +167,9 @@ export default function AkumulasiTable({ data, setData, pegawai, akNormatif }) {
                     >
                         jumlah angka kredit yang diperoleh
                     </td>
-                    <td className="border text-center">{"45.094"}</td>
+                    <td className="border text-center">
+                        {data.jumlah_ak_kredit}
+                    </td>
                 </tr>
             </tbody>
             <tfoot>

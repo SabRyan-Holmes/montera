@@ -19,8 +19,8 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
     Route::get('/pegawai', [CetakDokumenController::class, 'index'])->name('index');
     Route::get('/show/{pegawai:id}', [CetakDokumenController::class, 'show'])->name('show');
     Route::get('/create/{pegawai:id}', [CetakDokumenController::class, 'create'])->name('create');
-    Route::get('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
-    // Route::post('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
+    Route::post('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
+    Route::get('/view-pak', [CetakDokumenController::class, 'view_pak'])->name('view-pak');
 });
 
 

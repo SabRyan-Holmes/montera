@@ -1,11 +1,11 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdPersonSearch } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
-import { Link } from "@inertiajs/react";
+import { Link, router, useForm } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
 import { InputLabel } from "@/Components";
@@ -17,7 +17,8 @@ export default function Index({
     search,
     flash,
     subTitle,
-    byDaerah,
+    byDaerahReq: initialDaerah,
+    byJabatanReq: initialJabatan,
 }) {
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
@@ -51,6 +52,33 @@ export default function Index({
             };
         }
     }, [flash.message]);
+    const [byDaerah, setByDaerah] = useState(initialDaerah || "");
+    const [byJabatan, setByJabatan] = useState(initialJabatan || "");
+
+    const { data, get } = useForm({
+        // Input Data
+        periode_mulai: 1, //Default: Januari
+        periode_berakhir: 2, //Default Januari
+    });
+
+    const handleByDaerahChange = (e) => {
+        setByDaerah(e.target.value);
+    };
+
+    useEffect(() => {
+        if (byJabatan || byDaerah) {
+            router.get(
+                "/pegawai",
+                { byJabatan, byDaerah, search },
+                { replace: true, preserveState: true }
+            );
+        } else if(byJabatan == '' && byDaerah == '') {
+            router.get(
+                "/pegawai",
+                {}, { replace: true, preserveState: true }
+            );
+        }
+    }, [byJabatan, byDaerah]);
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -67,71 +95,73 @@ export default function Index({
 
                 <h1 className="my-7 text-3xl">Data Pejabat Fungsional 2024</h1>
 
-                <div className="flex gap-4 m-3  items-center">
-                    <div className="flex-none w-72">
-                        <p className="text-lg ml-1">Jabatan</p>
-                        <select
-                            className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
-                            name="byJabatan"
-                            defaultValue={"Semua Kategori"}
-                            // onChange={(e) => setDaerah(e.target.value)}
-                        >
-                            <option disabled value={null} className="">
-                                Semua Kategori
-                            </option>
-                            <option>Statistisi Ahli Muda</option>
-                            <option>Statistisi Ahli Penyelia</option>
-                            <option>Statistisi Ahli Pertama</option>
-                            <option>Statistisi Ahli Terampil</option>
-                            <option>Statistisi Mahir</option>
-                        </select>
-                    </div>
-                    <div className="flex-none w-72">
-                        <InputLabel
-                            value="Daerah"
-                            Htmlfor="Daerah"
-                            className="max-w-sm text-lg  ml-1"
-                        />
+                <form
+                    // onSubmit={(e) => {
+                    //     // e.preventDefault();
+                    //     handleSubmit();
+                    // }}
+                    className="max-w-screen-laptop mx-auto"
+                >
+                    <div className="flex gap-4 m-3  items-center">
+                        <div className="flex-none w-72">
+                            <p className="text-lg ml-1">Jabatan</p>
+                            <select
+                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                name="byJabatan"
+                                defaultValue={byJabatan}
+                                onChange={(e) => setByJabatan(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                <option>Ahli Muda</option>
+                                <option>Ahli Penyelia</option>
+                                <option>Ahli Pertama</option>
+                                <option>Ahli Terampil</option>
+                                <option>Mahir</option>
+                            </select>
+                        </div>
+                        <div className="flex-none w-72">
+                            <InputLabel
+                                value="Daerah"
+                                Htmlfor="Daerah"
+                                className="max-w-sm text-lg  ml-1"
+                            />
 
-                        <select
-                            className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
-                            name="byDaerah"
-                            id="byDaerah"
-                            defaultValue={"Semua Kategori"}
-                            onChange={(e) => setDaerah(e.target.value)}
-                        >
-                            <option disabled value={null} className="">
-                                Semua Kategori
-                            </option>
-                            <option>PROVINSI JAMBI</option>
-                            <option>KOTA JAMBI</option>
-                            <option>KERINCI</option>
-                            <option>MUARO JAMBI</option>
-                            <option>BATANG HARI</option>
-                            <option>SAROLANGUN</option>
-                            <option>TANJAB BARAT</option>
-                            <option>TANJAB TIMUR</option>
-                            <option>MERANGIN</option>
-                            <option>SUNGAI PENUH</option>
-                            <option>BUNGO</option>
-                            <option>TEBO</option>
-                        </select>
-                    </div>
-                    <div className="flex-none  w-80">
-                        <InputLabel
-                            value="Nama/NIP"
-                            Htmlfor="search"
-                            className="max-w-sm text-lg ml-1"
-                        />
-                        <form className="max-w-sm mx-auto ">
-                            {byDaerah && (
+                            <select
+                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                name="byDaerah"
+                                id="byDaerah"
+                                defaultValue={byDaerah}
+                                onChange={(e) => setByDaerah(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                <option>PROVINSI JAMBI</option>
+                                <option>KOTA JAMBI</option>
+                                <option>KERINCI</option>
+                                <option>MUARO JAMBI</option>
+                                <option>BATANG HARI</option>
+                                <option>SAROLANGUN</option>
+                                <option>TANJAB BARAT</option>
+                                <option>TANJAB TIMUR</option>
+                                <option>MERANGIN</option>
+                                <option>SUNGAI PENUH</option>
+                                <option>BUNGO</option>
+                                <option>TEBO</option>
+                            </select>
+                        </div>
+                        <div className="flex-none  w-80">
+                            <InputLabel
+                                value="Nama/NIP"
+                                Htmlfor="search"
+                                className="max-w-sm text-lg ml-1"
+                            />
+                            {/* {byDaerah && (
                                 <input
                                     type="hidden"
                                     name="byDaerah"
                                     defaultValue=""
                                     value={byDaerah}
                                 />
-                            )}
+                            )} */}
                             <label
                                 htmlFor="search"
                                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -147,16 +177,17 @@ export default function Index({
                                     id="search"
                                     defaultValue={search}
                                     name="search"
-                                    className=" w-full p-4 pl-10 text-sm placeholder:text-accent text-gray-900 border-2 bg-slate-100/60 border-t-primary border-l-primary border-r-secondary border-b-hijau focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary rounded-md bg-gray-50  focus:border-blue-500"
+                                    className=" w-full p-4 pl-10 text-sm placeholder:text-accent text-gray-900 border-2 bg-slate-100/60 border-t-primary border-l-primary border-r-secondary
+                                    border-b-hijau focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary rounded-md bg-gray-50  focus:border-blue-500"
                                     placeholder="Cari Nama Pegawai/NIP.."
                                 />
                                 <button className="text-white bg-primary absolute end-2.5 bottom-2.5 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                     Search
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
 
                 <div className="table-bordered rounded-sm overflow-auto pt-3 ">
                     <table className="ti-custom-table ti-custom-table-head table-xs table">

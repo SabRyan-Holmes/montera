@@ -1,13 +1,27 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React from "react";
 
-export default function InputDataTable({ data, setData}) {
-
+export default function InputDataTable({ data, setData }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {
             e.preventDefault();
         }
+    };
+
+    const bulan = {
+        1: "Januari",
+        2: "Februari",
+        3: "Maret",
+        4: "April",
+        5: "Mei",
+        6: "Juni",
+        7: "Juli",
+        8: "Agustus",
+        9: "September",
+        10: "Oktober",
+        11: "November",
+        12: "Desember",
     };
 
     return (
@@ -26,12 +40,59 @@ export default function InputDataTable({ data, setData}) {
                     </td>
                     <td colSpan={3}>
                         <div className="flex items-center gap-4">
-                            <DateInput name="periode_awal" id="periode_awal" />
+                            <select
+                                name="periode_mulai"
+                                id="periode_mulai"
+                                className="w-28 px-4 rounded-md  border-gradient disabled:text-accent font-medium"
+                                defaultValue={data.periode_mulai}
+                                onChange={(e) => {
+                                    const periodeMulai = parseInt(
+                                        e.target.value
+                                    );
+                                    setData("periode_mulai", periodeMulai);
+
+                                    // Jika periode berakhir kurang dari periode mulai, setel periode berakhir menjadi periode mulai
+                                    if (data.periode_berakhir < periodeMulai) {
+                                        setData(
+                                            "periode_berakhir",
+                                            periodeMulai
+                                        );
+                                    }
+                                }}
+                            >
+                                {Object.keys(bulan).map((key) => (
+                                    <option key={key} value={key}>
+                                        {bulan[key]}
+                                    </option>
+                                ))}
+                            </select>
                             <span>sd</span>
-                            <DateInput
-                                name="periode_akhir"
-                                id="periode_akhir"
-                            />
+                            <select
+                                name="periode_berakhir"
+                                id="periode_berakhir"
+                                className="w-28 px-4 rounded-md  border-gradient disabled:text-accent font-medium"
+                                defaultValue={data.periode_berakhir}
+                                disabled={!data.periode_mulai}
+                                onChange={(e) => {
+                                    setData(
+                                        "periode_berakhir",
+                                        parseInt(e.target.value)
+                                    );
+                                }}
+                            >
+                                {Object.keys(bulan).map((key) => (
+                                    <option
+                                        key={key}
+                                        value={key}
+                                        disabled={
+                                            data.periode_mulai &&
+                                            parseInt(key) < data.periode_mulai
+                                        }
+                                    >
+                                        {bulan[key]}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </td>
                 </tr>
@@ -43,6 +104,9 @@ export default function InputDataTable({ data, setData}) {
                             <DateInput
                                 name="tgl_ditetapkan"
                                 id="tgl_ditetapkan"
+                                onChange={(e) =>
+                                    setData("tgl_ditetapkan", e.target.value)
+                                }
                             />
                         </div>
                     </td>

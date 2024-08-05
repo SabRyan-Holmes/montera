@@ -27,6 +27,8 @@
 
 <body>
     <main>
+        {{-- @dd($data) --}}
+        {{-- <p style="text: text-nowrap">Data: {{ $data['tebusan1'] }}</p> --}}
         {{-- Page 1 --}}
         @include('pdf.pak-page-1', ['pegawai' => 'data'])
 

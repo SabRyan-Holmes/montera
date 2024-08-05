@@ -18,14 +18,17 @@ class Pegawai extends Model
             $filters['search'] ?? false,
             fn ($query, $search) =>
             $query->where('Nama', 'like', '%' . $search . '%')
+                ->orWhere('NIP/NRP', $search)
                 ->orWhere('NIP/NRP', 'like', '%' . $search . '%')
         );
+
+
 
         // Berdasarkan Jabatan
         $query->when(
             $filters['byJabatan'] ?? false,
             fn ($query, $byJabatan) =>
-            $query->where('Jabatan/TMT', $byJabatan)
+            $query->where('Jabatan/TMT', 'like', '%' . $byJabatan . '%')
         );
 
         // Berdasarkan Daerah

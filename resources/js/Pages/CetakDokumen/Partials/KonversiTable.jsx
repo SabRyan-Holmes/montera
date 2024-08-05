@@ -1,18 +1,57 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useState } from "react";
 
-export default function KonversiTable({ data, setData, pegawai, akNormatif }) {
+export default function KonversiTable({
+    data,
+    setData,
+    pegawai,
+    akNormatif,
+    predikat,
+}) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {
             e.preventDefault();
         }
     };
-    // SetPresentase
-    const [presentase1, setPresentase1] = useState(100);
 
     // Jabatan untuk sesuai Koefisien Pertahun
     const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
+
+    function hitungAk(akTerakhir, periode, akNormatif, presentase) {
+        const ak_kredit =
+            akTerakhir + (periode / 12) * akNormatif * (presentase / 100);
+        // console.log("angka terakhir", akTerakhir);
+        // console.log("periode : ", periode);
+        // console.log("ak normatif : ", akNormatif)s;
+        // console.log("presentase : ", presentase);
+        // console.log("isi nilai ak kedti");
+        // console.log(ak_kredit);
+        return ak_kredit;
+    }
+
+    const periode = data.periode_berakhir - data.periode_mulai;
+
+    const findAkNormatifValue = (jabatan) => {
+        const key = Object.keys(akNormatif).find((k) => jabatan.includes(k));
+        return key ? akNormatif[key] : null;
+    };
+
+    const akNormatifValue = findAkNormatifValue(jabatanOnly);
+    const akKreditValue = parseFloat(
+        hitungAk(
+            data.ak_terakhir,
+            periode,
+            akNormatifValue,
+            data.presentase
+        )
+    ).toFixed(2);
+
+    data.angka_kredit = akKreditValue;
+    data.ak_normatif = akNormatifValue;
+    data.predikat = predikat[data.presentase];
+    console.log("data.predikat");
+    console.log(data.predikat);
 
     return (
         <table className="table text-base">
@@ -64,48 +103,44 @@ export default function KonversiTable({ data, setData, pegawai, akNormatif }) {
                 </tr>
 
                 <tr className="text-center">
-                    <td className="border">
-                        {presentase1 == 150 && <strong>Sangat Baik</strong>}
-
-                        {presentase1 == 100 && <strong>Baik</strong>}
-                    </td>
+                    <td className="border">{predikat[data.presentase]}</td>
                     <td className="flex justify-center w-full">
                         <select
                             name="presentase"
                             id="presentase"
                             className="w-24 px-1 rounded-md text-center border-gradient"
+                            defaultValue={data.presentase}
                             onChange={(e) => {
                                 setData("presentase", e.target.value);
-                                setPresentase1(e.target.value);
                             }}
                         >
-                            <option selected value="75">75%</option>
-                            <option selected value="100">
-                                100%
-                            </option>
+                            <option value="75">75%</option>
+                            <option value="100">100%</option>
                             <option value="150">150%</option>
                         </select>
                     </td>
                     <td className="border">
-                        {akNormatif[jabatanOnly] ? (
-                            <span>{akNormatif[jabatanOnly]}</span>
+                        {data.ak_normatif ? (
+                            <span>{data.ak_normatif}</span>
                         ) : (
                             <TextInput
-                                id="ak_normatif1"
+                                id="ak_normatif_ops"
                                 type="text"
-                                name="ak_normatif1"
+                                name="ak_normatif_ops"
                                 className=""
-                                // onChange={onChangeToNumber}
                                 placeholder="Input Manual Angka Normatif"
                                 onKeyPress={handleKeyPress}
                                 onChange={(e) =>
-                                    setData("ak_normatif1", e.target.value)
+                                    setData("ak_normatif_ops", e.target.value)
                                 }
                             />
                         )}
                     </td>
-                    {/* TODO Logika Angka Kredit Nanti */}
-                    <td className="border">{"18.7"}</td>
+                    <td className="border">
+                        {data.angka_kredit && !isNaN(data.angka_kredit)
+                            ? data.angka_kredit
+                            : "0"}
+                    </td>
                 </tr>
 
                 <tr>

@@ -1,25 +1,34 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { Link, Head, useForm } from "@inertiajs/react";
-import { InputError, PrimaryButton } from "@/Components";
+import { InputError, PrimaryButton, SecondaryButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
     AkumulasiTable,
     PAKTable,
 } from "./Partials";
+import { FaPrint } from "react-icons/fa6";
+import { router } from '@inertiajs/react'
 
+import { FaSave, FaUserEdit } from "react-icons/fa";
+import { RiArrowGoBackFill } from "react-icons/ri";
 export default function Index({ auth, pegawai, title }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, get, post,processing, errors, reset } = useForm({
         // Input Data
-        periode_mulai: "",
-        periode_berakhir: "",
-        tanggal_ditetapkan: "",
+        periode_mulai: 1, //Default: Januari
+        periode_berakhir: 2, //Default Januari
+        tgl_ditetapkan: "",
         penanda_tangan: "",
 
         // Konversi Predikat
         no_surat1: "",
-        presentase: "",
+        predikat: "Baik",
+        presentase: 100,
+        ak_normatif: 0, //Koefisien pertahun || Dipakai juga untuk Akumalasi AK
+        angka_kredit: 0, //Angka Kredit || Dipakai juga untuk Akumalasi AK
+        ak_normatif_ops: 0, //AK Normatif opsional(jika tidak ada)
+
         tebusan1: {
             kepala_reg: false,
             sekretaris: false,
@@ -31,7 +40,13 @@ export default function Index({ auth, pegawai, title }) {
 
         // Akumulasi angka kredit
         no_surat2: "",
-        angka_kredit: "",
+        // ak_normatif: 0,
+        // angka_kredit: 0,
+        ak_terakhir: 0,
+        jumlah_ak_kredit: 0,
+        tahun_terakhir: "",
+        tahun_ini: "",
+
         tebusan2: {
             kepala_reg: false,
             sekretaris: false,
@@ -49,12 +64,16 @@ export default function Index({ auth, pegawai, title }) {
         ak_konversi: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
         ak_peningkatan: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
 
-        // tambahan
-        //
-
         // Jumlah Angka Kredit Kumulatif
         jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
-        //
+
+        // tambahan
+        pangkat: 50,
+        jabatan: 100,
+        // Kelebihan/Kekurangan
+        pangkat_keker: "",
+        jabatan_keker: "",
+
         tebusan3: {
             kepala_reg: false,
             sekretaris: false,
@@ -65,6 +84,12 @@ export default function Index({ auth, pegawai, title }) {
         },
     });
 
+    const predikat = {
+        75: "Cukup",
+        100: "Baik",
+        150: "Sangat Baik",
+    };
+
     const [alert, setAlert] = useState(false);
 
     useEffect(() => {
@@ -73,19 +98,50 @@ export default function Index({ auth, pegawai, title }) {
 
     const submit = (e) => {
         e.preventDefault();
+        router.post('/cetak_dokumen/cetak', data)
 
-        get(route("cetak_dokumen.cetak"), data);
+        // post(route("cetak_dokumen.cetak"), {
+        //     data: data,
+        //     forceFormData: true,
+        //     // onFinish: (response) => {
+        //     //     // Buka PDF di tab baru
+        //     //     const url = window.URL.createObjectURL(new Blob([response.data]));
+        //     //     const a = document.createElement('a');
+        //     //     a.href = url;
+        //     //     a.target = '_blank';
+        //     //     document.body.appendChild(a);s
+        //     //     a.click();
+        //     //     window.URL.revokeObjectURL(url);
+
+        //     //     // const url = new URL(route("cetak_dokumen.view-pak"));
+        //     //     // const params = new URLSearchParams(new FormData(e.target));
+
+        //     //     // window.location.href = `${url}?${params.toString()}`;
+        //     // },
+        // });
     };
+
+
+    // const submit = (e) => {
+    //     e.preventDefault();
+
+    //     const url = new URL(route("cetak_dokumen.cetak"));
+    //     const params = new URLSearchParams(new FormData(e.target));
+
+    //     window.location.href = `${url}?${params.toString()}`;
+    // };
+
+
 
     // Jabatan untuk sesuai Koefisien Pertahun
 
     const akNormatif = {
-        "Statistisi Ahli Terampil": 5,
-        "Statistisi Ahli Mahir": 12.5,
-        "Statistisi Ahli Penyelia": 25,
-        "Statistisi Ahli Pertama": 12.5,
-        "Statistisi Ahli Muda": 25,
-        "Statistisi Ahli Madya": 37.5,
+        Terampil: 5,
+        Mahir: 12.5,
+        Penyelia: 25,
+        Pertama: 12.5,
+        Muda: 25,
+        sMadya: 37.5,
     };
 
     // TODO Logika Penilaian Periode(Menyusul)
@@ -104,7 +160,44 @@ export default function Index({ auth, pegawai, title }) {
             current={route().current("cetak_dokumen.index")}
         >
             <Head title="Pembuatan Dokumen PAK" />
+
             <section className="m-10 h-screen">
+                <div className="flex justify-between">
+                    <div className="breadcrumbs mt-2 text-sm">
+                        <ul>
+                            <li>
+                                <a
+                                    href={route("pegawai.index")}
+                                    className="gap-2"
+                                >
+                                    <FaPrint className="h-4 w-4 stroke-current" />
+                                    <span>Cetak Dokumen</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <span className="inline-flex items-center gap-2">
+                                    {pegawai.Nama}
+                                </span>
+                            </li>
+
+                            <li>
+                                <span className="inline-flex items-center gap-2">
+                                    <FaUserEdit className="h-4 w-4 stroke-current" />
+
+                                    {title}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <SecondaryButton
+                        onClick={() => window.history.back()}
+                        className="bg-secondary/5 capitalize "
+                    >
+                        <span>Kembali</span>
+                        <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
+                    </SecondaryButton>
+                </div>
                 <h1 className="my-10 text-3xl capitalize">
                     Data untuk pencetakan dokumen pak
                 </h1>
@@ -184,6 +277,7 @@ export default function Index({ auth, pegawai, title }) {
                             data={data}
                             setData={setData}
                             akNormatif={akNormatif}
+                            predikat={predikat}
                         />
                         {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | END*/}
 
@@ -193,6 +287,7 @@ export default function Index({ auth, pegawai, title }) {
                             data={data}
                             setData={setData}
                             akNormatif={akNormatif}
+                            predikat={predikat}
                         />
                         {/* AKUMULASI ANGKA KREDIT | END */}
 

@@ -27,9 +27,10 @@ class PegawaiController extends Controller
             // "title" => "Pegawai " . $title,
             "title" => "Pencetakan Dokumen PAK ",
             "subTitle" => $subTitle,
-            "pegawais" => $pegawai->filter(request(['search', 'byDaerah']))->paginate(10),
+            "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
             "search" => request('search'),
-            "byDaerah" => request('byDaerah')
+            "byDaerahReq" => request('byDaerah'),
+            "byJabatanReq" => request('byJabatan')
         ]);
     }
 
