@@ -1,15 +1,20 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { MdPersonSearch } from "react-icons/md";
+import {
+    MdOutlineKeyboardDoubleArrowLeft,
+    MdOutlineKeyboardDoubleArrowRight,
+    MdPersonSearch,
+} from "react-icons/md";
 import { FaPrint } from "react-icons/fa6";
 import { jsPDF } from "jspdf";
 // import html2canvas from "html2canvas";
 import html2canvas from "html2canvas-pro";
 import PAK from "@/Pages/CetakDokumen/PAK";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import ReactPaginate from "react-paginate";
 import { InputLabel } from "@/Components";
+import { TiArrowRight } from "react-icons/ti";
 
 export default function Index({
     auth,
@@ -17,129 +22,117 @@ export default function Index({
     title,
     search,
     subTitle,
-    byDaerah,
+    byDaerahReq: initialDaerah,
+    byJabatanReq: initialJabatan,
 }) {
-    function printDocument() {
-        html2canvas(document.querySelector("#capture")).then((canvas) => {
-            document.body.appendChild(canvas); // if you want see your screenshot in body.
-            const imgData = canvas.toDataURL("image/png");
-            const pdf = new jsPDF();
-            pdf.addImage(imgData, "PNG", 0, 0);
-            // pdf.save("download.pdf");
-
-            pdf.output("dataurlnewwindow");
-        });
-    }
-
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
-        console.log("isi event", event);
-        const newOffset =
-            (event.selected * pegawais.per_page) % pegawais.last_page;
+        const selectedPage = event.selected + 1;
+        const newOffset = (selectedPage - 1) * pegawais.per_page;
 
         console.log(
-            `User requested page number ${event.selected}, which is offset ${newOffset}`
+            `User requested page number ${selectedPage}, which is offset ${newOffset}`
         );
 
-        // window.location = `/cetak_dokumen/pegawai?page=${event.selected + 1}`;
-        setItemOffset(newOffset);
-        // const target = `/cetak_dokumen?page=${event.selected + 1}`;
-        // browserHistory.push({
-        //     pathname: target,
-        // });
+        router.get(
+            `/cetak_dokumen/pegawai`,
+            { page: selectedPage },
+            {
+                replace: true,
+                preserveState: true,
+                onSuccess: () => {
+                    setItemOffset(newOffset); // Update the offset after successful page load
+                },
+            }
+        );
     };
 
-    // useEffect(() => {
-    //     window.location = `/cetak_dokumen?page=${active}`;
-    //     setPageChange(false)
-    // }, [selectedPage]);
+    const [byDaerah, setByDaerah] = useState(initialDaerah || "");
+    const [byJabatan, setByJabatan] = useState(initialJabatan || "");
 
-    //TODO: Logic Kategori  Daerah
-    // const [daerah, setDaerah] = useState(null);
-    // useEffect(() => {
-    //   first
-
-    //   return () => {
-    //     second
-    //   }
-    // }, [setDaerah])
-
-    //TODO: Logic Kategori  Jabatan/Pangkat
-    // const [daerah, setDaerah] = useState(null);
+    useEffect(() => {
+        if (byJabatan || byDaerah) {
+            router.get(
+                "/cetak_dokumen/pegawai",
+                { byJabatan, byDaerah, search },
+                { replace: true, preserveState: true }
+            );
+        } else if (byJabatan == "" && byDaerah == "") {
+            router.get(
+                "/cetak_dokumen/pegawai",
+                {},
+                { replace: true, preserveState: true }
+            );
+        }
+    }, [byJabatan, byDaerah]);
 
     console.log("isi req byDaerah", byDaerah);
+
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="phone:h-screen laptop:h-full max-w-screen-desktop mx-6">
-                <h1 className="my-10 text-3xl ">
+            <section className="phone:h-screen laptop:h-full max-w-screen-laptop mx-auto px-7">
+            <h1 className="my-10 text-3xl ">
                     Data Pejabat Fungsional 2024
                 </h1>
 
-                <div className="flex gap-4 m-3  items-center">
-                    <div className="flex-none w-72">
-                        <p className="text-lg ml-1">Jabatan</p>
-                        <select
-                            className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
-                            name="byJabatan"
-                            defaultValue={"Semua Kategori"}
-                            // onChange={(e) => setDaerah(e.target.value)}
-                        >
-                            <option disabled value={null} className="">
-                                Semua Kategori
-                            </option>
-                            <option>Statistisi Ahli Muda</option>
-                            <option>Statistisi Ahli Penyelia</option>
-                            <option>Statistisi Ahli Pertama</option>
-                            <option>Statistisi Ahli Terampil</option>
-                            <option>Statistisi Mahir</option>
-                        </select>
-                    </div>
-                    <div className="flex-none w-72">
-                        <InputLabel
-                            value="Daerah"
-                            Htmlfor="Daerah"
-                            className="max-w-sm text-lg  ml-1"
-                        />
+                <form className="max-w-screen-laptop ">
+                    <div className="flex gap-3 my-3 items-center">
+                        <div className="flex-none w-72">
+                            <InputLabel
+                                value="Jabatan"
+                                Htmlfor="Jabatan"
+                                className="max-w-sm text-lg  ml-1"
+                            />
+                            <select
+                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                name="byJabatan"
+                                defaultValue={byJabatan}
+                                onChange={(e) => setByJabatan(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                <option>Ahli Muda</option>
+                                <option>Ahli Penyelia</option>
+                                <option>Ahli Pertama</option>
+                                <option>Ahli Terampil</option>
+                                <option>Mahir</option>
+                            </select>
+                        </div>
+                        <div className="flex-none w-72">
+                            <InputLabel
+                                value="Daerah"
+                                Htmlfor="Daerah"
+                                className="max-w-sm text-lg  ml-1"
+                            />
 
-                        <select
-                            className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
-                            name="byDaerah"
-                            id="byDaerah"
-                            defaultValue={"Semua Kategori"}
-                            onChange={(e) => setDaerah(e.target.value)}
-                        >
-                            <option disabled value={null} className="">
-                                Semua Kategori
-                            </option>
-                            <option>PROVINSI JAMBI</option>
-                            <option>KOTA JAMBI</option>
-                            <option>KERINCI</option>
-                            <option>MUARO JAMBI</option>
-                            <option>BATANG HARI</option>
-                            <option>SAROLANGUN</option>
-                            <option>TANJAB BARAT</option>
-                            <option>TANJAB TIMUR</option>
-                            <option>MERANGIN</option>
-                            <option>SUNGAI PENUH</option>
-                            <option>BUNGO</option>
-                            <option>TEBO</option>
-                        </select>
-                    </div>
-                    <div className="flex-none  w-80">
-                        <InputLabel
-                            value="Nama/NIP"
-                            Htmlfor="search"
-                            className="max-w-sm text-lg ml-1"
-                        />
-                        <form className="max-w-sm mx-auto ">
-                            {byDaerah && (
-                                <input
-                                    type="hidden"
-                                    name="byDaerah"
-                                    defaultValue=""
-                                    value={byDaerah}
-                                />
-                            )}
+                            <select
+                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                name="byDaerah"
+                                id="byDaerah"
+                                defaultValue={byDaerah}
+                                onChange={(e) => setByDaerah(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                <option>PROVINSI JAMBI</option>
+                                <option>KOTA JAMBI</option>
+                                <option>KERINCI</option>
+                                <option>MUARO JAMBI</option>
+                                <option>BATANG HARI</option>
+                                <option>SAROLANGUN</option>
+                                <option>TANJAB BARAT</option>
+                                <option>TANJAB TIMUR</option>
+                                <option>MERANGIN</option>
+                                <option>SUNGAI PENUH</option>
+                                <option>BUNGO</option>
+                                <option>TEBO</option>
+                            </select>
+                        </div>
+                        <div className="flex-none w-80">
+                            <InputLabel
+                                value="Nama/NIP"
+                                Htmlfor="search"
+                                className="max-w-sm text-lg ml-1"
+                            />
+
                             <label
                                 htmlFor="search"
                                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -155,44 +148,56 @@ export default function Index({
                                     id="search"
                                     defaultValue={search}
                                     name="search"
-                                    className=" w-full p-4 pl-10 text-sm placeholder:text-accent text-gray-900 border-2 bg-slate-100/60 border-t-primary border-l-primary border-r-secondary border-b-hijau focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary rounded-md bg-gray-50  focus:border-blue-500"
+                                    className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
                                     placeholder="Cari Nama Pegawai/NIP.."
                                 />
-                                <button className="text-white bg-primary absolute end-2.5 bottom-2.5 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                <button className="text-white  bg-sky-600/85 absolute end-2 bottom-[6px] hover:bg-primary/85 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                     Search
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
 
-                <div className="table-bordered rounded-sm overflow-auto pt-3">
-                    <table className="ti-custom-table ti-custom-table-head table-xs table">
-                        <thead className="">
+                <div className="overflow-auto pt-3 ">
+                    <table className="table-bordered text-xs table overflow-auto rounded-md ">
+                        <thead className="text-white font-medium text-sm bg-primary  rounded-md border border-secondary/15">
                             <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">NIP</th>
-                                <th scope="col">Nama</th>
+                                <th scope="col" width="1%">
+                                    No
+                                </th>
+                                <th scope="col" width="15%">
+                                    NIP
+                                </th>
+                                <th scope="col" width="25%">
+                                    Nama
+                                </th>
                                 {/* <th scope="col">No Seri Karpeg</th> */}
-                                <th scope="col ">Jabatan</th>
-                                {/* <th scope="col">Unit Kerja</th> */}
-                                <th scope="col">Daerah</th>
-                                <th scope="col" className="flex justify-center">
-                                    {" "}
-                                    <span className="mx-auto ">Aksi</span>
+                                <th scope="col" width="20%">
+                                    <span className="flex justify-center">
+                                        Jabatan
+                                    </span>
+                                </th>
+                                <th scope="col" width="15%">
+                                    <span className="flex justify-center">
+                                        Daerah
+                                    </span>
+                                </th>
+                                <th scope="col " className="text-center ">
+                                    Aksi
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             {pegawais.data?.map((pegawai, i) => (
-                                <Link
-                                    as="tr"
+                                <tr
+                                    role="list"
                                     href={route(
                                         "cetak_dokumen.create",
                                         pegawai.id
                                     )}
                                     key={i}
-                                    className="hover:bg-secondary hover:cursor-pointer"
+                                    className="group/item hover:bg-secondary/50 hover:cursor-pointer"
                                 >
                                     <td className="text-center">{i + 1}</td>
                                     <td>{pegawai["NIP/NRP"]}</td>
@@ -207,55 +212,72 @@ export default function Index({
                                         }
                                     </td>
                                     <td>{pegawai["Daerah"]}</td>
-                                    <td className="">
-                                        <a
-                                            className="hover:text-primary flex items-center gap-2"
-                                            href="/cetak_dokumen/cetak"
+                                    <td className="text-center">
+                                        <Link
+                                            as="a"
+                                            className="group/button text-center font-medium group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 inline-flex items-center justify-center gap-2 mx-auto action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            href={route(
+                                                "cetak_dokumen.create",
+                                                pegawai.id
+                                            )}
                                             target="_blank"
                                         >
-                                            Cetak PAK <FaPrint />
-                                        </a>
+                                            Cetak PAK{" "}
+                                            <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
+                                        </Link>
                                     </td>
-                                </Link>
+
+                                    {/* <Link
+                                            as="a"
+                                            href={route(
+                                                "pegawai.edit",
+                                                pegawai.id
+                                            )}
+                                            className="  flex items-center gap-2 text-secondary/75 font-medium  border-secondary/15"
+                                        >
+                                            <FaEdit className="w-6 h-6 fill-secondary/75" />
+                                            <span>Edit</span>
+                                        </Link> */}
+                                </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
                 {/* Pagination */}
-                <div className="box-footer mb-8">
+                <div className="box-footer mb-8 text-sm">
                     <div className="sm:flex items-center justify-between">
-                        <div className="flex items-center">
-                            showing {pegawais.per_page} Entries{" "}
-                            <i className="ri-arrow-right-line ml-2 font-semibold "></i>
+                        <div className="flex items-center text-xs">
+                            showing {pegawais.data.length} Entries{" "}
+                            <TiArrowRight className="w-5 h-5" />
                         </div>
                         <ReactPaginate
                             breakLabel={<span>...</span>}
                             nextLabel={
                                 pegawais.next_page_url && (
                                     <a
-                                        className="text-gray-500 dark:text-white/70 hover:text-primary e py-1 px-2 leading-none inline-flex items-center gap-2 rounded-sm hover:border hover:bg-primary/75 font-semibold border-primary"
+                                        className="group/next dark:text-white/70 border text-primary hover:text-white  py-1 px-2 leading-none inline-flex items-center gap-2 rounded-md hover:border hover:bg-primary/75 font-semibold border-primary"
                                         href={pegawais.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
                                         <span className="sr-only">Next</span>
                                         <span aria-hidden="true">Next</span>
+                                        <MdOutlineKeyboardDoubleArrowRight className="-ml-1 w-4 h-4 fill-primary group-hover/next:fill-white" />
                                     </a>
                                 )
                             }
-                            s
                             onPageChange={handlePageClick}
                             pageRangeDisplayed={1}
                             pageCount={pegawais.last_page}
                             previousLabel={
                                 pegawais.prev_page_url && (
                                     <a
-                                        className="text-gray-500 dark:text-white/70 hover:text-primary e py-1 px-2 leading-none inline-flex items-center gap-2 rounded-sm hover:border hover:bg-primary/75 font-semibold border-primary"
-                                        href={pegawais.prev_page_url}
+                                        className="group/next dark:text-white/70 border text-primary hover:text-white  py-1 px-2 leading-none inline-flex items-center gap-2 rounded-md hover:border hover:bg-primary/75 font-semibold border-primary"
+                                        href={pegawais.next_page_url}
+                                        onClick={() => setNum(num + 1)}
                                     >
+                                        <MdOutlineKeyboardDoubleArrowLeft className="-mr-1 w-4 h-4 fill-primary group-hover/next:fill-white" />
+                                        <span className="sr-only">Prev</span>
                                         <span aria-hidden="true">Prev</span>
-                                        <span className="sr-only">
-                                            Previous
-                                        </span>
                                     </a>
                                 )
                             }
@@ -263,64 +285,12 @@ export default function Index({
                             containerClassName={
                                 "flex items-center text-center justify-center mt-8 mb-4 gap-4 "
                             }
-                            pageClassName="border border-solid border-primary text-center hover:bg-success w-6 h-6 flex items-center justify-center rounded-md"
-                            activeClassName="bg-primary"
+                            pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
+                            activeClassName="bg-primary text-white"
                             className="justify-end flex gap-2"
                         />
                     </div>
                 </div>
-
-                {/* <div className="box-footer">
-                    <div className="sm:flex items-center justify-between">
-                        <div className="">
-                            showing {pegawais.per_page} Entries{" "}
-                            <i className="ri-arrow-right-line ml-2 font-semibold"></i>
-                        </div>
-                        <div className="ltr:ml-auto rtl:mr-auto">
-                            <nav className="flex justify-center items-center space-x-2 rtl:space-x-reverse">
-                                {pegawais.prev_page_url && (
-                                    <a
-                                        className="text-gray-500 dark:text-white/70 hover:text-primary e py-1 px-2 leading-none inline-flex items-center gap-2 rounded-sm"
-                                        href={pegawais.prev_page_url}
-                                    >
-                                        <span aria-hidden="true">Prev</span>
-                                        <span className="sr-only">Previous</span>
-                                    </a>
-                                )}
-
-                                {links.map((link, i) => {
-                                    console.log('isi link label', link.label)
-                                    console.log('isi current', current)
-                                    return (
-                                        <a
-                                            key={i}
-                                            className={
-                                                "border  leading-none inline-flex items-center text-sm font-medium rounded-sm bg-indigo-500" +
-                                                (link.label != current
-                                                    ? "bg-white py-1  px-2 text-2xl"
-                                                    : "bg-primary py-1 px-2 text-primary ")
-                                            }
-                                            href={link.url}
-                                            aria-current="page"
-                                        >
-                                            {link.label}
-                                        </a>
-                                    );
-                                })}
-
-                                {pegawais.next_page_url && (
-                                    <a
-                                        className="text-gray-500 dark:text-white/70 hover:text-primary e py-1 px-2 leading-none inline-flex items-center gap-2 rounded-sm"
-                                        href={pegawais.next_page_url} onClick={()=> setNum(num+1)}
-                                    >
-                                        <span className="sr-only">Next</span>
-                                        <span aria-hidden="true">Next</span>
-                                    </a>
-                                )}
-                            </nav>
-                        </div>
-                    </div>
-                </div> */}
             </section>
         </Authenticated>
     );

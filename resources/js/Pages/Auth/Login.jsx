@@ -1,12 +1,9 @@
 import { useEffect } from 'react';
-import Checkbox from '@/Components/Checkbox';
-import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ApplicationLogo, TextInput, PrimaryButton, InputLabel, InputError,  Checkbox, } from '@/Components';
+import GuestLayout from '@/Layouts/GuestLayout';
+
+
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,8 +21,9 @@ export default function Login({ status, canResetPassword }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('login'));
+        post(route('login'))
     };
+
 
     return (
         <GuestLayout>

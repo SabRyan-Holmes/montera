@@ -58,17 +58,9 @@ export default function Create({ auth, pegawai, title, flash }) {
         <Authenticated
             user={auth.user}
             title={title}
-            current={route().current("pegawai.index")}
+            current={route().current()}
         >
-            {/* {flash.message &&
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: `${flash.message}`,
-                    icon: "success",
-                    iconColor: "#50C878",
-                    confirmButtonText: "Oke",
-                    confirmButtonColor: "#2D95C9",
-                })} */}
+
 
             <section className="m-10 laptop:h-full h-full mb-24">
                 <div className="flex justify-between">

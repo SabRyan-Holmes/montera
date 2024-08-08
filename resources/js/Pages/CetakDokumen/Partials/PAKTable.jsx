@@ -1,7 +1,7 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useState } from "react";
-import { MdAddBox } from "react-icons/md";
-
+import { MdAddBox, MdDelete } from "react-icons/md";
+import { FaMinus } from "react-icons/fa";
 export default function PAKTable({ data, setData, pegawai, akNormatif }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
@@ -15,39 +15,41 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
     // Jabatan untuk sesuai Koefisien Pertahun
     const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
 
-    // CONSOLE
-    // console.log(data.)
-    var jakk_lama =
-        parseFloat(data.ak_dasar["lama"]) +
-        parseFloat(data.ak_jf["lama"]) +
-        parseFloat(data.ak_penyesuaian["lama"]) +
-        parseFloat(data.ak_konversi["lama"]) +
-        parseFloat(data.ak_peningkatan["lama"]);
+    // Logika Hitung jakk
+    const calculateTotal = () => {
+        let jakk_lama =
+            parseFloat(data.ak_dasar["lama"]) +
+            parseFloat(data.ak_jf["lama"]) +
+            parseFloat(data.ak_penyesuaian["lama"]) +
+            parseFloat(data.ak_konversi["lama"]) +
+            parseFloat(data.ak_peningkatan["lama"]);
 
-    var jakk_baru =
-        parseFloat(data.ak_dasar["baru"]) +
-        parseFloat(data.ak_jf["baru"]) +
-        parseFloat(data.ak_penyesuaian["baru"]) +
-        parseFloat(data.ak_konversi["baru"]) +
-        parseFloat(data.ak_peningkatan["baru"]);
+        let jakk_baru =
+            parseFloat(data.ak_dasar["baru"]) +
+            parseFloat(data.ak_jf["baru"]) +
+            parseFloat(data.ak_penyesuaian["baru"]) +
+            parseFloat(data.ak_konversi["baru"]) +
+            parseFloat(data.ak_peningkatan["baru"]);
 
-    var jakk_jumlah =
-        parseFloat(data.ak_dasar["jumlah"]) +
-        parseFloat(data.ak_jf["jumlah"]) +
-        parseFloat(data.ak_penyesuaian["jumlah"]) +
-        parseFloat(data.ak_konversi["jumlah"]) +
-        parseFloat(data.ak_peningkatan["jumlah"]);
+        let jakk_jumlah =
+            parseFloat(data.ak_dasar["jumlah"]) +
+            parseFloat(data.ak_jf["jumlah"]) +
+            parseFloat(data.ak_penyesuaian["jumlah"]) +
+            parseFloat(data.ak_konversi["jumlah"]) +
+            parseFloat(data.ak_peningkatan["jumlah"]);
 
-    // var jakk_keterangan =
-    //     parseFloat(data.ak_dasar["keterangan"]) +
-    //     parseFloat(data.ak_jf["keterangan"]) +
-    //     parseFloat(data.ak_penyesuaian["keterangan"]) +
-    //     parseFloat(data.ak_konversi["keterangan"]) +
-    //     parseFloat(data.ak_peningkatan["keterangan"]);
+        for (let key in data.ak_tipe_tambahan) {
+            jakk_lama += parseFloat(data.ak_tipe_tambahan[key]["lama"]);
+            jakk_baru += parseFloat(data.ak_tipe_tambahan[key]["baru"]);
+            jakk_jumlah += parseFloat(data.ak_tipe_tambahan[key]["jumlah"]);
+        }
 
+        return { jakk_lama, jakk_baru, jakk_jumlah };
+    };
+
+    // Call this function whenever you need to calculate the totals
+    const { jakk_lama, jakk_baru, jakk_jumlah } = calculateTotal();
     // Logika Jumlah AK Dasar
-
-    const [jumlahAkDasar, setjumlahAkDasar] = useState(data.ak_dasar["jumlah"]);
 
     useEffect(() => {
         const newData = data.jakk;
@@ -143,6 +145,80 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
         data.jabatan_keker = jabatanKeker;
     }, [jakk_jumlah, data.jabatan]);
 
+    // <========Logika Tambah Kolom=============>
+    const dataTipePAK = {
+        ak_dasar: data.ak_dasar,
+        ak_jf: data.ak_jf,
+        ak_penyesuaian: data.ak_penyesuaian,
+        ak_konversi: data.ak_konversi,
+        ak_peningkatan: data.ak_peningkatan,
+        ...data.ak_tipe_tambahan,
+    };
+    const [rowKeys, setRowKeys] = useState(Object.keys(dataTipePAK));
+
+    const handleAddRow = () => {
+        const newRowKey = `ak_tambahan_${
+            Object.keys(data.ak_tipe_tambahan).length + 1
+        }`;
+        setData({
+            ...data,
+            ak_tipe_tambahan: {
+                ...data.ak_tipe_tambahan,
+                [newRowKey]: {
+                    tipe_ak: "",
+                    lama: 0,
+                    baru: 0,
+                    jumlah: 0,
+                    keterangan: "",
+                },
+            },
+        });
+        setRowKeys([...rowKeys, newRowKey]);
+    };
+
+    const handleRemoveRow = (key) => {
+        const newTipeTambahan = { ...data.ak_tipe_tambahan };
+        delete newTipeTambahan[key];
+        setData({
+            ...data,
+            ak_tipe_tambahan: newTipeTambahan,
+        });
+        setRowKeys(rowKeys.filter((rowKey) => rowKey !== key));
+    };
+    const handleChange = (key, field, value) => {
+        let updatedKeyData = {};
+        if (key.startsWith("ak_tambahan_")) {
+            updatedKeyData = { ...data.ak_tipe_tambahan[key], [field]: value };
+
+            if (field === "lama" || field === "baru") {
+                updatedKeyData.jumlah =
+                    (parseFloat(updatedKeyData.lama) || 0) +
+                    (parseFloat(updatedKeyData.baru) || 0);
+            }
+
+            setData({
+                ...data,
+                ak_tipe_tambahan: {
+                    ...data.ak_tipe_tambahan,
+                    [key]: updatedKeyData,
+                },
+            });
+        } else {
+            updatedKeyData = { ...data[key], [field]: value };
+
+            if (field === "lama" || field === "baru") {
+                updatedKeyData.jumlah =
+                    (parseFloat(updatedKeyData.lama) || 0) +
+                    (parseFloat(updatedKeyData.baru) || 0);
+            }
+
+            setData({
+                ...data,
+                [key]: updatedKeyData,
+            });
+        }
+    };
+
     return (
         <table className="table text-base">
             {/* head */}
@@ -162,7 +238,6 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         <TextInput
                             className="w-64  border-gradient"
                             placeholder="contoh: 1500.445/PAK/2024"
-                            autoComplete="username"
                             onChange={(e) =>
                                 setData("no_surat3", e.target.value)
                             }
@@ -183,412 +258,141 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 </tr>
             </thead>
             <tbody className="border ">
-                {/* row 1 */}
-                <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0">
-                    <td className="border text-center">1</td>
-                    <td className="border">AK Dasar yang diberikan</td>
-                    <td className="border" width="10%">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_dasar;
-                                newData["lama"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_dasar: newData,
-                                });
-                            }}
-                        />
-                    </td>
+                {rowKeys.map((key, index) => (
+                    <tr
+                        key={key}
+                        className="text-base capitalize text-slate-600 font-semibold border-separate space-x-0"
+                    >
+                        {/* Kolom 1 */}
+                        <td className="border text-center">
+                            {/* Jika Kolom baru ditambahkan pada row TERAKHIR jadi Logo Minus, sebaliknya angka seperti biasa  */}
+                            {index !== rowKeys.length - 1 ? (
+                                <span>{index + 1}</span>
+                            ) : (
+                                <FaMinus
+                                    onClick={() => handleRemoveRow(key)}
+                                    className="w-6 h-6 stroke-rose-500 fill-rose-500 cursor-pointer hover:fill-secondary"
+                                />
+                            )}
+                        </td>
+                        {/* Kolom 2 */}
+                        <td className="border">
+                            {index < 5 ? (
+                                dataTipePAK[key].tipe_ak
+                            ) : (
+                                <TextInput
+                                    name={key}
+                                    type="text"
+                                    className="placeholder:text-accent text-center text-hijau"
+                                    placeholder="Input Tipe AK"
+                                    value={dataTipePAK[key].tipe_ak}
+                                    onChange={(e) =>
+                                        handleChange(
+                                            key,
+                                            "tipe_ak",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            )}
+                        </td>
+                        {/* Kolom 3 */}
+                        <td className="border">
+                            <TextInput
+                                min={0.1}
+                                max={100}
+                                step={0.1}
+                                type="number"
+                                className="placeholder:text-accent text-center text-hijau"
+                                autoComplete="username"
+                                placeholder="0,0"
+                                value={dataTipePAK[key].lama}
+                                onChange={(e) =>
+                                    handleChange(key, "lama", e.target.value)
+                                }
+                            />
+                        </td>
+                        {/* Kolom 4 */}
+                        <td className="border">
+                            <TextInput
+                                min={0.1}
+                                max={100}
+                                step={0.1}
+                                type="number"
+                                className="placeholder:text-accent text-center text-hijau"
+                                autoComplete="username"
+                                placeholder="0,0"
+                                value={dataTipePAK[key].baru}
+                                onChange={(e) =>
+                                    handleChange(key, "baru", e.target.value)
+                                }
+                            />
+                        </td>
+                        {/* Kolom 5 */}
+                        <td className="border">
+                            <TextInput
+                                min={0.1}
+                                max={100}
+                                step={0.1}
+                                value={
+                                    dataTipePAK[key].jumlah !== 0
+                                        ? parseFloat(
+                                              dataTipePAK[key].jumlah
+                                          ).toFixed(2)
+                                        : null
+                                }
+                                type="number"
+                                className="placeholder:text-accent text-center text-hijau"
+                                autoComplete="username"
+                                placeholder="0,0"
+                                disabled
+                            />
+                        </td>
+                        {/* Kolom 6 */}
+                        <td className="border">
+                            <TextInput
+                                className="placeholder:text-accent text-center text-hijau"
+                                autoComplete="username"
+                                placeholder="Input Ket."
+                                value={dataTipePAK[key].keterangan}
+                                onChange={(e) =>
+                                    handleChange(
+                                        key,
+                                        "keterangan",
+                                        e.target.value
+                                    )
+                                }
+                            />
+                        </td>
+                        {/* Kolom 7 */}
+                        {/* <td className="border">
+                                {index >= 5 && (
+                                    <button type="button" onClick={() => handleRemoveRow(key)}>
+                                        <MdDelete className="w-6 h-6 text-red-500" />
+                                    </button>
+                                )}
+                            </td> */}
+                    </tr>
+                ))}
+                <tr className="text-base capitalize text-slate-600 font-semibold border-separate space-x-0">
+                    <td className="border text-center"></td>
                     <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_dasar;
-                                newData["baru"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_dasar: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            value={
-                                data.ak_dasar["jumlah"] != 0
-                                    ? parseFloat(
-                                          data.ak_dasar["jumlah"].toFixed(2)
-                                      )
-                                    : null
-                            }
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            disabled
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="Input Ket."
-                            onChange={(e) => {
-                                const newData = data.ak_dasar;
-                                newData["keterangan"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_dasar: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                </tr>
-                {/* row 2 */}
-                <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0">
-                    <td className="border text-center">2</td>
-                    <td className="border">AK JF Lama</td>
-                    <td className="border ">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_jf;
-                                newData["lama"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_jf: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_jf;
-                                newData["baru"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_jf: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            value={
-                                data.ak_jf["jumlah"] != 0
-                                    ? parseFloat(
-                                          data.ak_jf["jumlah"].toFixed(2)
-                                      )
-                                    : null
-                            }
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            disabled
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="Input Ket."
-                            onChange={(e) => {
-                                const newData = data.ak_jf;
-                                newData["keterangan"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_jf: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                </tr>
-                {/* row 3 */}
-                <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0">
-                    <td className="border text-center">3</td>
-                    <td className="border">AK Penyesuaian/ Penyetsaraan</td>
-                    <td className="border ">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau number-input"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_penyesuaian;
-                                newData["lama"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_penyesuaian: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_penyesuaian;
-                                newData["baru"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_penyesuaian: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            value={
-                                data.ak_penyesuaian["jumlah"] != 0
-                                    ? parseFloat(
-                                          data.ak_penyesuaian["jumlah"].toFixed(
-                                              2
-                                          )
-                                      )
-                                    : null
-                            }
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            disabled
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="Input Ket."
-                            onChange={(e) => {
-                                const newData = data.ak_penyesuaian;
-                                newData["keterangan"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_penyesuaian: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                </tr>
-                {/* row 4 */}
-                <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0">
-                    <td className="border text-center">4</td>
-                    <td className="border">AK Konversi</td>
-                    <td className="border ">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_konversi;
-                                newData["lama"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_konversi: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_konversi;
-                                newData["baru"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_konversi: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            value={
-                                data.ak_konversi["jumlah"] != 0
-                                    ? parseFloat(
-                                          data.ak_konversi["jumlah"].toFixed(2)
-                                      )
-                                    : null
-                            }
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            disabled
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="Input Ket."
-                            onChange={(e) => {
-                                const newData = data.ak_konversi;
-                                newData["keterangan"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_konversi: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                </tr>
-                {/* row 5 */}
-                <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0">
-                    <td className="border text-center">5</td>
-                    <td className="border">
-                        AK yang diperoleh dari Peningkatan yang diberikan
-                    </td>
-                    <td className="border ">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_peningkatan;
-                                newData["lama"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_peningkatan: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            onChange={(e) => {
-                                const newData = data.ak_peningkatan;
-                                newData["baru"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_peningkatan: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            min={0.1}
-                            max={100}
-                            step={0.1}
-                            value={
-                                data.ak_peningkatan["jumlah"] != 0
-                                    ? parseFloat(
-                                          data.ak_peningkatan["jumlah"].toFixed(
-                                              2
-                                          )
-                                      )
-                                    : null
-                            }
-                            type="number"
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="0,0"
-                            disabled
-                        />
-                    </td>
-                    <td className="border">
-                        <TextInput
-                            className="placeholder:text-accent text-center text-hijau"
-                            autoComplete="username"
-                            placeholder="Input Ket."
-                            onChange={(e) => {
-                                const newData = data.ak_peningkatan;
-                                newData["keterangan"] = e.target.value;
-                                setData({
-                                    ...data,
-                                    ak_peningkatan: newData,
-                                });
-                            }}
-                        />
-                    </td>
-                </tr>
-                {/* row 6 */}
-                <tr className="text-base capitalize  text-slate-600 font-semibold border-separate space-x-0">
-                    <td className="border text-center">6</td>
-                    <td className="border">
-                        <button className="text-primary flex justify-center items-center gap-2">
-                            <MdAddBox className="w-6 h-6 " />
+                        <button
+                            type="button"
+                            className="text-primary flex justify-center items-center gap-2"
+                            onClick={handleAddRow}
+                        >
+                            <MdAddBox className="w-6 h-6" />
                             <span className="underline">Tambah Kolom</span>
                         </button>
                     </td>
-                    {/* TODO: LOGIKA TAMBAH KOLOM */}
-                    <td className="border "></td>
                     <td className="border"></td>
                     <td className="border"></td>
                     <td className="border"></td>
+                    <td className="border"></td>
+                    {/* <td className="border"></td> */}
                 </tr>
+
                 {/* row 7 */}
                 <tr className="text-base capitalize text-center  text-slate-600 font-semibold border-separate space-x-0">
                     <td colSpan={2} className="uppercase">
@@ -681,10 +485,18 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             Pangkat
                         </span>
                     </td>
-                    <td className="border text-center text-lg" colSpan={2} rowSpan={2}>
+                    <td
+                        className="border text-center text-lg"
+                        colSpan={2}
+                        rowSpan={2}
+                    >
                         {Math.abs(data.pangkat_keker)}
                     </td>
-                    <td className="border text-center text-lg" colSpan={2} rowSpan={2}>
+                    <td
+                        className="border text-center text-lg"
+                        colSpan={2}
+                        rowSpan={2}
+                    >
                         {Math.abs(data.jabatan_keker)}
                     </td>
                 </tr>

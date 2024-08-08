@@ -63,6 +63,7 @@ class PegawaiController extends Controller
     public function show(Pegawai $pegawai)
     {
         return Inertia::render('KelolaData/Show', [
+            'title' => 'Detail Data Pegawai',
             'pegawai' => $pegawai
         ]);
     }

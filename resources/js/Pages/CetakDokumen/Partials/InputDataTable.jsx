@@ -141,7 +141,7 @@ export default function InputDataTable({ data, setData }) {
                                 // onChange={onChangeToNumber}
                                 placeholder="NIP penanda tangan"
                                 onKeyPress={handleKeyPress}
-                                onChange={(e) => setData("nip", e.target.value)}
+                                onChange={(e) => setData("nip", e.target.value.toString())}
                             />
 
                             {/* <InputError message={errors.email} className="mt-2" /> */}

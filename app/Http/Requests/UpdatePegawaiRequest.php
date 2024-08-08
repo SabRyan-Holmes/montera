@@ -23,8 +23,7 @@ class UpdatePegawaiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Nomor Seri Karpeg' => ['required', 'string', 'max:15'],
-            'Nomor Seri Karpeg' => ['required', 'string', 'max:15'],
+            'Nomor Seri Karpeg' => ['nullable', 'string', 'max:15'],
             'Pangkat/Golongan Ruangan/TMT' => ['required', 'string', 'max:40'],
             'Pendidikan' => ['required', 'string', 'max:50'],
             'Jabatan/TMT' => ['required', 'string', 'max:50'],

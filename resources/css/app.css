@@ -109,5 +109,39 @@ input[type="number"] {
 }
 
 .action-btn {
-    @apply rounded-lg inline-flex items-center border  shadow-md p-1 px-2;
+    @apply rounded-lg inline-flex items-center justify-center border mx-auto shadow-md p-1 px-2;
 }
+
+table.table-bordered {
+    /* table-layout: auto; */
+    width: 100%;
+    border-collapse: collapse;
+    line-height: 1rem;
+    @apply border-slate-600
+}
+
+
+table.table-bordered > thead > tr > th {
+    @apply border border-white
+}
+table.table-bordered > thead > tr > th {
+    @apply border border-secondary/15
+}
+
+table.table-bordered > tbody > tr > td {
+    @apply border border-secondary/15
+}
+table.table-bordered > tbody > tr > th {
+    @apply border border-secondary/15
+}
+
+
+.box-footer{
+    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-top-width: 1px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }

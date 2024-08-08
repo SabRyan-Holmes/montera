@@ -25,7 +25,9 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 
 
 // Tes
-Route::get('/cetak', function () {
+Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
+
+Route::get('/tessss', function () {
     return Inertia::render('Test');
 });
 

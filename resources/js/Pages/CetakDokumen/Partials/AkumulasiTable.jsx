@@ -35,12 +35,12 @@ export default function AkumulasiTable({
         12: "Desember",
     };
 
+    var jumlahAkKredit =
+        parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
+    console.log("jumlahAkKredit");
+    console.log(jumlahAkKredit);
 
-    var jumlahAkKredit = parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
-    console.log('jumlahAkKredit')
-    console.log(jumlahAkKredit)
-
-    data.jumlah_ak_kredit = jumlahAkKredit;
+    data.jumlah_ak_kredit = jumlahAkKredit.toFixed(2);
 
     return (
         <table className="table text-base">
@@ -127,16 +127,14 @@ export default function AkumulasiTable({
                             type="number"
                             className="placeholder:text-accent text-center"
                             placeholder="0,0"
-                            defaultValue = {data.ak_terakhir}
-                            // FIXME : Somehow angka kredit ikut berubah pas ak_terakhir berubah
-                            // onChange={(e) =>
-                            //     setData("ak_terakhir", e.target.value)
-                            // }
+                            defaultValue={data.ak_terakhir}
+                            onChange={(e) =>
+                                setData("ak_terakhir", e.target.value)
+                            }
                         />
                     </td>
                 </tr>
                 <tr className="border uppercase text-center">
-                    {/* TODO: Bikin lebih Dinamis */}
                     <td className="border">
                         <TextInput
                             id="tahun_ini"
@@ -158,7 +156,7 @@ export default function AkumulasiTable({
                     <td className="border">{predikat[data.presentase]}</td>
                     <td className="border">{data.presentase}</td>
                     <td className="border">{data.ak_normatif}</td>
-                    <td className="border">{data['angka_kredit']}</td>
+                    <td className="border">{data["angka_kredit"]}</td>
                 </tr>
                 <tr className="border uppercase">
                     <td

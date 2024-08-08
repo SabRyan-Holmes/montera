@@ -10,14 +10,15 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.jsx',
     ],
+    darkMode: ['class', '[data-theme="bps-theme"]'],
 
     theme: {
         extend: {
             colors: {
                 transparent: 'transparent',
                 current: 'currentColor',
-                primary: "#38bdf8",
-                secondary: '#fb923c',
+                'primary-dark': "#38bdf8",
+                'secondary': '#fb923c',
                 'oren': '#fb923c',
                 'hijau': '#22c55e',
                 'bermuda': '#78dcca',
@@ -62,7 +63,7 @@ export default {
             {
 
                 bps_theme: {
-                    "primary": "#38bdf8",
+                    "primary": "#2D95C9",
 
                     "secondary": "#fb923c",
                     "oren": "#fb923c",

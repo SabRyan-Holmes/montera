@@ -179,8 +179,41 @@ table.table-pak > tfoot > tr > th {
     border-left-color: transparent;
     border-right-color: transparent;
 }
-.border-x-transparent {
-    border: 1px solid #334454;
+.border-side-transparent {
     border-left-color: transparent;
     border-right-color: transparent;
 }
+
+
+/* Table PAK Page 3 || Make Smaller */
+.table-pak-3 {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 12px; /* Perkecil ukuran font */
+}
+
+.table-pak-3 th, .table-pak-3 td {
+    padding: 0.2rem; /* Kurangi padding */
+    text-align: center;
+    border: 1px solid #334454; /* Tambahkan border untuk semua sel */
+}
+
+.table-pak-3 > tbody > tr > td {
+    padding: 0.2rem; /* Kurangi padding */
+    text-align: left;
+    border: 1px solid #334454; /* Tambahkan border untuk semua sel */
+}
+
+.table-pak-3 th {
+    font-weight: 420;
+}
+
+.table-pak-3 thead th {
+    padding: 0.2rem;
+}
+
+.table-pak-3 tbody th, .table-pak-3 tbody td {
+    padding: 0.2rem;
+}
+

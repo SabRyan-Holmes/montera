@@ -1,6 +1,6 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { Link, Head, useForm } from "@inertiajs/react";
+import { Link, Head, useForm, usePage } from "@inertiajs/react";
 import { InputError, PrimaryButton, SecondaryButton } from "@/Components";
 import {
     InputDataTable,
@@ -9,17 +9,19 @@ import {
     PAKTable,
 } from "./Partials";
 import { FaPrint } from "react-icons/fa6";
-import { router } from '@inertiajs/react'
 
 import { FaSave, FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 export default function Index({ auth, pegawai, title }) {
-    const { data, setData, get, post,processing, errors, reset } = useForm({
+    const { data, setData, get, post, processing, errors, reset } = useForm({
+        pegawai: pegawai,
         // Input Data
+        nama: "",
         periode_mulai: 1, //Default: Januari
         periode_berakhir: 2, //Default Januari
         tgl_ditetapkan: "",
         penanda_tangan: "",
+        nip: "",
 
         // Konversi Predikat
         no_surat1: "",
@@ -58,11 +60,44 @@ export default function Index({ auth, pegawai, title }) {
 
         // Penetapan Angka Kredit
         no_surat3: "",
-        ak_dasar: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
-        ak_jf: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
-        ak_penyesuaian: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
-        ak_konversi: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
-        ak_peningkatan: { lama: 0, baru: 0, jumlah: 0, keterangan: "" },
+        ak_dasar: {
+            tipe_ak: "AK Dasar yang diberikan",
+            lama: 0,
+            baru: 0,
+            jumlah: 0,
+            keterangan: "",
+        },
+        ak_jf: {
+            tipe_ak: "AK JF Lama",
+            lama: 0,
+            baru: 0,
+            jumlah: 0,
+            keterangan: "",
+        },
+        ak_penyesuaian: {
+            tipe_ak: "AK Penyesuaian/ Penyetsaraan",
+            lama: 0,
+            baru: 0,
+            jumlah: 0,
+            keterangan: "",
+        },
+        ak_konversi: {
+            tipe_ak: "AK Konversi",
+            lama: 0,
+            baru: 0,
+            jumlah: 0,
+            keterangan: "",
+        },
+        ak_peningkatan: {
+            tipe_ak: "AK yang diperoleh dari Peningkatan yang diberikan",
+            lama: 0,
+            baru: 0,
+            jumlah: 0,
+            keterangan: "",
+        },
+
+        // Menampung Tambahan Kolom
+        ak_tipe_tambahan: {},
 
         // Jumlah Angka Kredit Kumulatif
         jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
@@ -96,31 +131,22 @@ export default function Index({ auth, pegawai, title }) {
         setAlert(true);
     }, []);
 
+    const props = usePage().props;
+
     const submit = (e) => {
         e.preventDefault();
-        router.post('/cetak_dokumen/cetak', data)
 
-        // post(route("cetak_dokumen.cetak"), {
-        //     data: data,
-        //     forceFormData: true,
-        //     // onFinish: (response) => {
-        //     //     // Buka PDF di tab baru
-        //     //     const url = window.URL.createObjectURL(new Blob([response.data]));
-        //     //     const a = document.createElement('a');
-        //     //     a.href = url;
-        //     //     a.target = '_blank';
-        //     //     document.body.appendChild(a);s
-        //     //     a.click();
-        //     //     window.URL.revokeObjectURL(url);
-
-        //     //     // const url = new URL(route("cetak_dokumen.view-pak"));
-        //     //     // const params = new URLSearchParams(new FormData(e.target));
-
-        //     //     // window.location.href = `${url}?${params.toString()}`;
-        //     // },
-        // });
+        post("/cetak_dokumen/cetak", {
+            _token: props.csrf_token,
+            data: data,
+            // headers: {
+            //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            // },
+            onFinish: () => {
+                window.open("/cetak_dokumen/view-pak", "_blank");
+            },
+        });
     };
-
 
     // const submit = (e) => {
     //     e.preventDefault();
@@ -131,33 +157,24 @@ export default function Index({ auth, pegawai, title }) {
     //     window.location.href = `${url}?${params.toString()}`;
     // };
 
-
-
     // Jabatan untuk sesuai Koefisien Pertahun
-
     const akNormatif = {
         Terampil: 5,
         Mahir: 12.5,
         Penyelia: 25,
         Pertama: 12.5,
         Muda: 25,
-        sMadya: 37.5,
+        Madya: 37.5,
     };
 
-    // TODO Logika Penilaian Periode(Menyusul)
-
     // CONSOLE
-    //console.log ('isi current', current)
-    // console.log("isi tebusan 1", data.tebusan1);
-    // console.log("isi tebusan 2", data.tebusan2);
-    // console.log("isi tebusan 3", data.tebusan3);
-
+    console.log('Isi data');
     console.log(data);
     return (
         <Authenticated
             user={auth.user}
             title={title}
-            current={route().current("cetak_dokumen.index")}
+            current={route().current()}
         >
             <Head title="Pembuatan Dokumen PAK" />
 
@@ -265,7 +282,7 @@ export default function Index({ auth, pegawai, title }) {
             </section>
 
             <section className="m-12 h-full">
-                <form onSubmit={submit}>
+                <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
                         {/* INPUT DATA | START*/}
                         <InputDataTable data={data} setData={setData} />

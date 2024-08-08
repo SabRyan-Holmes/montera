@@ -17,9 +17,8 @@ export default function AdminPage({
     userCount,
     kegiatanCount,
     documentCount,
-    processCount,
-    rejectedCount,
-    acceptedCount,
+    pegawaiCount,
+
 }) {
     console.log(`isi route  : ${route}`);
     return (
@@ -69,7 +68,7 @@ export default function AdminPage({
                             <h3 className="text-sm tracking-wider">
                                 Jumlah Pegawai
                             </h3>
-                            <p className="text-3xl">{userCount}</p>
+                            <p className="text-3xl">{pegawaiCount}</p>
                         </div>
                     </div>
                 </div>

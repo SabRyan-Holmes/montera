@@ -16,7 +16,7 @@ return new class extends Migration
             // $table->string('Nomor');
             $table->string('Nama');
             $table->bigInteger('NIP/NRP')->unique();
-            $table->string('Nomor Seri Karpeg');
+            $table->string('Nomor Seri Karpeg')->nullable();
             $table->string('Pangkat/Golongan Ruangan/TMT');
             $table->string('Tempat/Tanggal Lahir');
             $table->enum('Jenis Kelamin', ['PRIA', 'WANITA']);

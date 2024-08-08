@@ -16,7 +16,7 @@
 
                 NOMOR :
                 <span>
-                    {{ '1500.445/Konv/2024' }}
+                    {{ $data['no_surat1'] }}
                 </span>
             </span>
         </h2>
@@ -28,8 +28,10 @@
                 <td style="font-weight: 400; text-align: left;">
                     Instansi: Badan Pusat Statistik
                 </td>
+
                 <td style="font-weight: 400; text-align: right;">
-                    Periode: {{ 'Januari' }} - {{ 'Desember 2024' }}
+                    {{-- FIXME: mungkin SEBAIKNYA UNTUK BULAN BAGUS VALUE NYA STRING AJ, JANGAN ANGKA --}}
+                    Periode: @bulan($data['periode_mulai']) - @bulan($data['periode_berakhir']) {{ $data['tahun_ini'] }}
                 </td>
             </tr>
         </table>
@@ -60,7 +62,10 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                         padding: 0.4rem /* 8px */;">
-                        : {{ 'Kiky Amci Ilzania, S.Tr.Stat' }}
+                        {{-- FIXME: nama pgeawai harusny ad di dari data useForm --}}
+                        :
+                        {{-- {{ 'Kiky Amci Ilzania, S.Tr.Stat' }} --}}
+                        {{ $data['pegawai']['Nama'] }}
                     </td>
                 </tr>
                 {{-- {/* NIP */} --}}
@@ -73,7 +78,7 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                         padding: 0.4rem /* 8px */;">
-                        : {{ '1997010220019012001' }}
+                        : {{ $data['pegawai']['NIP/NRP'] }}
                     </td>
                 </tr>
                 {{-- {/* No Seri Karpeg */} --}}
@@ -86,7 +91,7 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                             padding: 0.4rem /* 8px */;">
-                        : {{ 'B 00046316 ' }}
+                        : {{ $data['pegawai']['Nomor Seri Karpeg'] ?: '_' }}
                     </td>
                 </tr>
                 {{-- {/* Tempat/Tgl Lahir */} --}}
@@ -99,7 +104,7 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                         padding: 0.4rem /* 8px */;">
-                        : {{ 'Jambi/2 Januari 1997 ' }}
+                        : {{ $data['pegawai']['Tempat/Tanggal Lahir'] }}
                     </td>
                 </tr>
                 {{-- {/* Jenis Kelamin */} --}}
@@ -112,7 +117,7 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                         padding: 0.4rem /* 8px */;">
-                        : {{ 'Perempuan ' }}
+                        : {{ $data['pegawai']['Jenis Kelamin'] }}
                     </td>
                 </tr>
 
@@ -124,7 +129,7 @@
                         Pangkat/Golongan Ruang/TMT
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
-                        : {{ 'Penata Muda(III/a)/01/12/2019 ' }}
+                        : {{ $data['pegawai']['Pangkat/Golongan Ruangan/TMT'] }}
                     </td>
                 </tr>
 
@@ -136,7 +141,7 @@
                         Jabatan/TMT
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
-                        : {{ 'Statistisi Ahli Pertama/ 17-06-2021' }}
+                        : {{ $data['pegawai']['Jabatan/TMT'] }}
                     </td>
                 </tr>
 
@@ -148,7 +153,7 @@
                         Unit Kerja
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
-                        : {{ 'BPS Kabupaten Tanjung Jabung Timur ' }}
+                        : {{ $data['pegawai']['Unit Kerja'] }}
                     </td>
                 </tr>
 
@@ -162,7 +167,7 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                                 padding: 0.4rem /* 8px */;">
-                        : {{ 'Badan Pusat Statistik ' }}
+                        : {{ 'Badan Pusat Statistik' }}
                     </td>
                 </tr>
                 {{-- -------------------------------------- --}}
@@ -179,7 +184,8 @@
                 {{-- ---------------------------------------- --}}
 
                 <tr style="text-align: center; font-weight: 400;">
-                    <th colspan="3" style="border: 1px solid #000; padding: 0.4rem;  font-weight: 400; text-transform: capitalize;">
+                    <th colspan="3"
+                        style="border: 1px solid #000; padding: 0.4rem;  font-weight: 400; text-transform: capitalize;">
                         Hasil Penilaian Kinerja
                     </th>
                     <th rowSpan="2" style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
@@ -214,23 +220,24 @@
                         {{ '3' }}
                     </th>
                     <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
-                        {{ '5' }}
+                        {{ '4' }}
                     </th>
                 </tr>
 
                 <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">
                     <th colspan="2"
                         style="border: 1px solid #000; text-wrap: nowrap; padding: 0.4rem; font-weight: 400;">
-                        {{ 'Sangat Baik' }}
+                        {{ $data['predikat'] }}
                     </th>
                     <th style="border: 1px solid #000; font-weight: 400;">
-                        {{ '12' }}/12
+                        {{ $data['periode_berakhir'] - $data['periode_mulai'] }}
+                        /12
                     </th>
                     <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
-                        {{ '12.5' }}
+                        {{ $data['ak_normatif'] }}
                     </th>
                     <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
-                        {{ '18.75' }}
+                        {{ $data['angka_kredit'] }}
                     </th>
                 </tr>
             </tfoot>
@@ -239,26 +246,42 @@
         <div class="signature-container">
             <strong>Ditetapkan di Jambi </strong>
             <strong style="display:block">
-                Pada tanggal {{ '8 Mei 2024' }}
+                Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
             </strong>
             <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
 
             <img src="" alt="" />
 
-            <div style="margin-top: 2rem;">
+            <div style="margin-top: 3rem;">
                 <strong style="display: block">
-                    {{ 'Agus Sudibyo, M.Stat' }}
+                    {{ $data['nama'] }}
                 </strong>
                 <strong style="display: block">
-                    NIP. {{ ' 197412311996121001' }}
+                    NIP. {{ $data['nip'] }}
                 </strong>
             </div>
         </div>
 
         <div style="margin-top:2rem">
             <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
-            <span style="display: block">1. Kepala BPS Kabupaten/Kota</span>
-            <span style="display: block">2. PNS Bersangkutan</span>
+            @php
+                $tebusan_list = [
+                    'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                    'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                    'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                    'pns' => 'PNS Bersangkutan',
+                    'kepala_biro' => 'Kepala Biro SDM BPS',
+                    'arsip' => 'Arsip',
+                ];
+                $i = 1;
+            @endphp
+            @foreach ($data['tebusan1'] as $key => $value)
+                @if ($value)
+                    <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
+                    @php $i++; @endphp
+                @endif
+            @endforeach
         </div>
+
     </div>
 </section>

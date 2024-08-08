@@ -8657,9 +8657,11 @@ select option:focus {
 /* End Tailwind Styles */
 /* Start Variables Styles */
 :root {
-  --color-primary: 90 102 241;
-  --color-primary-rgb: 90,102,241;
-  --color-secondary: 251 146 60;
+  --color-primary: 56, 189, 248;
+  --color-primary-rgb: 56, 189, 248 ;
+  --color-secondary: 251, 146, 60;
+  --color-secondary: 251, 146, 60;
+  --color-hijau: 251, 146, 60;
 
   --dark-rgb: 14 16 20;
   --menu-bg: 255 255 255;

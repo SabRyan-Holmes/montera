@@ -13,7 +13,7 @@ const Sidebar = ({active  }) => {
     return (
         <div className="drawer-side  shadow-2xl">
             <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-            <ul className="menu p-4 w-72 min-h-full bg-gradient-to-b text-opacity-75 from-slate-950 to bg-cyan-950  text-slate-100 h-full">
+            <ul className="menu p-4 w-80 min-h-full bg-gradient-to-b text-opacity-75 from-slate-950 to bg-cyan-950  text-slate-100 h-full">
                 {/* Sidebar content here */}
                 <div className="flex-col justify-center items-center mt-7">
                     {/* App Name */}
@@ -40,7 +40,7 @@ const Sidebar = ({active  }) => {
                 {/* Link Dashboard */}
                 <NavLinkDashboard
                     href={route("cetak_dokumen.index")}
-                    active={active ? active : route().current("cetak_dokumen.index")}
+                    active={route().current("cetak_dokumen.index") || active == 'cetak_dokumen.create'}
                 >
                     <FaPrint />
                     Cetak Dokumen
@@ -49,7 +49,7 @@ const Sidebar = ({active  }) => {
                 {/* Link Dashboard */}
                 <NavLinkDashboard
                     href={route("pegawai.index")}
-                    active={active ? active :route().current("pegawai.index")}
+                    active={route().current("pegawai.index") || active == 'pegawai.create' || active == 'pegawai.edit' || active == 'pegawai.show'}
                 >
                     <FaDatabase />
                     Kelola Data

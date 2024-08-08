@@ -5,6 +5,7 @@ import {
     InputError,
     SecondaryButton,
     InputLabel,
+    PrimaryButton,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
@@ -37,10 +38,10 @@ export default function Edit({ auth, pegawai, title, flash }) {
         timer: 3000,
         timerProgressBar: true,
         didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        }
-      });
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
 
     useEffect(() => {
         if (flash.message) {
@@ -54,8 +55,8 @@ export default function Edit({ auth, pegawai, title, flash }) {
             // });
             Toast.fire({
                 icon: "success",
-                title: "Data Pegawai Berhasil Diupdate!!"
-              });
+                title: "Data Pegawai Berhasil Diupdate!!",
+            });
         }
     }, [flash.message]);
 
@@ -70,9 +71,9 @@ export default function Edit({ auth, pegawai, title, flash }) {
         <Authenticated
             user={auth.user}
             title={title}
-            current={route().current("cetak_dokumen.index")}
+            current={route().current()}
         >
-            <section className="m-10 laptop:h-full h-full mb-24">
+            <section className="phone:h-screen laptop:h-full max-w-screen-laptop mx-auto px-24 mb-24">
                 <div className="flex justify-between">
                     <div className="breadcrumbs mt-2 text-sm">
                         <ul>
@@ -110,7 +111,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                     </SecondaryButton>
                 </div>
 
-                <h1 className="mt-5 mb-10 text-3xl capitalize">{title}</h1>
+                <h1 className="my-6 text-2xl capitalize">{title}</h1>
 
                 <div className="overflow-x-auto">
                     <form onSubmit={submit}>
@@ -416,13 +417,13 @@ export default function Edit({ auth, pegawai, title, flash }) {
                             </tbody>
                         </table>
 
-                        <div className="w-full flex justify-center my-4   ">
+                        <div className="w-full flex justify-center my-4">
                             <button
                                 type="submit"
-                                className="action-btn text-base bg-hijau/15 border border-hijau/20 text-hijau px-3 gap-3"
+                                className="group/button text-base btn glass scale-95  bg-hijau/20 border hover:bg-hijau hover:text-white border-hijau/20 text-hijau px-5 gap-3"
                             >
                                 <span>Update Data</span>
-                                <FaSave className="w-4 h-5 fill-hijau" />
+                                <FaSave className="w-4 h-5 fill-hijau group-hover/button:fill-white" />
                             </button>
                         </div>
                     </form>
