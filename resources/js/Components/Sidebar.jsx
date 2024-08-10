@@ -7,56 +7,78 @@ import logo from "../../assets/image/logo.png";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLinkDashboard from "@/Components/NavLinkDashboard";
 
-
-const Sidebar = ({active  }) => {
+const Sidebar = ({ active }) => {
     // console.log(active)
     return (
-        <div className="drawer-side  shadow-2xl">
+        <div className="drawer-side shadow-2xl relative">
             <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-            <ul className="menu p-4 w-80 min-h-full bg-gradient-to-b text-opacity-75 from-slate-950 to bg-cyan-950  text-slate-100 h-full">
-                {/* Sidebar content here */}
-                <div className="flex-col justify-center items-center mt-7">
+
+            {/* Smooth Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-gray-800 to-sky-950 transform scale-110 rounded-tr-2xl rounded-br-2xl shadow-xl" />
+
+            <ul className="menu p-4 w-80 min-h-full relative z-10 text-slate-100 space-y-4">
+                {/* Sidebar content */}
+                <div className="flex-col justify-center items-center mt-10 relative z-20">
                     {/* App Name */}
-                    <strong className="flex justify-center text-2xl text-gradient gradient-bps">SiPacak</strong>
+                    <strong className="flex justify-center text-2xl text-gradient gradient-bps">
+                        SiPacak
+                    </strong>
+
                     {/* App Logo */}
                     <img
                         src={logo}
-                        className=" text-primary/70 w-24 h-24 m-3 mx-auto"
+                        className="w-24 h-24 m-3 mx-auto filter drop-shadow-lg relative z-20"
                     />
                 </div>
 
-                {/* <ApplicationLogo className="mx-16 " /> */}
-                <div className="border-b-2 border-yellow-600 mt-4 mb-2" />
+                <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary rounded-md via-hijau to-secondary p-0 opacity-100 h-full w-full transition-colors duration-1000 ease-in-out" />
+                </div>
+
+                <section>
 
                 {/* Link Dashboard */}
                 <NavLinkDashboard
                     href={route("dashboard")}
                     active={route().current("dashboard")}
+                    className="relative z-20"
                 >
                     <MdSpaceDashboard />
                     Dashboard
                 </NavLinkDashboard>
 
-                {/* Link Dashboard */}
+                {/* Link Cetak Dokumen */}
                 <NavLinkDashboard
                     href={route("cetak_dokumen.index")}
-                    active={route().current("cetak_dokumen.index") || active == 'cetak_dokumen.create'}
+                    active={
+                        route().current("cetak_dokumen.index") ||
+                        active === "cetak_dokumen.create"
+                    }
+                    className="relative z-20"
                 >
                     <FaPrint />
                     Cetak Dokumen
                 </NavLinkDashboard>
 
-                {/* Link Dashboard */}
+                {/* Link Kelola Data */}
                 <NavLinkDashboard
                     href={route("pegawai.index")}
-                    active={route().current("pegawai.index") || active == 'pegawai.create' || active == 'pegawai.edit' || active == 'pegawai.show'}
+                    active={
+                        route().current("pegawai.index") ||
+                        active === "pegawai.create" ||
+                        active === "pegawai.edit" ||
+                        active === "pegawai.show"
+                    }
+                    className="relative z-20"
                 >
                     <FaDatabase />
                     Kelola Data
                 </NavLinkDashboard>
-
-
+                </section>
             </ul>
+
+            {/* Decorative Bottom Shadow */}
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900 to-transparent rounded-b-lg shadow-inner" />
         </div>
     );
 };

@@ -18,7 +18,8 @@ export default function Index({ auth, pegawai, title }) {
         // Input Data
         nama: "",
         periode_mulai: 1, //Default: Januari
-        periode_berakhir: 2, //Default Januari
+        periode_berakhir: 2, //Default Februari
+        angka_periode: 0,
         tgl_ditetapkan: "",
         penanda_tangan: "",
         nip: "",

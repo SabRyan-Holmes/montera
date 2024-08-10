@@ -1,11 +1,10 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function AkumulasiTable({
     data,
     setData,
-    pegawai,
-    akNormatif,
+
     predikat,
 }) {
     const handleKeyPress = (e) => {
@@ -14,11 +13,6 @@ export default function AkumulasiTable({
             e.preventDefault();
         }
     };
-    // SetPredikat
-    const [presentase1, setPresentase1] = useState(100);
-
-    // Jabatan untuk sesuai Koefisien Pertahun
-    const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
 
     const bulan = {
         1: "Januari",
@@ -35,12 +29,15 @@ export default function AkumulasiTable({
         12: "Desember",
     };
 
-    var jumlahAkKredit =
-        parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
-    console.log("jumlahAkKredit");
-    console.log(jumlahAkKredit);
+    // FIXME : Bug Ak kredit ikut berubah
 
-    data.jumlah_ak_kredit = jumlahAkKredit.toFixed(2);
+    useEffect(() => {
+        var jumlahAkKredit =
+            parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
+        console.log("jumlahAkKredit");
+        console.log(jumlahAkKredit);
+        setData("jumlah_ak_kredit", jumlahAkKredit.toFixed(3));
+    }, [data.ak_terakhir, data.angka_kredit]);
 
     return (
         <table className="table text-base">
@@ -60,6 +57,7 @@ export default function AkumulasiTable({
                         <TextInput
                             id="no_surat2"
                             type="text"
+                            maxLength={20}
                             name="no_surat2"
                             placeholder="contoh: 1500.445/Akm/2024"
                             className="w-64"

@@ -1,5 +1,5 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function KonversiTable({
     data,
@@ -15,43 +15,57 @@ export default function KonversiTable({
         }
     };
 
-    // Jabatan untuk sesuai Koefisien Pertahun
-    const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
+    // Jabatan untuk sesuai Koefisien Pertahun/Ak Normatif
+
+    useEffect(() => {
+        const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
+        const findAkNormatifValue = (jabatan) => {
+            const key = Object.keys(akNormatif).find((k) =>
+                jabatan.includes(k)
+            );
+            return key ? akNormatif[key] : null;
+        };
+
+        const akNormatifValue = findAkNormatifValue(jabatanOnly);
+        data.ak_normatif = akNormatifValue;
+    }, []);
 
     function hitungAk(akTerakhir, periode, akNormatif, presentase) {
         const ak_kredit =
-            akTerakhir + (periode / 12) * akNormatif * (presentase / 100);
-        // console.log("angka terakhir", akTerakhir);
-        // console.log("periode : ", periode);
-        // console.log("ak normatif : ", akNormatif)s;
-        // console.log("presentase : ", presentase);
-        // console.log("isi nilai ak kedti");
-        // console.log(ak_kredit);
-        return ak_kredit;
+            parseFloat(akTerakhir) +
+            parseFloat(periode / 12) *
+                parseFloat(akNormatif) *
+                parseFloat(presentase / 100);
+        console.log("angka kredit terakhir", akTerakhir);
+        console.log("periode : ", periode);
+        console.log("ak normatif : ", akNormatif);
+        console.log("presentase : ", presentase);
+        const result = parseFloat(ak_kredit).toFixed(3);
+        console.log("isi nilai ak kredit dari fungsi");
+        console.log(result);
+
+        return result;
     }
 
-    const periode = data.periode_berakhir - data.periode_mulai;
-
-    const findAkNormatifValue = (jabatan) => {
-        const key = Object.keys(akNormatif).find((k) => jabatan.includes(k));
-        return key ? akNormatif[key] : null;
-    };
-
-    const akNormatifValue = findAkNormatifValue(jabatanOnly);
-    const akKreditValue = parseFloat(
-        hitungAk(
+    // Logika Hitung AK dijalankan ketika ada perubahan
+    useEffect(() => {
+        const akKreditValue = hitungAk(
             data.ak_terakhir,
-            periode,
-            akNormatifValue,
+            data.angka_periode,
+            data.ak_normatif,
             data.presentase
-        )
-    ).toFixed(2);
+        );
+        setData("angka_kredit", akKreditValue);
+        data.angka_kredit = akKreditValue;
+        console.log("isi dari fungsi akKreditValue");
+        console.log(akKreditValue);
+    }, [data.ak_terakhir, data.angka_periode, data.predikat, data.presentase]);
 
-    data.angka_kredit = akKreditValue;
-    data.ak_normatif = akNormatifValue;
-    data.predikat = predikat[data.presentase];
-    console.log("data.predikat");
-    console.log(data.predikat);
+    useEffect(() => {
+        setData("predikat", predikat[data.presentase]);
+    }, [data.presentase]);
+
+    // data.predikat = predikat[data.presentase];
 
     return (
         <table className="table text-base">
@@ -103,7 +117,7 @@ export default function KonversiTable({
                 </tr>
 
                 <tr className="text-center">
-                    <td className="border">{predikat[data.presentase]}</td>
+                    <td className="border">{data.predikat}</td>
                     <td className="flex justify-center w-full">
                         <select
                             name="presentase"

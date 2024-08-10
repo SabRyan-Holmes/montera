@@ -175,9 +175,9 @@ export default function Index({
                     </div>
                 </form>
 
-                <div className="overflow-auto pt-3 ">
-                    <table className="table-bordered text-xs table overflow-auto rounded-md ">
-                        <thead className="text-white font-medium text-sm bg-primary  rounded-md border border-secondary/15">
+                <div className=" pt-3 rounded-xl overflow-hidden">
+                    <table className="table-bordered text-xs table overflow-auto rounded-xl ">
+                        <thead className="text-white font-medium text-sm bg-primary  rounded-xl border border-secondary/15">
                             <tr>
                                 <th scope="col" width="1%">
                                     No
@@ -204,7 +204,7 @@ export default function Index({
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="border-secondary/15">
+                        <tbody className="border-secondary/15 ">
                             {pegawais.data?.map((pegawai, i) => (
                                 <tr
                                     key={i}

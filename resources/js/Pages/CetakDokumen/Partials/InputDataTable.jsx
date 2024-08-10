@@ -1,5 +1,5 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function InputDataTable({ data, setData }) {
     const handleKeyPress = (e) => {
@@ -23,6 +23,13 @@ export default function InputDataTable({ data, setData }) {
         11: "November",
         12: "Desember",
     };
+
+    useEffect(() => {
+        setData('angka_periode' , data.periode_mulai + data.periode_berakhir )
+        data.angka_periode = data.periode_mulai + data.periode_berakhir
+        parseInt(data.angka_periode)
+    }, [data.periode_mulai, data.periode_berakhir])
+
 
     return (
         <table className="table text-base">
@@ -122,6 +129,7 @@ export default function InputDataTable({ data, setData }) {
                                 type="text"
                                 name="nama"
                                 className="w-64"
+                                maxLength="50"
                                 placeholder="Input nama penanda tangan"
                                 onChange={(e) =>
                                     setData("nama", e.target.value)
@@ -138,7 +146,7 @@ export default function InputDataTable({ data, setData }) {
                                 name="nip"
                                 // value={data.nip}
                                 className="w-64"
-                                // onChange={onChangeToNumber}
+                                maxLength="18"
                                 placeholder="NIP penanda tangan"
                                 onKeyPress={handleKeyPress}
                                 onChange={(e) => setData("nip", e.target.value.toString())}

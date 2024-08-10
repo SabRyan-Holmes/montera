@@ -2,19 +2,8 @@ import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useState } from "react";
 import { MdAddBox, MdDelete } from "react-icons/md";
 import { FaMinus } from "react-icons/fa";
+
 export default function PAKTable({ data, setData, pegawai, akNormatif }) {
-    const handleKeyPress = (e) => {
-        // Mencegah karakter non-numeric
-        if (!/[0-9]/.test(e.key)) {
-            e.preventDefault();
-        }
-    };
-    // SetPresentase
-    const [presentase1, setPresentase1] = useState(100);
-
-    // Jabatan untuk sesuai Koefisien Pertahun
-    const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
-
     // Logika Hitung jakk
     const calculateTotal = () => {
         let jakk_lama =
@@ -123,7 +112,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
     useEffect(() => {
         const pangkatKeker = parseFloat(
             data.jakk["jumlah"] - data.pangkat
-        ).toFixed(2);
+        ).toFixed(3);
         console.log("isi pangkat keker");
         console.log(pangkatKeker);
         setData({
@@ -137,7 +126,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
     useEffect(() => {
         const jabatanKeker = parseFloat(
             data.jakk["jumlah"] - data.jabatan
-        ).toFixed(2);
+        ).toFixed(3);
         setData({
             ...data,
             jabatan_keker: jabatanKeker,
@@ -185,10 +174,18 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
         });
         setRowKeys(rowKeys.filter((rowKey) => rowKey !== key));
     };
+
     const handleChange = (key, field, value) => {
         let updatedKeyData = {};
+
+        // Ensure that if value is empty or null, it is converted to 0
+        const numericValue = parseFloat(value) || 0;
+
         if (key.startsWith("ak_tambahan_")) {
-            updatedKeyData = { ...data.ak_tipe_tambahan[key], [field]: value };
+            updatedKeyData = {
+                ...data.ak_tipe_tambahan[key],
+                [field]: numericValue,
+            };
 
             if (field === "lama" || field === "baru") {
                 updatedKeyData.jumlah =
@@ -204,7 +201,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 },
             });
         } else {
-            updatedKeyData = { ...data[key], [field]: value };
+            updatedKeyData = { ...data[key], [field]: numericValue };
 
             if (field === "lama" || field === "baru") {
                 updatedKeyData.jumlah =
@@ -218,6 +215,26 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
             });
         }
     };
+
+    console.log(rowKeys.length);
+
+    useEffect(() => {
+        // setData({
+        //     ...data,
+        //     ak_konversi: {
+        //         ...data.ak_konversi,
+        //         'lama': data.ak_terakhir,
+        //         'baru': data.angka_kredit,
+        //         'jumlah': (data.ak_terakhir + data.angka_kredit),
+        //     },
+        // });
+        data.ak_konversi["lama"] = data.ak_terakhir;
+        data.ak_konversi["baru"] = data.angka_kredit;
+        data.ak_konversi["jumlah"] =
+            parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
+        console.log("data.ak_konversi :");
+        console.log(data.ak_konversi);
+    });
 
     return (
         <table className="table text-base">
@@ -238,6 +255,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         <TextInput
                             className="w-64  border-gradient"
                             placeholder="contoh: 1500.445/PAK/2024"
+                            maxLength={20}
                             onChange={(e) =>
                                 setData("no_surat3", e.target.value)
                             }
@@ -251,10 +269,18 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                     <td className="border" width="40%">
                         Penetapan Angka Kredit{" "}
                     </td>
-                    <td className="border">Lama </td>
-                    <td className="border">Baru </td>
-                    <td className="border">Jumlah </td>
-                    <td className="border">Keterangan </td>
+                    <td className="border" width="10%">
+                        Lama{" "}
+                    </td>
+                    <td className="border" width="10%">
+                        Baru{" "}
+                    </td>
+                    <td className="border" width="12%">
+                        Jumlah{" "}
+                    </td>
+                    <td className="border" width="23%">
+                        Keterangan{" "}
+                    </td>
                 </tr>
             </thead>
             <tbody className="border ">
@@ -266,7 +292,8 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         {/* Kolom 1 */}
                         <td className="border text-center">
                             {/* Jika Kolom baru ditambahkan pada row TERAKHIR jadi Logo Minus, sebaliknya angka seperti biasa  */}
-                            {index !== rowKeys.length - 1 ? (
+                            {index + 1 < rowKeys.length ||
+                            rowKeys.length <= 5 ? (
                                 <span>{index + 1}</span>
                             ) : (
                                 <FaMinus
@@ -297,63 +324,83 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             )}
                         </td>
                         {/* Kolom 3 */}
-                        <td className="border">
+                        <td className="border text-center">
                             <TextInput
-                                min={0.1}
+                                min={0}
                                 max={100}
                                 step={0.1}
                                 type="number"
-                                className="placeholder:text-accent text-center text-hijau"
-                                autoComplete="username"
+                                className={
+                                    "placeholder:text-accent text-center " +
+                                    (dataTipePAK[key]["lama"] == 0
+                                        ? "text-accent"
+                                        : "text-green-700/70")
+                                }
                                 placeholder="0,0"
-                                value={dataTipePAK[key].lama}
+                                value={parseFloat(
+                                    dataTipePAK[key]["lama"] || 0
+                                ).toFixed(3)}
                                 onChange={(e) =>
                                     handleChange(key, "lama", e.target.value)
                                 }
                             />
                         </td>
                         {/* Kolom 4 */}
-                        <td className="border">
+                        <td className="border text-center">
                             <TextInput
-                                min={0.1}
+                                min={0}
                                 max={100}
                                 step={0.1}
                                 type="number"
-                                className="placeholder:text-accent text-center text-hijau"
-                                autoComplete="username"
+                                maxLength="6"
+                                className={
+                                    "placeholder:text-accent text-center " +
+                                    (dataTipePAK[key]["baru"] == 0
+                                        ? "text-accent"
+                                        : "text-green-700/70")
+                                }
                                 placeholder="0,0"
-                                value={dataTipePAK[key].baru}
+                                // value={
+                                //     dataTipePAK[key]['baru'] !== 0
+                                //         ? parseFloat(
+                                //               dataTipePAK[key]['baru']
+                                //           ).toFixed(3)
+                                //         : null
+                                // }
+                                value={parseFloat(
+                                    dataTipePAK[key]["baru"] || 0
+                                ).toFixed(3)}
                                 onChange={(e) =>
                                     handleChange(key, "baru", e.target.value)
                                 }
                             />
                         </td>
                         {/* Kolom 5 */}
-                        <td className="border">
+                        <td className="border text-center">
                             <TextInput
-                                min={0.1}
+                                min={0}
                                 max={100}
                                 step={0.1}
-                                value={
-                                    dataTipePAK[key].jumlah !== 0
-                                        ? parseFloat(
-                                              dataTipePAK[key].jumlah
-                                          ).toFixed(2)
-                                        : null
-                                }
+                                value={parseFloat(
+                                    dataTipePAK[key]["jumlah"] || 0
+                                ).toFixed(3)}
                                 type="number"
-                                className="placeholder:text-accent text-center text-hijau"
-                                autoComplete="username"
+                                className={
+                                    "placeholder:text-accent text-center " +
+                                    (dataTipePAK[key]["baru"] == 0
+                                        ? "text-accent"
+                                        : "text-green-700/70")
+                                }
                                 placeholder="0,0"
                                 disabled
                             />
                         </td>
                         {/* Kolom 6 */}
-                        <td className="border">
+                        <td className="border text-center ">
                             <TextInput
                                 className="placeholder:text-accent text-center text-hijau"
-                                autoComplete="username"
                                 placeholder="Input Ket."
+                                maxLength="15"
                                 value={dataTipePAK[key].keterangan}
                                 onChange={(e) =>
                                     handleChange(
@@ -399,19 +446,20 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         Jumlah Angka Kredit Kumulatif
                     </td>
                     <td className="border ">
-                        {parseFloat(jakk_lama.toFixed(2)) > 0
-                            ? parseFloat(jakk_lama.toFixed(2))
+                        {parseFloat(jakk_lama.toFixed(3)) > 0
+                            ? parseFloat(jakk_lama.toFixed(3))
                             : 0}
-                        {/* {parseFloat(jakk_lama.toFixed(2))} */}
+                        {/* {parseFloat(jakk_lama.toFixed(3))} */}
                     </td>
                     <td className="border">
-                        {parseFloat(jakk_baru.toFixed(2)) > 0
-                            ? parseFloat(jakk_baru.toFixed(2))
-                            : 0}
+                        {parseFloat(jakk_baru.toFixed(3))}
+                        {/* {parseFloat(jakk_baru.toFixed(3)) > 0
+                            ? parseFloat(jakk_baru.toFixed(3))
+                            : 0} */}
                     </td>
                     <td className="border">
-                        {parseFloat(jakk_jumlah.toFixed(2)) > 0
-                            ? parseFloat(jakk_jumlah.toFixed(2))
+                        {parseFloat(jakk_jumlah.toFixed(3)) > 0
+                            ? parseFloat(jakk_jumlah.toFixed(3))
                             : 0}
                     </td>
                     <td className="border"></td>
@@ -470,12 +518,14 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 <tr className="text-xs capitalize  text-slate-600 font-semibold border-separate space-x-0 text-left">
                     <td colSpan={2} className="uppercase text-left">
                         {data.pangkat_keker > 0 ? (
-                            <span>
-                                Kelebihan/ <s>Kekurangan</s>
+                            <span className="text-green-600/70">
+                                Kelebihan/{" "}
+                                <s className="text-accent">Kekurangan</s>
                             </span>
                         ) : (
-                            <span>
-                                <s>Kelebihan</s> /Kekurangan'
+                            <span className="text-error">
+                                <s className="text-accent">Kelebihan</s>{" "}
+                                /Kekurangan'
                             </span>
                         )}
 
@@ -504,12 +554,14 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 <tr className="text-xs capitalize  text-slate-600 font-semibold border-separate space-x-0 text-left">
                     <td colSpan={2} className="uppercase text-left">
                         {data.jabatan_keker > 0 ? (
-                            <span>
-                                Kelebihan/ <s>Kekurangan</s>
+                            <span className="text-green-600/70">
+                                Kelebihan/{" "}
+                                <s className="text-accent">Kekurangan</s>
                             </span>
                         ) : (
-                            <span>
-                                <s>Kelebihan</s> /Kekurangan'
+                            <span className="text-error">
+                                <s className="text-accent">Kelebihan</s>{" "}
+                                /Kekurangan'
                             </span>
                         )}
 

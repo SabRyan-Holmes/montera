@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ApplicationLogo, TextInput, PrimaryButton, InputLabel, InputError,  Checkbox, } from '@/Components';
+import { ApplicationLogo, TextInput, PrimaryButton, InputLabel,  Checkbox, } from '@/Components';
 import GuestLayout from '@/Layouts/GuestLayout';
+import InputError from '@/Components/InputError';
 
 
 

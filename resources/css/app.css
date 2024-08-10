@@ -41,7 +41,7 @@ input[type="number"] {
 }
 
 .gradient-primary {
-    @apply bg-gradient-to-br from-primary from-30% via-50% to-10%  via-hijau to-secondary opacity-100;
+    @apply bg-gradient-to-r from-primary from-30% via-50% to-10%  via-hijau to-secondary opacity-100;
 }
 
 .gradient-sidebar {
@@ -117,26 +117,27 @@ table.table-bordered {
     width: 100%;
     border-collapse: collapse;
     line-height: 1rem;
-    @apply border-slate-600
+    overflow: hidden;
+    @apply border-slate-600;
 }
 
 
+
 table.table-bordered > thead > tr > th {
-    @apply border border-white
+    @apply border border-white;
 }
 table.table-bordered > thead > tr > th {
-    @apply border border-secondary/15
+    @apply border border-secondary/15;
 }
 
 table.table-bordered > tbody > tr > td {
-    @apply border border-secondary/15
+    @apply border border-secondary/15;
 }
 table.table-bordered > tbody > tr > th {
-    @apply border border-secondary/15
+    @apply border border-secondary/15;
 }
 
-
-.box-footer{
+.box-footer {
     border-bottom-right-radius: 0.25rem;
     border-bottom-left-radius: 0.25rem;
     border-top-width: 1px;
@@ -144,4 +145,20 @@ table.table-bordered > tbody > tr > th {
     padding-bottom: 0.75rem;
     padding-left: 1rem;
     padding-right: 1rem;
-  }
+}
+
+.label-warning {
+    @apply rounded-md bg-rose-500/90 uppercase p-1 mx-3 text-xs font-semibold text-center;
+}
+
+.label-secondary {
+    @apply rounded-md bg-secondary/90 uppercase p-1 mx-3 text-xs font-semibold text-center;
+}
+
+.label-success {
+    @apply rounded-md bg-success uppercase p-1 mx-3 text-xs font-semibold text-center;
+}
+
+.label-base {
+    @apply rounded-md uppercase p-1 mx-3 text-xs font-semibold text-center;
+}
