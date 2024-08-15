@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title inertia>{{ config('app.name', 'PAK Terintegrasi') }}</title>
+        <title inertia>{{ config('app.name', 'Laravel Application') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,13 +18,14 @@
         <script src="sweetalert2.all.min.js"></script>
         <script src="sweetalert2.min.js"></script>
         <link rel="stylesheet" href="sweetalert2.min.css"> --}}
+        <link rel="shortcut icon" href="{{ asset('logo.png') }}">
 
         @routes
         @viteReactRefresh
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
         @inertiaHead
     </head>
-    <body class="font-sans antialiased" >
+    <body class="antialiased " >
         @inertia
     </body>
 </html>

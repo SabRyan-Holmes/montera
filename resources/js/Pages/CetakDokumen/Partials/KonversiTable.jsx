@@ -34,31 +34,30 @@ export default function KonversiTable({
         const ak_kredit =
             parseFloat(akTerakhir) +
             parseFloat(periode / 12) *
-                parseFloat(akNormatif) *
-                parseFloat(presentase / 100);
-        console.log("angka kredit terakhir", akTerakhir);
-        console.log("periode : ", periode);
-        console.log("ak normatif : ", akNormatif);
-        console.log("presentase : ", presentase);
+            parseFloat(akNormatif) *
+            parseFloat(presentase / 100);
         const result = parseFloat(ak_kredit).toFixed(3);
-        console.log("isi nilai ak kredit dari fungsi");
-        console.log(result);
+        // console.log("angka kredit terakhir", akTerakhir);
+        // console.log("periode : ", periode);
+        // console.log("ak normatif : ", akNormatif);
+        // console.log("presentase : ", presentase);
+        // console.log("isi nilai ak kredit dari fungsi");
+        // console.log(result);
 
         return result;
     }
 
     // Logika Hitung AK dijalankan ketika ada perubahan
     useEffect(() => {
+        const akNormatif = (data.ak_normatif ? data.ak_normatif : data.ak_normatif_ops)
         const akKreditValue = hitungAk(
             data.ak_terakhir,
             data.angka_periode,
-            data.ak_normatif,
+            akNormatif,
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
         data.angka_kredit = akKreditValue;
-        console.log("isi dari fungsi akKreditValue");
-        console.log(akKreditValue);
     }, [data.ak_terakhir, data.angka_periode, data.predikat, data.presentase]);
 
     useEffect(() => {
@@ -71,7 +70,7 @@ export default function KonversiTable({
         <table className="table text-base">
             {/* head */}
             <thead>
-                <tr className="text-lg bg-orange-500 text-white text-center">
+                <tr className="text-lg text-center text-white bg-orange-500">
                     <th colSpan={4}>KONVERSI PREDIKAT KINERJA ANGKA KREDIT</th>
                 </tr>
             </thead>
@@ -79,29 +78,30 @@ export default function KonversiTable({
                 {/* row 1 */}
 
                 <tr>
-                    <td className="uppercase border text-center">
-                        <InputLabel
-                            htmlFor="no_surat1"
-                            className="inline-block ml-1 text-lg "
-                            value="NOMOR SURAT"
-                        />
+                    <td className="text-center uppercase border">
+                        <strong>NOMOR SURAT</strong>
                     </td>
                     <td>
                         <TextInput
                             id="no_surat1"
                             name="no_surat1"
-                            className="w-64"
+                            className="w-64 h-12"
+                            required
                             placeholder="contoh: 1500.445/Konv/2024"
                             onChange={(e) =>
                                 setData("no_surat1", e.target.value)
                             }
-                        />
+                            list="no_surat1"
+                            />
+                            <datalist id="no_surat1">
+                                <option value="1500.455/KONV/2024" />
+                            </datalist>
                     </td>
                 </tr>
-                <tr className="border text-center">
+                <tr className="text-center border">
                     <td
                         colSpan={2}
-                        className="text-center font-medium text-normal "
+                        className="font-semibold text-center "
                     >
                         Hasil Penilaian Kinerja
                     </td>
@@ -112,8 +112,8 @@ export default function KonversiTable({
                 </tr>
 
                 <tr>
-                    <td className="uppercase text-center border">Predikat</td>
-                    <td className="uppercase text-center border">Presentase</td>
+                    <td className="text-center uppercase border">Predikat</td>
+                    <td className="text-center uppercase border">Presentase</td>
                 </tr>
 
                 <tr className="text-center">
@@ -122,7 +122,7 @@ export default function KonversiTable({
                         <select
                             name="presentase"
                             id="presentase"
-                            className="w-24 px-1 rounded-md text-center border-gradient"
+                            className="w-24 px-1 text-center rounded-md border-gradient"
                             defaultValue={data.presentase}
                             onChange={(e) => {
                                 setData("presentase", e.target.value);
@@ -145,7 +145,7 @@ export default function KonversiTable({
                                 placeholder="Input Manual Angka Normatif"
                                 onKeyPress={handleKeyPress}
                                 onChange={(e) =>
-                                    setData("ak_normatif_ops", e.target.value)
+                                    setData("ak_normatif_ops", parseFloat(e.target.value).toFixed(3))
                                 }
                             />
                         )}
@@ -160,7 +160,7 @@ export default function KonversiTable({
                 <tr>
                     <td
                         rowSpan={3}
-                        className="text-lg font-semibold text-slate-500"
+                        className="text-lg font-semibold "
                     >
                         Tebusan
                     </td>
@@ -168,7 +168,7 @@ export default function KonversiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["kepala_reg"] = !newData["kepala_reg"];
@@ -189,7 +189,7 @@ export default function KonversiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["sekretaris"] = !newData["sekretaris"];
@@ -212,7 +212,7 @@ export default function KonversiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["kepala_bps"] = !newData["kepala_bps"];
@@ -232,7 +232,7 @@ export default function KonversiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["pns"] = !newData["pns"];
@@ -254,7 +254,7 @@ export default function KonversiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["kepala_biro"] =
@@ -275,7 +275,7 @@ export default function KonversiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["arsip"] = !newData["arsip"];

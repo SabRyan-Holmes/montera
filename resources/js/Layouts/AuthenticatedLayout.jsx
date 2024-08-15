@@ -16,15 +16,15 @@ export default function Authenticated({ user, title, header, children, current }
         <div className="h-full">
             <Head title={title} />
 
-            <div className="drawer lg:drawer-open h-full">
+            <div className="h-full drawer lg:drawer-open">
                 <input
                     id="my-drawer-2"
                     type="checkbox"
                     className="drawer-toggle"
                 />
-                <div className="drawer-content flex flex-col bg-neutral h-full">
-                    <Navbar user={user} />
-                    <div className="mx-6 mt-6 h-full bg-white">
+                <div className="flex flex-col h-full drawer-content bg-neutral">
+                    <Navbar user={user} title={title} />
+                    <div className="h-full mx-6 mt-6 bg-white">
                         <main>{children}</main>
                     </div>
                 </div>

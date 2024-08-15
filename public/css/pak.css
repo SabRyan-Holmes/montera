@@ -1,3 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, label {
+    font-family: Arial, Helvetica, sans-serif;
+        @apply font-roboto text-slate-700;
+  }
+
 .pdf-modal {
     width: 90vw;
     position: fixed;
@@ -65,6 +76,7 @@ section.container-a4 {
 }
 .header {
     width: 100%;
+    /* background-color: #334454; */
 }
 
 .header img {
@@ -72,12 +84,63 @@ section.container-a4 {
     height: 6rem;
 }
 
+.header .title {
+    line-height: 1.2; /* Mengatur jarak antar baris teks */
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.header span {
+    margin: 0;
+    padding: 0;
+}
+
+
+
+.title {
+    font-size: 1.25rem;
+    line-height: 1.8rem;
+    --tw-text-opacity: 1;
+    /* color: rgb(2 132 199 / var(--tw-text-opacity)) #0284c7; */
+    color: rgb(2 132 199);
+    opacity: 1;
+    text-transform: uppercase;
+}
+
+div.sub-title {
+    width: 100%;
+    padding-top: 0px;
+    margin-top: -20px;
+    margin-bottom: 0.75rem;
+}
+
+div.sub-title > h2 {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1rem;
+    line-height: 1.75rem;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 450;
+}
+
+div.sub-title > h2 > span {
+    line-height: 1.2;
+    display: block;
+}
+
+div.sub-title > h2 > span > span {
+    text-transform: none;
+}
+
+
 .signature-container {
     float: right;
     width: 40%;
     margin-top: 1rem;
     margin-right: 0.5rem;
     text-align: left;
+    font-size: 0.9rem;
 }
 
 .signature-container strong {
@@ -93,39 +156,7 @@ section.container-a4 {
     width: 55%;
 }
 
-.title {
-    font-size: 1.25rem;
-    line-height: 2rem;
-    --tw-text-opacity: 1;
-    /* color: rgb(2 132 199 / var(--tw-text-opacity)) #0284c7; */
-    color: rgb(2 132 199);
-    opacity: 1;
-    text-transform: uppercase;
-}
 
-div.sub-title {
-    margin-top: 0.1rem;
-    width: 100%;
-    margin-bottom: 0.75rem;
-}
-
-div.sub-title > h2 {
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-    text-transform: uppercase;
-    text-align: center;
-    font-weight: 450;
-}
-
-div.sub-title > h2 > span {
-    display: block;
-}
-
-div.sub-title > h2 > span > span {
-    text-transform: none;
-}
 
 /* Prevent thead display on all pages */
 thead {
@@ -155,6 +186,7 @@ table.table-pak {
 
 table.table-pak > thead > tr > th {
     border: 1px solid #334454;
+    font-size: 15px;
 }
 table.table-pak > tbody > tr > th {
     border: 1px solid #334454;

@@ -25,7 +25,7 @@ class PegawaiController extends Controller
 
         return Inertia::render('KelolaData/Index', [
             // "title" => "Pegawai " . $title,
-            "title" => "Pencetakan Dokumen PAK ",
+            "title" => "Kelola Data Pegawai ",
             "subTitle" => $subTitle,
             "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
             "search" => request('search'),

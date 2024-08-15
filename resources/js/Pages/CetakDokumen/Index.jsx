@@ -70,21 +70,23 @@ export default function Index({
 
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="phone:h-screen laptop:h-full max-w-screen-laptop mx-auto px-7">
+            <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
             <h1 className="my-10 text-3xl ">
                     Data Pejabat Fungsional 2024
                 </h1>
 
                 <form className="max-w-screen-laptop ">
-                    <div className="flex gap-3 my-3 items-center">
+                    <div className="flex items-center justify-between gap-3 my-3">
+                        <div className="flex items-center justify-start gap-3">
+
                         <div className="flex-none w-72">
                             <InputLabel
                                 value="Jabatan"
                                 Htmlfor="Jabatan"
-                                className="max-w-sm text-lg  ml-1"
+                                className="max-w-sm ml-1 text-lg"
                             />
                             <select
-                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                 name="byJabatan"
                                 defaultValue={byJabatan}
                                 onChange={(e) => setByJabatan(e.target.value)}
@@ -101,11 +103,11 @@ export default function Index({
                             <InputLabel
                                 value="Daerah"
                                 Htmlfor="Daerah"
-                                className="max-w-sm text-lg  ml-1"
+                                className="max-w-sm ml-1 text-lg"
                             />
 
                             <select
-                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                 name="byDaerah"
                                 id="byDaerah"
                                 defaultValue={byDaerah}
@@ -126,11 +128,13 @@ export default function Index({
                                 <option>TEBO</option>
                             </select>
                         </div>
+                        </div>
+
                         <div className="flex-none w-80">
                             <InputLabel
                                 value="Nama/NIP"
                                 Htmlfor="search"
-                                className="max-w-sm text-lg ml-1"
+                                className="max-w-sm ml-1 text-lg"
                             />
 
                             <label
@@ -140,7 +144,7 @@ export default function Index({
                                 Search
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
                                     <MdPersonSearch className="w-6 h-6 fill-primary" />
                                 </div>
                                 <input
@@ -159,9 +163,9 @@ export default function Index({
                     </div>
                 </form>
 
-                <div className="overflow-auto pt-3 ">
-                    <table className="table-bordered text-xs table overflow-auto rounded-md ">
-                        <thead className="text-white font-medium text-sm bg-primary  rounded-md border border-secondary/15">
+                <div className="pt-3 overflow-auto ">
+                    <table className="table overflow-auto text-xs rounded-md table-bordered ">
+                        <thead className="text-sm font-medium text-white border rounded-md bg-primary border-secondary/15">
                             <tr>
                                 <th scope="col" width="1%">
                                     No
@@ -215,7 +219,7 @@ export default function Index({
                                     <td className="text-center">
                                         <Link
                                             as="a"
-                                            className="group/button text-center font-medium group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 inline-flex items-center justify-center gap-2 mx-auto action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                             href={route(
                                                 "cetak_dokumen.create",
                                                 pegawai.id
@@ -233,7 +237,7 @@ export default function Index({
                                                 "pegawai.edit",
                                                 pegawai.id
                                             )}
-                                            className="  flex items-center gap-2 text-secondary/75 font-medium  border-secondary/15"
+                                            className="flex items-center gap-2 font-medium text-secondary/75 border-secondary/15"
                                         >
                                             <FaEdit className="w-6 h-6 fill-secondary/75" />
                                             <span>Edit</span>
@@ -244,8 +248,8 @@ export default function Index({
                     </table>
                 </div>
                 {/* Pagination */}
-                <div className="box-footer mb-8 text-sm">
-                    <div className="sm:flex items-center justify-between">
+                <div className="mb-8 text-sm box-footer">
+                    <div className="items-center justify-between sm:flex">
                         <div className="flex items-center text-xs">
                             showing {pegawais.data.length} Entries{" "}
                             <TiArrowRight className="w-5 h-5" />
@@ -255,13 +259,13 @@ export default function Index({
                             nextLabel={
                                 pegawais.next_page_url && (
                                     <a
-                                        className="group/next dark:text-white/70 border text-primary hover:text-white  py-1 px-2 leading-none inline-flex items-center gap-2 rounded-md hover:border hover:bg-primary/75 font-semibold border-primary"
+                                        className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
                                         href={pegawais.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
                                         <span className="sr-only">Next</span>
                                         <span aria-hidden="true">Next</span>
-                                        <MdOutlineKeyboardDoubleArrowRight className="-ml-1 w-4 h-4 fill-primary group-hover/next:fill-white" />
+                                        <MdOutlineKeyboardDoubleArrowRight className="w-4 h-4 -ml-1 fill-primary group-hover/next:fill-white" />
                                     </a>
                                 )
                             }
@@ -271,11 +275,11 @@ export default function Index({
                             previousLabel={
                                 pegawais.prev_page_url && (
                                     <a
-                                        className="group/next dark:text-white/70 border text-primary hover:text-white  py-1 px-2 leading-none inline-flex items-center gap-2 rounded-md hover:border hover:bg-primary/75 font-semibold border-primary"
+                                        className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
                                         href={pegawais.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
-                                        <MdOutlineKeyboardDoubleArrowLeft className="-mr-1 w-4 h-4 fill-primary group-hover/next:fill-white" />
+                                        <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
                                         <span className="sr-only">Prev</span>
                                         <span aria-hidden="true">Prev</span>
                                     </a>
@@ -287,7 +291,7 @@ export default function Index({
                             }
                             pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
                             activeClassName="bg-primary text-white"
-                            className="justify-end flex gap-2"
+                            className="flex justify-end gap-2"
                         />
                     </div>
                 </div>

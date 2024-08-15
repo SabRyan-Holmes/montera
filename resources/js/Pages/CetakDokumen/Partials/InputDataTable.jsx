@@ -25,17 +25,18 @@ export default function InputDataTable({ data, setData }) {
     };
 
     useEffect(() => {
-        setData('angka_periode' , data.periode_mulai + data.periode_berakhir )
-        data.angka_periode = data.periode_mulai + data.periode_berakhir
-        parseInt(data.angka_periode)
-    }, [data.periode_mulai, data.periode_berakhir])
+        setData("angka_periode", data.periode_mulai + data.periode_berakhir);
+        data.angka_periode = data.periode_mulai + data.periode_berakhir;
+        parseInt(data.angka_periode);
+    }, [data.periode_mulai, data.periode_berakhir]);
 
+    const today = new Date().toISOString().split("T")[0];
 
     return (
         <table className="table text-base">
             {/* head */}
             <thead>
-                <tr className="text-lg uppercase bg-orange-500 text-white text-center">
+                <tr className="text-lg text-center text-white uppercase bg-orange-500">
                     <th colSpan={4}>Input Data</th>
                 </tr>
             </thead>
@@ -50,7 +51,7 @@ export default function InputDataTable({ data, setData }) {
                             <select
                                 name="periode_mulai"
                                 id="periode_mulai"
-                                className="w-28 px-4 rounded-md  border-gradient disabled:text-accent font-medium"
+                                className="px-4 font-medium rounded-md w-28 border-gradient disabled:text-accent"
                                 defaultValue={data.periode_mulai}
                                 onChange={(e) => {
                                     const periodeMulai = parseInt(
@@ -77,7 +78,7 @@ export default function InputDataTable({ data, setData }) {
                             <select
                                 name="periode_berakhir"
                                 id="periode_berakhir"
-                                className="w-28 px-4 rounded-md  border-gradient disabled:text-accent font-medium"
+                                className="px-4 font-medium rounded-md w-28 border-gradient disabled:text-accent"
                                 defaultValue={data.periode_berakhir}
                                 disabled={!data.periode_mulai}
                                 onChange={(e) => {
@@ -111,6 +112,7 @@ export default function InputDataTable({ data, setData }) {
                             <DateInput
                                 name="tgl_ditetapkan"
                                 id="tgl_ditetapkan"
+                                max={today}
                                 onChange={(e) =>
                                     setData("tgl_ditetapkan", e.target.value)
                                 }
@@ -130,13 +132,22 @@ export default function InputDataTable({ data, setData }) {
                                 name="nama"
                                 className="w-64"
                                 maxLength="50"
+                                defaultValue={data.nama}
+                                list="namaList"
+                                required
                                 placeholder="Input nama penanda tangan"
                                 onChange={(e) =>
                                     setData("nama", e.target.value)
                                 }
                             />
 
-                            {/* <InputError message={errors.email} className="mt-2" /> */}
+                            <datalist id="namaList">
+                                {/* Datalist untuk autocomplete nama */}
+                                <option value="Agus Sudibyo, M.Stat" />
+                                <option value="Budi Santoso, M.Si" />
+                                <option value="Siti Aminah, M.Sc" />
+                                {/* Tambahkan lebih banyak opsi sesuai kebutuhan */}
+                            </datalist>
 
                             {/* NIP */}
                             <InputLabel htmlFor="nip" value="NIP" />
@@ -144,15 +155,26 @@ export default function InputDataTable({ data, setData }) {
                                 id="nip"
                                 type="text"
                                 name="nip"
-                                // value={data.nip}
+                                required
+                                list="nipList" // tambahkan list untuk datalist
+                                defaultValue={data.nip}
                                 className="w-64"
                                 maxLength="18"
                                 placeholder="NIP penanda tangan"
                                 onKeyPress={handleKeyPress}
-                                onChange={(e) => setData("nip", e.target.value.toString())}
+                                onChange={(e) =>
+                                    setData("nip", e.target.value.toString())
+                                }
                             />
 
-                            {/* <InputError message={errors.email} className="mt-2" /> */}
+                            <datalist id="nipList">
+                                {" "}
+                                {/* Datalist untuk autocomplete NIP */}
+                                <option value="197412311996121001" />
+                                <option value="198507101990032001" />
+                                <option value="196501011989021001" />
+                                {/* Tambahkan lebih banyak opsi sesuai kebutuhan */}
+                            </datalist>
                         </div>
                     </td>
                 </tr>

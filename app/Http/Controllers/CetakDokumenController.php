@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CetakPAKRequest;
 use Inertia\Inertia;
 use App\Models\Pegawai;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
@@ -35,6 +36,7 @@ class CetakDokumenController extends Controller
     public function show(Pegawai $pegawai)
     {
         return Inertia::render('CetakDokumen/Show', [
+            "title" => "Cetak Dokumen PAK ",
             'pegawai' => $pegawai
         ]);
     }
@@ -42,6 +44,7 @@ class CetakDokumenController extends Controller
     public function create(Pegawai $pegawai)
     {
         return Inertia::render('CetakDokumen/Create', [
+            "title" => "Cetak Dokumen PAK ",
             'pegawai' => $pegawai
         ]);
     }
@@ -56,28 +59,20 @@ class CetakDokumenController extends Controller
 
     public function cetak(Request $request)
     {
+        // $request->validated();
         Session::put('data', $request->all());
-        return redirect()->route('cetak_dokumen.view-pak');
-        // $data = $request->all();
-        // // dd($request->all());
-        // // return Redirect::route('cetak_dokumen.view-pak')->with(['data' => $data]);
-        // $pdf = Pdf::loadView('pdf/pak', [
-        //     "title" => "Dokumen PAK",
-        //     "data" => $data
-        // ])->setPaper('F4', 'portrait')->setWarnings(false);
-        // return $pdf->stream('dokumen_pak.pdf');
-        // exit();
+        return response()->json(['url' => route('cetak_dokumen.view-pak')]);
     }
 
-    public function view_pak(Request $request)
+    public function view_pak()
     {
         // Ambil data dari session
-        $data = Session::get('data');
+        $data = Session::get('data')['data'];
         $dataTest = [
             "pegawai" => [
                 "id" => 4,
                 "Nama" => "DWI SATRIA FIRMANSYAH S.Tr.Stat.",
-                "NIP/NRP" => "1998030620210410001",
+                "NIP/NRP" => "199803062021041000",
                 "Nomor Seri Karpeg" => "",
                 "Pangkat/Golongan Ruangan/TMT" => "PENATA MUDA /III/a /01-04-2021",
                 "Tempat/Tanggal Lahir" => "JAMBI 06-03-1998",
@@ -91,120 +86,125 @@ class CetakDokumenController extends Controller
                 "updated_at" => null,
             ],
             "nama" => "Agus Sudibyo, M.Stat",
-            "periode_mulai" => 1,
-            "periode_berakhir" => 6,
-            "tgl_ditetapkan" => "2024-08-14",
             "nip" => "197412311996121001",
-            "no_surat1" => "1500.445/Konv/2024",
+            "tgl_ditetapkan" => "2024-08-14",
+            "periode_mulai" => 1,
+            "periode_berakhir" => 2,
+            "angka_periode" => 3,
+            "penanda_tangan" => "",
+            "no_surat1" => "1500.455/KONV/2024",
             "predikat" => "Baik",
             "presentase" => 100,
             "ak_normatif" => 12.5,
-            "angka_kredit" => "1.75",
+            "angka_kredit" => "235.456",
             "ak_normatif_ops" => 0,
             "tebusan1" => [
-                "kepala_reg" => false,
-                "sekretaris" => false,
+                "kepala_reg" => true,
+                "sekretaris" => true,
                 "kepala_bps" => true,
                 "pns" => true,
                 "kepala_biro" => false,
-                "arsip" => true,
+                "arsip" => false,
             ],
-            "no_surat2" => "1500.445/Akm/2024",
-            "ak_terakhir" => "1.7",
-            "jumlah_ak_kredit" => "3.45",
+            "no_surat2" => "1500.455/AKM/2024",
+            "ak_terakhir" => "232.331",
+            "jumlah_ak_kredit" => "467.787",
             "tahun_terakhir" => "2023",
             "tahun_ini" => "2024",
             "tebusan2" => [
-                "kepala_reg" => false,
+                "kepala_reg" => true,
                 "sekretaris" => false,
-                "kepala_bps" => false,
+                "kepala_bps" => true,
                 "pns" => false,
                 "kepala_biro" => false,
                 "arsip" => false,
             ],
-            "no_surat3" => "1500.445/PAK/2024",
+            "no_surat3" => "1500.455/PAK/2024",
             "ak_dasar" => [
-                'tipe_ak' => "AK Dasar yang diberikan",
-                "lama" => "0.6",
-                "baru" => "0.5",
-                "jumlah" => 1.1,
-                "keterangan" => "",
+                "tipe_ak" => "AK Dasar yang diberikan",
+                "lama" => 22,
+                "baru" => 233,
+                "jumlah" => "255.000",
+                "keterangan" => "wdwdwdwdwdwdwdw",
             ],
             "ak_jf" => [
-                'tipe_ak' => "AK JF Lama",
-                "lama" => "14.2",
-                "baru" => "30",
-                "jumlah" => 44.2,
+                "tipe_ak" => "AK JF Lama",
+                "lama" => 230,
+                "baru" => 2,
+                "jumlah" => "232.000",
                 "keterangan" => "",
             ],
             "ak_penyesuaian" => [
-                'tipe_ak'=> "AK Penyesuaian/ Penyetsaraan",
-                "lama" => "0.8",
-                "baru" => "1.1",
-                "jumlah" => 1.9000000000000001,
+                "tipe_ak" => "AK Penyesuaian/ Penyetsaraan",
+                "lama" => 340,
+                "baru" => 33,
+                "jumlah" => "373.000",
                 "keterangan" => "",
             ],
             "ak_konversi" => [
-                'tipe_ak'=> "AK Konversi",
-                "lama" => "0.8",
-                "baru" => "1.4",
-                "jumlah" => 2.2,
-                "keterangan" => "Ini Keterangan",
-            ],
-            "ak_peningkatan" => [
-                'tipe_ak'=> "AK yang diperoleh dari Peningkatan yang diberikan",
-                "lama" => 0,
-                "baru" => "3.9",
-                "jumlah" => 3.9,
+                "tipe_ak" => "AK Konversi",
+                "lama" => "232.331",
+                "baru" => "235.456",
+                "jumlah" => "467.787",
                 "keterangan" => "",
             ],
-            "jakk" => [
-                "lama" => 16.4,
-                "baru" => 36.9,
-                "jumlah" => 53.2,
+            "ak_peningkatan" => [
+                "tipe_ak" => "AK yang diperoleh dari Peningkatan yang diberikan",
+                "lama" => 30,
+                "baru" => 32.3,
+                "jumlah" => "62.300",
                 "keterangan" => "",
             ],
             "ak_tipe_tambahan" => [
-                "ak_tambahan_1" => [
-                    "tipe_ak" => "Tess Cuy",
-                    "lama" => "2.4",
-                    "baru" => "1.7",
-                    "jumlah" => 4.1,
-                    "keterangan" => "dwwww",
-                ],
-                "ak_tambahan_2" => [
-                    "tipe_ak" => "tes lagi cik",
-                    "lama" => "0.5",
-                    "baru" => "0.9",
-                    "jumlah" => 1.4,
-                    "keterangan" => "",
+                'ak_tambahan_1' => [
+                    'tipe_ak' => 'AK konversi baru lagi',
+                    'lama' => '27.2',
+                    'baru' => '31.2',
+                    'jumlah' => 58.4,
+                    'keterangan' => '',
                 ],
             ],
-            "pangkat" => "50",
-            "jabatan" => 100,
-            "pangkat_keker" => "3.20",
-            "jabatan_keker" => "-46.80",
+
+            "jakk" => [
+                "lama" => 854.331,
+                "baru" => 535.756,
+                "jumlah" => 1390.087,
+                "keterangan" => "",
+            ],
+            "pangkat" => "100",
+            "jabatan" => "450",
+            "pangkat_keker" => "1290.087",
+            "jabatan_keker" => "940.087",
             "tebusan3" => [
                 "kepala_reg" => true,
-                "sekretaris" => true,
-                "kepala_bps" => false,
+                "sekretaris" => false,
+                "kepala_bps" => true,
                 "pns" => false,
-                "kepala_biro" => true,
-                "arsip" => true,
+                "kepala_biro" => false,
+                "arsip" => false,
             ],
         ];
+
+        // Validasi
+        // Buat instance dari CetakPAKRequest
+        // $request = new CetakPAKRequest();
+        // // Isi request dengan data dari $dataTest
+        // $request->merge($dataTest);
+        // $request->validated();
+
         // Buat PDF
+        // SIZE F4
+        // dd($data);
+        $nama_pak = 'Dokumen PAK -' . $data['pegawai']['NIP/NRP'] . '.pdf';
+        $customF4Paper = array(0, 0, 595.28, 935.43);
         $pdf = Pdf::loadView('pdf.pak', [
             "title" => "Dokumen PAK",
             "pegawai" => "pegawai",
             "data" => $data, // Kirim data ke view
-        ])->setPaper('F4', 'portrait')->setWarnings(false);
+        ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
 
         // Stream PDF
-        return $pdf->stream('dokumen_pak.pdf');
-        // return response($pdf->output(), 200)
-        //     ->header('Content-Type', 'application/pdf')
-        //     ->header('Content-Disposition', 'inline; filename="dokumen_pak.pdf"');
+        return $pdf->stream($nama_pak);
     }
 
     // public function by_jabatan (Pegawai $pegawai) {

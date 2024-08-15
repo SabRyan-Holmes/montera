@@ -18,7 +18,6 @@ class Pegawai extends Model
             $filters['search'] ?? false,
             fn ($query, $search) =>
             $query->where('Nama', 'like', '%' . $search . '%')
-                ->orWhere('NIP/NRP', $search)
                 ->orWhere('NIP/NRP', 'like', '%' . $search . '%')
         );
 

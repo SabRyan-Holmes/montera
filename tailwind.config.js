@@ -25,13 +25,14 @@ export default {
               },
             fontFamily: {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
+                roboto: ['Roboto', 'sans-serif'],
                 inder: ["Inder"],
                 kanit: ["Kanit"],
                 signika: ["Signika Negative"],
                 explora: ["Explora"],
             },
             backgroundImage: {
-                // card: "url('/resources/assets/card.png')",
+                bps: "url('/resources/assets/image/background-bps.png')",
             },
 
             screens: {

@@ -41,36 +41,40 @@ export default function AkumulasiTable({
 
     return (
         <table className="table text-base">
-            <thead className="text-base">
-                <tr className="text-lg uppercase bg-orange-500 text-white text-center">
+            <thead>
+                <tr className="text-lg text-center text-white uppercase bg-orange-500">
                     <th colSpan={6}>Akumulasi Angka Kredit</th>
                 </tr>
+            </thead>
+            <tbody className="border">
                 <tr className="border">
-                    <td colSpan={2} className="text-center">
-                        <InputLabel
-                            htmlFor="no_surat2"
-                            className="inline-block ml-1 text-lg"
-                            value="NOMOR SURAT"
-                        />
+                    <td className="text-center uppercase border" width="18.5%">
+                        <strong>NOMOR SURAT</strong>
                     </td>
-                    <td colSpan={4} className="border">
+                    <td colSpan={5} className="border">
                         <TextInput
                             id="no_surat2"
                             type="text"
                             maxLength={20}
                             name="no_surat2"
                             placeholder="contoh: 1500.445/Akm/2024"
-                            className="w-64"
+                            required
+                            className="w-64 h-12"
                             onChange={(e) =>
                                 setData("no_surat2", e.target.value)
                             }
-                        />
-
-                        {/* <InputError message={errors.email} className="mt-2" /> */}
+                            list="no_surat2"
+                            />
+                            <datalist id="no_surat2">
+                                <option value="1500.455/Akm/2024" />
+                            </datalist>
                     </td>
                 </tr>
                 <tr className="border">
-                    <td colSpan={4} className="border text-center">
+                    <td
+                        colSpan={4}
+                        className="font-semibold text-center border"
+                    >
                         Hasil Penilaian Kinerja
                     </td>
                     <td rowSpan={2} className="border">
@@ -80,21 +84,19 @@ export default function AkumulasiTable({
                         Angka Kredit Yang Didapat
                     </td>
                 </tr>
-                <tr className="border text-center">
+                <tr className="text-center border">
                     <td className="border">Tahun</td>
                     <td className="border">Periodik(Bulan)</td>
                     <td className="border">Predikat</td>
                     <td className="border">Presentase</td>
                 </tr>
-            </thead>
-            <tbody className="border">
                 <tr className="text-center">
                     <td className="border">1</td>
                     <td className="border ">2</td>
                     <td className="border ">3</td>
                     <td className="border ">4</td>
                     <td className="border ">5</td>
-                    <td className="border text-center ">6</td>
+                    <td className="text-center border ">6</td>
                 </tr>
                 <tr className="text-center">
                     <td className="border">
@@ -104,6 +106,7 @@ export default function AkumulasiTable({
                             name="tahun_terakhir"
                             placeholder="2023"
                             maxLength={4}
+                            required
                             onKeyPress={handleKeyPress}
                             className="w-16"
                             onChange={(e) =>
@@ -115,15 +118,16 @@ export default function AkumulasiTable({
                     <td className="border ">_</td>
                     <td className="border ">_</td>
                     <td className="border ">_</td>
-                    <td className="border text-center ">
+                    <td className="text-center border ">
                         <TextInput
                             id="ak_terakhir"
                             name="ak_terakhir"
                             min={0}
-                            max={100}
-                            step={0.1}
+                            max={1000}
+                            step={0.001}
                             type="number"
-                            className="placeholder:text-accent text-center"
+                            required
+                            className="text-center placeholder:text-accent"
                             placeholder="0,0"
                             defaultValue={data.ak_terakhir}
                             onChange={(e) =>
@@ -132,12 +136,13 @@ export default function AkumulasiTable({
                         />
                     </td>
                 </tr>
-                <tr className="border uppercase text-center">
+                <tr className="text-center uppercase border">
                     <td className="border">
                         <TextInput
                             id="tahun_ini"
                             type="text"
                             name="tahun_ini"
+                            required
                             placeholder="tahun"
                             maxlength={4}
                             onKeyPress={handleKeyPress}
@@ -156,28 +161,31 @@ export default function AkumulasiTable({
                     <td className="border">{data.ak_normatif}</td>
                     <td className="border">{data["angka_kredit"]}</td>
                 </tr>
-                <tr className="border uppercase">
+                <tr className="uppercase border">
                     <td
                         colSpan={5}
-                        className="border text-center font-semibold"
+                        className="font-semibold text-center border"
                     >
                         jumlah angka kredit yang diperoleh
                     </td>
-                    <td className="border text-center">
+                    <td className="text-center border">
                         {data.jumlah_ak_kredit}
                     </td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <td rowSpan={3} colSpan={2} className="border text-lg">
+                    <td
+                        rowSpan={3}
+                        className="text-lg border text-slate-700"
+                    >
                         Tebusan
                     </td>
-                    <td colSpan={2} className="border-y">
+                    <td colSpan={3} className="border-y">
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["kepala_reg"] = !newData["kepala_reg"];
@@ -194,11 +202,11 @@ export default function AkumulasiTable({
                         />
                     </td>
 
-                    <td colSpan={2} className="border">
+                    <td colSpan={3} className="border">
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["sekretaris"] = !newData["sekretaris"];
@@ -217,11 +225,11 @@ export default function AkumulasiTable({
                 </tr>
 
                 <tr>
-                    <td colSpan={2} className="border-y">
+                    <td colSpan={3} className="border-y">
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["kepala_bps"] = !newData["kepala_bps"];
@@ -241,7 +249,7 @@ export default function AkumulasiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["pns"] = !newData["pns"];
@@ -259,11 +267,11 @@ export default function AkumulasiTable({
                     </td>
                 </tr>
                 <tr>
-                    <td colSpan={2} className="border-y">
+                    <td colSpan={3} className="border-y">
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["kepala_biro"] =
@@ -284,7 +292,7 @@ export default function AkumulasiTable({
                         <input
                             type="checkbox"
                             value={true}
-                            className=" w-5 h-5 rounded-sm"
+                            className="w-5 h-5 rounded-sm "
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["arsip"] = !newData["arsip"];

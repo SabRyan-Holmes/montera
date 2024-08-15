@@ -10,29 +10,29 @@ import NavLinkDashboard from "@/Components/NavLinkDashboard";
 const Sidebar = ({ active }) => {
     // console.log(active)
     return (
-        <div className="drawer-side shadow-2xl relative">
+        <div className="relative shadow-2xl drawer-side">
             <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
 
             {/* Smooth Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-gray-800 to-sky-950 transform scale-110 rounded-tr-2xl rounded-br-2xl shadow-xl" />
+            <div className="absolute inset-0 transform scale-110 shadow-xl bg-gradient-to-br from-slate-950 via-gray-800 to-sky-950 rounded-tr-2xl rounded-br-2xl" />
 
-            <ul className="menu p-4 w-80 min-h-full relative z-10 text-slate-100 space-y-4">
+            <ul className="relative z-10 min-h-full p-4 space-y-4 menu w-80 text-slate-100">
                 {/* Sidebar content */}
-                <div className="flex-col justify-center items-center mt-10 relative z-20">
+                <div className="relative z-20 flex-col items-center justify-center mt-10">
                     {/* App Name */}
-                    <strong className="flex justify-center text-2xl text-gradient gradient-bps">
+                    <strong className="flex justify-center text-2xl italic uppercase text-gradient gradient-bps">
                         SiPacak
                     </strong>
 
                     {/* App Logo */}
                     <img
                         src={logo}
-                        className="w-24 h-24 m-3 mx-auto filter drop-shadow-lg relative z-20"
+                        className="relative z-20 w-24 h-24 m-3 mx-auto mt-0 filter drop-shadow-lg"
                     />
                 </div>
 
                 <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary rounded-md via-hijau to-secondary p-0 opacity-100 h-full w-full transition-colors duration-1000 ease-in-out" />
+                    <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary via-hijau to-secondary" />
                 </div>
 
                 <section>
@@ -78,7 +78,7 @@ const Sidebar = ({ active }) => {
             </ul>
 
             {/* Decorative Bottom Shadow */}
-            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900 to-transparent rounded-b-lg shadow-inner" />
+            <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-lg shadow-inner bg-gradient-to-t from-slate-900 to-transparent" />
         </div>
     );
 };

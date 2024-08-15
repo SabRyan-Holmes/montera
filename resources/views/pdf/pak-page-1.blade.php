@@ -1,10 +1,11 @@
 <section class="container-a4">
-    <table class="header">
+    <table class="header" style="margin-top: 0px">
         <tr>
             <td style="width: 20%;"><img src="{{ asset('logo.png') }}" alt="Logo BPS" /></td>
-            <td>
-                <strong class="title">Badan Pusat Statistik</strong><br>
-                <strong class="title">Provinsi Jambi</strong>
+            <td style="font-style: italic; line-height: 1.2; padding: 0; margin: 0;">
+                <strong class="title" style="margin: 0; padding: 0;">Badan Pusat Statistik
+                    <span style="display: block; margin: 0; padding: 0;">Provinsi Jambi</span>
+                </strong>
             </td>
         </tr>
     </table>
@@ -40,18 +41,18 @@
 
     <div style="margin-top: 0.4rem ">
         {{-- Table --}}
-        <table aria-colcount="5" class="table-pak-1"
+        <table aria-colcount="5" class="table-pak"
             style="border-collapse: collapse; border-spacing: 0;   font-size: 1rem;
                         line-height: 1rem ;">
             {{--  head  --}}
             <thead>
                 <tr style="text-align: center;  text-transform: uppercase; font-weight: 700;">
-                    <th colspan="5" style="border: 1px solid #000;  padding: 0.4rem /* 8px */;">
+                    <th colspan="5" style="border: 1px solid #000;  padding: 0.4rem /* 8px */; font-size: 15px;">
                         Pejabat Fungsional Yang Dinilai
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="font-size: 13px">
                 {{--  Nama  --}}
                 <tr>
                     <th style="border: 1px solid #000;  width: 3.8rem /* 64px */;">
@@ -61,7 +62,7 @@
                     </td>
                     <td colspan="2"
                         style="border: 1px solid #000;
-                        padding: 0.4rem /* 8px */;">
+                        padding: 0.4rem /* 8px */; text-wrap: nowrap;" >
                         {{-- FIXME: nama pgeawai harusny ad di dari data useForm --}}
                         :
                         {{-- {{ 'Kiky Amci Ilzania, S.Tr.Stat' }} --}}
@@ -176,8 +177,8 @@
             </tbody>
 
             <tfoot style="font-size: 14px;">
-                <tr style="text-align: center;  text-transform: uppercase; font-weight: 700;">
-                    <th colspan="5" style="border: 1px solid #000;  padding: 0.4rem /* 8px */;">
+                <tr style="text-align: center;  text-transform: uppercase; ">
+                    <th colspan="5" style="border: 1px solid #000;  padding: 0.4rem /* 8px */; font-weight: 700; font-size:15px">
                         konversi predikat kinerja ke angka kredit
                     </th>
                 </tr>
@@ -250,9 +251,9 @@
             </strong>
             <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
 
-            <img src="" alt="" />
+            {{-- TTD --}}
 
-            <div style="margin-top: 3rem;">
+            <div style="margin-top: 3.2rem;">
                 <strong style="display: block">
                     {{ $data['nama'] }}
                 </strong>
@@ -262,8 +263,9 @@
             </div>
         </div>
 
-        <div style="margin-top:2rem">
-            <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
+        @if (count(array_filter($data['tebusan1'])) > 0)
+        <div style="margin-top:12rem;">
+            <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
             @php
                 $tebusan_list = [
                     'kepala_reg' => 'Kepala Kantor Regional VII BKN',
@@ -282,6 +284,8 @@
                 @endif
             @endforeach
         </div>
+        @endif
+
 
     </div>
 </section>

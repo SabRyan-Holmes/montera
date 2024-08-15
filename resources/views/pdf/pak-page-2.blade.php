@@ -1,10 +1,11 @@
 <section class="container-a4">
-    <table class="header">
+    <table class="header" style="margin-top: 0px">
         <tr>
             <td style="width: 20%;"><img src="{{ asset('logo.png') }}" alt="Logo BPS" /></td>
-            <td>
-                <strong class="title">Badan Pusat Statistik</strong><br>
-                <strong class="title">Provinsi Jambi</strong>
+            <td style="font-style: italic; line-height: 1.2; padding: 0; margin: 0;">
+                <strong class="title" style="margin: 0; padding: 0;">Badan Pusat Statistik
+                    <span style="display: block; margin: 0; padding: 0;">Provinsi Jambi</span>
+                </strong>
             </td>
         </tr>
     </table>
@@ -13,11 +14,7 @@
         <h2>
             Akumulasi Angka Kredit
             <span>
-
-                NOMOR :
-                <span>
-                    {{ $data['no_surat2'] }}
-                </span>
+                NOMOR : {{ $data['no_surat2'] }}
             </span>
         </h2>
     </div>
@@ -42,12 +39,12 @@
             <thead>
                 <tr style="text-align: center;  text-transform: uppercase; font-weight: 400;">
                     <th colspan="1" style="width: 30px; font-weight: 450;">I</th>
-                    <th colspan="6" style=" padding: 0.4rem; text-align: left; font-weight: 450;">
+                    <th colspan="6" style=" padding: 0.4rem; text-align: left; font-weight: 400;">
                         KETERANGAN PERORANGAN
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="font-size: 13px">
                 {{--  Nama  --}}
                 <tr>
                     <th></th>
@@ -170,7 +167,7 @@
 
             <tfoot style="font-size: 14px; font-weight: 400;">
                 <tr style="text-align: center; text-transform: uppercase; ">
-                    <th colspan="7" style=" padding: 0.25rem; font-weight: 600; font-size: 15px;">
+                    <th colspan="7" style=" padding: 0.25rem; font-weight: 700; font-size: 15px;">
                         hasil penilaian angka kredit
                     </th>
                 </tr>
@@ -253,7 +250,8 @@
             </div>
         </div>
 
-        <div style="margin-top:2rem">
+        @if (count(array_filter($data['tebusan2'])) > 0)
+        <div style="margin-top:12rem">
             <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
             @php
                 $tebusan_list = [
@@ -273,5 +271,6 @@
                 @endif
             @endforeach
         </div>
+        @endif
     </div>
 </section>

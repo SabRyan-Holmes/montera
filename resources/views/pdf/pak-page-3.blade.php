@@ -2,12 +2,14 @@
     <table class="header" style="margin-top: 0px">
         <tr>
             <td style="width: 20%;"><img src="{{ asset('logo.png') }}" alt="Logo BPS" /></td>
-            <td>
-                <strong class="title">Badan Pusat Statistik</strong><br>
-                <strong class="title">Provinsi Jambi</strong>
+            <td style="font-style: italic; line-height: 1.2; padding: 0; margin: 0;">
+                <strong class="title" style="margin: 0; padding: 0;">Badan Pusat Statistik
+                    <span style="display: block; margin: 0; padding: 0;">Provinsi Jambi</span>
+                </strong>
             </td>
         </tr>
     </table>
+
 
     <div class="sub-title">
         <h2>
@@ -171,7 +173,7 @@
 
 
         {{-- Bagian 2 Start --}}
-        <table aria-colcount="7" class="table-pak-3" style="margin-bottom: 3rem">
+        <table aria-colcount="7" class="table-pak-3">
             <thead>
                 <tr>
                     <th colspan="7" style="text-align: center; font-weight: 450;">
@@ -234,6 +236,15 @@
                     <td style="text-align: center">{{ $data['ak_konversi']['jumlah'] }}</td>
                     <td style="text-align: center">{{ $data['ak_konversi']['keterangan'] ?: '_' }}</td>
                 </tr>
+                <tr>
+                    <th></th>
+                    <th style="width: 30px">5</th>
+                    <td style="text-align: left">AK Yang diperoleh dari peningkatan pendidikan</td>
+                    <td style="text-align: center">{{ $data['ak_peningkatan']['lama'] }}</td>
+                    <td style="text-align: center">{{ $data['ak_peningkatan']['baru'] }}</td>
+                    <td style="text-align: center">{{ $data['ak_peningkatan']['jumlah'] }}</td>
+                    <td style="text-align: center">{{ $data['ak_peningkatan']['keterangan'] ?: '_' }}</td>
+                </tr>
                 <!-- Baris 6 dan seterusnya -->
                 @php $index = 6; @endphp
                 @foreach ($data['ak_tipe_tambahan'] as $key => $value)
@@ -263,13 +274,14 @@
                     <th colspan="2" style="border: 1px solid #334454;">Jenjang Jabatan</th>
                 </tr>
                 <tr>
-                    <th colspan="3" style="text-align: left;">Angka Kredit Minimal yang harus dipenuhi untuk
+                    <th colspan="3" style="text-align: left; font-size: 12px;">Angka Kredit Minimal yang harus
+                        dipenuhi untuk
                         kenaikan pangkat/jenjang</th>
                     <th colspan="2">{{ $data['pangkat'] }}</th>
                     <th colspan="2">{{ $data['jabatan'] }}</th>
                 </tr>
                 <tr>
-                    <th colspan="3" style="text-align: left;">
+                    <th colspan="3" style="text-align: left; font-size: 12px;">
                         <span>
                             {!! $data['pangkat_keker'] >= 0 ? 'Kelebihan/ <del>Kekurangan</del>' : '<del>Kelebihan</del> /Kekurangan' !!}
                         </span>
@@ -281,7 +293,7 @@
                         {{ abs($data['jabatan_keker']) }}</th>
                 </tr>
                 <tr>
-                    <th colspan="3" style="text-align: left;">
+                    <th colspan="3" style="text-align: left; font-size: 12px;">
                         <span>
                             {!! $data['jabatan_keker'] >= 0 ? 'Kelebihan/ <del>Kekurangan</del>' : '<del>Kelebihan</del> /Kekurangan' !!}
                         </span>
@@ -290,7 +302,11 @@
                     </th>
                 </tr>
                 <tr>
-                    <th colspan="7">Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi</th>
+                    @if ($data['jabatan_keker'] >= 0 && $data['pangkat_keker'] >= 0)
+                        <th colspan="7">Sudah Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi</th>
+                    @else
+                        <th colspan="7">Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi</th>
+                    @endif
                 </tr>
             </tfoot>
         </table>
@@ -316,9 +332,11 @@
             </div>
         </div>
 
-
-        <div style="margin-top:2rem">
-            <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
+        @if (count(array_filter($data['tebusan3'])) > 0)
+        <div style="margin-top:2rem; width:32rem; font-size: 0.9rem">
+            <strong style="font-weight: 400">ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang
+                bersangkutan</strong>
+            <strong style="font-weight: 400; margin-top: 1.5rem; display: block">Tembusan Disampaikan kepada :</strong>
             @php
                 $tebusan_list = [
                     'kepala_reg' => 'Kepala Kantor Regional VII BKN',
@@ -337,5 +355,6 @@
                 @endif
             @endforeach
         </div>
+        @endif
     </div>
 </section>

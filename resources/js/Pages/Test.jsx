@@ -30,7 +30,7 @@ export default function Dashboard({ auth }) {
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
                     Dashboard
                 </h2>
             }
@@ -38,8 +38,8 @@ export default function Dashboard({ auth }) {
             <Head title="Dashboard" />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             You're logged in!
                         </div>
@@ -49,7 +49,7 @@ export default function Dashboard({ auth }) {
 
             <div className="py-12 text-center">
                 <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
                     onClick={downloadPdf}
                     disabled={loading}
                 >
@@ -71,7 +71,7 @@ export default function Dashboard({ auth }) {
                             <h2>PDF Preview</h2>
                             <button
                                 onClick={closeModal}
-                                className="text-red-600 text-3xl"
+                                className="text-3xl text-red-600"
                             >
                                 &times;
                             </button>
@@ -90,3 +90,13 @@ export default function Dashboard({ auth }) {
         </AuthenticatedLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+

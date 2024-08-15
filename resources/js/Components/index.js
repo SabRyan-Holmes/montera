@@ -13,6 +13,7 @@ import NavLinkCollapse from './NavLinkCollapse'
 import NavLinkDashboard from './NavLinkDashboard'
 import Paginations from './Paginations'
 import PrimaryButton from './PrimaryButton'
+import ProfileImage from './ProfileImage'
 import ResponsiveNavLink from './ResponsiveNavLink'
 import SecondaryButton from './SecondaryButton'
 import Sidebar from './Sidebar'
@@ -21,4 +22,4 @@ import TextInput from './TextInput'
 
 export {ApplicationLogo,Checkbox, CollapsedLink, DangerButton, Dropdown,
       InputError, InputLabel, Modal, Navbar, NavLink, NavLinkCollapse, NavLinkDashboard, Paginations,
-     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput}
+     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage}

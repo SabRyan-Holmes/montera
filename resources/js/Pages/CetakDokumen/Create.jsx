@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { Link, Head, useForm, usePage } from "@inertiajs/react";
-import { InputError, PrimaryButton, SecondaryButton } from "@/Components";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import { PrimaryButton, SecondaryButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -9,20 +9,23 @@ import {
     PAKTable,
 } from "./Partials";
 import { FaPrint } from "react-icons/fa6";
-
-import { FaSave, FaUserEdit } from "react-icons/fa";
+import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
+import Swal from "sweetalert2";
+import axios from "axios";
+
+
 export default function Index({ auth, pegawai, title }) {
-    const { data, setData, get, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         pegawai: pegawai,
         // Input Data
-        nama: "",
+        nama: "Agus Sudibyo, M.Stat",
+        nip: "197412311996121001",
         periode_mulai: 1, //Default: Januari
         periode_berakhir: 2, //Default Februari
         angka_periode: 0,
         tgl_ditetapkan: "",
         penanda_tangan: "",
-        nip: "",
 
         // Konversi Predikat
         no_surat1: "",
@@ -126,28 +129,56 @@ export default function Index({ auth, pegawai, title }) {
         150: "Sangat Baik",
     };
 
-    const [alert, setAlert] = useState(false);
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
 
     useEffect(() => {
-        setAlert(true);
-    }, []);
+        if (errors && Object.values(errors).length > 0) {
+            // Ambil nilai pertama dari object errors
+            const firstErrorMessage = Object.values(errors)[0];
+            console.log("firstErrorMessage :");
+            console.log(firstErrorMessage);
+            Toast.fire({
+                icon: "warning",
+                iconColor: "#fb7185",
+                title: firstErrorMessage,
+                color: "#fb7185",
+            });
+        }
+    }, [errors]);
 
     const props = usePage().props;
+    const [isLoading, setIsLoading] = useState(false);
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
-        post("/cetak_dokumen/cetak", {
-            _token: props.csrf_token,
-            data: data,
-            // headers: {
-            //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            // },
-            onFinish: () => {
-                window.open("/cetak_dokumen/view-pak", "_blank");
-            },
-        });
+        try {
+            const response = await axios.post("/cetak_dokumen/cetak", {
+                _token: props.csrf_token,
+                data: data
+            });
+
+            // Buka PDF di tab baru dengan URL yang diberikan dalam respons
+            window.open(response.data.url, "_blank");
+        } catch (error) {
+            console.error("Error:", error);
+            // Tangani error, mungkin tampilkan pesan error ke pengguna
+        } finally {
+            setIsLoading(false); // Hentikan loading, baik saat sukses maupun error
+        }
     };
+
 
     // const submit = (e) => {
     //     e.preventDefault();
@@ -169,8 +200,10 @@ export default function Index({ auth, pegawai, title }) {
     };
 
     // CONSOLE
-    console.log('Isi data');
+    console.log("Isi data");
     console.log(data);
+    console.log("Isi Error");
+    console.log(errors);
     return (
         <Authenticated
             user={auth.user}
@@ -179,16 +212,16 @@ export default function Index({ auth, pegawai, title }) {
         >
             <Head title="Pembuatan Dokumen PAK" />
 
-            <section className="m-10 h-screen">
+            <section className="h-screen m-10 ">
                 <div className="flex justify-between">
-                    <div className="breadcrumbs mt-2 text-sm">
+                    <div className="mt-2 text-sm breadcrumbs">
                         <ul>
                             <li>
                                 <a
                                     href={route("pegawai.index")}
                                     className="gap-2"
                                 >
-                                    <FaPrint className="h-4 w-4 stroke-current" />
+                                    <FaPrint className="w-4 h-4 stroke-current" />
                                     <span>Cetak Dokumen</span>
                                 </a>
                             </li>
@@ -198,34 +231,30 @@ export default function Index({ auth, pegawai, title }) {
                                     {pegawai.Nama}
                                 </span>
                             </li>
-
-                            <li>
-                                <span className="inline-flex items-center gap-2">
-                                    <FaUserEdit className="h-4 w-4 stroke-current" />
-
-                                    {title}
-                                </span>
-                            </li>
                         </ul>
                     </div>
                     <SecondaryButton
                         onClick={() => window.history.back()}
-                        className="bg-secondary/5 capitalize "
+                        className="capitalize bg-secondary/5 "
                     >
                         <span>Kembali</span>
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
                 </div>
-                <h1 className="my-10 text-3xl capitalize">
-                    Data untuk pencetakan dokumen pak
-                </h1>
+                {/* <h1 className="my-10 text-2xl font-[550] capitalize ">
+                    Data Pegawai Untuk Pencetakan PAK
+                </h1> */}
 
-                <div className="overflow-x-auto">
+
+                <div className="overflow-x-auto px-7">
+                <h1 className="text-2xl font-medium my-7">
+                    Data Pegawai Untuk Pencetakan PAK
+                </h1>
                     <table className="table text-base">
                         {/* head */}
                         <thead>
                             <tr className="text-lg bg-primary/70">
-                                <th colSpan={2}>Detail Pegawai</th>
+                                <th className="px-7" colSpan={2}>Detail Pegawai</th>
                                 {/* <th>Name</th>
                             <th>Job</th>
                             <th>Favorite Color</th> */}
@@ -234,55 +263,55 @@ export default function Index({ auth, pegawai, title }) {
                         <tbody>
                             {/* row 1 */}
                             <tr className="border">
-                                <td>Nama</td>
-                                <td>{pegawai.Nama}</td>
+                                <td className="px-7">Nama</td>
+                                <td className="px-7">{pegawai.Nama}</td>
                             </tr>
                             {/* row 2 */}
                             <tr className="border">
-                                <td>NIP/NRP</td>
-                                <td>{pegawai["NIP/NRP"]}</td>
+                                <td className="px-7">NIP/NRP</td>
+                                <td className="px-7">{pegawai["NIP/NRP"]}</td>
                             </tr>
                             {/* row 3 */}
                             <tr className="border">
-                                <td>NOMOR SERI KARPEG</td>
-                                <td>{pegawai["NOMOR SERI KARPEG"]}</td>
+                                <td className="px-7">NOMOR SERI KARPEG</td>
+                                <td className="px-7">{pegawai["NOMOR SERI KARPEG"]}</td>
                             </tr>
                             <tr className="border">
-                                <td>PANGKAT/GOLONGAN/TMT</td>
-                                <td>
+                                <td className="px-7">PANGKAT/GOLONGAN/TMT</td>
+                                <td className="px-7">
                                     {pegawai["Pangkat/Golongan Ruangan/TMT"]}
                                 </td>
                             </tr>
                             <tr className="border">
-                                <td>TEMPAT/TANGGAL LAHIR</td>
-                                <td>{pegawai["Tempat/Tanggal Lahir"]}</td>
+                                <td className="px-7">TEMPAT/TANGGAL LAHIR</td>
+                                <td className="px-7">{pegawai["Tempat/Tanggal Lahir"]}</td>
                             </tr>
                             <tr className="border">
-                                <td>JENIS KELAMIN</td>
-                                <td>{pegawai["Jenis Kelamin"]}</td>
+                                <td className="px-7">JENIS KELAMIN</td>
+                                <td className="px-7">{pegawai["Jenis Kelamin"]}</td>
                             </tr>
                             <tr className="border">
-                                <td>PENDIDIKAN</td>
-                                <td>{pegawai["Pendidikan"]}</td>
+                                <td className="px-7">PENDIDIKAN</td>
+                                <td className="px-7">{pegawai["Pendidikan"]}</td>
                             </tr>
                             <tr className="border">
-                                <td>JABATAN/TMT</td>
-                                <td>{pegawai["Jabatan/TMT"]}</td>
+                                <td className="px-7">JABATAN/TMT</td>
+                                <td className="px-7">{pegawai["Jabatan/TMT"]}</td>
                             </tr>
                             <tr className="border">
-                                <td>MASA KERJA GOLONGAN</td>
-                                <td>{pegawai["Masa Kerja Golongan"]}</td>
+                                <td className="px-7">MASA KERJA GOLONGAN</td>
+                                <td className="px-7">{pegawai["Masa Kerja Golongan"]}</td>
                             </tr>
                             <tr className="border">
-                                <td>UNIT KERJA</td>
-                                <td>{pegawai["Unit Kerja"]}</td>
+                                <td className="px-7">UNIT KERJA</td>
+                                <td className="px-7">{pegawai["Unit Kerja"]}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <section className="m-12 h-full">
+            <section className="h-full m-12">
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
                         {/* INPUT DATA | START*/}
@@ -319,14 +348,14 @@ export default function Index({ auth, pegawai, title }) {
                         {/* PENETAPAN ANGKA KREDIT | END*/}
                     </div>
 
-                    <div className="w-full flex justify-center mt-10 ">
-                        <PrimaryButton
+                    <div className="flex justify-center w-full mt-10 ">
+                        <button
                             type="submit"
-                            className="scale-125 bg-hijau text-white"
+                            className="text-white bg-hijau button-correct "
                         >
                             {/* <a href="/cetak_dokumen/cetak">Cetak Dokumen PAK</a> */}
                             Cetak Dokumen PAK
-                        </PrimaryButton>
+                        </button>
                     </div>
                 </form>
             </section>
