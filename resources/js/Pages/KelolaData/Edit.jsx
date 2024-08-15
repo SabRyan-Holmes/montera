@@ -6,6 +6,7 @@ import {
     SecondaryButton,
     InputLabel,
     PrimaryButton,
+    SuccessButton,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
@@ -73,16 +74,16 @@ export default function Edit({ auth, pegawai, title, flash }) {
             title={title}
             current={route().current()}
         >
-            <section className="phone:h-screen laptop:h-full max-w-screen-laptop mx-auto px-24 mb-24">
+            <section className="px-24 mx-auto mb-24 phone:h-screen laptop:h-full max-w-screen-laptop">
                 <div className="flex justify-between">
-                    <div className="breadcrumbs mt-2 text-sm">
+                    <div className="mt-2 text-sm breadcrumbs">
                         <ul>
                             <li>
                                 <a
                                     href={route("pegawai.index")}
                                     className="gap-2"
                                 >
-                                    <FaDatabase className="h-4 w-4 stroke-current" />
+                                    <FaDatabase className="w-4 h-4 stroke-current" />
                                     <span>Kelola Data</span>
                                 </a>
                             </li>
@@ -95,7 +96,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
 
                             <li>
                                 <span className="inline-flex items-center gap-2">
-                                    <FaUserEdit className="h-4 w-4 stroke-current" />
+                                    <FaUserEdit className="w-4 h-4 stroke-current" />
 
                                     {title}
                                 </span>
@@ -104,7 +105,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                     </div>
                     <SecondaryButton
                         onClick={() => window.history.back()}
-                        className="bg-secondary/5 capitalize "
+                        className="capitalize bg-secondary/5 "
                     >
                         <span>Kembali</span>
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
@@ -129,14 +130,14 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 {/* row 1 */}
                                 <tr className="border">
                                     <td className="">Nama</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             id="Nama"
                                             type="text"
                                             name="Nama"
                                             value={pegawai.Nama}
                                             disabled
-                                            className="h-9 w-96 px-2 border-gradient disabled:text-accent hover:cursor-not-allowed  "
+                                            className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
 
                                             // onChange={(e) => setData('nama', e.target.value)}
                                         />
@@ -150,14 +151,14 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 {/* row 2 */}
                                 <tr className="border">
                                     <td className="">NIP/NRP</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             id="NIP/NRP"
                                             type="text"
                                             name="NIP/NRP"
                                             value={pegawai["NIP/NRP"]}
                                             disabled
-                                            className="h-9 w-96 px-2 border-gradient disabled:text-accent hover:cursor-not-allowed  "
+                                            className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
 
                                             // onChange={(e) => setData('nama', e.target.value)}
                                         />
@@ -171,7 +172,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 {/* row 3 */}
                                 <tr className="border">
                                     <td className="">NOMOR SERI KARPEG</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             id="nama"
                                             type="text"
@@ -179,7 +180,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             defaultValue={
                                                 pegawai["Nomor Seri Karpeg"]
                                             }
-                                            className="h-9 w-96 px-2 border-gradient placeholder:text-accent   "
+                                            className="px-2 h-9 w-96 border-gradient placeholder:text-accent "
                                             placeholder="input disini"
                                             onChange={(e) =>
                                                 setData(
@@ -202,7 +203,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         PANGKAT/GOLONGAN Ruangan/TMT
                                     </td>
 
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Pangkat/Golongan Ruangan/TMT"
@@ -211,7 +212,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                     "Pangkat/Golongan Ruangan/TMT"
                                                 ]
                                             }
-                                            className="h-9 w-96 px-2 border-gradient   "
+                                            className="px-2 h-9 w-96 border-gradient "
                                             placeholder="input disini"
                                             onChange={(e) =>
                                                 setData(
@@ -235,7 +236,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                     <td className="border">
                                         TEMPAT/TANGGAL LAHIR
                                     </td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Tempat/Tanggal Lahir"
@@ -243,7 +244,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                 pegawai["Tempat/Tanggal Lahir"]
                                             }
                                             disabled
-                                            className="h-9 w-96 px-2 border-gradient disabled:text-accent hover:cursor-not-allowed  "
+                                            className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                             onChange={(e) =>
                                                 setData(
                                                     "Tempat/Tanggal Lahir",
@@ -263,12 +264,12 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 <tr className="border">
                                     <td className="">JENIS KELAMIN</td>
 
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Jenis Kelamin"
                                             value={pegawai["Jenis Kelamin"]}
-                                            className="h-9 w-96 px-2 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
+                                            className="px-2 h-9 w-96 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
                                             disabled
                                             placeholder="input disini"
                                         />
@@ -276,7 +277,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 </tr>
                                 <tr className="border">
                                     <td className="">PENDIDIKAN</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Pendidikan"
@@ -299,7 +300,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 </tr>
                                 <tr className="border">
                                     <td className="">JABATAN/TMT</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Jabatan/TMT"
@@ -324,7 +325,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 </tr>
                                 <tr className="border">
                                     <td className="">MASA KERJA GOLONGAN</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Masa Kerja Golongan"
@@ -351,7 +352,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 </tr>
                                 <tr className="border">
                                     <td className="">UNIT KERJA</td>
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Unit Kerja"
@@ -375,9 +376,9 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 <tr className="border">
                                     <td className="">ASAL DAERAH BPS</td>
 
-                                    <td className="border-x flex">
+                                    <td className="flex border-x">
                                         <select
-                                            className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                            className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                             name="Daerah"
                                             defaultValue={pegawai.Daerah}
                                             onChange={(e) =>
@@ -417,14 +418,15 @@ export default function Edit({ auth, pegawai, title, flash }) {
                             </tbody>
                         </table>
 
-                        <div className="w-full flex justify-center my-4">
+                        <div className="flex justify-center w-full my-4">
                             <button
                                 type="submit"
-                                className="group/button text-base btn glass scale-95  bg-hijau/20 border hover:bg-hijau hover:text-white border-hijau/20 text-hijau px-5 gap-3"
+                                className="gap-3 px-5 text-base uppercase scale-95 border group/button btn glass bg-hijau/20 hover:bg-hijau hover:text-white border-hijau/20 text-hijau"
                             >
                                 <span>Update Data</span>
                                 <FaSave className="w-4 h-5 fill-hijau group-hover/button:fill-white" />
                             </button>
+
                         </div>
                     </form>
                 </div>

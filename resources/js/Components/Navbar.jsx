@@ -16,6 +16,11 @@ const Navbar = ({ user, title }) => {
         admin = true;
     }
 
+    const nameParts = user.name.split(" ");
+    const first = nameParts[0]
+    const second = nameParts[1]
+    const fullName = first + ' ' + second
+
     return (
         <div className="">
             <hr className="h-1 bg-base" />
@@ -54,7 +59,7 @@ const Navbar = ({ user, title }) => {
                                 <div className="flex items-center justify-end gap-2 p-2 transition-all group/item w-60 hover:shadow-md hover:bg-base-100/10 rounded-xl hover:cursor-pointer">
                                     <div className="mr-1 font-semibold text-nowrap">
                                         <span className="block text-sm group-hover/item:text-primary ">
-                                            {user.name}
+                                            {fullName}
                                         </span>
                                         <span
                                             className={
@@ -74,7 +79,7 @@ const Navbar = ({ user, title }) => {
                                             className="w-6 h-6 rounded-full avatar"
                                         />
                                     ) : (
-                                        <ProfileImage name={user.name} />
+                                        <ProfileImage name={fullName} />
                                     )}
                                     <IoIosArrowDown className="w-5 h-5 fill-slate-500 group-hover/item:fill-primary" />
                                 </div>
@@ -86,11 +91,11 @@ const Navbar = ({ user, title }) => {
                         >
                             <>
                                 <li>
-                                    <Link href="/dashboard">Homepage</Link>
+                                    <Link href="/dashboard">Dashboard</Link>
                                 </li>
                                 <li>
                                     <Link href={route("profile.edit")}>
-                                        Edit Profile
+                                        Edit Profil
                                     </Link>
                                 </li>
                                 <li>

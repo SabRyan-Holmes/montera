@@ -3,10 +3,10 @@ import React from "react";
 import { useForm } from "@inertiajs/react";
 import { FaEdit } from "react-icons/fa";
 import { FaDatabase } from "react-icons/fa6";
-import {  FaUserEdit } from "react-icons/fa";
+import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { Head, Link } from "@inertiajs/react";
-import { SecondaryButton } from "@/Components";
+import { PrimaryButton, SecondaryButton } from "@/Components";
 
 export default function Show({ auth, pegawai, title }) {
     // console.log('isi current', current)
@@ -16,17 +16,17 @@ export default function Show({ auth, pegawai, title }) {
             title={title}
             current={route().current()}
         >
-            <Head title={title}/>
-            <section className="phone:h-screen laptop:h-full max-w-screen-laptop mx-auto px-24 mb-24">
-            <div className="flex justify-between">
-                    <div className="breadcrumbs mt-2 text-sm">
+            <Head title={title} />
+            <section className="px-24 mx-auto mb-24 phone:h-screen laptop:h-full max-w-screen-laptop">
+                <div className="flex justify-between">
+                    <div className="mt-2 text-sm breadcrumbs">
                         <ul>
                             <li>
                                 <a
                                     href={route("pegawai.index")}
                                     className="gap-2"
                                 >
-                                    <FaDatabase className="h-4 w-4 stroke-current" />
+                                    <FaDatabase className="w-4 h-4 stroke-current" />
                                     <span>Kelola Data</span>
                                 </a>
                             </li>
@@ -39,7 +39,7 @@ export default function Show({ auth, pegawai, title }) {
 
                             <li>
                                 <span className="inline-flex items-center gap-2">
-                                    <FaUserEdit className="h-4 w-4 stroke-current" />
+                                    <FaUserEdit className="w-4 h-4 stroke-current" />
 
                                     {title}
                                 </span>
@@ -48,16 +48,14 @@ export default function Show({ auth, pegawai, title }) {
                     </div>
                     <SecondaryButton
                         onClick={() => window.history.back()}
-                        className="bg-secondary/5 capitalize "
+                        className="capitalize bg-secondary/5 "
                     >
                         <span>Kembali</span>
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
                 </div>
 
-                <h1 className="my-6 text-2xl capitalize">
-                    {title}
-                </h1>
+                <h1 className="my-6 text-2xl capitalize">{title}</h1>
 
                 <div className="overflow-x-auto">
                     <table className="table text-base">
@@ -119,13 +117,12 @@ export default function Show({ auth, pegawai, title }) {
                         </tbody>
                     </table>
 
-                    <div className="w-full flex justify-center my-4">
-                        <Link as="a"
-                            href={route('pegawai.edit', pegawai.id)}
-                            className="group/button text-base btn glass scale-95  bg-secondary/30 border hover:bg-secondary hover:text-white border-secondary/20 text-secondary px-5 gap-3"
-                        >
+                    <div className="flex items-center justify-center w-full my-9">
+                        <Link as="a" href={route("pegawai.edit", pegawai.id)}>
+                        <SecondaryButton className="text-white scale-110 bg-secondary glass hover:bg-secondary">
                             <span>Edit Data</span>
-                            <FaEdit className="w-4 h-5 fill-secondary group-hover/button:fill-white" />
+                            <FaEdit className="w-4 h-5 mx-1 -mt-1 fill-white group-hover/button:fill-white" />
+                        </SecondaryButton>
                         </Link>
                     </div>
                 </div>

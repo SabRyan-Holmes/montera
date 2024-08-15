@@ -61,13 +61,17 @@ class CetakDokumenController extends Controller
     {
         // $request->validated();
         Session::put('data', $request->all());
-        return response()->json(['url' => route('cetak_dokumen.view-pak')]);
+        // return response()->json(['url' => route('cetak_dokumen.view-pak')]);
+        return Inertia::location(route('cetak_dokumen.view-pak'));
+
     }
 
     public function view_pak()
     {
+        dd(Session::get('data'));
         // Ambil data dari session
-        $data = Session::get('data')['data'];
+        $data = Session::get('data');
+
         $dataTest = [
             "pegawai" => [
                 "id" => 4,
@@ -185,6 +189,8 @@ class CetakDokumenController extends Controller
             ],
         ];
 
+        $this->cleanAllData($data);
+
         // Validasi
         // Buat instance dari CetakPAKRequest
         // $request = new CetakPAKRequest();
@@ -207,17 +213,28 @@ class CetakDokumenController extends Controller
         return $pdf->stream($nama_pak);
     }
 
-    // public function by_jabatan (Pegawai $pegawai) {
+    private function cleanData(&$item)
+    {
+        // Ganti koma dengan titik untuk pengecekan numeric
+        $numericValue = is_string($item) ? str_replace(',', '.', $item) : $item;
 
-    //     $lomba = $pegawai->lomba()->latest()->paginate(5);
-    //     // ddd($lomba);
-    //     return Inertia::render('Informasi/LombaPegawai', [
-    //         "title" => "Lomba Berdasarkan Kategori",
-    //         "lomba" => $lomba,
-    //         "pegawai" => $pegawai->name,
-    //         "reqPegawai" => request('pegawai')
-    //     ]);
-    // })->middleware(['auth'])->name('lomba.show_pegawai');
+        // Cek apakah nilai sama dengan 0, "0,000", atau null
+        if ($numericValue === 0 || $numericValue === '0' || $numericValue === '0.000' || $item === null) {
+            $item = ''; // Ubah menjadi string kosong
+        }
+    }
+
+    // Fungsi rekursif untuk memproses semua elemen dalam array atau object
+    private function cleanAllData(&$array)
+    {
+        foreach ($array as &$value) {
+            if (is_array($value) || is_object($value)) {
+                $this->cleanAllData($value); // Jika value adalah array atau object, rekursif
+            } else {
+                $this->cleanData($value); // Jika value adalah nilai tunggal, cek dan bersihkan
+            }
+        }
+    }
 
 
     public function test_pdf()

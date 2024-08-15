@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { Head, useForm, usePage } from "@inertiajs/react";
-import { PrimaryButton, SecondaryButton } from "@/Components";
+import { PrimaryButton, SecondaryButton, SuccessButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -13,7 +13,6 @@ import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import axios from "axios";
-
 
 export default function Index({ auth, pegawai, title }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -121,6 +120,8 @@ export default function Index({ auth, pegawai, title }) {
             kepala_biro: false,
             arsip: false,
         },
+
+        kesimpulan: "Belum Dapat untuk Kenaikan Pangkat Setingkat",
     });
 
     const predikat = {
@@ -166,7 +167,7 @@ export default function Index({ auth, pegawai, title }) {
         try {
             const response = await axios.post("/cetak_dokumen/cetak", {
                 _token: props.csrf_token,
-                data: data
+                data: data,
             });
 
             // Buka PDF di tab baru dengan URL yang diberikan dalam respons
@@ -178,16 +179,6 @@ export default function Index({ auth, pegawai, title }) {
             setIsLoading(false); // Hentikan loading, baik saat sukses maupun error
         }
     };
-
-
-    // const submit = (e) => {
-    //     e.preventDefault();
-
-    //     const url = new URL(route("cetak_dokumen.cetak"));
-    //     const params = new URLSearchParams(new FormData(e.target));
-
-    //     window.location.href = `${url}?${params.toString()}`;
-    // };
 
     // Jabatan untuk sesuai Koefisien Pertahun
     const akNormatif = {
@@ -210,9 +201,7 @@ export default function Index({ auth, pegawai, title }) {
             title={title}
             current={route().current()}
         >
-            <Head title="Pembuatan Dokumen PAK" />
-
-            <section className="h-screen m-10 ">
+            <section className="m-10 ">
                 <div className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
                         <ul>
@@ -245,16 +234,17 @@ export default function Index({ auth, pegawai, title }) {
                     Data Pegawai Untuk Pencetakan PAK
                 </h1> */}
 
-
                 <div className="overflow-x-auto px-7">
-                <h1 className="text-2xl font-medium my-7">
-                    Data Pegawai Untuk Pencetakan PAK
-                </h1>
+                    <h1 className="text-2xl font-medium my-7">
+                        Data Pegawai Untuk Pencetakan PAK
+                    </h1>
                     <table className="table text-base">
                         {/* head */}
                         <thead>
                             <tr className="text-lg bg-primary/70">
-                                <th className="px-7" colSpan={2}>Detail Pegawai</th>
+                                <th className="px-7" colSpan={2}>
+                                    Detail Pegawai
+                                </th>
                                 {/* <th>Name</th>
                             <th>Job</th>
                             <th>Favorite Color</th> */}
@@ -274,7 +264,9 @@ export default function Index({ auth, pegawai, title }) {
                             {/* row 3 */}
                             <tr className="border">
                                 <td className="px-7">NOMOR SERI KARPEG</td>
-                                <td className="px-7">{pegawai["NOMOR SERI KARPEG"]}</td>
+                                <td className="px-7">
+                                    {pegawai["NOMOR SERI KARPEG"]}
+                                </td>
                             </tr>
                             <tr className="border">
                                 <td className="px-7">PANGKAT/GOLONGAN/TMT</td>
@@ -284,34 +276,46 @@ export default function Index({ auth, pegawai, title }) {
                             </tr>
                             <tr className="border">
                                 <td className="px-7">TEMPAT/TANGGAL LAHIR</td>
-                                <td className="px-7">{pegawai["Tempat/Tanggal Lahir"]}</td>
+                                <td className="px-7">
+                                    {pegawai["Tempat/Tanggal Lahir"]}
+                                </td>
                             </tr>
                             <tr className="border">
                                 <td className="px-7">JENIS KELAMIN</td>
-                                <td className="px-7">{pegawai["Jenis Kelamin"]}</td>
+                                <td className="px-7">
+                                    {pegawai["Jenis Kelamin"]}
+                                </td>
                             </tr>
                             <tr className="border">
                                 <td className="px-7">PENDIDIKAN</td>
-                                <td className="px-7">{pegawai["Pendidikan"]}</td>
+                                <td className="px-7">
+                                    {pegawai["Pendidikan"]}
+                                </td>
                             </tr>
                             <tr className="border">
                                 <td className="px-7">JABATAN/TMT</td>
-                                <td className="px-7">{pegawai["Jabatan/TMT"]}</td>
+                                <td className="px-7">
+                                    {pegawai["Jabatan/TMT"]}
+                                </td>
                             </tr>
                             <tr className="border">
                                 <td className="px-7">MASA KERJA GOLONGAN</td>
-                                <td className="px-7">{pegawai["Masa Kerja Golongan"]}</td>
+                                <td className="px-7">
+                                    {pegawai["Masa Kerja Golongan"]}
+                                </td>
                             </tr>
                             <tr className="border">
                                 <td className="px-7">UNIT KERJA</td>
-                                <td className="px-7">{pegawai["Unit Kerja"]}</td>
+                                <td className="px-7">
+                                    {pegawai["Unit Kerja"]}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <section className="h-full m-12">
+            <section className="h-full m-12 mt-4">
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
                         {/* INPUT DATA | START*/}
@@ -348,14 +352,12 @@ export default function Index({ auth, pegawai, title }) {
                         {/* PENETAPAN ANGKA KREDIT | END*/}
                     </div>
 
-                    <div className="flex justify-center w-full mt-10 ">
-                        <button
-                            type="submit"
-                            className="text-white bg-hijau button-correct "
-                        >
+                    <div className="flex justify-center w-full pb-12 mt-10 ">
+                        <SuccessButton type="submit"
+                        className="scale-125">
                             {/* <a href="/cetak_dokumen/cetak">Cetak Dokumen PAK</a> */}
                             Cetak Dokumen PAK
-                        </button>
+                        </SuccessButton>
                     </div>
                 </form>
             </section>

@@ -1,17 +1,21 @@
 <?php
 
 use App\Http\Controllers\CetakDokumenController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use Inertia\Inertia;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login');
 });
 
-Route::get('/dashboard', [ProfileController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard/get-chart-data', [DashboardController::class, 'getChartData'])->middleware(['auth', 'verified'])->name('get-chart-data');
+
 
 
 // Cetak Dokumen
@@ -27,7 +31,7 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 // Tes
 Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
 
-Route::get('/tessss', function () {
+Route::get('/tes', function () {
     return Inertia::render('Test');
 });
 

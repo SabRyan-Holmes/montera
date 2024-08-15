@@ -5,14 +5,13 @@ import {
     TextInput,
     PrimaryButton,
     InputLabel,
-    Checkbox,
+    Checkbox, InputError
 } from "@/Components";
 import GuestLayout from "@/Layouts/GuestLayout";
-import InputError from "@/Components/InputError";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: "",
+        login: "",
         password: "",
         remember: false,
     });
@@ -28,6 +27,8 @@ export default function Login({ status, canResetPassword }) {
 
         post(route("login"));
     };
+
+    console.log(errors);
 
     return (
         <GuestLayout>
@@ -64,21 +65,21 @@ export default function Login({ status, canResetPassword }) {
             <section className="mx-2 mt-6 ">
                 <form onSubmit={submit}>
                     <div>
-                        <InputLabel htmlFor="email" value="Email/NIP" />
+                        <InputLabel htmlFor="login/nip" value="Email/NIP" />
 
                         <TextInput
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
+                            id="login"
+                            type="text"
+                            name="login"
+                            value={data.login}
                             className="block w-full mt-1 h-11"
-                            autoComplete={data.email}
+                            autoComplete={data.login}
                             placeholder="Masukkan Email/NIP"
                             isFocused={true}
-                            onChange={(e) => setData("email", e.target.value)}
+                            onChange={(e) => setData("login", e.target.value)}
                         />
 
-                        <InputError message={errors.email} className="mt-2" />
+                        <InputError message={errors.login} className="mt-2" />
                     </div>
 
                     <div className="mt-4">

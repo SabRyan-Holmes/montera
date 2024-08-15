@@ -52,9 +52,10 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
 
         // Logika set akDasar['jumlah']
         const newDataAkDasar = data.ak_dasar;
-        newDataAkDasar["jumlah"] =(
+        newDataAkDasar["jumlah"] = (
             parseFloat(data.ak_dasar["lama"]) +
-            parseFloat(data.ak_dasar["baru"])).toFixed(3);
+            parseFloat(data.ak_dasar["baru"])
+        ).toFixed(3);
 
         setData({
             ...data,
@@ -63,8 +64,9 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
 
         // Logika set akJf['jumlah']
         const newDataAkJf = data.ak_jf;
-        newDataAkJf["jumlah"] =
-            (parseFloat(data.ak_jf["lama"]) + parseFloat(data.ak_jf["baru"])).toFixed(3);
+        newDataAkJf["jumlah"] = (
+            parseFloat(data.ak_jf["lama"]) + parseFloat(data.ak_jf["baru"])
+        ).toFixed(3);
 
         setData({
             ...data,
@@ -73,9 +75,10 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
 
         // Logika set akPenyesuaian['jumlah']
         const newDataAkPenyesuaian = data.ak_penyesuaian;
-        newDataAkPenyesuaian["jumlah"] =
-            (parseFloat(data.ak_penyesuaian["lama"]) +
-            parseFloat(data.ak_penyesuaian["baru"])).toFixed(3);
+        newDataAkPenyesuaian["jumlah"] = (
+            parseFloat(data.ak_penyesuaian["lama"]) +
+            parseFloat(data.ak_penyesuaian["baru"])
+        ).toFixed(3);
 
         setData({
             ...data,
@@ -84,9 +87,10 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
 
         // Logika set akKonversi['jumlah']
         const newDataAkKonversi = data.ak_konversi;
-        newDataAkKonversi["jumlah"] =
-            (parseFloat(data.ak_konversi["lama"]) +
-            parseFloat(data.ak_konversi["baru"])).toFixed(3);
+        newDataAkKonversi["jumlah"] = (
+            parseFloat(data.ak_konversi["lama"]) +
+            parseFloat(data.ak_konversi["baru"])
+        ).toFixed(3);
 
         setData({
             ...data,
@@ -177,8 +181,8 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
         // Ensure that if value is empty or null, it is converted to 0
         let numericValue = parseFloat(value) || 0;
         // Jadikan kembali menjadi string biasa jika field keterangan/tipe ak
-        if(field== "keterangan" || field == "tipe_ak" ) {
-            numericValue = value
+        if (field == "keterangan" || field == "tipe_ak") {
+            numericValue = value;
         }
 
         if (key.startsWith("ak_tambahan_")) {
@@ -207,7 +211,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
         } else {
             updatedKeyData = { ...data[key], [field]: numericValue };
 
-                // updatedKeyData = { ...data[key], [field]: value };
+            // updatedKeyData = { ...data[key], [field]: value };
 
             if (field === "lama" || field === "baru") {
                 updatedKeyData.jumlah =
@@ -225,8 +229,9 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
     useEffect(() => {
         data.ak_konversi["lama"] = data.ak_terakhir;
         data.ak_konversi["baru"] = data.angka_kredit;
-        data.ak_konversi["jumlah"] =
-            (parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)).toFixed(3);
+        data.ak_konversi["jumlah"] = (
+            parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)
+        ).toFixed(3);
     });
 
     return (
@@ -251,10 +256,10 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                                 setData("no_surat3", e.target.value)
                             }
                             list="no_surat3"
-                            />
-                            <datalist id="no_surat3">
-                                <option value="1500.455/PAK/2024" />
-                            </datalist>
+                        />
+                        <datalist id="no_surat3">
+                            <option value="1500.455/PAK/2024" />
+                        </datalist>
                     </td>
                 </tr>
                 <tr className="text-base text-center uppercase">
@@ -495,12 +500,11 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             </span>
                         ) : (
                             <span className="text-error">
-                                <s className="text-accent">Kelebihan</s>{" "}
-                                /Kekurangan'
+                                <s className="text-accent">Kelebihan</s>
+                                /Kekurangan{" "}
                             </span>
                         )}
 
-                        <span>*{")"}</span>
                         <span>
                             Angka Kredit yang harus dipenuhi untuk kenaikan
                             Pangkat
@@ -531,12 +535,11 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             </span>
                         ) : (
                             <span className="text-error">
-                                <s className="text-accent">Kelebihan</s>{" "}
-                                /Kekurangan'
+                                <s className="text-accent">Kelebihan</s>
+                                /Kekurangan{" "}
                             </span>
                         )}
 
-                        <span>*{")"}</span>
                         <span>
                             Angka Kredit yang harus dipenuhi untuk kenaikan
                             Jabatan
@@ -545,9 +548,41 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 </tr>
                 {/* row 9 */}
                 <tr className="space-x-0 text-base font-semibold text-left capitalize border-separate text-slate-600">
-                    <td className="ml-5" colSpan={6}>
-                        Belum Dapat dipertimbangkan untuk kenaikan pangkat
-                        setingkat lebih tinggi
+                    <td className="ml-5 text-center" colSpan={6}>
+                        <select
+                            name="kesimpulan"
+                            id="kesimpulan"
+                            className="w-3/4 text-center rounded-md border-gradient"
+                            defaultValue={data.kesimpulan}
+                            onChange={(e) => {
+                                setData("kesimpulan", e.target.value);
+                            }}
+                        >
+                            <option>
+                                Belum Dapat untuk Kenaikan Pangkat Setingkat
+                                Lebih Tinggi
+                            </option>
+                            <option>
+                                Belum Dapat untuk Kenaikan Jabatan Setingkat
+                                Lebih Tinggi
+                            </option>
+                            <option>
+                                Belum Dapat untuk Kenaikan Pangkat dan Jabatan
+                                Setingkat Lebih Tinggi
+                            </option>
+                            <option>
+                                Sudah Dapat untuk Kenaikan Pangkat Setingkat
+                                Lebih Tinggi
+                            </option>
+                            <option>
+                                Sudah Dapat untuk Kenaikan Jabatan Setingkat
+                                Lebih Tinggi
+                            </option>
+                            <option>
+                                Sudah Dapat untuk Kenaikan Pangkat dan Jabatan
+                                Setingkat Lebih Tinggi
+                            </option>
+                        </select>
                     </td>
                 </tr>
             </tbody>

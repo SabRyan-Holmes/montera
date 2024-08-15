@@ -176,5 +176,5 @@ table.table-bordered > tbody > tr > th {
     border-radius: 50%;
     font-weight: 700;
 
-    @apply bg-slate-700;
+    @apply bg-gradient-to-br from-sky-800 to-slate-950;
 }

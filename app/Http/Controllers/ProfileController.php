@@ -21,6 +21,7 @@ class ProfileController extends Controller
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
+            'title' => 'Profile',
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);
@@ -63,13 +64,5 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function dashboard() {
 
-        // $accepted = Process::where('status', 'selesai')->count();
-        return Inertia::render('Dashboard', [
-            'title' => 'Dashboard',
-            'userCount' => User::all()->count(),
-            'pegawaiCount' => Pegawai::all()->count()
-        ]);
-    }
 }

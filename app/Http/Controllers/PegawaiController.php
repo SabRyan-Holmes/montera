@@ -99,6 +99,7 @@ class PegawaiController extends Controller
         //
     }
 
+
     public function cetak(Pegawai $pegawai)
     {
         return Inertia::render('CetakDokumen/Index', [

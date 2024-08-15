@@ -242,7 +242,9 @@
                     <td style="text-align: left">AK Yang diperoleh dari peningkatan pendidikan</td>
                     <td style="text-align: center">{{ $data['ak_peningkatan']['lama'] }}</td>
                     <td style="text-align: center">{{ $data['ak_peningkatan']['baru'] }}</td>
-                    <td style="text-align: center">{{ $data['ak_peningkatan']['jumlah'] }}</td>
+                    <td style="text-align: center">
+                        {{ floatval($data['ak_peningkatan']['jumlah']) != 0 ? $data['ak_peningkatan']['jumlah'] : '' }}
+                    </td>
                     <td style="text-align: center">{{ $data['ak_peningkatan']['keterangan'] ?: '_' }}</td>
                 </tr>
                 <!-- Baris 6 dan seterusnya -->
@@ -302,11 +304,7 @@
                     </th>
                 </tr>
                 <tr>
-                    @if ($data['jabatan_keker'] >= 0 && $data['pangkat_keker'] >= 0)
-                        <th colspan="7">Sudah Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi</th>
-                    @else
-                        <th colspan="7">Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi</th>
-                    @endif
+                    <th colspan="7">{{ $data['kesimpulan'] }}</th>
                 </tr>
             </tfoot>
         </table>
@@ -333,28 +331,29 @@
         </div>
 
         @if (count(array_filter($data['tebusan3'])) > 0)
-        <div style="margin-top:2rem; width:32rem; font-size: 0.9rem">
-            <strong style="font-weight: 400">ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang
-                bersangkutan</strong>
-            <strong style="font-weight: 400; margin-top: 1.5rem; display: block">Tembusan Disampaikan kepada :</strong>
-            @php
-                $tebusan_list = [
-                    'kepala_reg' => 'Kepala Kantor Regional VII BKN',
-                    'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
-                    'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
-                    'pns' => 'PNS Bersangkutan',
-                    'kepala_biro' => 'Kepala Biro SDM BPS',
-                    'arsip' => 'Arsip',
-                ];
-                $i = 1;
-            @endphp
-            @foreach ($data['tebusan3'] as $key => $value)
-                @if ($value)
-                    <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
-                    @php $i++; @endphp
-                @endif
-            @endforeach
-        </div>
+            <div style="margin-top:2rem; width:32rem; font-size: 0.9rem">
+                <strong style="font-weight: 400">ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang
+                    bersangkutan</strong>
+                <strong style="font-weight: 400; margin-top: 1.5rem; display: block">Tembusan Disampaikan kepada
+                    :</strong>
+                @php
+                    $tebusan_list = [
+                        'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                        'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                        'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                        'pns' => 'PNS Bersangkutan',
+                        'kepala_biro' => 'Kepala Biro SDM BPS',
+                        'arsip' => 'Arsip',
+                    ];
+                    $i = 1;
+                @endphp
+                @foreach ($data['tebusan3'] as $key => $value)
+                    @if ($value)
+                        <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
+                        @php $i++; @endphp
+                    @endif
+                @endforeach
+            </div>
         @endif
     </div>
 </section>

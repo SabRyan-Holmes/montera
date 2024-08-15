@@ -13,11 +13,13 @@
 
         <!-- Scripts -->
         {{-- Sweet Alert --}}
-        {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <script src="sweetalert2.all.min.js"></script>
         <script src="sweetalert2.min.js"></script>
-        <link rel="stylesheet" href="sweetalert2.min.css"> --}}
+
+        {{-- FlowBite --}}
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <link rel="stylesheet" href="sweetalert2.min.css">
         <link rel="shortcut icon" href="{{ asset('logo.png') }}">
 
         @routes
@@ -27,5 +29,6 @@
     </head>
     <body class="antialiased " >
         @inertia
+        <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
     </body>
 </html>
