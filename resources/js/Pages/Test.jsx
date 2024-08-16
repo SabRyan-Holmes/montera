@@ -486,3 +486,10 @@ export default function Dashboard({ auth }) {
         </AuthenticatedLayout>
     );
 }
+
+// // Validasi
+// Buat instance dari CetakPAKRequest
+// $request = new CetakPAKRequest();
+// // Isi request dengan data dari $dataTest
+// $request->merge($dataTest);
+// $request->validated();

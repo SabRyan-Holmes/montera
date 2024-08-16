@@ -30,9 +30,8 @@ export default function KonversiTable({
         data.ak_normatif = akNormatifValue;
     }, []);
 
-    function hitungAk(akTerakhir, periode, akNormatif, presentase) {
+    function hitungAk( periode, akNormatif, presentase) {
         const ak_kredit =
-            parseFloat(akTerakhir) +
             parseFloat(periode / 12) *
             parseFloat(akNormatif) *
             parseFloat(presentase / 100);
@@ -51,14 +50,13 @@ export default function KonversiTable({
     useEffect(() => {
         const akNormatif = (data.ak_normatif ? data.ak_normatif : data.ak_normatif_ops)
         const akKreditValue = hitungAk(
-            data.ak_terakhir,
             data.angka_periode,
             akNormatif,
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
         data.angka_kredit = akKreditValue;
-    }, [data.ak_terakhir, data.angka_periode, data.predikat, data.presentase]);
+    }, [data.angka_periode, data.predikat, data.presentase]);
 
     useEffect(() => {
         setData("predikat", predikat[data.presentase]);
@@ -70,7 +68,7 @@ export default function KonversiTable({
         <table className="table text-base">
             {/* head */}
             <thead>
-                <tr className="text-lg text-center text-white bg-orange-500">
+                <tr className="text-lg text-center text-white bg-secondary">
                     <th colSpan={4}>KONVERSI PREDIKAT KINERJA ANGKA KREDIT</th>
                 </tr>
             </thead>

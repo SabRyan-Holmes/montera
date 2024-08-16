@@ -205,10 +205,10 @@
                     <th colspan="2">
                         {{ $data['tahun_terakhir'] }}
                     </th>
-                    <th> {{ '_' }}</th>
-                    <th>{{ '_' }}</th>
-                    <th>{{ '_' }}</th>
-                    <th>{{ '_' }}</th>
+                    <th> {{ '-' }}</th>
+                    <th>{{ '-' }}</th>
+                    <th>{{ '-' }}</th>
+                    <th>{{ '-' }}</th>
                     <th>{{ $data['ak_terakhir'] }}</th>
                 </tr>
 

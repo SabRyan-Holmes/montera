@@ -85,7 +85,7 @@
                     </td>
                     <td colspan="3" style="
                                 ">
-                        : {{ $data['pegawai']['Nomor Seri Karpeg'] ?: '  _  ' }}
+                        : {{ $data['pegawai']['Nomor Seri Karpeg'] ?: '-' }}
                     </td>
                 </tr>
                 {{-- {/* Tempat/Tgl Lahir */} --}}
@@ -207,7 +207,7 @@
                     <td style="text-align: center">{{ $data['ak_dasar']['lama'] }}</td>
                     <td style="text-align: center">{{ $data['ak_dasar']['baru'] }}</td>
                     <td style="text-align: center">{{ $data['ak_dasar']['jumlah'] }}</td>
-                    <td style="text-align: center">{{ $data['ak_dasar']['keterangan'] ?: '_' }}</td>
+                    <td style="text-align: center">{{ $data['ak_dasar']['keterangan'] }}</td>
                 </tr>
                 <tr>
                     <th></th>
@@ -216,7 +216,7 @@
                     <td style="text-align: center">{{ $data['ak_jf']['lama'] }}</td>
                     <td style="text-align: center">{{ $data['ak_jf']['baru'] }}</td>
                     <td style="text-align: center">{{ $data['ak_jf']['jumlah'] }}</td>
-                    <td style="text-align: center">{{ $data['ak_jf']['keterangan'] ?: '_' }}</td>
+                    <td style="text-align: center">{{ $data['ak_jf']['keterangan'] }}</td>
                 </tr>
                 <tr>
                     <th></th>
@@ -225,7 +225,7 @@
                     <td style="text-align: center">{{ $data['ak_penyesuaian']['lama'] }}</td>
                     <td style="text-align: center">{{ $data['ak_penyesuaian']['baru'] }}</td>
                     <td style="text-align: center">{{ $data['ak_penyesuaian']['jumlah'] }}</td>
-                    <td style="text-align: center">{{ $data['ak_penyesuaian']['keterangan'] ?: '_' }}</td>
+                    <td style="text-align: center">{{ $data['ak_penyesuaian']['keterangan'] }}</td>
                 </tr>
                 <tr>
                     <th></th>
@@ -234,7 +234,7 @@
                     <td style="text-align: center">{{ $data['ak_konversi']['lama'] }}</td>
                     <td style="text-align: center">{{ $data['ak_konversi']['baru'] }}</td>
                     <td style="text-align: center">{{ $data['ak_konversi']['jumlah'] }}</td>
-                    <td style="text-align: center">{{ $data['ak_konversi']['keterangan'] ?: '_' }}</td>
+                    <td style="text-align: center">{{ $data['ak_konversi']['keterangan'] }}</td>
                 </tr>
                 <tr>
                     <th></th>
@@ -242,10 +242,8 @@
                     <td style="text-align: left">AK Yang diperoleh dari peningkatan pendidikan</td>
                     <td style="text-align: center">{{ $data['ak_peningkatan']['lama'] }}</td>
                     <td style="text-align: center">{{ $data['ak_peningkatan']['baru'] }}</td>
-                    <td style="text-align: center">
-                        {{ floatval($data['ak_peningkatan']['jumlah']) != 0 ? $data['ak_peningkatan']['jumlah'] : '' }}
-                    </td>
-                    <td style="text-align: center">{{ $data['ak_peningkatan']['keterangan'] ?: '_' }}</td>
+                    <td style="text-align: center">{{ $data['ak_peningkatan']['jumlah'] }}</td>
+                    <td style="text-align: center">{{ $data['ak_peningkatan']['keterangan'] }}</td>
                 </tr>
                 <!-- Baris 6 dan seterusnya -->
                 @php $index = 6; @endphp
@@ -257,7 +255,7 @@
                         <td style="text-align: center">{{ $value['lama'] }}</td>
                         <td style="text-align: center">{{ $value['baru'] }}</td>
                         <td style="text-align: center">{{ $value['jumlah'] }}</td>
-                        <td style="text-align: center">{{ $value['keterangan'] ?: '_' }}</td>
+                        <td style="text-align: center">{{ $value['keterangan'] }}</td>
                     </tr>
                     @php $index++; @endphp
                 @endforeach
@@ -284,10 +282,16 @@
                 </tr>
                 <tr>
                     <th colspan="3" style="text-align: left; font-size: 12px;">
+                        @if ($data['pangkat_keker'] >= 0)
                         <span>
-                            {!! $data['pangkat_keker'] >= 0 ? 'Kelebihan/ <del>Kekurangan</del>' : '<del>Kelebihan</del> /Kekurangan' !!}
+                            Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
                         </span>
-                        <span>Angka Kredit yang harus dipenuhi untuk kenaikan pangkat'</span>
+                        @else
+                        <span>
+                            <del>Kelebihan</del>/Kekurangan<span>{{ '*)' }}</span>
+                        </span>
+                        @endif
+                        <span>Angka Kredit yang harus dipenuhi untuk kenaikan pangkat</span>
                     </th>
                     <th colspan="2" rowspan="2" style="text-align: center; vertical-align: middle; ">
                         {{ abs($data['pangkat_keker']) }}</th>
@@ -296,10 +300,17 @@
                 </tr>
                 <tr>
                     <th colspan="3" style="text-align: left; font-size: 12px;">
+                        @if ($data['jabatan_keker'] >= 0)
                         <span>
-                            {!! $data['jabatan_keker'] >= 0 ? 'Kelebihan/ <del>Kekurangan</del>' : '<del>Kelebihan</del> /Kekurangan' !!}
+                            Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
                         </span>
-                        <span>Angka Kredit yang harus dipenuhi untuk kenaikan jabatan'</span>
+                        @else
+                        <span>
+                            <del>Kelebihan</del>/Kekurangan<span>{{ '*)' }}</span>
+                        </span>
+                        @endif
+
+                        <span>Angka Kredit yang harus dipenuhi untuk kenaikan jabatan</span>
 
                     </th>
                 </tr>

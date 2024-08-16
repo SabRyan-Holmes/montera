@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { Head, useForm, usePage } from "@inertiajs/react";
-import { PrimaryButton, SecondaryButton, SuccessButton } from "@/Components";
+import { router, useForm, usePage } from "@inertiajs/react";
+import {  SecondaryButton, SuccessButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -12,7 +12,6 @@ import { FaPrint } from "react-icons/fa6";
 import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 export default function Index({ auth, pegawai, title }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -22,6 +21,7 @@ export default function Index({ auth, pegawai, title }) {
         nip: "197412311996121001",
         periode_mulai: 1, //Default: Januari
         periode_berakhir: 2, //Default Februari
+
         angka_periode: 0,
         tgl_ditetapkan: "",
         penanda_tangan: "",
@@ -121,7 +121,7 @@ export default function Index({ auth, pegawai, title }) {
             arsip: false,
         },
 
-        kesimpulan: "Belum Dapat untuk Kenaikan Pangkat Setingkat",
+        kesimpulan: "Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi",
     });
 
     const predikat = {
@@ -160,24 +160,21 @@ export default function Index({ auth, pegawai, title }) {
     const props = usePage().props;
     const [isLoading, setIsLoading] = useState(false);
 
-    const submit = async (e) => {
+    const submit = (e) => {
         e.preventDefault();
         setIsLoading(true);
 
-        try {
-            const response = await axios.post("/cetak_dokumen/cetak", {
-                _token: props.csrf_token,
-                data: data,
-            });
-
-            // Buka PDF di tab baru dengan URL yang diberikan dalam respons
-            window.open(response.data.url, "_blank");
-        } catch (error) {
-            console.error("Error:", error);
-            // Tangani error, mungkin tampilkan pesan error ke pengguna
-        } finally {
-            setIsLoading(false); // Hentikan loading, baik saat sukses maupun error
-        }
+        router.post('/cetak_dokumen/cetak', { data: data }, {
+            onFinish: () => setIsLoading(false),
+            onError: (errors) => {
+                console.error("Error:", errors);
+            },
+            onSuccess: (page) => {
+                // Misalnya, URL PDF dikirim di props dari server
+                const url = page.props.url;
+                window.open(url, '_blank');
+            }
+        });
     };
 
     // Jabatan untuk sesuai Koefisien Pertahun
@@ -354,9 +351,10 @@ export default function Index({ auth, pegawai, title }) {
 
                     <div className="flex justify-center w-full pb-12 mt-10 ">
                         <SuccessButton type="submit"
-                        className="scale-125">
-                            {/* <a href="/cetak_dokumen/cetak">Cetak Dokumen PAK</a> */}
+                        className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 ">
                             Cetak Dokumen PAK
+                            <FaPrint className="mx-1" />
+
                         </SuccessButton>
                     </div>
                 </form>

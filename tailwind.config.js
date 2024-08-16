@@ -35,7 +35,7 @@ export default {
                 explora: ["Explora"],
             },
             backgroundImage: {
-                bps: "url('/resources/assets/image/background-bps.png')",
+                bps: "url('/resources/assets/image/background-bps.jpg')",
             },
 
             screens: {

@@ -14,11 +14,11 @@ export default function Edit({ auth, mustVerifyEmail, status, title }) {
 
             <div className="py-12">
                 <div className="mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
-                    <div className="p-4 overflow-hidden bg-white border shadow-md border-gradient sm:p-8 dark:bg-gray-800 sm:rounded-lg">
+                    <div className="p-4 overflow-hidden border shadow-md border-gradient sm:p-8 dark:bg-gray-800 sm:rounded-lg">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
-                            className="max-w-xl "
+                            className="w-full max-w-full "
                         />
                     </div>
 

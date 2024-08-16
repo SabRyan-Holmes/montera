@@ -42,7 +42,7 @@ export default function AkumulasiTable({
     return (
         <table className="table text-base">
             <thead>
-                <tr className="text-lg text-center text-white uppercase bg-orange-500">
+                <tr className="text-lg text-center text-white uppercase bg-secondary">
                     <th colSpan={6}>Akumulasi Angka Kredit</th>
                 </tr>
             </thead>
@@ -108,7 +108,7 @@ export default function AkumulasiTable({
                             maxLength={4}
                             required
                             onKeyPress={handleKeyPress}
-                            className="w-16"
+                            className="w-20 text-center"
                             onChange={(e) =>
                                 setData("tahun_terakhir", e.target.value)
                             }
@@ -146,7 +146,7 @@ export default function AkumulasiTable({
                             placeholder="tahun"
                             maxlength={4}
                             onKeyPress={handleKeyPress}
-                            className="w-16"
+                            className="w-20 text-center"
                             onChange={(e) =>
                                 setData("tahun_ini", e.target.value)
                             }

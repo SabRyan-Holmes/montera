@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "@/Components/Navbar";
-import { Link, Head } from "@inertiajs/react";
-import Sidebar from "@/Components/Sidebar";
 import { IconContext } from "react-icons";
 import { FaUserTie } from "react-icons/fa";
-import { MdEvent } from "react-icons/md";
-import { MdEventAvailable } from "react-icons/md";
 import { HiDocumentDuplicate } from "react-icons/hi2";
-import { MdEventRepeat } from "react-icons/md";
-import { MdEventBusy } from "react-icons/md";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 // Bagaimana caranya
+
 import { Checkbox, InputLabel } from "@/Components";
 import { initFlowbite } from "flowbite";
 export default function AdminPage({

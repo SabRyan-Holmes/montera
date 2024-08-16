@@ -35,7 +35,7 @@ input[type="number"] {
 }
 
 .gradient-base {
-    @apply opacity-100 bg-gradient-to-b from-orange-50 to-secondary;
+    @apply opacity-100 bg-gradient-to-b from-primary/70 via-hijau/70 to-secondary/70;
 }
 
 .gradient-white-base {
@@ -123,6 +123,11 @@ table.table-bordered {
     @apply border-slate-600;
 }
 
+.no-arrow {
+    -webkit-appearance: none; /* Untuk Chrome, Safari, Opera */
+    -moz-appearance: none; /* Untuk Firefox */
+    appearance: none; /* Untuk IE, Edge */
+}
 
 
 table.table-bordered > thead > tr > th {
@@ -169,10 +174,7 @@ table.table-bordered > tbody > tr > th {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
-    height: 30px;
     color: #ffffff;
-    font-size: 15px;
     border-radius: 50%;
     font-weight: 700;
 

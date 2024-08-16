@@ -238,7 +238,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
         <table className="table text-base">
             {/* head */}
             <thead>
-                <tr className="text-lg text-center text-white bg-orange-500">
+                <tr className="text-lg text-center text-white bg-secondary">
                     <th colSpan={6}>PENETAPAN ANGKA KREDIT</th>
                 </tr>
             </thead>
@@ -559,27 +559,27 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             }}
                         >
                             <option>
-                                Belum Dapat untuk Kenaikan Pangkat Setingkat
+                                Belum Dapat Dipertimbangkan untuk Kenaikan Pangkat Setingkat
                                 Lebih Tinggi
                             </option>
                             <option>
-                                Belum Dapat untuk Kenaikan Jabatan Setingkat
+                                Belum Dapat Dipertimbangkan untuk Kenaikan Jabatan Setingkat
                                 Lebih Tinggi
                             </option>
                             <option>
-                                Belum Dapat untuk Kenaikan Pangkat dan Jabatan
+                                Belum Dapat Dipertimbangkan untuk Kenaikan Pangkat dan Jabatan
                                 Setingkat Lebih Tinggi
                             </option>
                             <option>
-                                Sudah Dapat untuk Kenaikan Pangkat Setingkat
+                                Sudah Dapat Dipertimbangkan untuk Kenaikan Pangkat Setingkat
                                 Lebih Tinggi
                             </option>
                             <option>
-                                Sudah Dapat untuk Kenaikan Jabatan Setingkat
+                                Sudah Dapat Dipertimbangkan untuk Kenaikan Jabatan Setingkat
                                 Lebih Tinggi
                             </option>
                             <option>
-                                Sudah Dapat untuk Kenaikan Pangkat dan Jabatan
+                                Sudah Dapat Dipertimbangkan untuk Kenaikan Pangkat dan Jabatan
                                 Setingkat Lebih Tinggi
                             </option>
                         </select>

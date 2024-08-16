@@ -19,9 +19,10 @@ import SecondaryButton from './SecondaryButton'
 import Sidebar from './Sidebar'
 import SuccessButton from './SuccessButton'
 import TextInput from './TextInput'
+import TextInputSecondary from './TextInputSecondary'
 
 
 
 export {ApplicationLogo,Checkbox, CollapsedLink, DangerButton, Dropdown,
       InputError, InputLabel, Modal, Navbar, NavLink, NavLinkCollapse, NavLinkDashboard, Paginations,
-     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage, SuccessButton}
+     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage, SuccessButton, TextInputSecondary}

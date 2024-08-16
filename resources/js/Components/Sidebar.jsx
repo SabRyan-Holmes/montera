@@ -20,10 +20,12 @@ const Sidebar = ({ active }) => {
                 {/* Sidebar content */}
                 <div className="relative z-20 flex-col items-center justify-center mt-10">
                     {/* App Name */}
-                    <strong className="flex justify-center text-2xl italic uppercase text-gradient gradient-bps">
+                    <strong className="flex justify-center text-2xl italic uppercase text-gradient gradient-base">
                         SiPacak
                     </strong>
-
+                    {/* <strong className="block -mt-1 text-lg font-semibold text-center text-slate-600 ">
+                        Sistem Pencetakan Angka Kredit
+                    </strong> */}
                     {/* App Logo */}
                     <img
                         src={logo}
@@ -36,44 +38,43 @@ const Sidebar = ({ active }) => {
                 </div>
 
                 <section>
+                    {/* Link Dashboard */}
+                    <NavLinkDashboard
+                        href={route("dashboard")}
+                        active={route().current("dashboard")}
+                        className="relative z-20"
+                    >
+                        <MdSpaceDashboard />
+                        Dashboard
+                    </NavLinkDashboard>
 
-                {/* Link Dashboard */}
-                <NavLinkDashboard
-                    href={route("dashboard")}
-                    active={route().current("dashboard")}
-                    className="relative z-20"
-                >
-                    <MdSpaceDashboard />
-                    Dashboard
-                </NavLinkDashboard>
+                    {/* Link Cetak Dokumen */}
+                    <NavLinkDashboard
+                        href={route("cetak_dokumen.index")}
+                        active={
+                            route().current("cetak_dokumen.index") ||
+                            active === "cetak_dokumen.create"
+                        }
+                        className="relative z-20"
+                    >
+                        <FaPrint />
+                        Cetak Dokumen
+                    </NavLinkDashboard>
 
-                {/* Link Cetak Dokumen */}
-                <NavLinkDashboard
-                    href={route("cetak_dokumen.index")}
-                    active={
-                        route().current("cetak_dokumen.index") ||
-                        active === "cetak_dokumen.create"
-                    }
-                    className="relative z-20"
-                >
-                    <FaPrint />
-                    Cetak Dokumen
-                </NavLinkDashboard>
-
-                {/* Link Kelola Data */}
-                <NavLinkDashboard
-                    href={route("pegawai.index")}
-                    active={
-                        route().current("pegawai.index") ||
-                        active === "pegawai.create" ||
-                        active === "pegawai.edit" ||
-                        active === "pegawai.show"
-                    }
-                    className="relative z-20"
-                >
-                    <FaDatabase />
-                    Kelola Data
-                </NavLinkDashboard>
+                    {/* Link Kelola Data */}
+                    <NavLinkDashboard
+                        href={route("pegawai.index")}
+                        active={
+                            route().current("pegawai.index") ||
+                            active === "pegawai.create" ||
+                            active === "pegawai.edit" ||
+                            active === "pegawai.show"
+                        }
+                        className="relative z-20"
+                    >
+                        <FaDatabase />
+                        Kelola Data
+                    </NavLinkDashboard>
                 </section>
             </ul>
 

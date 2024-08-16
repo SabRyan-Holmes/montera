@@ -57,7 +57,7 @@
                 <tr>
                     <th style="border: 1px solid #000;  width: 3.8rem /* 64px */;">
                         1</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Nama
                     </td>
                     <td colspan="2"
@@ -73,7 +73,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         2</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         NIP
                     </td>
                     <td colspan="2"
@@ -86,7 +86,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         3</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Nomor Seri Karpeg
                     </td>
                     <td colspan="2"
@@ -99,7 +99,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         4</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Tempat/Tgl Lahir
                     </td>
                     <td colspan="2"
@@ -112,7 +112,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         5</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Jenis Kelamin
                     </td>
                     <td colspan="2"
@@ -126,7 +126,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         6</th>
-                    <td colspan="2" class="border-pak1 " style="padding: 0.4rem; text-wrap: nowrap;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Pangkat/Golongan Ruang/TMT
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
@@ -138,7 +138,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         7</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */; text-wrap: nowrap;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Jabatan/TMT
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
@@ -150,7 +150,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         8</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Unit Kerja
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
@@ -162,7 +162,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         9</th>
-                    <td colspan="2" class="border-pak1" style="padding: 0.4rem /* 8px */;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                         Intansi
                     </td>
                     <td colspan="2"
@@ -231,7 +231,8 @@
                         {{ $data['predikat'] }}
                     </th>
                     <th style="border: 1px solid #000; font-weight: 400;">
-                        {{ $data['periode_berakhir'] - $data['periode_mulai'] }}
+                        {{-- {{ ($data['periode_berakhir'] - $data['periode_mulai']) + 1 }} --}}
+                        {{ $data['angka_periode'] }}
                         /12
                     </th>
                     <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">

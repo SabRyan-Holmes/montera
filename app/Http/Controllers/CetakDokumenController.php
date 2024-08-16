@@ -68,9 +68,8 @@ class CetakDokumenController extends Controller
 
     public function view_pak()
     {
-        dd(Session::get('data'));
         // Ambil data dari session
-        $data = Session::get('data');
+        $data = Session::get('data')['data'];
 
         $dataTest = [
             "pegawai" => [
@@ -189,19 +188,17 @@ class CetakDokumenController extends Controller
             ],
         ];
 
+        // dd($data);
+
+        // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
         $this->cleanAllData($data);
 
-        // Validasi
-        // Buat instance dari CetakPAKRequest
-        // $request = new CetakPAKRequest();
-        // // Isi request dengan data dari $dataTest
-        // $request->merge($dataTest);
-        // $request->validated();
+
+        // dd($data);
 
         // Buat PDF
         // SIZE F4
-        // dd($data);
-        $nama_pak = 'Dokumen PAK -' . $data['pegawai']['NIP/NRP'] . '.pdf';
+        $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP/NRP'] . '-' . 'PAK';
         $customF4Paper = array(0, 0, 595.28, 935.43);
         $pdf = Pdf::loadView('pdf.pak', [
             "title" => "Dokumen PAK",

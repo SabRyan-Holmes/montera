@@ -79,7 +79,7 @@ const Navbar = ({ user, title }) => {
                                             className="w-6 h-6 rounded-full avatar"
                                         />
                                     ) : (
-                                        <ProfileImage name={fullName} />
+                                        <ProfileImage name={fullName} className="w-8 h-8 text-sm" />
                                     )}
                                     <IoIosArrowDown className="w-5 h-5 fill-slate-500 group-hover/item:fill-primary" />
                                 </div>

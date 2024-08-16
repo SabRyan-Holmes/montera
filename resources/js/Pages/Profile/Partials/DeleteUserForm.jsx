@@ -4,7 +4,7 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
+import TextInputSecondary from "@/Components/TextInputSecondary";
 import { useForm } from "@inertiajs/react";
 
 export default function DeleteUserForm({ className = "" }) {
@@ -47,7 +47,7 @@ export default function DeleteUserForm({ className = "" }) {
         <section className={`space-y-6 ${className}`}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Delete Account
+                    Hapus Akun
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -59,7 +59,7 @@ export default function DeleteUserForm({ className = "" }) {
             </header>
 
             <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
+                Hapus Akun
             </DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
@@ -82,7 +82,7 @@ export default function DeleteUserForm({ className = "" }) {
                             className="sr-only"
                         />
 
-                        <TextInput
+                        <TextInputSecondary
                             id="password"
                             type="password"
                             name="password"

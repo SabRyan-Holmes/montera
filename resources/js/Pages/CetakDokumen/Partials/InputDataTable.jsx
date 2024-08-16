@@ -1,5 +1,6 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+
 
 export default function InputDataTable({ data, setData }) {
     const handleKeyPress = (e) => {
@@ -25,18 +26,19 @@ export default function InputDataTable({ data, setData }) {
     };
 
     useEffect(() => {
-        setData("angka_periode", data.periode_mulai + data.periode_berakhir);
-        data.angka_periode = data.periode_mulai + data.periode_berakhir;
+        setData("angka_periode", (data.periode_berakhir - data.periode_mulai) + 1 );
+        data.angka_periode = (data.periode_berakhir - data.periode_mulai) + 1;
         parseInt(data.angka_periode);
     }, [data.periode_mulai, data.periode_berakhir]);
 
     const today = new Date().toISOString().split("T")[0];
+    const namaInput = useRef();
 
     return (
         <table className="table text-base">
             {/* head */}
             <thead>
-                <tr className="text-lg text-center text-white uppercase bg-orange-500">
+                <tr className="text-lg text-center text-white uppercase bg-secondary">
                     <th colSpan={4}>Input Data</th>
                 </tr>
             </thead>
@@ -129,8 +131,9 @@ export default function InputDataTable({ data, setData }) {
                             <TextInput
                                 id="nama"
                                 type="text"
+                                ref={namaInput}
                                 name="nama"
-                                className="w-64"
+                                className="w-64 appearance-none no-arrow"
                                 maxLength="50"
                                 defaultValue={data.nama}
                                 list="namaList"
@@ -141,7 +144,7 @@ export default function InputDataTable({ data, setData }) {
                                 }
                             />
 
-                            <datalist id="namaList">
+                            <datalist id="namaList" className="invisible hidden appearance-none no-arrow">
                                 {/* Datalist untuk autocomplete nama */}
                                 <option value="Agus Sudibyo, M.Stat" />
                                 <option value="Budi Santoso, M.Si" />
