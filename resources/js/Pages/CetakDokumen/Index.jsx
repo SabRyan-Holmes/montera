@@ -20,11 +20,15 @@ export default function Index({
     auth,
     pegawais,
     title,
-    search,
     subTitle,
+    searchReq: initialSearch,
     byDaerahReq: initialDaerah,
     byJabatanReq: initialJabatan,
 }) {
+    const [byDaerah, setByDaerah] = useState(initialDaerah || "");
+    const [byJabatan, setByJabatan] = useState(initialJabatan || "");
+    const [search, setSearch] = useState(initialSearch || "");
+
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
         const selectedPage = event.selected + 1;
@@ -36,7 +40,7 @@ export default function Index({
 
         router.get(
             `/cetak_dokumen/pegawai`,
-            { page: selectedPage },
+            { page: selectedPage, byJabatan, byDaerah, search },
             {
                 replace: true,
                 preserveState: true,
@@ -47,87 +51,147 @@ export default function Index({
         );
     };
 
-    const [byDaerah, setByDaerah] = useState(initialDaerah || "");
-    const [byJabatan, setByJabatan] = useState(initialJabatan || "");
-
     useEffect(() => {
-        if (byJabatan || byDaerah) {
+        if (
+            (byJabatan && byJabatan != initialJabatan) ||
+            (byDaerah && byDaerah != initialDaerah)
+        ) {
             router.get(
                 "/cetak_dokumen/pegawai",
-                { byJabatan, byDaerah, search },
+                {
+                    byJabatan: byJabatan,
+                    byDaerah: byDaerah,
+                },
                 { replace: true, preserveState: true }
             );
-        } else if (byJabatan == "" && byDaerah == "") {
+        } else if (
+            (byJabatan &&
+                byJabatan != initialJabatan &&
+                search != initialSearch) ||
+            (byDaerah && byDaerah != initialDaerah && search != initialSearch)
+        ) {
             router.get(
                 "/cetak_dokumen/pegawai",
-                {},
+                {
+                    byJabatan,
+                    byDaerah,
+                    search,
+                },
                 { replace: true, preserveState: true }
             );
         }
     }, [byJabatan, byDaerah]);
 
-    console.log("isi req byDaerah", byDaerah);
+    useEffect(() => {
+        // Kalo semua
+        if (byJabatan == "Semua Kategori" && byDaerah == "Semua Kategori" ) {
+            router.get(
+                "/cetak_dokumen/pegawai",
+                {
+                    search,
+                },
+                { replace: true, preserveState: true }
+            );
+        } else if(byJabatan == "Semua Kategori") {
+            router.get(
+                "/cetak_dokumen/pegawai",
+                {
+                    byDaerah, search
+                },
+                { replace: true, preserveState: true }
+            );
+        } else if(byDaerah == "Semua Kategori") {
+            router.get(
+                "/cetak_dokumen/pegawai",
+                {
+                    byJabatan, search
+                },
+                { replace: true, preserveState: true }
+            );
+        }
+        else if(search && search != initialSearch) {
+            router.get(
+                "/cetak_dokumen/pegawai",
+                {
+                    search
+                },
+                { replace: true, preserveState: true }
+            );
+        }
+    }, [byJabatan, byDaerah]);
+
+
 
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
-            <h1 className="my-10 text-3xl ">
+                <h1 className="my-10 text-3xl ">
                     Data Pejabat Fungsional 2024
                 </h1>
 
                 <form className="max-w-screen-laptop ">
                     <div className="flex items-center justify-between gap-3 my-3">
                         <div className="flex items-center justify-start gap-3">
+                            <div className="flex-none w-72">
+                                <InputLabel
+                                    value="Jabatan"
+                                    Htmlfor="Jabatan"
+                                    className="max-w-sm ml-1 text-lg"
+                                />
+                                <select
+                                    className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
+                                    name="byJabatan"
+                                    value={byJabatan}
+                                    onChange={(e) =>
+                                        setByJabatan(e.target.value)
+                                    }
+                                >
+                                    <option>Semua Kategori</option>
+                                    <option value="Terampil">
+                                        Ahli Terampil
+                                    </option>
+                                    <option value="Mahir">Mahir</option>
+                                    <option value="Pertama">
+                                        Ahli Pertama
+                                    </option>
+                                    <option value="Penyelia">
+                                        Ahli Penyelia
+                                    </option>
+                                    <option value="Muda">Ahli Muda</option>
+                                    <option value="Madya">Ahli Madya</option>
+                                </select>
+                            </div>
+                            <div className="flex-none w-72">
+                                <InputLabel
+                                    value="Daerah"
+                                    Htmlfor="Daerah"
+                                    className="max-w-sm ml-1 text-lg"
+                                />
 
-                        <div className="flex-none w-72">
-                            <InputLabel
-                                value="Jabatan"
-                                Htmlfor="Jabatan"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
-                                name="byJabatan"
-                                defaultValue={byJabatan}
-                                onChange={(e) => setByJabatan(e.target.value)}
-                            >
-                                <option value="">Semua Kategori</option>
-                                <option>Ahli Muda</option>
-                                <option>Ahli Penyelia</option>
-                                <option>Ahli Pertama</option>
-                                <option>Ahli Terampil</option>
-                                <option>Mahir</option>
-                            </select>
-                        </div>
-                        <div className="flex-none w-72">
-                            <InputLabel
-                                value="Daerah"
-                                Htmlfor="Daerah"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
-                                name="byDaerah"
-                                id="byDaerah"
-                                defaultValue={byDaerah}
-                                onChange={(e) => setByDaerah(e.target.value)}
-                            >
-                                <option value="">Semua Kategori</option>
-                                <option>PROVINSI JAMBI</option>
-                                <option>KOTA JAMBI</option>
-                                <option>KERINCI</option>
-                                <option>MUARO JAMBI</option>
-                                <option>BATANG HARI</option>
-                                <option>SAROLANGUN</option>
-                                <option>TANJAB BARAT</option>
-                                <option>TANJAB TIMUR</option>
-                                <option>MERANGIN</option>
-                                <option>SUNGAI PENUH</option>
-                                <option>BUNGO</option>
-                                <option>TEBO</option>
-                            </select>
-                        </div>
+                                <select
+                                    className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
+                                    name="byDaerah"
+                                    id="byDaerah"
+                                    value={byDaerah}
+                                    onChange={(e) =>
+                                        setByDaerah(e.target.value)
+                                    }
+                                >
+                                    <option>Semua Kategori</option>
+                                    <option>PROVINSI JAMBI</option>
+                                    <option>KOTA JAMBI</option>
+                                    <option>KERINCI</option>
+                                    <option>MUARO JAMBI</option>
+                                    <option>BATANG HARI</option>
+                                    <option>SAROLANGUN</option>
+                                    <option>TANJUNG JABUNG BARAT</option>
+                                    <option>TANJUNG JABUNG TIMUR</option>
+                                    <option>MERANGIN</option>
+                                    <option>KOTA SUNGAI PENUH</option>
+                                    <option>BUNGO</option>
+                                    <option>TEBO</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div className="flex-none w-80">
@@ -151,6 +215,7 @@ export default function Index({
                                     type="search"
                                     id="search"
                                     defaultValue={search}
+                                    onSubmit={(e) => setSearch(e.target.value)}
                                     name="search"
                                     className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
                                     placeholder="Cari Nama Pegawai/NIP.."

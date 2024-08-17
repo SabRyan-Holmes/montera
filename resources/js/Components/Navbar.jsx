@@ -28,7 +28,7 @@ const Navbar = ({ user, title }) => {
                 <div className="flex-none">
                     <label
                         htmlFor="my-drawer-2"
-                        className="btn btn-square btn-ghost lg:hidden"
+                        className="btn btn-square btn-ghost desktop:hidden"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

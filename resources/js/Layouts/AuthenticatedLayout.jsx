@@ -16,7 +16,7 @@ export default function Authenticated({ user, title, header, children, current }
         <div className="h-full">
             <Head title={title} />
 
-            <div className="h-full drawer lg:drawer-open">
+            <div className="h-full drawer tablet:drawer-open">
                 <input
                     id="my-drawer-2"
                     type="checkbox"

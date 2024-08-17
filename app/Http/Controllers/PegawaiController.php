@@ -28,7 +28,7 @@ class PegawaiController extends Controller
             "title" => "Kelola Data Pegawai ",
             "subTitle" => $subTitle,
             "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
-            "search" => request('search'),
+            "searchReq" => request('search'),
             "byDaerahReq" => request('byDaerah'),
             "byJabatanReq" => request('byJabatan')
         ]);

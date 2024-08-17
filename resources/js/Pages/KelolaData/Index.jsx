@@ -1,5 +1,5 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     MdOutlineKeyboardDoubleArrowLeft,
     MdOutlineKeyboardDoubleArrowRight,
@@ -13,17 +13,22 @@ import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
 import { InputLabel, PrimaryButton } from "@/Components";
 import { TiArrowRight } from "react-icons/ti";
+import { FaDeleteLeft, FaTrash } from "react-icons/fa6";
 
 export default function Index({
     auth,
     pegawais,
     title,
-    search,
     flash,
     subTitle,
+    searchReq: initialSearch,
     byDaerahReq: initialDaerah,
     byJabatanReq: initialJabatan,
 }) {
+    const [byDaerah, setByDaerah] = useState(initialDaerah || "");
+    const [byJabatan, setByJabatan] = useState(initialJabatan || "");
+    const [search, setSearch] = useState(initialSearch || "");
+
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
         const selectedPage = event.selected + 1;
@@ -35,7 +40,7 @@ export default function Index({
 
         router.get(
             `/pegawai`,
-            { page: selectedPage },
+            { page: selectedPage, byJabatan, byDaerah, search },
             {
                 replace: true,
                 preserveState: true,
@@ -60,73 +65,174 @@ export default function Index({
             };
         }
     }, [flash.message]);
-    const [byDaerah, setByDaerah] = useState(initialDaerah || "");
-    const [byJabatan, setByJabatan] = useState(initialJabatan || "");
 
     useEffect(() => {
-        if (byJabatan || byDaerah) {
+        if (
+            (byJabatan && byJabatan != initialJabatan) ||
+            (byDaerah && byDaerah != initialDaerah)
+        ) {
             router.get(
                 "/pegawai",
-                { byJabatan, byDaerah, search },
+                {
+                    byJabatan: byJabatan,
+                    byDaerah: byDaerah,
+                },
                 { replace: true, preserveState: true }
             );
-        } else if (byJabatan == "" && byDaerah == "") {
-            router.get("/pegawai", {}, { replace: true, preserveState: true });
+        } else if (
+            (byJabatan &&
+                byJabatan != initialJabatan &&
+                search != initialSearch) ||
+            (byDaerah && byDaerah != initialDaerah && search != initialSearch)
+        ) {
+            router.get(
+                "/pegawai",
+                {
+                    byJabatan,
+                    byDaerah,
+                    search,
+                },
+                { replace: true, preserveState: true }
+            );
         }
     }, [byJabatan, byDaerah]);
 
+    useEffect(() => {
+        // Kalo semua
+        if (byJabatan == "Semua Kategori" && byDaerah == "Semua Kategori") {
+            router.get(
+                "/pegawai",
+                {
+                    search,
+                },
+                { replace: true, preserveState: true }
+            );
+        } else if (byJabatan == "Semua Kategori") {
+            router.get(
+                "/pegawai",
+                {
+                    byDaerah,
+                    search,
+                },
+                { replace: true, preserveState: true }
+            );
+        } else if (byDaerah == "Semua Kategori") {
+            router.get(
+                "/pegawai",
+                {
+                    byJabatan,
+                    search,
+                },
+                { replace: true, preserveState: true }
+            );
+        } else if (search && search != initialSearch) {
+            router.get(
+                "/pegawai",
+                {
+                    search,
+                },
+                { replace: true, preserveState: true }
+            );
+        }
+    }, [byJabatan, byDaerah]);
+
+    function handleDelete(id) {
+        Swal.fire({
+            icon: "warning",
+            text: "Anda yakin ingin menghapus data pegawai ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(route("pegawai.destroy", id), {
+                    onSuccess: () => {
+                        console.log(
+                            "data pegawai dengan id ",
+                            id,
+                            "berhasil di delete!"
+                        );
+                        Swal.fire({
+                            title: "Berhasil!",
+                            text: "Data Berhasil Dihapus!",
+                            icon: "success",
+                            iconColor: "#50C878",
+                            confirmButtonText: "Oke",
+                            confirmButtonColor: "#2D95C9",
+                        });
+                    },
+                    onError: () => {
+                        console.log("Gagal Menghapus Data");
+                    },
+                });
+            }
+        });
+    }
+
+    console.log("search");
+    console.log(search);
+
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="phone:h-screen laptop:h-full max-w-screen-laptop mx-auto px-7">
-                <h1 className="my-7 text-3xl">Data Pejabat Fungsional 2024</h1>
+            <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
+                <h1 className="text-3xl my-7">Data Pejabat Fungsional 2024</h1>
 
-                <form className="w-full flex justify-between items-center">
-                    <div className="flex gap-3 my-3 items-center  w-fit justify-start">
+                <form className="flex items-center justify-between w-full">
+                    <div className="flex items-center justify-start gap-3 my-3 w-fit">
                         <div className="w-fit">
                             <InputLabel
                                 value="Jabatan"
                                 Htmlfor="Jabatan"
-                                className="max-w-sm text-lg  ml-1"
+                                className="max-w-sm ml-1 text-lg"
                             />
                             <select
-                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                 name="byJabatan"
-                                defaultValue={byJabatan}
+                                value={byJabatan}
                                 onChange={(e) => setByJabatan(e.target.value)}
                             >
-                                <option value="">Semua Kategori</option>
-                                <option>Ahli Muda</option>
-                                <option>Ahli Penyelia</option>
-                                <option>Ahli Pertama</option>
-                                <option>Ahli Terampil</option>
-                                <option>Mahir</option>
+                                <option>Semua Kategori</option>
+                                <option value="Terampil">Ahli Terampil</option>
+                                <option value="Mahir">Mahir</option>
+                                <option value="Pertama">Ahli Pertama</option>
+                                <option value="Penyelia">Ahli Penyelia</option>
+                                <option value="Muda">Ahli Muda</option>
+                                <option value="Madya">Ahli Madya</option>
                             </select>
                         </div>
                         <div className="w-fit">
                             <InputLabel
                                 value="Daerah"
                                 Htmlfor="Daerah"
-                                className="max-w-sm text-lg  ml-1"
+                                className="max-w-sm ml-1 text-lg"
                             />
 
                             <select
-                                className="select w-full max-w-xs text-sm border border-gradient selection:text-accent  disabled:text-accent"
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                 name="byDaerah"
                                 id="byDaerah"
-                                defaultValue={byDaerah}
+                                value={byDaerah}
                                 onChange={(e) => setByDaerah(e.target.value)}
                             >
-                                <option value="">Semua Kategori</option>
+                                <option>Semua Kategori</option>
                                 <option>PROVINSI JAMBI</option>
                                 <option>KOTA JAMBI</option>
                                 <option>KERINCI</option>
                                 <option>MUARO JAMBI</option>
                                 <option>BATANG HARI</option>
                                 <option>SAROLANGUN</option>
-                                <option>TANJAB BARAT</option>
-                                <option>TANJAB TIMUR</option>
+                                <option>TANJUNG JABUNG BARAT</option>
+                                <option>TANJUNG JABUNG TIMUR</option>
                                 <option>MERANGIN</option>
-                                <option>SUNGAI PENUH</option>
+                                <option>KOTA SUNGAI PENUH</option>
                                 <option>BUNGO</option>
                                 <option>TEBO</option>
                             </select>
@@ -135,7 +241,7 @@ export default function Index({
                             <InputLabel
                                 value="Nama/NIP"
                                 Htmlfor="search"
-                                className="max-w-sm text-lg ml-1"
+                                className="max-w-sm ml-1 text-lg"
                             />
 
                             <label
@@ -145,14 +251,15 @@ export default function Index({
                                 Search
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
                                     <MdPersonSearch className="w-6 h-6 fill-primary" />
                                 </div>
                                 <input
                                     type="search"
                                     id="search"
-                                    defaultValue={search}
                                     name="search"
+                                    onSubmit={(e) => setSearch(e.target.value)}
+                                    defaultValue={search}
                                     className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
                                     placeholder="Cari Nama Pegawai/NIP.."
                                 />
@@ -167,7 +274,7 @@ export default function Index({
                         <Link
                             as="button"
                             href={route("pegawai.create")}
-                            className="w-full flex justify-end btn glass bg-sky-600  text-white  mt-6 hover:bg-primary/90"
+                            className="flex justify-end w-full mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
                         >
                             Tambah Pegawai
                             <IoMdAdd className="w-6 h-6" />
@@ -175,9 +282,9 @@ export default function Index({
                     </div>
                 </form>
 
-                <div className=" pt-3 rounded-xl overflow-hidden">
-                    <table className="table-bordered text-xs table overflow-auto rounded-xl ">
-                        <thead className="text-white font-medium text-sm bg-primary  rounded-xl border border-secondary/15">
+                <div className="pt-3 overflow-hidden rounded-xl">
+                    <table className="table overflow-auto text-xs table-bordered rounded-xl ">
+                        <thead className="text-sm font-medium text-white border bg-primary rounded-xl border-secondary/15">
                             <tr>
                                 <th scope="col" width="1%">
                                     No
@@ -221,30 +328,45 @@ export default function Index({
                                     </td>
                                     {/* <td>{pegawai["Unit Kerja"]}</td> */}
                                     <td>{pegawai["Daerah"]}</td>
-                                    <td className="whitespace-nowrap text-nowrap" >
+                                    <td className="text-center whitespace-nowrap text-nowrap">
                                         <Link
                                             as="a"
                                             href={route(
                                                 "pegawai.show",
                                                 pegawai.id
                                             )}
-                                            className="group/button inline-block  text-center font-medium group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75  items-center justify-center gap-2 mx-auto action-btn border-hijau/20 hover:bg-hijau hover:text-white "
+                                            className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                         >
-                                            <FaEye className="fill-hijau/75 group-hover/item:fill-white"  />
-                                            <span>Lihat</span>
+                                            <FaEye className="fill-hijau/75 group-hover/item:fill-white" />
+                                            {/* <span>Lihat</span> */}
                                         </Link>
-                                        <span className="inline-block mx-1"></span>
+                                        <span className="inline-block mx-2"></span>
                                         <Link
                                             as="a"
                                             href={route(
                                                 "pegawai.edit",
                                                 pegawai.id
                                             )}
-                                            className="group/button inline-block text-center font-medium group-hover/item:bg-secondary group-hover/item:text-white text-secondary  items-center justify-center gap-2 mx-auto action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >
                                             <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                            <span>Edit</span>
+                                            {/* <span>Edit</span> */}
                                         </Link>
+                                        <span className="inline-block mx-2"></span>
+
+                                        <button
+                                            onClick={() =>
+                                                handleDelete(pegawai.id)
+                                            }
+                                            // href={route(
+                                            //     "pegawai.destroy",
+                                            //     pegawai.id
+                                            // )}
+                                            className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                        >
+                                            <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                            {/* <span>Hapus</span> */}
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -253,8 +375,8 @@ export default function Index({
                 </div>
 
                 {/* Pagination */}
-                <div className="box-footer mb-8 text-sm">
-                    <div className="sm:flex items-center justify-between">
+                <div className="mb-8 text-sm box-footer">
+                    <div className="items-center justify-between sm:flex">
                         <div className="flex items-center text-xs">
                             showing {pegawais.data.length} Entries{" "}
                             <TiArrowRight className="w-5 h-5" />
@@ -264,13 +386,13 @@ export default function Index({
                             nextLabel={
                                 pegawais.next_page_url && (
                                     <a
-                                        className="group/next dark:text-white/70 border text-primary hover:text-white  py-1 px-2 leading-none inline-flex items-center gap-2 rounded-md hover:border hover:bg-primary/75 font-semibold border-primary"
+                                        className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
                                         href={pegawais.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
                                         <span className="sr-only">Next</span>
                                         <span aria-hidden="true">Next</span>
-                                        <MdOutlineKeyboardDoubleArrowRight className="-ml-1 w-4 h-4 fill-primary group-hover/next:fill-white" />
+                                        <MdOutlineKeyboardDoubleArrowRight className="w-4 h-4 -ml-1 fill-primary group-hover/next:fill-white" />
                                     </a>
                                 )
                             }
@@ -280,11 +402,11 @@ export default function Index({
                             previousLabel={
                                 pegawais.prev_page_url && (
                                     <a
-                                        className="group/next dark:text-white/70 border text-primary hover:text-white  py-1 px-2 leading-none inline-flex items-center gap-2 rounded-md hover:border hover:bg-primary/75 font-semibold border-primary"
+                                        className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
                                         href={pegawais.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
-                                        <MdOutlineKeyboardDoubleArrowLeft className="-mr-1 w-4 h-4 fill-primary group-hover/next:fill-white" />
+                                        <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
                                         <span className="sr-only">Prev</span>
                                         <span aria-hidden="true">Prev</span>
                                     </a>
@@ -296,7 +418,7 @@ export default function Index({
                             }
                             pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
                             activeClassName="bg-primary text-white"
-                            className="justify-end flex gap-2"
+                            className="flex justify-end gap-2"
                         />
                     </div>
                 </div>
