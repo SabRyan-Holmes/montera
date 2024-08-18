@@ -29,7 +29,7 @@ const Sidebar = ({ active }) => {
                 </div>
                 <div className="relative z-20 flex-col items-center justify-center mt-10 space-y-6">
                     {/* App Name */}
-                    <strong className="flex justify-center -mb-3 text-3xl italic uppercase text-gradient gradient-base">
+                    <strong className="flex justify-center -mb-3 text-3xl tracking-wider uppercase text-gradient gradient-base">
                         SIPACAK
                     </strong>
 

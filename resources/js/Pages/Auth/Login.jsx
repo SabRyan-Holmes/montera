@@ -9,6 +9,7 @@ import {
 } from "@/Components";
 import GuestLayout from "@/Layouts/GuestLayout";
 
+
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         login: "",
@@ -44,13 +45,14 @@ export default function Login({ status, canResetPassword }) {
                 <a href="/">
                     <ApplicationLogo className="w-8 h-8 mx-auto text-gray-500 fill-current aspect-square " />
                 </a>
+
                 <strong className="text-sm italic font-bold text-slate-600">
                     BPS Provinsi Jambi
                 </strong>
             </div>
 
             <div className="flex-col justify-center w-full mt-5">
-                <strong className="flex justify-center mb-1 text-2xl italic uppercase text-slate-500 text-gradient bg-gradient-to-br from-primary/80 via-slate-500 to-secondary/70">
+                <strong className="flex justify-center mb-1 text-2xl tracking-wider uppercase text-slate-500 text-gradient bg-gradient-to-br from-primary/80 via-slate-500 to-secondary/70">
                     SIPACAK
                 </strong>
 
