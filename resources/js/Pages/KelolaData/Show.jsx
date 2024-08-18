@@ -6,7 +6,7 @@ import { FaDatabase } from "react-icons/fa6";
 import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { Head, Link } from "@inertiajs/react";
-import { PrimaryButton, SecondaryButton } from "@/Components";
+import {  SecondaryButton } from "@/Components";
 
 export default function Show({ auth, pegawai, title }) {
     // console.log('isi current', current)
@@ -58,14 +58,11 @@ export default function Show({ auth, pegawai, title }) {
                 <h1 className="my-6 text-2xl capitalize">{title}</h1>
 
                 <div className="overflow-x-auto">
-                    <table className="table text-base">
+                    <table className="table text-base table-bordered">
                         {/* head */}
                         <thead>
                             <tr className="text-lg bg-primary/70">
                                 <th colSpan={2}>Detail Pegawai</th>
-                                {/* <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -119,10 +116,10 @@ export default function Show({ auth, pegawai, title }) {
 
                     <div className="flex items-center justify-center w-full my-9">
                         <Link as="a" href={route("pegawai.edit", pegawai.id)}>
-                        <SecondaryButton className="text-white scale-110 bg-secondary glass hover:bg-secondary">
-                            <span>Edit Data</span>
-                            <FaEdit className="w-4 h-5 mx-1 -mt-1 fill-white group-hover/button:fill-white" />
-                        </SecondaryButton>
+                            <SecondaryButton className="text-white scale-110 bg-secondary glass hover:bg-secondary">
+                                <span>Edit Data</span>
+                                <FaEdit className="w-4 h-5 mx-1 -mt-1 fill-white group-hover/button:fill-white" />
+                            </SecondaryButton>
                         </Link>
                     </div>
                 </div>

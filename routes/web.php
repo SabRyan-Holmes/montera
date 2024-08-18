@@ -14,8 +14,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard/get-chart-data', [DashboardController::class, 'getChartData'])->middleware(['auth', 'verified'])->name('get-chart-data');
+Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv');
 
+// ? :
+Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
 
 
 // Cetak Dokumen
@@ -29,11 +31,11 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 
 
 // Tes
-Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
+// Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
 
-Route::get('/tes', function () {
-    return Inertia::render('Test');
-});
+// Route::get('/tes', function () {
+//     return Inertia::render('Test');
+// });
 
 // `Kelola Data
 Route::resource('pegawai', PegawaiController::class)->middleware('auth');
@@ -45,4 +47,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -26,20 +26,28 @@ class DatabaseSeeder extends Seeder
 
 
         User::create([
-            'name' => 'Dwi Utaminingsih, S.Psi, MM.',
+            'name' => 'Divisi Sumber Daya Manusia',
             'nip' => '198807032011012019',
             'email' => 'sdm.bps1500@gmail.com',
             'password' => static::$password ??= Hash::make('tanpaair21'),
             'remember_token' => Str::random(10),
         ]);
 
-        User::create([
-            'name' => 'Siti Marfuah, S.E.',
-            'nip' => '198711082006042002',
-            'email' => 'siti_marfuah@gmail.com',
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ]);
+        // User::create([
+        //     'name' => 'Dwi Utaminingsih, S.Psi, MM.',
+        //     'nip' => '198807032011012019',
+        //     'email' => 'sdm.bps1500@gmail.com',
+        //     'password' => static::$password ??= Hash::make('tanpaair21'),
+        //     'remember_token' => Str::random(10),
+        // ]);
+
+        // User::create([
+        //     'name' => 'Siti Marfuah, S.E.',
+        //     'nip' => '198711082006042002',
+        //     'email' => 'siti_marfuah@gmail.com',
+        //     'password' => static::$password ??= Hash::make('password'),
+        //     'remember_token' => Str::random(10),
+        // ]);
 
 
     }

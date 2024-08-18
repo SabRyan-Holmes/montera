@@ -463,7 +463,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         <select
                             name="pangkat"
                             id="pangkat"
-                            className="w-24 px-1 text-center rounded-md border-gradient"
+                            className="w-20 text-center rounded-md border-gradient"
                             defaultValue={data.pangkat}
                             onChange={(e) => {
                                 setData("pangkat", e.target.value);
@@ -478,7 +478,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         <select
                             name="jabatan"
                             id="jabatan"
-                            className="w-24 px-1 text-center rounded-md border-gradient"
+                            className="w-20 text-center rounded-md border-gradient"
                             defaultValue={data.jabatan}
                             onChange={(e) => {
                                 setData("jabatan", e.target.value);

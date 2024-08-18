@@ -8,21 +8,22 @@ import { initFlowbite } from "flowbite";
 import Graph from "@/Components/Graph";
 import { FaUserLarge, FaUsers } from "react-icons/fa6";
 
-export default function AdminPage({
+export default function Dashboard({
     title,
     auth,
     userCount,
-    kegiatanCount,
-    documentCount,
     pegawaiCount,
+    pegawaiFungsional,
+    pakCount,
     data,
 }) {
     console.log(`isi route  : ${route}`);
 
+    const nonFungsional = pegawaiCount - pegawaiFungsional
     return (
         <AuthenticatedLayout user={auth.user} title={title}>
             {/* content */}
-            <section className="flex justify-around grid-cols-2 gap-16 px-20 mx-auto ">
+            <section className="flex items-center justify-around grid-cols-2 gap-20 px-20 mx-auto ">
                 {/* Grid */}
 
                 {/* Graph */}
@@ -32,7 +33,7 @@ export default function AdminPage({
 
                 <section className="items-center justify-center gap-4 my-auto space-y-5 ">
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                        <div className="h-full p-4 bg-primary/75">
+                        <div className="h-full p-4 bg-slate-500">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
                             >
@@ -59,12 +60,12 @@ export default function AdminPage({
                             <h3 className="text-sm tracking-wider">
                                 Total Jumlah Pegawai Fungsional
                             </h3>
-                            <p className="text-3xl">{pegawaiCount ?? 0}</p>
+                            <p className="text-3xl">{pegawaiFungsional ?? 0}</p>
                         </div>
                     </div>
 
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                        <div className="h-full p-4 bg-base-300">
+                        <div className="h-full p-4 bg-secondary">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
                             >
@@ -75,11 +76,26 @@ export default function AdminPage({
                             <h3 className="text-sm tracking-wider">
                                 Total Jumlah Pegawai Nonfungsional
                             </h3>
-                            <p className="text-3xl">{pegawaiCount}</p>
+                            <p className="text-3xl">{nonFungsional ?? 0}</p>
                         </div>
                     </div>
 
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                        <div className="p-4 bg-hijau">
+                            <IconContext.Provider
+                                value={{ color: "white", size: "50px" }}
+                            >
+                                <HiDocumentDuplicate className="w-12 h-full" />
+                            </IconContext.Provider>
+                        </div>
+                        <div className="px-4 text-gray-700">
+                            <h3 className="text-sm tracking-wider">
+                                Total Jumlah PAK yang pernah dicetak
+                            </h3>
+                            <p className="text-3xl">{pakCount ?? 0}</p>
+                        </div>
+                    </div>
+                    {/* <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                         <div className="p-4 bg-secondary">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
@@ -89,11 +105,11 @@ export default function AdminPage({
                         </div>
                         <div className="px-4 text-gray-700">
                             <h3 className="text-sm tracking-wider">
-                                Total Jumlah Dokumen PAK yang pernah dicetak
+                                Total Jumlah User
                             </h3>
-                            <p className="text-3xl">{documentCount ?? 0}</p>
+                            <p className="text-3xl">{pakCount ?? 0}</p>
                         </div>
-                    </div>
+                    </div> */}
                 </section>
 
                 {/* end of content */}

@@ -50,9 +50,10 @@ export default function Login({ status, canResetPassword }) {
             </div>
 
             <div className="flex-col justify-center w-full mt-5">
-                <strong className="flex justify-center text-2xl italic uppercase text-gradient gradient-bps">
-                    SiPacak
+                <strong className="flex justify-center mb-1 text-2xl italic uppercase text-slate-500 text-gradient bg-gradient-to-br from-primary/80 via-slate-500 to-secondary/70">
+                    SIPACAK
                 </strong>
+
                 <strong className="block -mt-1 text-lg font-semibold text-center text-slate-600">
                     Sistem Pencetakan Angka Kredit
                 </strong>

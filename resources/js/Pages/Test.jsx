@@ -1,7 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
-import Modal from "@/Components/Modal";
 
 export default function Dashboard({ auth }) {
     const [loading, setLoading] = useState(false);

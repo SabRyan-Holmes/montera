@@ -7,10 +7,6 @@ import {
     MdPersonSearch,
 } from "react-icons/md";
 import { FaPrint } from "react-icons/fa6";
-import { jsPDF } from "jspdf";
-// import html2canvas from "html2canvas";
-import html2canvas from "html2canvas-pro";
-import PAK from "@/Pages/CetakDokumen/PAK";
 import { Link, router } from "@inertiajs/react";
 import ReactPaginate from "react-paginate";
 import { InputLabel } from "@/Components";

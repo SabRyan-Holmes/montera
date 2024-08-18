@@ -46,7 +46,7 @@ const Navbar = ({ user, title }) => {
                     </label>
                 </div>
                 <div className="navbar-start">
-                    <a className="text-xl normal-case btn btn-ghost">{title}</a>
+                    <a className="-ml-2 text-xl normal-case btn btn-ghost">{title}</a>
                 </div>
                 <div className="navbar-end">
                     <div className="dropdown dropdown-end">
@@ -56,10 +56,10 @@ const Navbar = ({ user, title }) => {
                                     Login / Register
                                 </button>
                             ) : (
-                                <div className="flex items-center justify-end gap-2 p-2 transition-all group/item w-60 hover:shadow-md hover:bg-base-100/10 rounded-xl hover:cursor-pointer">
+                                <div className="flex items-center justify-end gap-2 p-2 transition-all group/item w-fit hover:shadow-md hover:bg-base-100/10 rounded-xl hover:cursor-pointer">
                                     <div className="mr-1 font-semibold text-nowrap">
                                         <span className="block text-sm group-hover/item:text-primary ">
-                                            {fullName}
+                                            {user.name}
                                         </span>
                                         <span
                                             className={
@@ -72,7 +72,7 @@ const Navbar = ({ user, title }) => {
                                             {user.divisi}
                                         </span>
                                     </div>
-                                    {user.profile ? (
+                                    {/* {user.profile ? (
                                         <img
                                             src={user.profile}
                                             alt="pp"
@@ -80,7 +80,7 @@ const Navbar = ({ user, title }) => {
                                         />
                                     ) : (
                                         <ProfileImage name={fullName} className="w-8 h-8 text-sm" />
-                                    )}
+                                    )} */}
                                     <IoIosArrowDown className="w-5 h-5 fill-slate-500 group-hover/item:fill-primary" />
                                 </div>
                             )}

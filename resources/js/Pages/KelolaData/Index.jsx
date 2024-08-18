@@ -52,8 +52,7 @@ export default function Index({
     };
 
     useEffect(() => {
-        if (flash.message !== null) {
-            return () => {
+        if (flash.message) {
                 Swal.fire({
                     title: "Berhasil!",
                     text: `${flash.message}`,
@@ -63,7 +62,6 @@ export default function Index({
                     confirmButtonColor: "#2D95C9",
                 });
             };
-        }
     }, [flash.message]);
 
     useEffect(() => {
@@ -160,25 +158,24 @@ export default function Index({
                             id,
                             "berhasil di delete!"
                         );
-                        Swal.fire({
-                            title: "Berhasil!",
-                            text: "Data Berhasil Dihapus!",
-                            icon: "success",
-                            iconColor: "#50C878",
-                            confirmButtonText: "Oke",
-                            confirmButtonColor: "#2D95C9",
-                        });
                     },
                     onError: () => {
                         console.log("Gagal Menghapus Data");
                     },
+                    // onFinish: () => {
+                    //     Swal.fire({
+                    //         title: "Berhasil!",
+                    //         text: `${flash.message}`,
+                    //         icon: "success",
+                    //         iconColor: "#50C878",
+                    //         confirmButtonText: "Oke",
+                    //         confirmButtonColor: "#2D95C9",
+                    //     });
+                    // },
                 });
             }
         });
     }
-
-    console.log("search");
-    console.log(search);
 
     return (
         <Authenticated user={auth.user} title={title}>

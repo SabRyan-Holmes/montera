@@ -1,6 +1,5 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
-import React, { useEffect, useRef } from "react";
-
+import React, { useEffect, useRef, useState } from "react";
 
 export default function InputDataTable({ data, setData }) {
     const handleKeyPress = (e) => {
@@ -26,16 +25,21 @@ export default function InputDataTable({ data, setData }) {
     };
 
     useEffect(() => {
-        setData("angka_periode", (data.periode_berakhir - data.periode_mulai) + 1 );
-        data.angka_periode = (data.periode_berakhir - data.periode_mulai) + 1;
+        setData(
+            "angka_periode",
+            data.periode_berakhir - data.periode_mulai + 1
+        );
+        data.angka_periode = data.periode_berakhir - data.periode_mulai + 1;
         parseInt(data.angka_periode);
     }, [data.periode_mulai, data.periode_berakhir]);
 
     const today = new Date().toISOString().split("T")[0];
     const namaInput = useRef();
 
+    const [minPeriode, setMinPeriode] = useState()
+
     return (
-        <table className="table text-base">
+        <table className="table text-base ">
             {/* head */}
             <thead>
                 <tr className="text-lg text-center text-white uppercase bg-secondary">
@@ -50,7 +54,34 @@ export default function InputDataTable({ data, setData }) {
                     </td>
                     <td colSpan={3}>
                         <div className="flex items-center gap-4">
-                            <select
+                            <input
+                                type="month"
+                                name="periode_mulai"
+                                id="periode_mulai"
+                                className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                onChange={(e) => {
+                                    // Mengambil nilai dari input (format: YYYY-MM)
+                                    const value = e.target.value;
+
+                                    // Memisahkan nilai menjadi tahun dan bulan
+                                    const [year, month] = value.split("-");
+
+                                    // Mengonversi bulan menjadi     integer
+                                    const periodeMulai = parseInt(month, 10);
+
+                                    // Set min periode untuk untuk periode berakhir
+                                    setMinPeriode(value)
+                                    // Memasukkan nilai bulan ke dalam state atau data
+
+                                    setData("periode_mulai", periodeMulai);
+
+                                    // Logika tambahan jika diperlukan
+                                    // if (data.periode_berakhir < periodeMulai) {
+                                    //     setData("periode_berakhir", periodeMulai);
+                                    // }
+                                }}
+                            />
+                            {/* <select
                                 name="periode_mulai"
                                 id="periode_mulai"
                                 className="px-4 font-medium rounded-md w-28 border-gradient disabled:text-accent"
@@ -75,12 +106,37 @@ export default function InputDataTable({ data, setData }) {
                                         {bulan[key]}
                                     </option>
                                 ))}
-                            </select>
+                            </select> */}
                             <span>sd</span>
-                            <select
+                            <input
+                                type="month"
                                 name="periode_berakhir"
                                 id="periode_berakhir"
-                                className="px-4 font-medium rounded-md w-28 border-gradient disabled:text-accent"
+                                min={minPeriode}
+                                className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                onChange={(e) => {
+                                    // Mengambil nilai dari input (format: YYYY-MM)
+                                    const value = e.target.value;
+
+                                    // Memisahkan nilai menjadi tahun dan bulan
+                                    const [year, month] = value.split("-");
+
+                                    // Mengonversi bulan menjadi integer
+                                    const periodeBerakhir = parseInt(month, 10);
+
+                                    // Memasukkan nilai bulan ke dalam state atau data
+                                    setData("periode_berakhir", periodeBerakhir);
+
+                                    // Logika tambahan jika diperlukan
+                                    // if (data.periode_berakhir < periodeBerakhir) {
+                                    //     setData("periode_berakhir", periodeBerakhir);
+                                    // }
+                                }}
+                            />
+                            {/* <select
+                                name="periode_berakhir"
+                                id="periode_berakhir"
+                                className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                 defaultValue={data.periode_berakhir}
                                 disabled={!data.periode_mulai}
                                 onChange={(e) => {
@@ -102,7 +158,7 @@ export default function InputDataTable({ data, setData }) {
                                         {bulan[key]}
                                     </option>
                                 ))}
-                            </select>
+                            </select> */}
                         </div>
                     </td>
                 </tr>
@@ -144,7 +200,10 @@ export default function InputDataTable({ data, setData }) {
                                 }
                             />
 
-                            <datalist id="namaList" className="invisible hidden appearance-none no-arrow">
+                            <datalist
+                                id="namaList"
+                                className="invisible hidden appearance-none no-arrow"
+                            >
                                 {/* Datalist untuk autocomplete nama */}
                                 <option value="Agus Sudibyo, M.Stat" />
                                 <option value="Budi Santoso, M.Si" />

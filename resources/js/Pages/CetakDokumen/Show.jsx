@@ -1,10 +1,5 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React from "react";
-import { RiArrowDropDownLine } from "react-icons/ri";
-import { MdPersonSearch } from "react-icons/md";
-import { FaPrint } from "react-icons/fa6";
-import { jsPDF } from "jspdf";
-import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { FaEdit } from "react-icons/fa";
 
@@ -13,7 +8,7 @@ export default function Index({ auth, pegawai, title }) {
     // console.log('isi current', current)
     return (
         <Authenticated user={auth.user} title={title} current={route().current("cetak_dokumen.index")}>
-            <section className="m-10 h-screen">
+            <section className="h-screen m-10">
 
             <h1 className="my-10 text-3xl capitalize">Data untuk pencetakan dokumen pak</h1>
 
@@ -75,8 +70,8 @@ export default function Index({ auth, pegawai, title }) {
                     </tbody>
                 </table>
 
-                <div className="w-full flex justify-center my-4 ">
-                <SecondaryButton className=" border border-oren bg-oren ">Edit Data
+                <div className="flex justify-center w-full my-4 ">
+                <SecondaryButton className="border  border-oren bg-oren">Edit Data
                 <FaEdit className="w-6 h-6 fill-orange-500" />
 
                 </SecondaryButton>

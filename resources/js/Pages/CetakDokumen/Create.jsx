@@ -19,8 +19,8 @@ export default function Index({ auth, pegawai, title }) {
         // Input Data
         nama: "Agus Sudibyo, M.Stat",
         nip: "197412311996121001",
-        periode_mulai: 1, //Default: Januari
-        periode_berakhir: 2, //Default Februari
+        periode_mulai: 0, //Default: Januari
+        periode_berakhir: 0, //Default Februari
 
         angka_periode: 0,
         tgl_ditetapkan: "",
@@ -231,11 +231,11 @@ export default function Index({ auth, pegawai, title }) {
                     Data Pegawai Untuk Pencetakan PAK
                 </h1> */}
 
-                <div className="overflow-x-auto px-7">
+                <div className="px-2 mx-auto overflow-x-auto">
                     <h1 className="text-2xl font-medium my-7">
                         Data Pegawai Untuk Pencetakan PAK
                     </h1>
-                    <table className="table text-base">
+                    <table className="table text-base table-bordered">
                         {/* head */}
                         <thead>
                             <tr className="text-lg bg-primary/70">

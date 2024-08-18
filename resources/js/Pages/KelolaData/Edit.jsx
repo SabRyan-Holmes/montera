@@ -1,5 +1,3 @@
-// import InputError from "@/Components/InputError";
-// import TextInput from "@/Components/TextInput";
 import {
     TextInput,
     InputError,
@@ -11,15 +9,12 @@ import {
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
 import React, { useEffect } from "react";
-import { FaEdit } from "react-icons/fa";
-// import { FaUserEdit } from "react-icons/fa";
 import { FaDatabase } from "react-icons/fa6";
 import { FaSave, FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 
-// import Swal from 'sweetalert2/dist/sweetalert2.js'
-// import 'sweetalert2/src/sweetalert2.scss'
+
 
 export default function Edit({ auth, pegawai, title, flash }) {
     const { data, setData, patch, processing, errors, reset } = useForm({

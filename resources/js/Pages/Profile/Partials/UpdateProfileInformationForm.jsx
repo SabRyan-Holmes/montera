@@ -129,7 +129,7 @@ export default function UpdateProfileInformation({
                     </div>
                 </form>
             </div>
-            {/* TODO ?: Logika Ubah Profile Picture Nanti */}
+            {/* Todo?: Logika Ubah Profile Picture Nanti */}
             {/* <div className="flex items-center justify-center w-1/2">
                 {user.profile ? (
                     <img

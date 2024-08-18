@@ -18,23 +18,35 @@ const Sidebar = ({ active }) => {
 
             <ul className="relative z-10 min-h-full p-4 space-y-4 menu w-80 text-slate-100">
                 {/* Sidebar content */}
-                <div className="relative z-20 flex-col items-center justify-center mt-10">
-                    {/* App Name */}
-                    <strong className="flex justify-center text-2xl italic uppercase text-gradient gradient-base">
-                        SiPacak
+                {/*  */}
+                <div className="flex items-center justify-start gap-2 mb-5">
+                    <a href="/">
+                        <ApplicationLogo className="mx-auto text-gray-500 fill-current w-7 h-7 aspect-square " />
+                    </a>
+                    <strong className="text-xs italic font-bold text-slate-400">
+                        BPS Provinsi Jambi
                     </strong>
-                    {/* <strong className="block -mt-1 text-lg font-semibold text-center text-slate-600 ">
-                        Sistem Pencetakan Angka Kredit
-                    </strong> */}
+                </div>
+                <div className="relative z-20 flex-col items-center justify-center mt-10 space-y-6">
+                    {/* App Name */}
+                    <strong className="flex justify-center -mb-3 text-3xl italic uppercase text-gradient gradient-base">
+                        SIPACAK
+                    </strong>
+
+                    <div className="flex items-center justify-center h-16 mx-5 rounded-xl bg-slate-400/50">
+                        <strong className="mx-5 text-lg font-semibold leading-6 text-center height text-slate-300 text-opacity-90 ">
+                            Sistem Pencetakan Angka Kredit
+                        </strong>
+                    </div>
+
                     {/* App Logo */}
-                    <img
+                    {/* <img
                         src={logo}
                         className="relative z-20 w-24 h-24 m-3 mx-auto mt-0 filter drop-shadow-lg"
-                    />
-                </div>
-
-                <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md">
-                    <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary via-hijau to-secondary" />
+                    /> */}
+                    <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md bg-slate-300 ">
+                        <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary via-hijau to-secondary" />
+                    </div>
                 </div>
 
                 <section>

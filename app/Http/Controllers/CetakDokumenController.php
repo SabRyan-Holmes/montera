@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CetakPAKRequest;
 use Inertia\Inertia;
 use App\Models\Pegawai;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
@@ -49,13 +52,6 @@ class CetakDokumenController extends Controller
         ]);
     }
 
-    public function process(Pegawai $pegawai)
-    {
-        // Logika Cetak Dokumen
-        // return Inertia::render('CetakDokumen/Show',[
-        //     'pegawai' => $pegawai
-        // ]);
-    }
 
     public function cetak(Request $request)
     {
@@ -63,13 +59,19 @@ class CetakDokumenController extends Controller
         Session::put('data', $request->all());
         // return response()->json(['url' => route('cetak_dokumen.view-pak')]);
         return Inertia::location(route('cetak_dokumen.view-pak'));
-
     }
 
     public function view_pak()
     {
         // Ambil data dari session
         $data = Session::get('data')['data'];
+
+        // Perbarui nilai total_dicetak dengan menambahkannya 1
+        $userId = Auth::user()->id;
+        User::where('id', $userId)
+            ->update([
+                'jumlah_dicetak' => DB::raw('jumlah_dicetak + 1')
+            ]);
 
         $dataTest = [
             "pegawai" => [
@@ -191,6 +193,7 @@ class CetakDokumenController extends Controller
         // dd($data);
 
         // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
+        // dd($data);
         $this->cleanAllData($data);
 
 

@@ -1,4 +1,4 @@
-import { DateInput, InputLabel, TextInput } from "@/Components";
+import {  InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useState } from "react";
 
 export default function AkumulasiTable({
@@ -29,7 +29,6 @@ export default function AkumulasiTable({
         12: "Desember",
     };
 
-    // FIXME : Bug Ak kredit ikut berubah
 
     useEffect(() => {
         var jumlahAkKredit =

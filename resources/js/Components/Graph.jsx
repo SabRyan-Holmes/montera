@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { Checkbox, InputLabel } from "@/Components";
 import { initFlowbite } from "flowbite";
+import { Link } from "@inertiajs/react";
 
 
-export default function Graph({data}) {
+export default function Graph({ data }) {
     useEffect(() => {
         // Panggil fungsi yang diimpor
         // initializeChart();
@@ -126,8 +127,9 @@ export default function Graph({data}) {
         };
     };
     return (
-        <div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5">
-            <div class="flex justify-between mb-3">
+        <div class="max-w-md w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5 border border-gradient">
+
+            <div class="flex justify-around mb-3 items-center">
                 <div class="flex justify-center items-center">
                     <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
                         Data Pegawai Fungsional
@@ -173,36 +175,49 @@ export default function Graph({data}) {
                             administratif umum.
                             </span>
                         </li> */}
-                                {/* FIXME: BENERIN LAGI NANTI SESUAI PENJELASAN YG BENER */}
-                                <li>
-                                    <strong>PERTAMA</strong>: Pada tingkatan
-                                    ini, pegawai mulai memasuki level yang lebih
-                                    spesifik dengan tanggung jawab yang lebih
-                                    besar dalam bidang keahlian tertentu.
+                                <li  className="text-[12px]">
+                                    <strong>Penyelia</strong>: Bertanggung jawab atas
+                                    pengawasan dan koordinasi pekerjaan tim
+                                    dalam proyek atau tugas-tugas statistik.
                                 </li>
-                                <li>
-                                    <strong>MUDA</strong>: Tingkatan ini
-                                    menunjukkan bahwa pegawai telah memiliki
-                                    pengalaman yang cukup dan kemampuan yang
-                                    lebih mendalam dalam bidang fungsionalnya.
+                                <li className="text-[12px]">
+                                    <strong>Mahir</strong>: Melibatkan kemampuan statistik yang mendalam
+                                    dan aplikasi metode analisis tingkat lanjut
+                                    dalam berbagai proyek.
                                 </li>
-                                <li>
-                                    <strong>LANJUT</strong>: Tingkatan ini
-                                    merupakan level yang lebih tinggi, di mana
-                                    pegawai memiliki tanggung jawab yang lebih
-                                    besar dan biasanya memimpin dalam proyek
-                                    atau kegiatan tertentu.
+                                <li className="text-[12px]">
+                                    <strong>Terampil</strong>: Level yang menunjukkan kemampuan dalam
+                                    menggunakan teknik statistik standar dan
+                                    alat analisis untuk melakukan pekerjaan.
+                                </li>
+                                <li className="text-[12px]">
+                                    <strong>Madya</strong>: Melibatkan tingkat keterampilan dan
+                                    pengalaman yang lebih tinggi dibandingkan
+                                    dengan level Muda dan melibatkan tanggung
+                                    jawab tambahan dalam analisis statistik.
+                                </li>
+                                <li className="text-[12px]">
+                                    <strong>Muda</strong>: Merupakan posisi awal atau tingkat menengah
+                                    dalam karir statistik yang memerlukan
+                                    kemampuan dasar dan pengalaman dalam
+                                    analisis data.
+                                </li>
+                                <li className="text-[12px]">
+                                    <strong>Pertama</strong>:
+                                    adalah level entry-level yang biasanya
+                                    melibatkan tugas-tugas dasar dan pelatihan
+                                    awal dalam statistik.
                                 </li>
                             </ul>
-                            <p>
+                            {/* <p className="text-xs">
                                 Setiap tingkatan jabatan memiliki peran dan
                                 kontribusi yang penting dalam mendukung kegiatan
                                 dan program di BPS Provinsi Jambi, serta
                                 berperan dalam mencapai tujuan organisasi secara
                                 keseluruhan.
-                            </p>
+                            </p> */}
                             <a
-                                href="#"
+                                href="https://infoasn.id/jabatan-fungsional/uraian-tugas-jabatan-fungsional-statistisi-ahli-muda.html"
                                 class="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline"
                             >
                                 Read more{" "}
@@ -226,39 +241,41 @@ export default function Graph({data}) {
                         <div data-popper-arrow></div>
                     </div>
                 </div>
-                <div>
-                    <button
-                        type="button"
-                        data-tooltip-target="data-tooltip"
-                        data-tooltip-placement="bottom"
-                        class="hidden sm:inline-flex items-center justify-center text-gray-500 w-8 h-8 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm"
-                    >
-                        <svg
-                            class="w-3.5 h-3.5"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 16 18"
+
+                    <a href={route('export-csv')}>
+                        <button
+                            type="button"
+                            data-tooltip-target="data-tooltip"
+                            data-tooltip-placement="bottom"
+                            class="hidden sm:inline-flex items-center justify-center text-gray-500 w-8 h-8 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm"
                         >
-                            <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3"
-                            />
-                        </svg>
-                        <span class="sr-only">Download data</span>
-                    </button>
+                            <svg
+                                class="w-3.5 h-3.5"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 16 18"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3"
+                                />
+                            </svg>
+                            <span class="sr-only">Download data</span>
+                        </button>
+                    </a>
+
                     <div
                         id="data-tooltip"
                         role="tooltip"
                         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
                     >
-                        Download CSV
+                        Unduh CSV
                         <div class="tooltip-arrow" data-popper-arrow></div>
                     </div>
-                </div>
             </div>
 
             <div className="visible hidden">
@@ -352,7 +369,8 @@ export default function Graph({data}) {
                         id="lastDaysdropdown"
                         class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
                     >
-                        <ul
+                        {/* Todo? */}
+                        {/* <ul
                             class="py-2 text-sm text-gray-700 dark:text-gray-200"
                             aria-labelledby="dropdownDefaultButton"
                         >
@@ -380,7 +398,7 @@ export default function Graph({data}) {
                                     90 Hari Terakhir
                                 </a>
                             </li>
-                        </ul>
+                        </ul> */}
                     </div>
                     <a
                         href="#"

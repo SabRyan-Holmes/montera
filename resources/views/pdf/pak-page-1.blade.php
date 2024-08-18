@@ -92,7 +92,7 @@
                     <td colspan="2"
                         style="border: 1px solid #000;
                             padding: 0.4rem /* 8px */;">
-                        : {{ $data['pegawai']['Nomor Seri Karpeg'] ?: '_' }}
+                        : {{ $data['pegawai']['Nomor Seri Karpeg'] ?: '-' }}
                     </td>
                 </tr>
                 {{-- {/* Tempat/Tgl Lahir */} --}}

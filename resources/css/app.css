@@ -35,7 +35,7 @@ input[type="number"] {
 }
 
 .gradient-base {
-    @apply opacity-100 bg-gradient-to-b from-primary/70 via-hijau/70 to-secondary/70;
+    @apply opacity-100 bg-gradient-to-b from-primary/50 via-slate-200 to-secondary/50;
 }
 
 .gradient-white-base {
@@ -67,7 +67,7 @@ input[type="number"] {
 }
 
 .border-gradient {
-    @apply  bg-slate-100/85 border-t-primary border-l-primary border-r-secondary border-b-hijau focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary;
+    @apply  bg-slate-100/85 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50;
 }
 
 .large-primary-button {

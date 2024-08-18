@@ -96,15 +96,10 @@ class PegawaiController extends Controller
      */
     public function destroy(Pegawai $pegawai)
     {
-        //
+        // dd($pegawai);
+        $pegawai->delete();
+        return redirect()->back()->with('message', 'Data Pegawai Berhasil DiHapus!');
     }
 
 
-    public function cetak(Pegawai $pegawai)
-    {
-        return Inertia::render('CetakDokumen/Index', [
-            'title' => 'Cetak Dokumen PAK',
-            'pegawais' => Pegawai::paginate(10)
-        ]);
-    }
 }
