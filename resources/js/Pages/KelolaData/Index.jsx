@@ -1,5 +1,5 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     MdOutlineKeyboardDoubleArrowLeft,
     MdOutlineKeyboardDoubleArrowRight,
@@ -8,12 +8,12 @@ import {
 import { FaEye } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
-import { Link, router, useForm } from "@inertiajs/react";
+import { Link, router} from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { InputLabel, PrimaryButton } from "@/Components";
+import { InputLabel } from "@/Components";
 import { TiArrowRight } from "react-icons/ti";
-import { FaDeleteLeft, FaTrash } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa6";
 
 export default function Index({
     auth,
@@ -34,9 +34,9 @@ export default function Index({
         const selectedPage = event.selected + 1;
         const newOffset = (selectedPage - 1) * pegawais.per_page;
 
-        console.log(
-            `User requested page number ${selectedPage}, which is offset ${newOffset}`
-        );
+        // console.log(
+        //     `User requested page number ${selectedPage}, which is offset ${newOffset}`
+        // );
 
         router.get(
             `/pegawai`,
@@ -153,25 +153,15 @@ export default function Index({
             if (result.isConfirmed) {
                 router.delete(route("pegawai.destroy", id), {
                     onSuccess: () => {
-                        console.log(
-                            "data pegawai dengan id ",
-                            id,
-                            "berhasil di delete!"
-                        );
+                        // console.log(
+                        //     "data pegawai dengan id ",
+                        //     id,
+                        //     "berhasil di delete!"
+                        // );
                     },
                     onError: () => {
                         console.log("Gagal Menghapus Data");
                     },
-                    // onFinish: () => {
-                    //     Swal.fire({
-                    //         title: "Berhasil!",
-                    //         text: `${flash.message}`,
-                    //         icon: "success",
-                    //         iconColor: "#50C878",
-                    //         confirmButtonText: "Oke",
-                    //         confirmButtonColor: "#2D95C9",
-                    //     });
-                    // },
                 });
             }
         });
@@ -287,7 +277,7 @@ export default function Index({
                                     No
                                 </th>
                                 <th scope="col" width="15%">
-                                    NIP
+                                    NIP/NRP
                                 </th>
                                 <th scope="col" width="25%">
                                     Nama
@@ -315,7 +305,7 @@ export default function Index({
                                     className="group/item hover:bg-secondary/50 hover:cursor-pointer"
                                 >
                                     <td className="text-center">{i + 1}</td>
-                                    <td>{pegawai["NIP/NRP"]}</td>
+                                    <td>{pegawai["NIP"]}</td>
                                     <td>{pegawai.Nama}</td>
                                     {/* <td>{pegawai["Nomor Seri Karpeg"]}</td> */}
                                     <td>
@@ -330,24 +320,22 @@ export default function Index({
                                             as="a"
                                             href={route(
                                                 "pegawai.show",
-                                                pegawai.id
+                                                pegawai['NIP']
                                             )}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                         >
                                             <FaEye className="fill-hijau/75 group-hover/item:fill-white" />
-                                            {/* <span>Lihat</span> */}
                                         </Link>
                                         <span className="inline-block mx-2"></span>
                                         <Link
                                             as="a"
                                             href={route(
                                                 "pegawai.edit",
-                                                pegawai.id
+                                                pegawai['NIP']
                                             )}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >
                                             <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                            {/* <span>Edit</span> */}
                                         </Link>
                                         <span className="inline-block mx-2"></span>
 
@@ -355,14 +343,9 @@ export default function Index({
                                             onClick={() =>
                                                 handleDelete(pegawai.id)
                                             }
-                                            // href={route(
-                                            //     "pegawai.destroy",
-                                            //     pegawai.id
-                                            // )}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >
                                             <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                            {/* <span>Hapus</span> */}
                                         </button>
                                     </td>
                                 </tr>

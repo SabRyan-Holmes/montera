@@ -18,7 +18,7 @@ class Pegawai extends Model
             $filters['search'] ?? false,
             fn ($query, $search) =>
             $query->where('Nama', 'like', '%' . $search . '%')
-                ->orWhere('NIP/NRP', 'like', '%' . $search . '%')
+                ->orWhere('NIP', 'like', '%' . $search . '%')
         );
 
 
@@ -38,14 +38,9 @@ class Pegawai extends Model
         );
     }
 
-    // public function scopeFilter(Builder $query, array $filters): void
-    // {
-    //     // Search By Nama & NIP
-    //     // $query->where('Nama', 'like', '%' . request('search') . '%')->orWhere('NIP/NRP', 'like', '%' . request('search') . '%');
-
-    //     if (isset($filters['search']) ? $filters['search'] : false) {
-
-    //         $query->where('Nama', 'like', '&' . request('search') . '%')->orWhere('NI[/NRP', 'like', '%', request('search') . '%');
-    //     }
-    // }
+    // Untuk Route Model Binding Custom(defaultny id)
+    public function getRouteKeyName()
+    {
+      return 'NIP';
+    }
 }

@@ -15,7 +15,7 @@ class PegawaiStoreRequest extends FormRequest
     {
         return [
             'Nama' => 'required|string|max:60|min:1',
-            'NIP/NRP' => 'required|string|max:18',
+            'NIP' => 'required|string|max:18',
             'Nomor Seri Karpeg' => 'required|string|max:40',
             'Pangkat/Golongan Ruangan/TMT' => 'required|string|max:150',
             'Tempat/Tanggal Lahir' => 'required|string|max:50',
@@ -43,7 +43,7 @@ class PegawaiStoreRequest extends FormRequest
     {
         return [
             'Nama' => 'Nama',
-            'NIP/NRP' => 'NIP/NRP',
+            'NIP' => 'NIP',
             'Nomor Seri Karpeg' => 'Nomor Seri Karpeg',
             'Pangkat/Golongan Ruangan/TMT' => 'Pangkat/Golongan Ruangan/TMT',
             'Tempat/Tanggal Lahir' => 'Tempat/Tanggal Lahir',

@@ -256,7 +256,7 @@ export default function Index({ auth, pegawai, title }) {
                             {/* row 2 */}
                             <tr className="border">
                                 <td className="px-7">NIP/NRP</td>
-                                <td className="px-7">{pegawai["NIP/NRP"]}</td>
+                                <td className="px-7">{pegawai["NIP"]}</td>
                             </tr>
                             {/* row 3 */}
                             <tr className="border">

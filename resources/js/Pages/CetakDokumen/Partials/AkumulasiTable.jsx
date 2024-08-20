@@ -103,11 +103,11 @@ export default function AkumulasiTable({
                             id="tahun_terakhir"
                             type="text"
                             name="tahun_terakhir"
-                            placeholder="2023"
+                            placeholder="tahun sebelumnya"
                             maxLength={4}
                             required
                             onKeyPress={handleKeyPress}
-                            className="w-20 text-center"
+                            className="w-32 text-center"
                             onChange={(e) =>
                                 setData("tahun_terakhir", e.target.value)
                             }
@@ -142,10 +142,10 @@ export default function AkumulasiTable({
                             type="text"
                             name="tahun_ini"
                             required
-                            placeholder="tahun"
+                            placeholder="tahun sekarang"
                             maxlength={4}
                             onKeyPress={handleKeyPress}
-                            className="w-20 text-center"
+                            className="w-32 text-center"
                             onChange={(e) =>
                                 setData("tahun_ini", e.target.value)
                             }

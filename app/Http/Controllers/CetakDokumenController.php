@@ -55,9 +55,7 @@ class CetakDokumenController extends Controller
 
     public function cetak(Request $request)
     {
-        // $request->validated();
         Session::put('data', $request->all());
-        // return response()->json(['url' => route('cetak_dokumen.view-pak')]);
         return Inertia::location(route('cetak_dokumen.view-pak'));
     }
 
@@ -77,7 +75,7 @@ class CetakDokumenController extends Controller
             "pegawai" => [
                 "id" => 4,
                 "Nama" => "DWI SATRIA FIRMANSYAH S.Tr.Stat.",
-                "NIP/NRP" => "199803062021041000",
+                "NIP" => "199803062021041000",
                 "Nomor Seri Karpeg" => "",
                 "Pangkat/Golongan Ruangan/TMT" => "PENATA MUDA /III/a /01-04-2021",
                 "Tempat/Tanggal Lahir" => "JAMBI 06-03-1998",
@@ -201,10 +199,10 @@ class CetakDokumenController extends Controller
 
         // Buat PDF
         // SIZE F4
-        $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP/NRP'] . '-' . 'PAK';
+        $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
         $customF4Paper = array(0, 0, 595.28, 935.43);
         $pdf = Pdf::loadView('pdf.pak', [
-            "title" => "Dokumen PAK",
+            "title" => $nama_pak,
             "pegawai" => "pegawai",
             "data" => $data, // Kirim data ke view
         ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);

@@ -341,11 +341,11 @@ export default function Graph({ data }) {
             <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
                 <div class="flex justify-between items-center pt-5">
                     {/* <!-- Button --> */}
-                    <button
+                    {/* <button
                         id="dropdownDefaultButton"
                         data-dropdown-toggle="lastDaysdropdown"
                         data-dropdown-placement="bottom"
-                        class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
+                        class="text-sm font-medium text-gray-500 dark:text-gray-400  hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
                         type="button"
                     >
                         Semua Waktu
@@ -364,7 +364,7 @@ export default function Graph({ data }) {
                                 d="m1 1 4 4 4-4"
                             />
                         </svg>
-                    </button>
+                    </button> */}
                     <div
                         id="lastDaysdropdown"
                         class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
@@ -400,7 +400,7 @@ export default function Graph({ data }) {
                             </li>
                         </ul> */}
                     </div>
-                    <a
+                    {/* <a
                         href="#"
                         class="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500  hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2"
                     >
@@ -420,7 +420,7 @@ export default function Graph({ data }) {
                                 d="m1 9 4-4-4-4"
                             />
                         </svg>
-                    </a>
+                    </a> */}
                 </div>
             </div>
         </div>

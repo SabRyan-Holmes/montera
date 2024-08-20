@@ -23,8 +23,8 @@ Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'
 // Cetak Dokumen
 Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->group(function () {
     Route::get('/pegawai', [CetakDokumenController::class, 'index'])->name('index');
-    Route::get('/show/{pegawai:id}', [CetakDokumenController::class, 'show'])->name('show');
-    Route::get('/create/{pegawai:id}', [CetakDokumenController::class, 'create'])->name('create');
+    // Route::get('/show/{pegawai:NIP}', [CetakDokumenController::class, 'show'])->name('show');
+    Route::get('/create/{pegawai:NIP}', [CetakDokumenController::class, 'create'])->name('create');
     Route::post('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
     Route::get('/view-pak', [CetakDokumenController::class, 'view_pak'])->name('view-pak');
 });

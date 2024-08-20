@@ -12,7 +12,7 @@ import { Transition } from "@headlessui/react";
 export default function Create({ auth, pegawai, title, flash }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         Nama: "",
-        "NIP/NRP": "",
+        "NIP": "",
         "Nomor Seri Karpeg": "",
         "Pangkat/Golongan Ruangan/TMT": "",
         "Tempat/Tanggal Lahir": "",
@@ -129,20 +129,20 @@ export default function Create({ auth, pegawai, title, flash }) {
                                     <td className="border-x">
                                         <TextInput
                                             type="text"
-                                            name="NIP/NRP"
+                                            name="NIP"
                                             placeholder="Masukkan NIP/NRP"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
                                             onChange={(e) =>
                                                 setData(
-                                                    "NIP/NRP",
+                                                    "NIP",
                                                     e.target.value
                                                 )
                                             }
                                         />
 
                                         <InputError
-                                            message={errors["NIP/NRP"]}
+                                            message={errors["NIP"]}
                                             className="mt-2"
                                         />
                                     </td>

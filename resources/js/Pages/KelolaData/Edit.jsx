@@ -148,10 +148,10 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                     <td className="">NIP/NRP</td>
                                     <td className="flex border-x">
                                         <TextInput
-                                            id="NIP/NRP"
+                                            id="NIP"
                                             type="text"
-                                            name="NIP/NRP"
-                                            value={pegawai["NIP/NRP"]}
+                                            name="NIP"
+                                            value={pegawai["NIP"]}
                                             disabled
                                             className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
 
@@ -159,7 +159,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         />
 
                                         <InputError
-                                            message={errors["NIP/NRP"]}
+                                            message={errors["NIP"]}
                                             className="mt-2"
                                         />
                                     </td>

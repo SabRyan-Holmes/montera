@@ -73,7 +73,7 @@
                     </td>
                     <td colspan="3" style="
                             ">
-                        : {{ $data['pegawai']['NIP/NRP'] }}
+                        : {{ $data['pegawai']['NIP'] }}
                     </td>
                 </tr>
                 {{-- {/* No Seri Karpeg */} --}}

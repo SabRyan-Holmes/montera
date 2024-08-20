@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             // $table->string('Nomor');
             $table->string('Nama');
-            $table->string('NIP/NRP')->unique();
+            // $table->string('NIP')->unique();
+            $table->string('NIP')->unique();
             $table->string('Nomor Seri Karpeg')->nullable();
             $table->string('Pangkat/Golongan Ruangan/TMT');
             $table->string('Tempat/Tanggal Lahir');

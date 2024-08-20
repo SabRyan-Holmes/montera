@@ -1,6 +1,5 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { RiArrowDropDownLine } from "react-icons/ri";
 import {
     MdOutlineKeyboardDoubleArrowLeft,
     MdOutlineKeyboardDoubleArrowRight,
@@ -30,9 +29,9 @@ export default function Index({
         const selectedPage = event.selected + 1;
         const newOffset = (selectedPage - 1) * pegawais.per_page;
 
-        console.log(
-            `User requested page number ${selectedPage}, which is offset ${newOffset}`
-        );
+        // console.log(
+        //     `User requested page number ${selectedPage}, which is offset ${newOffset}`
+        // );
 
         router.get(
             `/cetak_dokumen/pegawai`,
@@ -232,7 +231,7 @@ export default function Index({
                                     No
                                 </th>
                                 <th scope="col" width="15%">
-                                    NIP
+                                    NIP/NRP
                                 </th>
                                 <th scope="col" width="25%">
                                     Nama
@@ -257,20 +256,15 @@ export default function Index({
                             {pegawais.data?.map((pegawai, i) => (
                                 <tr
                                     role="list"
-                                    href={route(
-                                        "cetak_dokumen.create",
-                                        pegawai.id
-                                    )}
                                     key={i}
                                     className="group/item hover:bg-secondary/50 hover:cursor-pointer"
                                 >
                                     <td className="text-center">{i + 1}</td>
-                                    <td>{pegawai["NIP/NRP"]}</td>
+                                    <td>{pegawai["NIP"]}</td>
                                     <td>{pegawai.Nama}</td>
                                     {/* <td>{pegawai["Nomor Seri Karpeg"]}</td> */}
                                     <td>
                                         {
-                                            //   const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
                                             pegawai["Jabatan/TMT"]
                                                 .split("/")[0]
                                                 .trim()
@@ -283,7 +277,7 @@ export default function Index({
                                             className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                             href={route(
                                                 "cetak_dokumen.create",
-                                                pegawai.id
+                                                pegawai['NIP']
                                             )}
                                             target="_blank"
                                         >
@@ -291,18 +285,6 @@ export default function Index({
                                             <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
                                         </Link>
                                     </td>
-
-                                    {/* <Link
-                                            as="a"
-                                            href={route(
-                                                "pegawai.edit",
-                                                pegawai.id
-                                            )}
-                                            className="flex items-center gap-2 font-medium text-secondary/75 border-secondary/15"
-                                        >
-                                            <FaEdit className="w-6 h-6 fill-secondary/75" />
-                                            <span>Edit</span>
-                                        </Link> */}
                                 </tr>
                             ))}
                         </tbody>
