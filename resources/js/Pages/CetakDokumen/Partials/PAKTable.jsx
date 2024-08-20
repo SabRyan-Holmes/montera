@@ -472,6 +472,8 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             <option value="50">50</option>
                             <option value="100">100</option>
                             <option value="150">150</option>
+                            <option value="200">200</option>
+                            <option value="300">300</option>
                         </select>
                     </td>
                     <td className="text-center border" colSpan={2}>
@@ -484,9 +486,11 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                                 setData("jabatan", e.target.value);
                             }}
                         >
+                            <option value="50">50</option>
                             <option value="100">100</option>
                             <option value="200">200</option>
                             <option value="450">450</option>
+                            <option value="600">600</option>
                         </select>
                     </td>
                 </tr>

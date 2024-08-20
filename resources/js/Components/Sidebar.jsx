@@ -33,7 +33,7 @@ const Sidebar = ({ active }) => {
                         SIPACAK
                     </strong>
 
-                    <div className="flex items-center justify-center h-16 mx-5 rounded-xl bg-slate-400/50">
+                    <div className="flex items-center justify-center h-16 mx-5 border rounded-xl bg-slate-400/50 border-t-primary/70 border-x-secondary/70 border-b-hijau/70">
                         <strong className="mx-5 text-lg font-semibold leading-6 text-center height text-slate-300 text-opacity-90 ">
                             Sistem Pencetakan Angka Kredit
                         </strong>
@@ -45,7 +45,7 @@ const Sidebar = ({ active }) => {
                         className="relative z-20 w-24 h-24 m-3 mx-auto mt-0 filter drop-shadow-lg"
                     /> */}
                     <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md bg-slate-300 ">
-                        <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary via-hijau to-secondary" />
+                        <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary/40 via-hijau/40 to-secondary/40" />
                     </div>
                 </div>
 
