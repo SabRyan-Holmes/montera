@@ -56,13 +56,14 @@ export default function Edit({ auth, pegawai, title, flash }) {
         }
     }, [flash.message]);
 
+
     const submit = (e) => {
         e.preventDefault();
 
         patch(route("pegawai.update", pegawai));
     };
 
-    console.log("isi data", data);
+    // console.log("isi data", data);
     return (
         <Authenticated
             user={auth.user}

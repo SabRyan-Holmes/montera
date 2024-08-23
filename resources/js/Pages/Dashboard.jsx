@@ -17,7 +17,7 @@ export default function Dashboard({
     pakCount,
     data,
 }) {
-    console.log(`isi route  : ${route}`);
+    // console.log(`isi route  : ${route}`);
 
     const nonFungsional = pegawaiCount - pegawaiFungsional
     return (

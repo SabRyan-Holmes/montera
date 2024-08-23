@@ -146,8 +146,8 @@ export default function Index({ auth, pegawai, title }) {
         if (errors && Object.values(errors).length > 0) {
             // Ambil nilai pertama dari object errors
             const firstErrorMessage = Object.values(errors)[0];
-            console.log("firstErrorMessage :");
-            console.log(firstErrorMessage);
+            // console.log("firstErrorMessage :");
+            // console.log(firstErrorMessage);
             Toast.fire({
                 icon: "warning",
                 iconColor: "#fb7185",
@@ -165,6 +165,8 @@ export default function Index({ auth, pegawai, title }) {
         setIsLoading(true);
 
         router.post('/cetak_dokumen/cetak', { data: data }, {
+            preserveScroll:true,
+            preserveState: true,
             onFinish: () => setIsLoading(false),
             onError: (errors) => {
                 console.error("Error:", errors);
@@ -188,10 +190,10 @@ export default function Index({ auth, pegawai, title }) {
     };
 
     // CONSOLE
-    console.log("Isi data");
-    console.log(data);
-    console.log("Isi Error");
-    console.log(errors);
+    // console.log("Isi data");
+    // console.log(data);
+    // console.log("Isi Error");
+    // console.log(errors);
     return (
         <Authenticated
             user={auth.user}
@@ -262,7 +264,7 @@ export default function Index({ auth, pegawai, title }) {
                             <tr className="border">
                                 <td className="px-7">NOMOR SERI KARPEG</td>
                                 <td className="px-7">
-                                    {pegawai["NOMOR SERI KARPEG"]}
+                                    {pegawai["Nomor Seri Karpeg"]}
                                 </td>
                             </tr>
                             <tr className="border">

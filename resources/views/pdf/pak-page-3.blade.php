@@ -176,7 +176,7 @@
         <table aria-colcount="7" class="table-pak-3">
             <thead>
                 <tr>
-                    <th colspan="7" style="text-align: center; font-weight: 450;">
+                    <th colspan="7" style="text-align: center; font-weight: 500;">
                         HASIL PENILAIAN ANGKA KREDIT
                     </th>
                 </tr>
@@ -192,7 +192,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr style="background-color: #e8f3f3;">
                     <th>1</th>
                     <th colspan="2">2</th>
                     <th>3</th>

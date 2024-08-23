@@ -191,7 +191,7 @@
                     <th>Prosentase</th>
                 </tr>
 
-                <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">
+                <tr style="text-transform: uppercase; width: 100%; font-weight: 400; background-color: #e8f3f3;">
                     <th colspan="2">1</th>
                     <th>2</th>
                     <th>3</th>
@@ -251,7 +251,7 @@
         </div>
 
         @if (count(array_filter($data['tebusan2'])) > 0)
-        <div style="margin-top:12rem">
+        <div style="margin-top:12rem; font-size: 0.9rem">
             <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
             @php
                 $tebusan_list = [

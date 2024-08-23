@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { MdAddBox, MdDelete } from "react-icons/md";
 import { FaMinus } from "react-icons/fa";
 
-export default function PAKTable({ data, setData, pegawai, akNormatif }) {
+export default function PAKTable({ data, setData }) {
     // Logika Hitung jakk
     const calculateTotal = () => {
         let jakk_lama =
@@ -251,7 +251,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                         <TextInput
                             className="w-64 h-12 border-gradient"
                             placeholder="contoh: 1500.445/PAK/2024"
-                            maxLength={20}
+                            maxLength={30}
                             onChange={(e) =>
                                 setData("no_surat3", e.target.value)
                             }
@@ -264,22 +264,22 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 </tr>
                 <tr className="text-base text-center uppercase">
                     <td className="border" width="5%">
-                        No{" "}
+                        No
                     </td>
                     <td className="border" width="40%">
-                        Penetapan Angka Kredit{" "}
+                        Penetapan Angka Kredit
                     </td>
                     <td className="border" width="10%">
-                        Lama{" "}
+                        Lama
                     </td>
                     <td className="border" width="10%">
-                        Baru{" "}
+                        Baru
                     </td>
                     <td className="border" width="12%">
-                        Jumlah{" "}
+                        Jumlah
                     </td>
                     <td className="border" width="23%">
-                        Keterangan{" "}
+                        Keterangan
                     </td>
                 </tr>
                 {rowKeys.map((key, index) => (
@@ -456,7 +456,7 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                 <tr className="space-x-0 text-xs font-semibold text-left capitalize border-separate text-slate-600 ">
                     <td colSpan={2} className="text-left ">
                         Angka Kredit Minimal yang harus dipenuhi untuk kenaikan
-                        pangkat/jenjang
+                        pangkat/jabatan
                     </td>
 
                     <td className="text-center border" colSpan={2}>
@@ -486,6 +486,8 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                                 setData("jabatan", e.target.value);
                             }}
                         >
+                            <option value="20">20</option>
+                            <option value="40">40</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
                             <option value="200">200</option>
@@ -499,13 +501,13 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                     <td colSpan={2} className="text-left">
                         {data.pangkat_keker > 0 ? (
                             <span className="text-green-600/70">
-                                Kelebihan/{" "}
+                                Kelebihan/
                                 <s className="text-accent">Kekurangan</s>
                             </span>
                         ) : (
                             <span className="text-error">
                                 <s className="text-accent">Kelebihan</s>
-                                /Kekurangan{" "}
+                                /Kekurangan
                             </span>
                         )}
 
@@ -534,13 +536,13 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                     <td colSpan={2} className="text-left ">
                         {data.jabatan_keker > 0 ? (
                             <span className="text-green-600/70">
-                                Kelebihan/{" "}
+                                Kelebihan/
                                 <s className="text-accent">Kekurangan</s>
                             </span>
                         ) : (
                             <span className="text-error">
                                 <s className="text-accent">Kelebihan</s>
-                                /Kekurangan{" "}
+                                /Kekurangan
                             </span>
                         )}
 
@@ -563,28 +565,28 @@ export default function PAKTable({ data, setData, pegawai, akNormatif }) {
                             }}
                         >
                             <option>
-                                Belum Dapat Dipertimbangkan untuk Kenaikan Pangkat Setingkat
-                                Lebih Tinggi
+                                Belum Dapat Dipertimbangkan untuk Kenaikan
+                                Pangkat Setingkat Lebih Tinggi
                             </option>
                             <option>
-                                Belum Dapat Dipertimbangkan untuk Kenaikan Jabatan Setingkat
-                                Lebih Tinggi
+                                Belum Dapat Dipertimbangkan untuk Kenaikan
+                                Jabatan Setingkat Lebih Tinggi
                             </option>
                             <option>
-                                Belum Dapat Dipertimbangkan untuk Kenaikan Pangkat dan Jabatan
-                                Setingkat Lebih Tinggi
+                                Belum Dapat Dipertimbangkan untuk Kenaikan
+                                Pangkat dan Jabatan Setingkat Lebih Tinggi
                             </option>
                             <option>
-                                Sudah Dapat Dipertimbangkan untuk Kenaikan Pangkat Setingkat
-                                Lebih Tinggi
+                                Sudah Dapat Dipertimbangkan untuk Kenaikan
+                                Pangkat Setingkat Lebih Tinggi
                             </option>
                             <option>
-                                Sudah Dapat Dipertimbangkan untuk Kenaikan Jabatan Setingkat
-                                Lebih Tinggi
+                                Sudah Dapat Dipertimbangkan untuk Kenaikan
+                                Jabatan Setingkat Lebih Tinggi
                             </option>
                             <option>
-                                Sudah Dapat Dipertimbangkan untuk Kenaikan Pangkat dan Jabatan
-                                Setingkat Lebih Tinggi
+                                Sudah Dapat Dipertimbangkan untuk Kenaikan
+                                Pangkat dan Jabatan Setingkat Lebih Tinggi
                             </option>
                         </select>
                     </td>

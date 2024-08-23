@@ -5,13 +5,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
 use Inertia\Inertia;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login');
-});
+})->middleware('guest');
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv');

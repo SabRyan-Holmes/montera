@@ -15,7 +15,7 @@ class PegawaiStoreRequest extends FormRequest
     {
         return [
             'Nama' => 'required|string|max:60|min:1',
-            'NIP' => 'required|string|max:18',
+            'NIP' => 'required|string|max:18|unique:pegawais,NIP',
             'Nomor Seri Karpeg' => 'required|string|max:40',
             'Pangkat/Golongan Ruangan/TMT' => 'required|string|max:150',
             'Tempat/Tanggal Lahir' => 'required|string|max:50',
@@ -36,6 +36,7 @@ class PegawaiStoreRequest extends FormRequest
             'max' => ':attribute maksimal :max karakter.',
             'min' => ':attribute minimal :min karakter.',
             'in' => ':attribute harus salah satu dari :values.',
+            'unique' => ':attribute sudah ada, silakan gunakan NIP yang lain.',
         ];
     }
 

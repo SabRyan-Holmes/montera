@@ -36,7 +36,7 @@ export default function InputDataTable({ data, setData }) {
     const today = new Date().toISOString().split("T")[0];
     const namaInput = useRef();
 
-    const [minPeriode, setMinPeriode] = useState()
+    const [minPeriode, setMinPeriode] = useState('')
 
     return (
         <table className="table text-base ">
@@ -70,43 +70,17 @@ export default function InputDataTable({ data, setData }) {
                                     const periodeMulai = parseInt(month, 10);
 
                                     // Set min periode untuk untuk periode berakhir
-                                    setMinPeriode(value)
+                                    setMinPeriode(value);
                                     // Memasukkan nilai bulan ke dalam state atau data
 
-                                    setData("periode_mulai", periodeMulai);
+                                    // setData("periode_mulai", periodeMulai);
 
-                                    // Logika tambahan jika diperlukan
-                                    // if (data.periode_berakhir < periodeMulai) {
-                                    //     setData("periode_berakhir", periodeMulai);
-                                    // }
+                                    // setData("tahun_ini", year);
+                                    setData(data => ({ ...data, periode_mulai: periodeMulai}));
+                                    setData(data => ({ ...data, tahun_ini: year}));
                                 }}
                             />
-                            {/* <select
-                                name="periode_mulai"
-                                id="periode_mulai"
-                                className="px-4 font-medium rounded-md w-28 border-gradient disabled:text-accent"
-                                defaultValue={data.periode_mulai}
-                                onChange={(e) => {
-                                    const periodeMulai = parseInt(
-                                        e.target.value
-                                    );
-                                    setData("periode_mulai", periodeMulai);
 
-                                    // Jika periode berakhir kurang dari periode mulai, setel periode berakhir menjadi periode mulai
-                                    if (data.periode_berakhir < periodeMulai) {
-                                        setData(
-                                            "periode_berakhir",
-                                            periodeMulai
-                                        );
-                                    }
-                                }}
-                            >
-                                {Object.keys(bulan).map((key) => (
-                                    <option key={key} value={key}>
-                                        {bulan[key]}
-                                    </option>
-                                ))}
-                            </select> */}
                             <span>sd</span>
                             <input
                                 type="month"
@@ -124,41 +98,20 @@ export default function InputDataTable({ data, setData }) {
                                     // Mengonversi bulan menjadi integer
                                     const periodeBerakhir = parseInt(month, 10);
 
-                                    // Memasukkan nilai bulan ke dalam state atau data
-                                    setData("periode_berakhir", periodeBerakhir);
-
-                                    // Logika tambahan jika diperlukan
-                                    // if (data.periode_berakhir < periodeBerakhir) {
-                                    //     setData("periode_berakhir", periodeBerakhir);
-                                    // }
+                                    if (year !== data.tahun_ini) {
+                                        alert(
+                                            "Tahun periode berakhir harus sama dengan periode mulai!"
+                                        );
+                                        e.target.value = ""; // Reset input jika tidak sesuai
+                                    } else {
+                                        // Jika tahun sama, masukkan nilai bulan ke dalam state atau data
+                                        setData(
+                                            "periode_berakhir",
+                                            periodeBerakhir
+                                        );
+                                    }
                                 }}
                             />
-                            {/* <select
-                                name="periode_berakhir"
-                                id="periode_berakhir"
-                                className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
-                                defaultValue={data.periode_berakhir}
-                                disabled={!data.periode_mulai}
-                                onChange={(e) => {
-                                    setData(
-                                        "periode_berakhir",
-                                        parseInt(e.target.value)
-                                    );
-                                }}
-                            >
-                                {Object.keys(bulan).map((key) => (
-                                    <option
-                                        key={key}
-                                        value={key}
-                                        disabled={
-                                            data.periode_mulai &&
-                                            parseInt(key) < data.periode_mulai
-                                        }
-                                    >
-                                        {bulan[key]}
-                                    </option>
-                                ))}
-                            </select> */}
                         </div>
                     </td>
                 </tr>
@@ -170,6 +123,7 @@ export default function InputDataTable({ data, setData }) {
                             <DateInput
                                 name="tgl_ditetapkan"
                                 id="tgl_ditetapkan"
+                                required
                                 max={today}
                                 onChange={(e) =>
                                     setData("tgl_ditetapkan", e.target.value)

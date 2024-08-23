@@ -48,7 +48,7 @@ export default function Create({ auth, pegawai, title, flash }) {
     //     };
     // }, [flash.message]);
 
-    console.log("isi errors", errors);
+    // console.log("isi errors", errors);
     return (
         <Authenticated
             user={auth.user}

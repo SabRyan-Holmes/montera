@@ -9,8 +9,8 @@ export default function KonversiTable({
     predikat,
 }) {
     const handleKeyPress = (e) => {
-        // Mencegah karakter non-numeric
-        if (!/[0-9]/.test(e.key)) {
+        // Mengizinkan angka dan tanda koma atau titik
+        if (!/[0-9,.]/.test(e.key)) {
             e.preventDefault();
         }
     };
@@ -18,7 +18,7 @@ export default function KonversiTable({
     // Jabatan untuk sesuai Koefisien Pertahun/Ak Normatif
 
     useEffect(() => {
-        const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
+        // const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
         const findAkNormatifValue = (jabatan) => {
             const key = Object.keys(akNormatif).find((k) =>
                 jabatan.includes(k)
@@ -26,11 +26,14 @@ export default function KonversiTable({
             return key ? akNormatif[key] : null;
         };
 
-        const akNormatifValue = findAkNormatifValue(jabatanOnly);
+        let akNormatifValue = findAkNormatifValue(pegawai["Jabatan/TMT"]);
+        console.log("akNormatifValue");
+        console.log(akNormatifValue);
+        // Kalau tidak ketemu sesuai ketentuan
         data.ak_normatif = akNormatifValue;
     }, []);
 
-    function hitungAk( periode, akNormatif, presentase) {
+    function hitungAk(periode, akNormatif, presentase) {
         const ak_kredit =
             parseFloat(periode / 12) *
             parseFloat(akNormatif) *
@@ -48,7 +51,17 @@ export default function KonversiTable({
 
     // Logika Hitung AK dijalankan ketika ada perubahan
     useEffect(() => {
-        const akNormatif = (data.ak_normatif ? data.ak_normatif : data.ak_normatif_ops)
+        let akNormatif = data.ak_normatif
+            ? data.ak_normatif
+            : data.ak_normatif_ops;
+        if (akNormatif == null) {
+            // Ammbil dari inputan custom
+            akNormatif = data.ak_normatif_ops;
+            // data.ak_normatif = akNormatifValue
+            setData("ak_normatif", akNormatif);
+            // console.log("ak_ops");
+            // console.log(akNormatif);
+        }
         const akKreditValue = hitungAk(
             data.angka_periode,
             akNormatif,
@@ -56,7 +69,12 @@ export default function KonversiTable({
         );
         setData("angka_kredit", akKreditValue);
         data.angka_kredit = akKreditValue;
-    }, [data.angka_periode, data.predikat, data.presentase]);
+    }, [
+        data.angka_periode,
+        data.predikat,
+        data.presentase,
+        data.ak_normatif_ops,
+    ]);
 
     useEffect(() => {
         setData("predikat", predikat[data.presentase]);
@@ -86,21 +104,19 @@ export default function KonversiTable({
                             className="w-64 h-12"
                             required
                             placeholder="contoh: 1500.445/Konv/2024"
+                            maxLength={30}
                             onChange={(e) =>
                                 setData("no_surat1", e.target.value)
                             }
                             list="no_surat1"
-                            />
-                            <datalist id="no_surat1">
-                                <option value="1500.455/KONV/2024" />
-                            </datalist>
+                        />
+                        <datalist id="no_surat1">
+                            <option value="1500.455/KONV/2024" />
+                        </datalist>
                     </td>
                 </tr>
                 <tr className="text-center border">
-                    <td
-                        colSpan={2}
-                        className="font-semibold text-center "
-                    >
+                    <td colSpan={2} className="font-semibold text-center ">
                         Hasil Penilaian Kinerja
                     </td>
                     <td rowSpan={2} className="border">
@@ -139,12 +155,20 @@ export default function KonversiTable({
                                 id="ak_normatif_ops"
                                 type="text"
                                 name="ak_normatif_ops"
-                                className=""
-                                placeholder="Input Manual Angka Normatif"
+                                className="text-center w-28 placeholder:text-xs"
+                                maxLength="5"
+                                placeholder="Input Manual"
                                 onKeyPress={handleKeyPress}
-                                onChange={(e) =>
-                                    setData("ak_normatif_ops", parseFloat(e.target.value).toFixed(3))
-                                }
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    // Mengganti koma dengan titik untuk parsing
+                                    value = value.replace(",", ".");
+
+                                    setData(
+                                        "ak_normatif_ops",
+                                        parseFloat(value).toFixed(2)
+                                    );
+                                }}
                             />
                         )}
                     </td>
@@ -156,10 +180,7 @@ export default function KonversiTable({
                 </tr>
 
                 <tr>
-                    <td
-                        rowSpan={3}
-                        className="text-lg font-semibold "
-                    >
+                    <td rowSpan={3} className="text-lg font-semibold ">
                         Tebusan
                     </td>
                     <td className="border">

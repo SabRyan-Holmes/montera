@@ -1,4 +1,4 @@
-import {  InputLabel, TextInput } from "@/Components";
+import { InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useState } from "react";
 
 export default function AkumulasiTable({
@@ -29,12 +29,11 @@ export default function AkumulasiTable({
         12: "Desember",
     };
 
-
     useEffect(() => {
         var jumlahAkKredit =
             parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
-        console.log("jumlahAkKredit");
-        console.log(jumlahAkKredit);
+        // console.log("jumlahAkKredit");
+        // console.log(jumlahAkKredit);
         setData("jumlah_ak_kredit", jumlahAkKredit.toFixed(3));
     }, [data.ak_terakhir, data.angka_kredit]);
 
@@ -54,7 +53,7 @@ export default function AkumulasiTable({
                         <TextInput
                             id="no_surat2"
                             type="text"
-                            maxLength={20}
+                            maxLength={30}
                             name="no_surat2"
                             placeholder="contoh: 1500.445/Akm/2024"
                             required
@@ -63,10 +62,10 @@ export default function AkumulasiTable({
                                 setData("no_surat2", e.target.value)
                             }
                             list="no_surat2"
-                            />
-                            <datalist id="no_surat2">
-                                <option value="1500.455/Akm/2024" />
-                            </datalist>
+                        />
+                        <datalist id="no_surat2">
+                            <option value="1500.455/Akm/2024" />
+                        </datalist>
                     </td>
                 </tr>
                 <tr className="border">
@@ -129,9 +128,15 @@ export default function AkumulasiTable({
                             className="text-center placeholder:text-accent"
                             placeholder="0,0"
                             defaultValue={data.ak_terakhir}
-                            onChange={(e) =>
-                                setData("ak_terakhir", e.target.value)
-                            }
+                            onChange={(e) => {
+                                const value = e.target.value;
+
+                                // Jika input dikosongkan, set nilai ke 0
+                                setData(
+                                    "ak_terakhir",
+                                    value == "" || value == null ? 0 : value
+                                );
+                            }}
                         />
                     </td>
                 </tr>
@@ -141,9 +146,10 @@ export default function AkumulasiTable({
                             id="tahun_ini"
                             type="text"
                             name="tahun_ini"
+                            value={data.tahun_ini}
                             required
                             placeholder="tahun sekarang"
-                            maxlength={4}
+                            maxLength={4}
                             onKeyPress={handleKeyPress}
                             className="w-32 text-center"
                             onChange={(e) =>
@@ -174,10 +180,7 @@ export default function AkumulasiTable({
             </tbody>
             <tfoot>
                 <tr>
-                    <td
-                        rowSpan={3}
-                        className="text-lg border text-slate-700"
-                    >
+                    <td rowSpan={3} className="text-lg border text-slate-700">
                         Tebusan
                     </td>
                     <td colSpan={3} className="border-y">

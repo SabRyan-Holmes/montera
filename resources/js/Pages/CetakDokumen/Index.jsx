@@ -121,7 +121,7 @@ export default function Index({
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
                 <h1 className="my-10 text-3xl ">
-                    Data Pejabat Fungsional 2024
+                    Data Pegawai Fungsional
                 </h1>
 
                 <form className="max-w-screen-laptop ">

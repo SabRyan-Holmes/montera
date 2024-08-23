@@ -52,7 +52,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody style="font-size: 13px">
+            <tbody style="font-size: 0.9rem">
                 {{--  Nama  --}}
                 <tr>
                     <th style="border: 1px solid #000;  width: 3.8rem /* 64px */;">
@@ -126,7 +126,7 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         6</th>
-                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem; text-wrap: nowrap; font-size: 13px">
                         Pangkat/Golongan Ruang/TMT
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
@@ -210,7 +210,7 @@
                     </th>
                 </tr>
 
-                <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">
+                <tr style="text-transform: uppercase; width: 100%; font-weight: 400; background-color: #e8f3f3;" >
                     <th colspan="2" style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
                         {{ '1' }}
                     </th>
@@ -265,15 +265,15 @@
         </div>
 
         @if (count(array_filter($data['tebusan1'])) > 0)
-        <div style="margin-top:12rem;">
+        <div style="margin-top:12rem; font-size: 0.9rem">
             <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
             @php
                 $tebusan_list = [
                     'kepala_reg' => 'Kepala Kantor Regional VII BKN',
                     'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
                     'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
-                    'pns' => 'PNS Bersangkutan',
                     'kepala_biro' => 'Kepala Biro SDM BPS',
+                    'pns' => 'PNS Bersangkutan',
                     'arsip' => 'Arsip',
                 ];
                 $i = 1;

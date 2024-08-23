@@ -170,7 +170,7 @@ export default function Index({
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
-                <h1 className="text-3xl my-7">Data Pejabat Fungsional 2024</h1>
+                <h1 className="text-3xl my-7">Data Pegawai Fungsional</h1>
 
                 <form className="flex items-center justify-between w-full">
                     <div className="flex items-center justify-start gap-3 my-3 w-fit">
