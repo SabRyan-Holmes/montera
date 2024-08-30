@@ -341,7 +341,7 @@ export default function Index({
 
                                         <button
                                             onClick={() =>
-                                                handleDelete(pegawai.id)
+                                                handleDelete(pegawai['NIP'])
                                             }
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >
