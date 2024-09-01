@@ -8,7 +8,7 @@ import {
 import { FaEye } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
-import { Link, router} from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
 import { InputLabel } from "@/Components";
@@ -53,15 +53,18 @@ export default function Index({
 
     useEffect(() => {
         if (flash.message) {
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: `${flash.message}`,
-                    icon: "success",
-                    iconColor: "#50C878",
-                    confirmButtonText: "Oke",
-                    confirmButtonColor: "#2D95C9",
-                });
-            };
+            Swal.fire({
+                title: "Berhasil!",
+                text: `${flash.message}`,
+                icon: "success",
+                iconColor: "#50C878",
+                confirmButtonText: "Oke",
+                confirmButtonColor: "#2D95C9",
+            });
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
+        }
     }, [flash.message]);
 
     useEffect(() => {
@@ -320,7 +323,7 @@ export default function Index({
                                             as="a"
                                             href={route(
                                                 "pegawai.show",
-                                                pegawai['NIP']
+                                                pegawai["NIP"]
                                             )}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                         >
@@ -331,7 +334,7 @@ export default function Index({
                                             as="a"
                                             href={route(
                                                 "pegawai.edit",
-                                                pegawai['NIP']
+                                                pegawai["NIP"]
                                             )}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >
@@ -341,7 +344,7 @@ export default function Index({
 
                                         <button
                                             onClick={() =>
-                                                handleDelete(pegawai['NIP'])
+                                                handleDelete(pegawai["NIP"])
                                             }
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >

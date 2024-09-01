@@ -16,7 +16,7 @@ class PegawaiStoreRequest extends FormRequest
         return [
             'Nama' => 'required|string|max:60|min:1',
             'NIP' => 'required|string|max:18|unique:pegawais,NIP',
-            'Nomor Seri Karpeg' => 'required|string|max:40',
+            'Nomor Seri Karpeg' => 'nullable|string|max:40',
             'Pangkat/Golongan Ruangan/TMT' => 'required|string|max:150',
             'Tempat/Tanggal Lahir' => 'required|string|max:50',
             'Jenis Kelamin' => 'required|string|in:PRIA,WANITA',

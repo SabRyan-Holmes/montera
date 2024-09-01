@@ -17,7 +17,7 @@ import Swal from "sweetalert2";
 
 
 export default function Edit({ auth, pegawai, title, flash }) {
-    const { data, setData, patch, processing, errors, reset } = useForm({
+    const { data, setData, patch, processing, errors, reset, clearErrors } = useForm({
         "Nomor Seri Karpeg": pegawai["Nomor Seri Karpeg"],
         "Pangkat/Golongan Ruangan/TMT": pegawai["Pangkat/Golongan Ruangan/TMT"],
         Pendidikan: pegawai["Pendidikan"],
@@ -41,18 +41,13 @@ export default function Edit({ auth, pegawai, title, flash }) {
 
     useEffect(() => {
         if (flash.message) {
-            // Swal.fire({
-            //     title: "Berhasil!",
-            //     text: flash.message,
-            //     icon: "success",
-            //     iconColor: "#50C878",
-            //     confirmButtonText: "Oke",
-            //     confirmButtonColor: "#2D95C9",
-            // });
             Toast.fire({
                 icon: "success",
                 title: "Data Pegawai Berhasil Diupdate!!",
             });
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
         }
     }, [flash.message]);
 
@@ -63,7 +58,25 @@ export default function Edit({ auth, pegawai, title, flash }) {
         patch(route("pegawai.update", pegawai));
     };
 
-    // console.log("isi data", data);
+
+    useEffect(() => {
+        if (errors && Object.values(errors).length > 0) {
+            // Ambil nilai pertama dari object errors
+            const firstErrorMessage = Object.values(errors)[0];
+            // console.log("firstErrorMessage :");
+            // console.log(firstErrorMessage);
+            Toast.fire({
+                icon: "warning",
+                iconColor: "#fb7185",
+                title: firstErrorMessage,
+                color: "#fb7185",
+            });
+            setTimeout(() => {
+                clearErrors();
+            }, 3000);
+        }
+    }, [errors]);
+
     return (
         <Authenticated
             user={auth.user}
@@ -133,14 +146,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             name="Nama"
                                             value={pegawai.Nama}
                                             disabled
-                                            className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
-
-                                            // onChange={(e) => setData('nama', e.target.value)}
-                                        />
-
-                                        <InputError
-                                            message={errors.Nama}
-                                            className="mt-2"
+                                            className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                         />
                                     </td>
                                 </tr>
@@ -154,20 +160,15 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             name="NIP"
                                             value={pegawai["NIP"]}
                                             disabled
-                                            className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
-
-                                            // onChange={(e) => setData('nama', e.target.value)}
+                                            className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                         />
 
-                                        <InputError
-                                            message={errors["NIP"]}
-                                            className="mt-2"
-                                        />
+
                                     </td>
                                 </tr>
                                 {/* row 3 */}
                                 <tr className="border">
-                                    <td className="">NOMOR SERI KARPEG</td>
+                                    <td className="">NOMOR SERI KARPEG(opsional)</td>
                                     <td className="flex border-x">
                                         <TextInput
                                             id="nama"
@@ -176,8 +177,8 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             defaultValue={
                                                 pegawai["Nomor Seri Karpeg"]
                                             }
-                                            className="px-2 h-9 w-96 border-gradient placeholder:text-accent "
-                                            placeholder="input disini"
+                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent "
+                                            placeholder="Masukkan nomor Seri Karpeg. contoh: P 152011"
                                             onChange={(e) =>
                                                 setData(
                                                     "Nomor Seri Karpeg",
@@ -208,23 +209,15 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                     "Pangkat/Golongan Ruangan/TMT"
                                                 ]
                                             }
-                                            className="px-2 h-9 w-96 border-gradient "
-                                            placeholder="input disini"
+                                            className="w-full px-2 h-9 border-gradient "
+                                            placeholder="contoh: PENATA / III/c / 01-04-2021"
+                                            max
                                             onChange={(e) =>
                                                 setData(
                                                     "Pangkat/Golongan Ruangan/TMT",
                                                     e.target.value
                                                 )
                                             }
-                                        />
-
-                                        <InputError
-                                            message={
-                                                errors[
-                                                    "Pangkat/Golongan Ruangan/TMT"
-                                                ]
-                                            }
-                                            className="mt-2"
                                         />
                                     </td>
                                 </tr>
@@ -240,7 +233,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                 pegawai["Tempat/Tanggal Lahir"]
                                             }
                                             disabled
-                                            className="px-2 h-9 w-96 border-gradient disabled:text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                             onChange={(e) =>
                                                 setData(
                                                     "Tempat/Tanggal Lahir",
@@ -248,24 +241,16 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                 )
                                             }
                                         />
-
-                                        <InputError
-                                            message={
-                                                errors["Tempat/Tanggal Lahir"]
-                                            }
-                                            className="mt-2"
-                                        />
                                     </td>
                                 </tr>
                                 <tr className="border">
                                     <td className="">JENIS KELAMIN</td>
-
                                     <td className="flex border-x">
                                         <TextInput
                                             type="text"
                                             name="Jenis Kelamin"
                                             value={pegawai["Jenis Kelamin"]}
-                                            className="px-2 h-9 w-96 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
+                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
                                             disabled
                                             placeholder="input disini"
                                         />
@@ -287,11 +272,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                 )
                                             }
                                         />
-
-                                        <InputError
-                                            message={errors["Pendidikan"]}
-                                            className="mt-2"
-                                        />
                                     </td>
                                 </tr>
                                 <tr className="border">
@@ -311,11 +291,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                     e.target.value
                                                 )
                                             }
-                                        />
-
-                                        <InputError
-                                            message={errors["Jabatan/TMT"]}
-                                            className="mt-2"
                                         />
                                     </td>
                                 </tr>
@@ -337,13 +312,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                 )
                                             }
                                         />
-
-                                        <InputError
-                                            message={
-                                                errors["Masa Kerja Golongan"]
-                                            }
-                                            className="mt-2"
-                                        />
                                     </td>
                                 </tr>
                                 <tr className="border">
@@ -362,11 +330,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                                 )
                                             }
                                         />
-
-                                        <InputError
-                                            message={errors["Unit Kerja"]}
-                                            className="mt-2"
-                                        />
                                     </td>
                                 </tr>
                                 <tr className="border">
@@ -374,7 +337,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
 
                                     <td className="flex border-x">
                                         <select
-                                            className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
+                                            className="w-full text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                             name="Daerah"
                                             defaultValue={pegawai.Daerah}
                                             onChange={(e) =>
@@ -404,11 +367,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             <option>BUNGO</option>
                                             <option>TEBO</option>
                                         </select>
-
-                                        <InputError
-                                            message={errors["Daerah"]}
-                                            className="mt-2"
-                                        />
                                     </td>
                                 </tr>
                             </tbody>

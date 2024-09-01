@@ -103,14 +103,15 @@ export default function Create({ auth, pegawai, title, flash }) {
                             <tbody>
                                 {/* row 1 */}
                                 <tr className="border">
-                                    <td className="" width="40%">Nama</td>
-                                    <td className="border-x" width="60%">
+                                <td className="" width="40%">Nama</td>
+                                <td className="border-x" width="60%">
                                         <TextInput
                                             id="Nama"
                                             type="text"
                                             name="Nama"
                                             placeholder="Masukkan Nama Pegawai"
                                             className="w-full px-2 h-9 border-slate-100"
+                                            maxLength={100}
                                             isFocused={true}
                                             onChange={(e) =>
                                                 setData("Nama", e.target.value)
@@ -133,6 +134,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             placeholder="Masukkan NIP/NRP"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
+                                            maxLength={18}
                                             onChange={(e) =>
                                                 setData(
                                                     "NIP",
@@ -149,7 +151,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                 </tr>
                                 {/* row 3 */}
                                 <tr className="border">
-                                    <td className="">NOMOR SERI KARPEG</td>
+                                    <td className="">NOMOR SERI KARPEG(opsional)</td>
                                     <td className="border-x">
                                         <TextInput
                                             id="nama"
@@ -157,6 +159,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             name="Nomor Seri Karpeg"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
+                                            maxLength={30}
                                             placeholder="Masukkan nomor Seri Karpeg. contoh: P 152011"
                                             onChange={(e) =>
                                                 setData(
@@ -185,6 +188,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             name="Pangkat/Golongan Ruangan/TMT"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
+                                            maxLength={100}
                                             placeholder="Masukkan Pangkat/Golongan/TMT. contoh: PENATA / III/c / 01-04-2021"
                                             onChange={(e) =>
                                                 setData(
@@ -197,7 +201,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                         <InputError
                                             message={
                                                 errors[
-                                                    "Pangkat/Golongan Ruang/TMT"
+                                                    "Pangkat/Golongan Ruangan/TMT"
                                                 ]
                                             }
                                             className="mt-2"
@@ -214,6 +218,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             name="Tempat/Tanggal Lahir"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
+                                            maxLength={50}
                                             placeholder="Masukkan Tempat/Tanggal Lahir. contoh: BATANG HARI  06-01-1972"
                                             onChange={(e) =>
                                                 setData(
@@ -272,6 +277,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
                                             placeholder="Masukkan Pendidikan. contoh: S1 Manajemen"
+                                            maxLength={100}
                                             onChange={(e) =>
                                                 setData(
                                                     "Pendidikan",
@@ -295,6 +301,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
                                             placeholder="Masukkan Jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
+                                            maxLength={100}
                                             onChange={(e) =>
                                                 setData(
                                                     "Jabatan/TMT",
@@ -317,6 +324,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             name="Masa Kerja Golongan"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
+                                            maxLength={100}
                                             placeholder="Masukkan Masa Kerja Golongan. contoh: 2 TAHUN 3 BULAN  "
                                             onChange={(e) =>
                                                 setData(
@@ -343,6 +351,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
                                             placeholder="Masukkan Unit Kerja. contoh: BPS Kabupaten Batang Hari"
+                                            maxLength={50}
                                             onChange={(e) =>
                                                 setData(
                                                     "Unit Kerja",
