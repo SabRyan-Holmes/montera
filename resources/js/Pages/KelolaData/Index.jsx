@@ -5,8 +5,7 @@ import {
     MdOutlineKeyboardDoubleArrowRight,
     MdPersonSearch,
 } from "react-icons/md";
-import { FaEye } from "react-icons/fa";
-import { FaEdit } from "react-icons/fa";
+import { FaEye, FaEdit } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
 import { Link, router } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";

@@ -11,6 +11,11 @@ class Pegawai extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
+    public function riwayatCetaks()
+    {
+        return $this->hasMany(RiwayatCetak::class);
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         // Search By Nama & NIP

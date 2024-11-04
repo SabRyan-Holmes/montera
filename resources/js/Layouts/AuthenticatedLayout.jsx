@@ -1,16 +1,9 @@
-import { useState } from "react";
-import ApplicationLogo from "@/Components/ApplicationLogo";
-import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, Head } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 
 export default function Authenticated({ user, title, header, children, current }) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
-        // console.log('isi current', current)
+    // console.log('isi current', current)
 
     return (
         <div className="h-full">

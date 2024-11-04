@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CetakPAKRequest;
 use Inertia\Inertia;
 use App\Models\Pegawai;
+use App\Models\RiwayatCetak;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -52,10 +53,31 @@ class CetakDokumenController extends Controller
         ]);
     }
 
+    public function edit(Pegawai $pegawai)
+    {
+        return Inertia::render('CetakDokumen/Create', [
+            "title" => "Edit Riwayat Dokumen PAK",
+            'pegawai' => $pegawai
+        ]);
+    }
+
+    public function show_history(Pegawai $pegawai)
+    {
+        return Inertia::render('CetakDokumen/History', [
+            "title" => "Riwayat Pencetakan Dokumen PAK",
+            'pegawai' => $pegawai
+        ]);
+    }
+
 
     public function cetak(Request $request)
     {
         Session::put('data', $request->all());
+        $datas = $request->except('data.pegawai');
+        $pegawai_id = $request->input('data.pegawai.id');
+        $datas = array_merge($datas['data'], ['pegawai_id' =>$pegawai_id]);
+        // dd($datas);
+        RiwayatCetak::create($datas);
         return Inertia::location(route('cetak_dokumen.view-pak'));
     }
 

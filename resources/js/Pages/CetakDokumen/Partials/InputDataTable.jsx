@@ -1,7 +1,7 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useRef, useState } from "react";
 
-export default function InputDataTable({ data, setData }) {
+export default function InputDataTable({ data, setData, isEdit, historyData }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {
@@ -57,8 +57,10 @@ export default function InputDataTable({ data, setData }) {
                             <input
                                 type="month"
                                 name="periode_mulai"
+                                // { isEdit && 'defaultValue = historyData '}
                                 id="periode_mulai"
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                defaultValue={isEdit && historyData['periode_mulai']}
                                 onChange={(e) => {
                                     // Mengambil nilai dari input (format: YYYY-MM)
                                     const value = e.target.value;
@@ -88,6 +90,7 @@ export default function InputDataTable({ data, setData }) {
                                 id="periode_berakhir"
                                 min={minPeriode}
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                defaultValue={isEdit && historyData['periode_berakhir']}
                                 onChange={(e) => {
                                     // Mengambil nilai dari input (format: YYYY-MM)
                                     const value = e.target.value;
@@ -125,6 +128,7 @@ export default function InputDataTable({ data, setData }) {
                                 id="tgl_ditetapkan"
                                 required
                                 max={today}
+                                defaultValue={isEdit && historyData['tgl_ditetapkan']}
                                 onChange={(e) =>
                                     setData("tgl_ditetapkan", e.target.value)
                                 }
@@ -145,7 +149,7 @@ export default function InputDataTable({ data, setData }) {
                                 name="nama"
                                 className="w-64 appearance-none no-arrow"
                                 maxLength="50"
-                                defaultValue={data.nama}
+                                defaultValue={isEdit ? historyData['nama'] :data.nama}
                                 list="namaList"
                                 required
                                 placeholder="Input nama penanda tangan"
@@ -173,7 +177,7 @@ export default function InputDataTable({ data, setData }) {
                                 name="nip"
                                 required
                                 list="nipList" // tambahkan list untuk datalist
-                                defaultValue={data.nip}
+                                defaultValue={isEdit ? historyData['nip'] : data.nip}
                                 className="w-64"
                                 maxLength="18"
                                 placeholder="NIP penanda tangan"

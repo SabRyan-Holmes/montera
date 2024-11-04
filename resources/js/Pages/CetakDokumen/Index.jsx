@@ -10,6 +10,7 @@ import { Link, router } from "@inertiajs/react";
 import ReactPaginate from "react-paginate";
 import { InputLabel } from "@/Components";
 import { TiArrowRight } from "react-icons/ti";
+import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 
 export default function Index({
     auth,
@@ -271,7 +272,7 @@ export default function Index({
                                         }
                                     </td>
                                     <td>{pegawai["Daerah"]}</td>
-                                    <td className="text-center">
+                                    <td className="text-center whitespace-nowrap text-nowrap">
                                         <Link
                                             as="a"
                                             className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white"
@@ -281,8 +282,21 @@ export default function Index({
                                             )}
                                             target="_blank"
                                         >
-                                            Cetak PAK{" "}
+                                            Cetak {" "}
                                             <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
+                                        </Link>
+                                        <span className="inline-block mx-1"></span>
+                                        <Link
+                                            as="a"
+                                            className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-secondary group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            href={route(
+                                                "cetak_dokumen.show_history",
+                                                pegawai['NIP']
+                                            )}
+                                            target="_blank"
+                                        >
+                                            Riwayat{" "}
+                                            <HiMiniClipboardDocumentList className="fill-secondary group-hover/item:fill-white" />
                                         </Link>
                                     </td>
                                 </tr>

@@ -9,10 +9,12 @@ import {
     PAKTable,
 } from "./Partials";
 import { FaPrint } from "react-icons/fa6";
+import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 
-export default function Index({ auth, pegawai, title }) {
+export default function Edit({ auth, title, riwayat }) {
+    const pegawai = riwayat.pegawai
     const { data, setData, post, processing, errors, reset } = useForm({
         pegawai: pegawai,
         // Input Data
@@ -119,6 +121,7 @@ export default function Index({ auth, pegawai, title }) {
             kepala_biro: false,
             arsip: false,
         },
+
         kesimpulan: "Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi",
     });
 
@@ -155,6 +158,7 @@ export default function Index({ auth, pegawai, title }) {
         }
     }, [errors]);
 
+    const props = usePage().props;
     const [isLoading, setIsLoading] = useState(false);
 
     const submit = (e) => {
@@ -185,6 +189,7 @@ export default function Index({ auth, pegawai, title }) {
         Muda: 25,
         Madya: 37.5,
     };
+
 
     // CONSOLE
     // console.log("Isi data");
@@ -315,13 +320,15 @@ export default function Index({ auth, pegawai, title }) {
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
                         {/* INPUT DATA | START*/}
-                        <InputDataTable data={data} setData={setData} />
+                        <InputDataTable data={data} setData={setData} isEdit={true} historyData={riwayat}/>
                         {/* INPUT DATA | END*/}
 
                         {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | START*/}
                         <KonversiTable
                             pegawai={pegawai}
                             data={data}
+                            isEdit={true}
+                            historyData={riwayat}
                             setData={setData}
                             akNormatif={akNormatif}
                             predikat={predikat}
@@ -333,6 +340,8 @@ export default function Index({ auth, pegawai, title }) {
                             pegawai={pegawai}
                             data={data}
                             setData={setData}
+                            isEdit={true}
+                            historyData={riwayat}
                             akNormatif={akNormatif}
                             predikat={predikat}
                         />
@@ -353,9 +362,9 @@ export default function Index({ auth, pegawai, title }) {
                         className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 ">
                             Cetak Dokumen PAK
                             <FaPrint className="mx-1" />
+
                         </SuccessButton>
                     </div>
-
                 </form>
             </section>
         </Authenticated>

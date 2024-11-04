@@ -4,6 +4,7 @@ use App\Http\Controllers\CetakDokumenController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RiwayatCetakController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,6 +26,11 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
     Route::get('/create/{pegawai:NIP}', [CetakDokumenController::class, 'create'])->name('create');
     Route::post('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
     Route::get('/view-pak', [CetakDokumenController::class, 'view_pak'])->name('view-pak');
+
+    // Riwayat Cetak
+    Route::get('/show-history/{pegawai:NIP}', [RiwayatCetakController::class, 'show_history'])->name('show_history');
+    Route::get('/show-history/edit/{riwayat:id}', [RiwayatCetakController::class, 'edit'])->name('edit');
+    Route::get('/show-history/delete/{riwayat:id}', [RiwayatCetakController::class, 'destroy'])->name('destroy');
 });
 
 
@@ -36,6 +42,7 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 // });
 
 // `Kelola Data
+// Route::resource('riwayat_cetak', RiwayatCetakController::class)->middleware('auth');
 Route::resource('pegawai', PegawaiController::class)->middleware('auth');
 
 
