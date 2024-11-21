@@ -3,8 +3,32 @@ import React, { useEffect, useState } from "react";
 import { MdAddBox, MdDelete } from "react-icons/md";
 import { FaMinus } from "react-icons/fa";
 
-export default function PAKTable({ data, setData }) {
+export default function PAKTable({ data, setData, isEdit, historyData }) {
     // Logika Hitung jakk
+    useEffect(() => {
+        if (isEdit) {
+            data.no_surat3 = historyData["no_surat3"];
+            data.ak_dasar = historyData["ak_dasar"];
+            data.ak_jf = historyData["ak_jf"];
+            data.ak_penyesuaian = historyData["ak_penyesuaian"];
+            data.ak_konversi = historyData["ak_konversi"];
+            data.ak_peningkatan = historyData["ak_peningkatan"];
+            data.jakk = historyData["jakk"];
+            data.pangkat = historyData["pangkat"];
+            data.jabatan = historyData["jabatan"];
+            data.pangkat_keker = historyData["pangkat_keker"];
+            data.jabatan_keker = historyData["jabatan_keker"];
+            data.tebusan3 = historyData["tebusan3"];
+            data.kesimpulan = historyData["kesimpulan"];
+
+            if(historyData["ak_tipe_tambahan"] != null) {
+                data.ak_tipe_tambahan = historyData["ak_tipe_tambahan"];
+            }
+
+            console.log("data.kesimpulan ", data.kesimpulan);
+        }
+    }, []);
+
     const calculateTotal = () => {
         let jakk_lama =
             parseFloat(data.ak_dasar["lama"]) +
@@ -119,7 +143,7 @@ export default function PAKTable({ data, setData }) {
             ...data,
             pangkat_keker: pangkatKeker,
         });
-        data.pangkat_keker = pangkatKeker;
+        // data.pangkat_keker = pangkatKeker;
     }, [jakk_jumlah, data.pangkat]);
 
     // Logika Kelebihan/Kekurangan  AK Kredit Untuk Kenaikan Jabatan
@@ -227,6 +251,7 @@ export default function PAKTable({ data, setData }) {
     };
 
     useEffect(() => {
+        data.no_surat3 = historyData["no_surat3"];
         data.ak_konversi["lama"] = data.ak_terakhir;
         data.ak_konversi["baru"] = data.angka_kredit;
         data.ak_konversi["jumlah"] = (
@@ -252,6 +277,7 @@ export default function PAKTable({ data, setData }) {
                             className="w-64 h-12 border-gradient"
                             placeholder="contoh: 1500.445/PAK/2024"
                             maxLength={30}
+                            defaultValue={data.no_surat3}
                             onChange={(e) =>
                                 setData("no_surat3", e.target.value)
                             }
@@ -394,7 +420,7 @@ export default function PAKTable({ data, setData }) {
                                 type="text"
                                 placeholder="Input Ket."
                                 maxLength="15"
-                                // value={dataTipePAK[key].keterangan}
+                                defaultValue={dataTipePAK[key].keterangan}
                                 onChange={(e) =>
                                     handleChange(
                                         key,
@@ -502,12 +528,12 @@ export default function PAKTable({ data, setData }) {
                         {data.pangkat_keker > 0 ? (
                             <span className="text-green-600/70">
                                 Kelebihan/
-                                <s className="text-accent">Kekurangan</s>
+                                <s className="text-accent">Kekurangan{" "}</s>
                             </span>
                         ) : (
                             <span className="text-error">
                                 <s className="text-accent">Kelebihan</s>
-                                /Kekurangan
+                                /Kekurangan{" "}
                             </span>
                         )}
 
@@ -537,12 +563,12 @@ export default function PAKTable({ data, setData }) {
                         {data.jabatan_keker > 0 ? (
                             <span className="text-green-600/70">
                                 Kelebihan/
-                                <s className="text-accent">Kekurangan</s>
+                                <s className="text-accent">Kekurangan{" "} </s>
                             </span>
                         ) : (
                             <span className="text-error">
-                                <s className="text-accent">Kelebihan</s>
-                                /Kekurangan
+                                <s className="text-accent">Kelebihan </s>
+                                /Kekurangan{" "}
                             </span>
                         )}
 
@@ -559,7 +585,11 @@ export default function PAKTable({ data, setData }) {
                             name="kesimpulan"
                             id="kesimpulan"
                             className="w-3/4 text-center rounded-md border-gradient"
-                            defaultValue={data.kesimpulan}
+                            defaultValue={
+                                isEdit
+                                    ? historyData.kesimpulan
+                                    : data.kesimpulan
+                            }
                             onChange={(e) => {
                                 setData("kesimpulan", e.target.value);
                             }}
@@ -606,7 +636,10 @@ export default function PAKTable({ data, setData }) {
                         <input
                             type="checkbox"
                             value={true}
-                            className="w-5 h-5 rounded-sm "
+                            className="w-5 h-5 rounded-sm"
+                            defaultChecked={
+                                isEdit && historyData.tebusan3["kepala_reg"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan3;
                                 newData["kepala_reg"] = !newData["kepala_reg"];
@@ -627,7 +660,10 @@ export default function PAKTable({ data, setData }) {
                         <input
                             type="checkbox"
                             value={true}
-                            className="w-5 h-5 rounded-sm "
+                            className="w-5 h-5 rounded-sm"
+                            defaultChecked={
+                                isEdit && historyData.tebusan3["sekretaris"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan3;
                                 newData["sekretaris"] = !newData["sekretaris"];
@@ -650,7 +686,10 @@ export default function PAKTable({ data, setData }) {
                         <input
                             type="checkbox"
                             value={true}
-                            className="w-5 h-5 rounded-sm "
+                            className="w-5 h-5 rounded-sm"
+                            defaultChecked={
+                                isEdit && historyData.tebusan3["kepala_bps"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan3;
                                 newData["kepala_bps"] = !newData["kepala_bps"];
@@ -670,7 +709,10 @@ export default function PAKTable({ data, setData }) {
                         <input
                             type="checkbox"
                             value={true}
-                            className="w-5 h-5 rounded-sm "
+                            className="w-5 h-5 rounded-sm"
+                            defaultChecked={
+                                isEdit && historyData.tebusan3["pns"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan3;
                                 newData["pns"] = !newData["pns"];
@@ -692,7 +734,10 @@ export default function PAKTable({ data, setData }) {
                         <input
                             type="checkbox"
                             value={true}
-                            className="w-5 h-5 rounded-sm "
+                            className="w-5 h-5 rounded-sm"
+                            defaultChecked={
+                                isEdit && historyData.tebusan3["kepala_biro"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan3;
                                 newData["kepala_biro"] =
@@ -713,7 +758,10 @@ export default function PAKTable({ data, setData }) {
                         <input
                             type="checkbox"
                             value={true}
-                            className="w-5 h-5 rounded-sm "
+                            className="w-5 h-5 rounded-sm"
+                            defaultChecked={
+                                isEdit && historyData.tebusan3["arsip"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan3;
                                 newData["arsip"] = !newData["arsip"];

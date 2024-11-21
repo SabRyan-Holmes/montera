@@ -247,18 +247,21 @@
                 </tr>
                 <!-- Baris 6 dan seterusnya -->
                 @php $index = 6; @endphp
-                @foreach ($data['ak_tipe_tambahan'] as $key => $value)
-                    <tr>
-                        <th></th>
-                        <th style="width: 30px">{{ $index }}</th>
-                        <td style="text-align: left">{{ $value['tipe_ak'] }}</td>
-                        <td style="text-align: center">{{ $value['lama'] }}</td>
-                        <td style="text-align: center">{{ $value['baru'] }}</td>
-                        <td style="text-align: center">{{ $value['jumlah'] }}</td>
-                        <td style="text-align: center">{{ $value['keterangan'] }}</td>
-                    </tr>
-                    @php $index++; @endphp
-                @endforeach
+                @if ($data['ak_tipe_tambahan'])
+                    @foreach ($data['ak_tipe_tambahan'] as $key => $value)
+                        <tr>
+                            <th></th>
+                            <th style="width: 30px">{{ $index }}</th>
+                            <td style="text-align: left">{{ $value['tipe_ak'] }}</td>
+                            <td style="text-align: center">{{ $value['lama'] }}</td>
+                            <td style="text-align: center">{{ $value['baru'] }}</td>
+                            <td style="text-align: center">{{ $value['jumlah'] }}</td>
+                            <td style="text-align: center">{{ $value['keterangan'] }}</td>
+                        </tr>
+                        @php $index++; @endphp
+                    @endforeach
+                @endif
+
             </tbody>
             <tfoot style="font-size: 13.7px; font-weight: 400;" class="text-xs">
                 <tr>
@@ -283,13 +286,13 @@
                 <tr>
                     <th colspan="3" style="text-align: left; font-size: 12px;">
                         @if ($data['pangkat_keker'] >= 0)
-                        <span>
-                            Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
-                        </span>
+                            <span>
+                                Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
+                            </span>
                         @else
-                        <span>
-                            <del>Kelebihan</del>/Kekurangan<span>{{ '*)' }}</span>
-                        </span>
+                            <span>
+                                <del>Kelebihan</del>/Kekurangan<span>{{ '*)' }}</span>
+                            </span>
                         @endif
                         <span>Angka Kredit yang harus dipenuhi untuk kenaikan pangkat</span>
                     </th>
@@ -301,13 +304,13 @@
                 <tr>
                     <th colspan="3" style="text-align: left; font-size: 12px;">
                         @if ($data['jabatan_keker'] >= 0)
-                        <span>
-                            Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
-                        </span>
+                            <span>
+                                Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
+                            </span>
                         @else
-                        <span>
-                            <del>Kelebihan</del>/Kekurangan<span>{{ '*)' }}</span>
-                        </span>
+                            <span>
+                                <del>Kelebihan</del>/Kekurangan<span>{{ '*)' }}</span>
+                            </span>
                         @endif
 
                         <span>Angka Kredit yang harus dipenuhi untuk kenaikan jabatan</span>

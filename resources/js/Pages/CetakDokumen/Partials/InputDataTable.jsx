@@ -9,6 +9,9 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
         }
     };
 
+    const [defaultPeriodeMulai, setdefaultPeriodeMulai] = useState();
+    const [defaultPeriodeBerakhir, setdefaultPeriodeBerakhir] = useState();
+
     const bulan = {
         1: "Januari",
         2: "Februari",
@@ -25,18 +28,50 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
     };
 
     useEffect(() => {
+        if (isEdit) {
+            data.angka_kredit = historyData["angka_kredit"];
+            data.angka_periode = historyData["angka_periode"];
+
+            data.periode_mulai = historyData["periode_mulai"];
+            data.periode_berakhir = historyData["periode_berakhir"];
+            data.tahun_periode = historyData["tahun_periode"];
+            data.tgl_ditetapkan = historyData["tgl_ditetapkan"];
+
+            setdefaultPeriodeMulai(
+                `${data.tahun_periode}-${String(data.periode_mulai).padStart(
+                    2,
+                    "0"
+                )}`
+            );
+            setdefaultPeriodeBerakhir(
+                `${data.tahun_periode}-${String(data.periode_berakhir).padStart(
+                    2,
+                    "0"
+                )}`
+            );
+
+            console.log("angka_kredit : ", data.angka_kredit);
+            console.log("angka_periode : ", data.angka_periode);
+        }
+    }, []);
+
+    useEffect(() => {
         setData(
             "angka_periode",
             data.periode_berakhir - data.periode_mulai + 1
         );
         data.angka_periode = data.periode_berakhir - data.periode_mulai + 1;
         parseInt(data.angka_periode);
+        // if(isEdit) {
+        //     setData("angka_kredit", historyData["angka_kredit"])
+        //     data.angka_periode = historyData["angka_periode"]
+        // }
     }, [data.periode_mulai, data.periode_berakhir]);
 
     const today = new Date().toISOString().split("T")[0];
     const namaInput = useRef();
 
-    const [minPeriode, setMinPeriode] = useState('')
+    const [minPeriode, setMinPeriode] = useState("");
 
     return (
         <table className="table text-base ">
@@ -60,7 +95,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 // { isEdit && 'defaultValue = historyData '}
                                 id="periode_mulai"
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
-                                defaultValue={isEdit && historyData['periode_mulai']}
+                                defaultValue={defaultPeriodeMulai}
                                 onChange={(e) => {
                                     // Mengambil nilai dari input (format: YYYY-MM)
                                     const value = e.target.value;
@@ -78,8 +113,17 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                     // setData("periode_mulai", periodeMulai);
 
                                     // setData("tahun_ini", year);
-                                    setData(data => ({ ...data, periode_mulai: periodeMulai}));
-                                    setData(data => ({ ...data, tahun_ini: year}));
+                                    setData((data) => ({
+                                        ...data,
+                                        periode_mulai: periodeMulai,
+                                    }));
+                                    setData((data) => ({
+                                        ...data,
+                                        tahun_ini: year,
+                                    }));
+
+                                    console.log("e.target.value");
+                                    console.log(e.target.value);
                                 }}
                             />
 
@@ -90,7 +134,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 id="periode_berakhir"
                                 min={minPeriode}
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
-                                defaultValue={isEdit && historyData['periode_berakhir']}
+                                defaultValue={defaultPeriodeBerakhir}
                                 onChange={(e) => {
                                     // Mengambil nilai dari input (format: YYYY-MM)
                                     const value = e.target.value;
@@ -112,6 +156,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                             "periode_berakhir",
                                             periodeBerakhir
                                         );
+                                        setData("tahun_periode", year);
                                     }
                                 }}
                             />
@@ -128,7 +173,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 id="tgl_ditetapkan"
                                 required
                                 max={today}
-                                defaultValue={isEdit && historyData['tgl_ditetapkan']}
+                                defaultValue={data.tgl_ditetapkan}
                                 onChange={(e) =>
                                     setData("tgl_ditetapkan", e.target.value)
                                 }
@@ -149,7 +194,9 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 name="nama"
                                 className="w-64 appearance-none no-arrow"
                                 maxLength="50"
-                                defaultValue={isEdit ? historyData['nama'] :data.nama}
+                                defaultValue={
+                                    isEdit ? historyData["nama"] : data.nama
+                                }
                                 list="namaList"
                                 required
                                 placeholder="Input nama penanda tangan"
@@ -177,7 +224,9 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 name="nip"
                                 required
                                 list="nipList" // tambahkan list untuk datalist
-                                defaultValue={isEdit ? historyData['nip'] : data.nip}
+                                defaultValue={
+                                    isEdit ? historyData["nip"] : data.nip
+                                }
                                 className="w-64"
                                 maxLength="18"
                                 placeholder="NIP penanda tangan"

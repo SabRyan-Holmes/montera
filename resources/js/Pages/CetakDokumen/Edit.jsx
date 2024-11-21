@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
-import {  SecondaryButton, SuccessButton } from "@/Components";
+import { PrimaryButton, SecondaryButton, SuccessButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -9,12 +9,12 @@ import {
     PAKTable,
 } from "./Partials";
 import { FaPrint } from "react-icons/fa6";
-import { FaUserEdit } from "react-icons/fa";
+import { FaSave, FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 
-export default function Edit({ auth, title, riwayat }) {
-    const pegawai = riwayat.pegawai
+export default function Edit({ auth, title, riwayat, flash }) {
+    const pegawai = riwayat.pegawai;
     const { data, setData, post, processing, errors, reset } = useForm({
         pegawai: pegawai,
         // Input Data
@@ -22,6 +22,7 @@ export default function Edit({ auth, title, riwayat }) {
         nip: "197412311996121001",
         periode_mulai: 0, //Default: Januari
         periode_berakhir: 0, //Default Februari
+        tahun_periode: "",
 
         angka_periode: 0,
         tgl_ditetapkan: "",
@@ -165,19 +166,39 @@ export default function Edit({ auth, title, riwayat }) {
         e.preventDefault();
         setIsLoading(true);
 
-        router.post('/cetak_dokumen/cetak', { data: data }, {
-            preserveScroll:true,
-            preserveState: true,
-            onFinish: () => setIsLoading(false),
-            onError: (errors) => {
-                console.error("Error:", errors);
-            },
-            onSuccess: (page) => {
-                // Misalnya, URL PDF dikirim di props dari server
-                const url = page.props.url;
-                window.open(url, '_blank');
+        router.post(
+            "/cetak_dokumen/cetak",
+            { data: data },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onFinish: () => setIsLoading(false),
+                onError: (errors) => {
+                    console.error("Error:", errors);
+                },
             }
+        );
+    };
+
+    const submitUpdate = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        post(route("cetak_dokumen.update", riwayat.id),{
+            preserveScroll: true,
+                preserveState: true,
+                onFinish: () => setIsLoading(false),
+                onError: (errors) => {
+                    console.error("Error:", errors);
+                },
+                onSuccess: (page) => {
+                    // Misalnya, URL PDF dikirim di props dari server
+                    const url = page.props.url;
+                    window.open(url, "_blank");
+                },
         });
+
+
     };
 
     // Jabatan untuk sesuai Koefisien Pertahun
@@ -190,6 +211,17 @@ export default function Edit({ auth, title, riwayat }) {
         Madya: 37.5,
     };
 
+    useEffect(() => {
+        if (flash.message) {
+            Toast.fire({
+                icon: "success",
+                title: "Data Pegawai Berhasil Diupdate!!",
+            });
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
+        }
+    }, [flash.message]);
 
     // CONSOLE
     // console.log("Isi data");
@@ -320,7 +352,12 @@ export default function Edit({ auth, title, riwayat }) {
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
                         {/* INPUT DATA | START*/}
-                        <InputDataTable data={data} setData={setData} isEdit={true} historyData={riwayat}/>
+                        <InputDataTable
+                            data={data}
+                            setData={setData}
+                            isEdit={true}
+                            historyData={riwayat}
+                        />
                         {/* INPUT DATA | END*/}
 
                         {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | START*/}
@@ -352,18 +389,33 @@ export default function Edit({ auth, title, riwayat }) {
                             pegawai={pegawai}
                             data={data}
                             setData={setData}
+                            isEdit={true}
+                            historyData={riwayat}
                             akNormatif={akNormatif}
                         />
                         {/* PENETAPAN ANGKA KREDIT | END*/}
                     </div>
 
-                    <div className="flex justify-center w-full pb-12 mt-10 ">
-                        <SuccessButton type="submit"
-                        className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 ">
+                    <div className="flex justify-center w-full gap-12 pb-12 mt-10 ">
+                        <SuccessButton
+                            type="submit"
+                            className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 "
+                        >
                             Cetak Dokumen PAK
                             <FaPrint className="mx-1" />
-
                         </SuccessButton>
+
+                        {/* Tombol submit satu lagi yang mengarah ke yg lain  */}
+
+                        {/* Tombol Simpan Data */}
+                        <PrimaryButton
+                            type="button"
+                            onClick={submitUpdate}
+                            className="scale-125 hover:scale-[1.3] hover:bg-primary/80 ml-4"
+                        >
+                            Simpan Data
+                            <FaSave className="mx-1" />
+                        </PrimaryButton>
                     </div>
                 </form>
             </section>

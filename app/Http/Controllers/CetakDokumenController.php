@@ -72,20 +72,30 @@ class CetakDokumenController extends Controller
 
     public function cetak(Request $request)
     {
+        // dd($request);
         Session::put('data', $request->all());
-        $datas = $request->except('data.pegawai');
-        $pegawai_id = $request->input('data.pegawai.id');
-        $datas = array_merge($datas['data'], ['pegawai_id' =>$pegawai_id]);
-        // dd($datas);
-        RiwayatCetak::create($datas);
+
+        // Kalo dibuka dr history(tanpa restore ke database)
+        if (!$request->id) {
+            $datas = $request->except('data.pegawai');
+            $pegawai_id = $request->input('data.pegawai.id');
+            $datas = array_merge($datas['data'], ['pegawai_id' => $pegawai_id]);
+            // dd($datas);
+            RiwayatCetak::create($datas);
+        }
+
         return Inertia::location(route('cetak_dokumen.view-pak'));
     }
 
     public function view_pak()
     {
+        // dd(Session::get('data'));
         // Ambil data dari session
-        $data = Session::get('data')['data'];
-
+        if (!Session::get('data')['id']) {
+            $data = Session::get('data')['data'];
+        } else {
+            $data = Session::get('data');
+        }
         // Perbarui nilai total_dicetak dengan menambahkannya 1
         $userId = Auth::user()->id;
         User::where('id', $userId)

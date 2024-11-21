@@ -51,7 +51,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
         }
     }, [flash.message]);
 
-
     const submit = (e) => {
         e.preventDefault();
 

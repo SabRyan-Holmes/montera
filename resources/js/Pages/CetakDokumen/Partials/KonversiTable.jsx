@@ -8,7 +8,7 @@ export default function KonversiTable({
     akNormatif,
     predikat,
     isEdit,
-    historyData
+    historyData,
 }) {
     const handleKeyPress = (e) => {
         // Mengizinkan angka dan tanda koma atau titik
@@ -17,6 +17,19 @@ export default function KonversiTable({
         }
     };
 
+    console.log("isEdit");
+    console.log(isEdit);
+
+    useEffect(() => {
+        if (isEdit) {
+            data.presentase = historyData["presentase"];
+            data.angka_periode = historyData["angka_periode"];
+            data.no_surat1 = historyData["no_surat1"];
+
+            // console.log("presentase")
+            // console.log(presentase)
+        }
+    }, []);
     // Jabatan untuk sesuai Koefisien Pertahun/Ak Normatif
 
     useEffect(() => {
@@ -29,10 +42,10 @@ export default function KonversiTable({
         };
 
         let akNormatifValue = findAkNormatifValue(pegawai["Jabatan/TMT"]);
-        console.log("akNormatifValue");
-        console.log(akNormatifValue);
-        // Kalau tidak ketemu sesuai ketentuan
         data.ak_normatif = akNormatifValue;
+
+        // console.log("akNormatifValue");
+        // console.log(akNormatifValue);
     }, []);
 
     function hitungAk(periode, akNormatif, presentase) {
@@ -41,12 +54,12 @@ export default function KonversiTable({
             parseFloat(akNormatif) *
             parseFloat(presentase / 100);
         const result = parseFloat(ak_kredit).toFixed(3);
-        // console.log("angka kredit terakhir", akTerakhir);
-        // console.log("periode : ", periode);
-        // console.log("ak normatif : ", akNormatif);
-        // console.log("presentase : ", presentase);
-        // console.log("isi nilai ak kredit dari fungsi");
-        // console.log(result);
+
+        console.log("periode : ", periode);
+        console.log("ak normatif : ", akNormatif);
+        console.log("presentase : ", presentase);
+        console.log("isi nilai ak kredit dari fungsi");
+        console.log(result);
 
         return result;
     }
@@ -59,18 +72,19 @@ export default function KonversiTable({
         if (akNormatif == null) {
             // Ammbil dari inputan custom
             akNormatif = data.ak_normatif_ops;
-            // data.ak_normatif = akNormatifValue
-            setData("ak_normatif", akNormatif);
+            data.ak_normatif = akNormatif
+
             // console.log("ak_ops");
             // console.log(akNormatif);
         }
+        console.log("presentase : ", data.presentase);
         const akKreditValue = hitungAk(
             data.angka_periode,
             akNormatif,
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
-        data.angka_kredit = akKreditValue;
+        console.log("ak Kredit Value ", data.angka_kredit);
     }, [
         data.angka_periode,
         data.predikat,
@@ -79,12 +93,14 @@ export default function KonversiTable({
     ]);
 
     useEffect(() => {
+        // data.predikat = predikat[data.presentase]
         setData("predikat", predikat[data.presentase]);
     }, [data.presentase]);
 
     // data.predikat = predikat[data.presentase];
-    console.log("historyData.tebusan1[pns]")
-    console.log(historyData.tebusan1["pns"])
+    // console.log("historyData.tebusan1[pns]")
+    // console.log(historyData.tebusan1["pns"])
+
     return (
         <table className="table text-base">
             {/* head */}
@@ -108,7 +124,7 @@ export default function KonversiTable({
                             required
                             placeholder="contoh: 1500.445/Konv/2024"
                             maxLength={30}
-                            defaultValue={isEdit && historyData['no_surat1']}
+                            defaultValue={data.no_surat1}
                             onChange={(e) =>
                                 setData("no_surat1", e.target.value)
                             }
@@ -135,13 +151,13 @@ export default function KonversiTable({
                 </tr>
 
                 <tr className="text-center">
-                    <td className="border">{data.predikat }</td>
+                    <td className="border">{data.predikat}</td>
                     <td className="flex justify-center w-full">
                         <select
                             name="presentase"
                             id="presentase"
                             className="w-24 px-1 text-center rounded-md border-gradient"
-                            defaultValue={isEdit ? historyData['presentase'] :data.presentase}
+                            defaultValue={data.presentase}
                             onChange={(e) => {
                                 setData("presentase", e.target.value);
                             }}
@@ -162,7 +178,9 @@ export default function KonversiTable({
                                 className="text-center w-28 placeholder:text-xs"
                                 maxLength="5"
                                 placeholder="Input Manual"
-                                defaultValue={isEdit && historyData['ak_normatif_ops']}
+                                defaultValue={
+                                    isEdit && historyData["ak_normatif_ops"]
+                                }
                                 onKeyPress={handleKeyPress}
                                 onChange={(e) => {
                                     let value = e.target.value;
@@ -193,7 +211,9 @@ export default function KonversiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan1["kepala_reg"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan1["kepala_reg"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["kepala_reg"] = !newData["kepala_reg"];
@@ -215,7 +235,9 @@ export default function KonversiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan1["sekretaris"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan1["sekretaris"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["sekretaris"] = !newData["sekretaris"];
@@ -239,7 +261,9 @@ export default function KonversiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan1["kepala_bps"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan1["kepala_bps"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["kepala_bps"] = !newData["kepala_bps"];
@@ -260,7 +284,9 @@ export default function KonversiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked = {isEdit && historyData.tebusan1["pns"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan1["pns"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["pns"] = !newData["pns"];
@@ -283,7 +309,9 @@ export default function KonversiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan1["kepala_biro"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan1["kepala_biro"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["kepala_biro"] =
@@ -305,7 +333,9 @@ export default function KonversiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan1["arsip"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan1["arsip"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan1;
                                 newData["arsip"] = !newData["arsip"];

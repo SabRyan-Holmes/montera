@@ -1,5 +1,5 @@
 import { InputLabel, TextInput } from "@/Components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function AkumulasiTable({
     data,
@@ -31,12 +31,45 @@ export default function AkumulasiTable({
     };
 
     useEffect(() => {
+        if (isEdit) {
+            data.no_surat2 = historyData["no_surat2"];
+            data.ak_terakhir = historyData["ak_terakhir"];
+            data.tahun_terakhir = historyData["tahun_terakhir"];
+            data.tahun_ini = historyData["tahun_ini"];
+        }
+    }, []);
+
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        if (isEdit && isFirstRender.current) {
+            // Tandai bahwa render pertama sudah selesai
+            // data.angka_kredit = historyData["angka_kredit"];
+            // data.jumlah_ak_kredit = historyData["jumlah_ak_kredit"];
+            var jumlahAkKredit =
+                parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
+            data.jumlah_ak_kredit = jumlahAkKredit.toFixed(3);
+            isFirstRender.current = false;
+            return;
+        }
+
+        // if (isEdit) {
+
+        //     setData("angka_kredit", historyData["angka_kredit"].toFixed(3))
+        //     data.angka_kredit = historyData["angka_kredit"];
+        // }
+
         var jumlahAkKredit =
             parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
-        // console.log("jumlahAkKredit");
-        // console.log(jumlahAkKredit);
         setData("jumlah_ak_kredit", jumlahAkKredit.toFixed(3));
     }, [data.ak_terakhir, data.angka_kredit]);
+
+    // console.log("isFirstRender");
+    // console.log(isFirstRender);
+    // console.log("historyData[jumlah_ak_kredit]");
+    // console.log(historyData["jumlah_ak_kredit"]);
+    // console.log("data.jumlah_ak_kredit");
+    console.log("data.angka_kredit");
+    console.log(data.angka_kredit);
 
     return (
         <table className="table text-base">
@@ -57,7 +90,7 @@ export default function AkumulasiTable({
                             maxLength={30}
                             name="no_surat2"
                             placeholder="contoh: 1500.445/Akm/2024"
-                            defaultValue={historyData && historyData['no_surat2']}
+                            defaultValue={data.no_surat2}
                             required
                             className="w-64 h-12"
                             onChange={(e) =>
@@ -109,7 +142,7 @@ export default function AkumulasiTable({
                             required
                             onKeyPress={handleKeyPress}
                             className="w-32 text-center"
-                            defaultValue={isEdit && historyData['tahun_terakhir']}
+                            defaultValue={data["tahun_terakhir"]}
                             onChange={(e) =>
                                 setData("tahun_terakhir", e.target.value)
                             }
@@ -130,7 +163,11 @@ export default function AkumulasiTable({
                             required
                             className="text-center placeholder:text-accent"
                             placeholder="0,0"
-                            defaultValue={isEdit ? historyData['ak_terakhir'] :data.ak_terakhir}
+                            defaultValue={
+                                isEdit
+                                    ? historyData["ak_terakhir"]
+                                    : data.ak_terakhir
+                            }
                             onChange={(e) => {
                                 const value = e.target.value;
 
@@ -149,7 +186,7 @@ export default function AkumulasiTable({
                             id="tahun_ini"
                             type="text"
                             name="tahun_ini"
-                            defaultValue={isEdit ? historyData['tahun_ini'] : data.tahun_ini}
+                            defaultValue={data.tahun_ini}
                             required
                             placeholder="tahun sekarang"
                             maxLength={4}
@@ -167,7 +204,11 @@ export default function AkumulasiTable({
                     <td className="border">{predikat[data.presentase]}</td>
                     <td className="border">{data.presentase}</td>
                     <td className="border">{data.ak_normatif}</td>
-                    <td className="border">{data["angka_kredit"]}</td>
+                    <td className="border">
+                        {isEdit && !data["angka_kredit"]
+                            ? historyData["angka_kredit"]
+                            : data["angka_kredit"]}
+                    </td>
                 </tr>
                 <tr className="uppercase border">
                     <td
@@ -177,7 +218,10 @@ export default function AkumulasiTable({
                         jumlah angka kredit yang diperoleh
                     </td>
                     <td className="text-center border">
-                        {data.jumlah_ak_kredit}
+                        {
+                            // Render pertama: tampilkan historyData
+                            data.jumlah_ak_kredit // Setelah render pertama: tampilkan hasil dari efek
+                        }
                     </td>
                 </tr>
             </tbody>
@@ -191,7 +235,9 @@ export default function AkumulasiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan2["kepala_reg"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan2["kepala_reg"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["kepala_reg"] = !newData["kepala_reg"];
@@ -213,7 +259,9 @@ export default function AkumulasiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan2["sekretaris"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan2["sekretaris"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["sekretaris"] = !newData["sekretaris"];
@@ -237,7 +285,9 @@ export default function AkumulasiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan2["kepala_bps"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan2["kepala_bps"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["kepala_bps"] = !newData["kepala_bps"];
@@ -258,7 +308,9 @@ export default function AkumulasiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan2["pns"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan2["pns"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["pns"] = !newData["pns"];
@@ -281,7 +333,9 @@ export default function AkumulasiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan2["kepala_biro"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan2["kepala_biro"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["kepala_biro"] =
@@ -303,7 +357,9 @@ export default function AkumulasiTable({
                             type="checkbox"
                             value={true}
                             className="w-5 h-5 rounded-sm"
-                            defaultChecked={isEdit && historyData.tebusan2["arsip"]}
+                            defaultChecked={
+                                isEdit && historyData.tebusan2["arsip"]
+                            }
                             onChange={() => {
                                 const newData = data.tebusan2;
                                 newData["arsip"] = !newData["arsip"];

@@ -9,8 +9,10 @@ import { FaPrint } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { IoMdAdd } from "react-icons/io";
+import moment from "moment/min/moment-with-locales";
 
 export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
+    moment.locale("id");
     function handleDelete(id) {
         Swal.fire({
             icon: "warning",
@@ -196,22 +198,28 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
                                 riwayatCetak.map((riwayat, i) => (
                                     <tr
                                         key={i}
-                                        className="group/item hover:bg-secondary/50 hover:cursor-pointer"
+                                        className="group/item hover:bg-primary/10 hover:cursor-pointer"
                                     >
                                         <td className="text-center">{i + 1}</td>
-                                        <td>{riwayat["tgl_ditetapkan"]}</td>
+                                        <td>
+                                            {moment(
+                                                riwayat["tgl_ditetapkan"]
+                                            ).format("LL")}
+                                        </td>
                                         <td>{riwayat["nama"]}</td>
                                         <td className="text-success">
                                             {riwayat["kesimpulan"]}
                                         </td>
-                                        <td>{"10 Hari yang lalu"}</td>
+                                        <td>
+                                            {moment(
+                                                riwayat["updated_at"]
+                                            ).fromNow()}
+                                        </td>
                                         <td className="text-center whitespace-nowrap text-nowrap">
                                             <Link
                                                 as="a"
-                                                // href={route(
-                                                //     "riwayat.show",
-                                                //     pegawai["NIP"]
-                                                // )}
+                                                href={route("cetak_dokumen.cetak")} data={riwayat}
+                                                method="post"
                                                 className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                             >
                                                 <FaEye className="fill-hijau/75 group-hover/item:fill-white" />
@@ -247,7 +255,8 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
                                             colSpan={6}
                                             className="text-base text-center"
                                         >
-                                            Belum ada riwayat cetakan dokumen PAK
+                                            Belum ada riwayat cetakan dokumen
+                                            PAK
                                         </td>
                                     </tr>
                                 </>
@@ -255,13 +264,10 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
                         </tbody>
                     </table>
 
-                        <div className="flex justify-end w-full">
+                    <div className="flex justify-end w-full">
                         <Link
                             as="button"
-                            href={route(
-                                "cetak_dokumen.create",
-                                pegawai['NIP']
-                            )}
+                            href={route("cetak_dokumen.create", pegawai["NIP"])}
                             className="flex justify-end w-32 mt-6 text-white btn glass bg-hijau hover:bg-hijau/90"
                         >
                             Tambah
