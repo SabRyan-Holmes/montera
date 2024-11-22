@@ -4,14 +4,13 @@ import { Link, router, useForm, usePage } from "@inertiajs/react";
 import { SecondaryButton, SuccessButton } from "@/Components";
 import { FaEye, FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
-
 import { FaPrint } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment/min/moment-with-locales";
 
-export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
+export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak, flash }) {
     moment.locale("id");
     function handleDelete(id) {
         Swal.fire({
@@ -30,7 +29,7 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("riwayat_cetak.destroy", id), {
+                router.delete(route("cetak_dokumen.destroy", id), {
                     onSuccess: () => {
                         // console.log(
                         //     "data pegawai dengan id ",
@@ -45,6 +44,31 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak }) {
             }
         });
     }
+
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    useEffect(() => {
+        if (flash.message) {
+            Toast.fire({
+                icon: "success",
+                title: flash.message,
+            });
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
+        }
+    }, [flash.message]);
     // CONSOLE
     // console.log("Isi data");
     // console.log(data);

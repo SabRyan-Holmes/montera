@@ -50,22 +50,22 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                 )}`
             );
 
-            console.log("angka_kredit : ", data.angka_kredit);
-            console.log("angka_periode : ", data.angka_periode);
+            // console.log("angka_kredit : ", data.angka_kredit);
+            // console.log("angka_periode : ", data.angka_periode);
         }
     }, []);
 
     useEffect(() => {
         setData(
             "angka_periode",
-            data.periode_berakhir - data.periode_mulai + 1
+            Math.abs(data.periode_berakhir - data.periode_mulai + 1)
         );
-        data.angka_periode = data.periode_berakhir - data.periode_mulai + 1;
-        parseInt(data.angka_periode);
-        // if(isEdit) {
-        //     setData("angka_kredit", historyData["angka_kredit"])
-        //     data.angka_periode = historyData["angka_periode"]
-        // }
+        // data.angka_periode = data.periode_berakhir - data.periode_mulai + 1;
+        // parseInt(data.angka_periode);
+        console.log("periode_mulai", data.periode_mulai)
+        console.log("periode_berakhir", data.periode_berakhir)
+        console.log("angka_periode", data.angka_periode)
+
     }, [data.periode_mulai, data.periode_berakhir]);
 
     const today = new Date().toISOString().split("T")[0];
@@ -156,7 +156,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                             "periode_berakhir",
                                             periodeBerakhir
                                         );
-                                        setData("tahun_periode", year);
+                                        data.tahun_periode = year
                                     }
                                 }}
                             />

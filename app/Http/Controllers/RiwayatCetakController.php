@@ -124,7 +124,7 @@ class RiwayatCetakController extends Controller
      */
     public function destroy(RiwayatCetak $riwayat)
     {
-        // dd($pegawai);
+        // dd($riwayat);
         $riwayat->delete();
         return redirect()->back()->with('message', 'Data Riwayat Berhasil DiHapus!');
     }

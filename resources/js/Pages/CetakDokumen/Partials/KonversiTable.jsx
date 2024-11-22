@@ -17,9 +17,6 @@ export default function KonversiTable({
         }
     };
 
-    console.log("isEdit");
-    console.log(isEdit);
-
     useEffect(() => {
         if (isEdit) {
             data.presentase = historyData["presentase"];
@@ -91,6 +88,10 @@ export default function KonversiTable({
         data.presentase,
         data.ak_normatif_ops,
     ]);
+
+    // FIXME:
+    // Ada bug penghitungan angka kredit tidak stabil,kadang negatif, kadg dk berubah sama sekali
+    // bug ini ketrigger ketika diubah periode/masa penilaian di inputDataTable
 
     useEffect(() => {
         // data.predikat = predikat[data.presentase]

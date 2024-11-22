@@ -32,7 +32,7 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
     Route::get('/show-history/show', [RiwayatCetakController::class, 'show'])->name('show');
     Route::get('/show-history/edit/{riwayat:id}', [RiwayatCetakController::class, 'edit'])->name('edit');
     Route::post('/show-history/update/{riwayat:id}', [RiwayatCetakController::class, 'update'])->name('update');
-    Route::get('/show-history/delete/{riwayat:id}', [RiwayatCetakController::class, 'destroy'])->name('destroy');
+    Route::delete('/show-history/delete/{riwayat:id}', [RiwayatCetakController::class, 'destroy'])->name('destroy');
 });
 
 

@@ -21,7 +21,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
             data.tebusan3 = historyData["tebusan3"];
             data.kesimpulan = historyData["kesimpulan"];
 
-            if(historyData["ak_tipe_tambahan"] != null) {
+            if (historyData["ak_tipe_tambahan"] != null) {
                 data.ak_tipe_tambahan = historyData["ak_tipe_tambahan"];
             }
 
@@ -251,12 +251,14 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
     };
 
     useEffect(() => {
-        data.no_surat3 = historyData["no_surat3"];
-        data.ak_konversi["lama"] = data.ak_terakhir;
-        data.ak_konversi["baru"] = data.angka_kredit;
-        data.ak_konversi["jumlah"] = (
-            parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)
-        ).toFixed(3);
+        if (isEdit) {
+            data.no_surat3 = historyData["no_surat3"];
+            data.ak_konversi["lama"] = data.ak_terakhir;
+            data.ak_konversi["baru"] = data.angka_kredit;
+            data.ak_konversi["jumlah"] = (
+                parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)
+            ).toFixed(3);
+        }
     });
 
     return (
@@ -309,6 +311,8 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                     </td>
                 </tr>
                 {rowKeys.map((key, index) => (
+                    // FIXME:
+                    // ad bug AK konversi bisa diubah pas createData, padahal harusny cuman bisa diubah di tabel konversi
                     <tr
                         key={key}
                         className="space-x-0 text-base font-semibold capitalize border-separate text-slate-600"
@@ -528,7 +532,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         {data.pangkat_keker > 0 ? (
                             <span className="text-green-600/70">
                                 Kelebihan/
-                                <s className="text-accent">Kekurangan{" "}</s>
+                                <s className="text-accent">Kekurangan </s>
                             </span>
                         ) : (
                             <span className="text-error">
@@ -542,6 +546,9 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                             Pangkat
                         </span>
                     </td>
+                    {/* FIXME :
+                    Ada bug angka pangkat keker dan jabatan keker pas createData
+                    */}
                     <td
                         className="text-lg text-center border"
                         colSpan={2}
@@ -563,7 +570,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         {data.jabatan_keker > 0 ? (
                             <span className="text-green-600/70">
                                 Kelebihan/
-                                <s className="text-accent">Kekurangan{" "} </s>
+                                <s className="text-accent">Kekurangan </s>
                             </span>
                         ) : (
                             <span className="text-error">
