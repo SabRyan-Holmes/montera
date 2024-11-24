@@ -278,7 +278,7 @@ export default function RiwayatCetak({
                                                 method="post"
                                                 className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                             >
-                                                <FaEye className="fill-hijau/75 group-hover/item:fill-white" />
+                                                <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
                                             </Link>
                                             <span className="inline-block mx-2"></span>
                                             <Link
