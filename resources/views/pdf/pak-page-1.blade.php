@@ -1,4 +1,4 @@
-<section class="container-a4">
+    <section class="container-a4">
     <table class="header" style="margin-top: 0px">
         <tr>
             <td style="width: 20%;"><img src="{{ asset('logo.png') }}" alt="Logo BPS" /></td>

@@ -52,11 +52,11 @@ export default function KonversiTable({
             parseFloat(presentase / 100);
         const result = parseFloat(ak_kredit).toFixed(3);
 
-        console.log("periode : ", periode);
-        console.log("ak normatif : ", akNormatif);
-        console.log("presentase : ", presentase);
-        console.log("isi nilai ak kredit dari fungsi");
-        console.log(result);
+        // console.log("periode : ", periode);
+        // console.log("ak normatif : ", akNormatif);
+        // console.log("presentase : ", presentase);
+        // console.log("isi nilai ak kredit dari fungsi");
+        // console.log(result);
 
         return result;
     }
@@ -74,14 +74,14 @@ export default function KonversiTable({
             // console.log("ak_ops");
             // console.log(akNormatif);
         }
-        console.log("presentase : ", data.presentase);
         const akKreditValue = hitungAk(
             data.angka_periode,
             akNormatif,
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
-        console.log("ak Kredit Value ", data.angka_kredit);
+        // console.log("presentase : ", data.presentase);
+        // console.log("ak Kredit Value ", data.angka_kredit);
     }, [
         data.angka_periode,
         data.predikat,

@@ -325,7 +325,7 @@
         </table>
         {{-- Bagian 2 End --}}
 
-        <div>
+        <div style="<?php echo isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? 'margin-top: 7rem;' : ''; ?>">
             <div class="signature-container">
                 <strong>Ditetapkan di Jambi </strong>
                 <strong style="display:block">
@@ -346,7 +346,7 @@
             </div>
 
             @if (count(array_filter($data['tebusan3'])) > 0)
-                <div style="margin-top:2rem; width:32rem; font-size: 0.9rem">
+                <div style="margin-top:0.7rem; width:20rem; font-size: 0.9rem">
                     <strong style="font-weight: 400">ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang
                         bersangkutan</strong>
                     <strong style="font-weight: 400; margin-top: 1.5rem; display: block">Tembusan Disampaikan kepada

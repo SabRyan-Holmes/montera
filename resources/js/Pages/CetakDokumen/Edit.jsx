@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 export default function Edit({ auth, title, riwayat, flash }) {
     const pegawai = riwayat.pegawai;
     const { data, setData, post, processing, errors, reset } = useForm({
+        id: riwayat.id,
         pegawai: pegawai,
         // Input Data
         nama: "Agus Sudibyo, M.Stat",
@@ -224,6 +225,9 @@ export default function Edit({ auth, title, riwayat, flash }) {
     // console.log(data);
     // console.log("Isi Error");
     // console.log(errors);
+
+
+
     return (
         <Authenticated
             user={auth.user}
@@ -294,7 +298,7 @@ export default function Edit({ auth, title, riwayat, flash }) {
                             <tr className="border">
                                 <td className="px-7">NOMOR SERI KARPEG</td>
                                 <td className="px-7">
-                                    {pegawai["Nomor Seri Karpeg"]}
+                                {pegawai["Nomor Seri Karpeg"] || '-'}
                                 </td>
                             </tr>
                             <tr className="border">

@@ -65,7 +65,9 @@ const Sidebar = ({ active }) => {
                         href={route("cetak_dokumen.index")}
                         active={
                             route().current("cetak_dokumen.index") ||
-                            active === "cetak_dokumen.create"
+                            active === "cetak_dokumen.create" ||
+                            active === "cetak_dokumen.show_history" ||
+                            active === "cetak_dokumen.edit"
                         }
                         className="relative z-20"
                     >

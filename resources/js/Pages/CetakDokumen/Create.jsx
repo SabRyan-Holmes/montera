@@ -266,7 +266,7 @@ export default function Index({ auth, pegawai, title }) {
                             <tr className="border">
                                 <td className="px-7">NOMOR SERI KARPEG</td>
                                 <td className="px-7">
-                                    {pegawai["Nomor Seri Karpeg"]}
+                                {pegawai["Nomor Seri Karpeg"] || '-'}
                                 </td>
                             </tr>
                             <tr className="border">

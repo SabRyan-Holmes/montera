@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+
+
 
 class CetakDokumenController extends Controller
 {
@@ -76,7 +79,7 @@ class CetakDokumenController extends Controller
         Session::put('data', $request->all());
 
         // Kalo dibuka dr history(tanpa restore ke database)
-        if (isset($request->id)) {
+        if (!isset($request->id) ) {
             $dataForStore = $request->except('pegawai');
             $pegawai_id = $request->input('pegawai.id');
             $dataForStore['pegawai_id'] = $pegawai_id;

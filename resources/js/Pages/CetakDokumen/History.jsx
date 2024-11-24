@@ -149,7 +149,7 @@ export default function RiwayatCetak({
                             <tr className="border">
                                 <td className="px-7">NOMOR SERI KARPEG</td>
                                 <td className="px-7">
-                                    {pegawai["Nomor Seri Karpeg"]}
+                                    {pegawai["Nomor Seri Karpeg"] || '-'}
                                 </td>
                             </tr>
                             <tr className="border">
@@ -201,15 +201,23 @@ export default function RiwayatCetak({
                 <section className="px-2 pt-3 mx-auto mb-20 overflow-hidden rounded-xl">
                     <table className="table overflow-auto text-xs table-bordered rounded-xl">
                         <thead className="text-sm font-medium text-white border bg-primary rounded-xl border-secondary/15">
-                            <tr>
+                            <tr className="p-1">
                                 <th scope="col" width="1%">
                                     No
                                 </th>
                                 <th scope="col" width="15%">
-                                    Tanggal Dicetak
+                                    <span>Tanggal Ditetapkan/</span>
+                                    <span className="block">No Surat PAK</span>
                                 </th>
                                 <th scope="col" width="15%">
                                     Penanda Tangan
+                                </th>
+                                {/* <th scope="col" width="15%">
+                                    NO Surat PAK
+                                </th> */}
+                                <th scope="col" width="10%"  className="w-16 p-1 text-xs">
+                                    <span>Jumlah Angka </span>
+                                    <span className="block">Kredit Kumulatif</span>
                                 </th>
                                 <th scope="col" width="25%">
                                     Keterangan
@@ -231,11 +239,18 @@ export default function RiwayatCetak({
                                     >
                                         <td className="text-center">{i + 1}</td>
                                         <td>
+                                            <span className="text-sm">
                                             {moment(
                                                 riwayat["tgl_ditetapkan"]
                                             ).format("LL")}
+                                            </span>
+                                            <span className="block mt-1 font-serif text-sm font-medium">
+                                                {riwayat['no_surat3']}
+                                            </span>
                                         </td>
-                                        <td>{riwayat["nama"]}</td>
+                                        <td className="text-nowrap">{riwayat["nama"]}</td>
+                                        {/* <td className="overflow-x-scroll">{riwayat["no_surat3"]}</td> */}
+                                        <td className="text-center">{parseFloat(riwayat["jakk"]['jumlah']).toFixed(3)}</td>
                                         <td
                                             className={
                                                 riwayat["kesimpulan"]
@@ -244,7 +259,9 @@ export default function RiwayatCetak({
                                                     : "text-warning"
                                             }
                                         >
+                                            <small className="text-xs">
                                             {riwayat["kesimpulan"]}
+                                            </small>
                                         </td>
                                         <td className="capitalize">
                                             {moment(

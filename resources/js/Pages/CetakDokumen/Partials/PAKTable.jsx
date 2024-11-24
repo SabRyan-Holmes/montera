@@ -33,7 +33,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
 
             if (historyData["ak_tipe_tambahan"] != null) {
                 data.ak_tipe_tambahan = historyData["ak_tipe_tambahan"];
-                console.log("data.ak_tipe_tambahan ", data.ak_tipe_tambahan);
+                // console.log("data.ak_tipe_tambahan ", data.ak_tipe_tambahan);
                 const updatedTipePAK = {
                     ak_dasar: data.ak_dasar,
                     ak_jf: data.ak_jf,
@@ -42,11 +42,10 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                     ak_peningkatan: data.ak_peningkatan,
                     ...data.ak_tipe_tambahan,
                 };
-                setRowKeys(Object.keys(updatedTipePAK))
+                setRowKeys(Object.keys(updatedTipePAK));
             }
 
-
-            console.log("data.kesimpulan ", data.kesimpulan);
+            // console.log("data.kesimpulan ", data.kesimpulan);
         }
     }, []);
 
@@ -166,7 +165,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
             pangkat_keker: pangkatKeker,
         });
         data.pangkat_keker = pangkatKeker;
-        console.log('data.pangkat_keker : ',data.pangkat_keker)
+        console.log("data.pangkat_keker : ", data.pangkat_keker);
     }, [jakk_jumlah, data.pangkat]);
 
     // Logika Kelebihan/Kekurangan  AK Kredit Untuk Kenaikan Jabatan
@@ -182,7 +181,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
     }, [jakk_jumlah, data.jabatan]);
 
     // <========Logika Tambah Kolom=============>
-
 
     const handleAddRow = () => {
         const newRowKey = `ak_tambahan_${
@@ -266,16 +264,12 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
     };
 
     useEffect(() => {
-        if (isEdit) {
-            data.no_surat3 = historyData["no_surat3"];
-        }
-            data.ak_konversi["lama"] = data.ak_terakhir;
-            data.ak_konversi["baru"] = data.angka_kredit;
-            data.ak_konversi["jumlah"] = (
-                parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)
-            ).toFixed(3);
+        data.ak_konversi["lama"] = data.ak_terakhir;
+        data.ak_konversi["baru"] = data.angka_kredit;
+        data.ak_konversi["jumlah"] = (
+            parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)
+        ).toFixed(3);
     });
-
 
     return (
         <table className="table text-base">
@@ -292,13 +286,20 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                     </td>
                     <td colSpan={4} className="border">
                         <TextInput
+                            id="no_surat3"
+                            name="no_surat3"
+                            required
                             className="w-64 h-12 border-gradient"
                             placeholder="contoh: 1500.445/PAK/2024"
                             maxLength={30}
                             defaultValue={data.no_surat3}
-                            onChange={(e) =>
-                                setData("no_surat3", e.target.value)
-                            }
+                            onChange={(e) => {
+                                setData("no_surat3", e.target.value);
+                                console.log(
+                                    "data.no_surat3 : ",
+                                    data.no_surat3
+                                );
+                            }}
                             list="no_surat3"
                         />
                         <datalist id="no_surat3">
@@ -560,9 +561,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                             Pangkat
                         </span>
                     </td>
-                    {/* FIXME :
-                    Ada bug angka pangkat keker dan jabatan keker pas createData
-                    */}
+
                     <td
                         className="text-lg text-center border"
                         colSpan={2}

@@ -61,10 +61,10 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
             Math.abs(data.periode_berakhir - data.periode_mulai + 1)
         );
 
-        console.log("periode_mulai", data.periode_mulai)
-        console.log("periode_berakhir", data.periode_berakhir)
-        console.log("tahun_periode", data.tahun_periode)
-        console.log("angka_periode", data.angka_periode)
+        // console.log("periode_mulai", data.periode_mulai)
+        // console.log("periode_berakhir", data.periode_berakhir)
+        // console.log("tahun_periode", data.tahun_periode)
+        // console.log("angka_periode", data.angka_periode)
 
     }, [data.periode_mulai, data.periode_berakhir]);
 

@@ -107,10 +107,6 @@ class RiwayatCetakController extends Controller
      */
     public function update(Request $request, RiwayatCetak $riwayat)
     {
-        // FIXME: Benerin bug pas diedit malah banyak yg keno keedit
-        // dd($request, $riwayat);
-        Log::info('Request data:', $request->all());
-        Log::info('Riwayat data:', $riwayat->toArray());
         // Update data berdasarkan ID
         if (!$riwayat) {
             return back()->withErrors('Data yang ingin diupdate tidak ditemukan.');
