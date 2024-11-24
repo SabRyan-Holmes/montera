@@ -26,13 +26,13 @@
                     Instansi: Badan Pusat Statistik
                 </td>
                 <td style="font-weight: 400; text-align: right;">
-                    Periode: <span> @bulan($data['periode_mulai']) - @bulan($data['periode_berakhir']) {{ $data['tahun_ini'] }}</span>
+                    Periode: <span> @bulan($data['periode_mulai']) - @bulan($data['periode_berakhir']) {{ $data['tahun_periode'] }}</span>
                 </td>
             </tr>
         </table>
     </div>
 
-    <div style="margin-top: 0.5rem ">
+    <div style="margin-top: 0.1rem ">
         {{-- Table --}}
         <table aria-colcount="7" class="table-pak" style="border-collapse: collapse; border-spacing: 0;">
             {{--  head  --}}
@@ -44,7 +44,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody style="font-size: 13px">
+            <tbody style="font-size: 15px">
                 {{--  Nama  --}}
                 <tr>
                     <th></th>
@@ -114,7 +114,7 @@
                     <th></th>
                     <th style="">
                         6</th>
-                    <td colspan="2" style="padding: 0.3rem; border-right-color: transparent; text-wrap: nowrap;">
+                    <td colspan="2" style="padding: 0.3rem; padding-right: 0px; border-right-color: transparent; text-wrap: nowrap;">
                         Pangkat/Golongan Ruang/TMT
                     </td>
                     <td colspan="3" style=" padding: 0.3rem;  text-wrap: nowrap;">
@@ -165,7 +165,7 @@
 
             </tbody>
 
-            <tfoot style="font-size: 14px; font-weight: 400;">
+            <tfoot style="font-size: 15px; font-weight: 400;">
                 <tr style="text-align: center; text-transform: uppercase; ">
                     <th colspan="7" style=" padding: 0.25rem; font-weight: 700; font-size: 15px;">
                         hasil penilaian angka kredit
@@ -174,7 +174,7 @@
                 {{-- ---------------------------------------- --}}
 
                 <tr style="text-align: center; font-weight: 400;">
-                    <th colspan="5" style="text-transform: uppercase; font-size: 14px; padding: 0px">
+                    <th colspan="5" style="text-transform: uppercase; font-size: 15px; padding: 0px">
                         Hasil Penilaian Kinerja
                     </th>
                     <th rowSpan="2" style="text-transform: uppercase; font-size: 13px;">
@@ -205,7 +205,7 @@
                     <th colspan="2">
                         {{ $data['tahun_terakhir'] }}
                     </th>
-                    <th> {{ '-' }}</th>
+                    <th>{{ '-' }}</th>
                     <th>{{ '-' }}</th>
                     <th>{{ '-' }}</th>
                     <th>{{ '-' }}</th>
@@ -217,7 +217,7 @@
                     <th> @bulan($data['periode_mulai']) - @bulan($data['periode_berakhir'])</th>
                     <th>{{ $data['predikat'] }}</th>
                     <th>{{ $data['presentase'] }}</th>
-                    <th>{{ $data['ak_normatif'] }}</th>
+                    <th>{{ number_format($data['ak_normatif'] ?? 0, 3) }}</th>
                     <th>{{ $data['angka_kredit'] }}</th>
                 </tr>
 
@@ -251,7 +251,7 @@
         </div>
 
         @if (count(array_filter($data['tebusan2'])) > 0)
-        <div style="margin-top:12rem; font-size: 0.9rem">
+        <div style="margin-top:12rem; font-size: 15px;">
             <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
             @php
                 $tebusan_list = [

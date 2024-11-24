@@ -72,16 +72,17 @@ class CetakDokumenController extends Controller
 
     public function cetak(Request $request)
     {
-        // dd($request);
+        // dd($request->all());
         Session::put('data', $request->all());
 
         // Kalo dibuka dr history(tanpa restore ke database)
-        if (!$request->id) {
-            $datas = $request->except('data.pegawai');
-            $pegawai_id = $request->input('data.pegawai.id');
-            $datas = array_merge($datas['data'], ['pegawai_id' => $pegawai_id]);
-            // dd($datas);
-            RiwayatCetak::create($datas);
+        if (isset($request->id)) {
+            $dataForStore = $request->except('pegawai');
+            $pegawai_id = $request->input('pegawai.id');
+            $dataForStore['pegawai_id'] = $pegawai_id;
+            // $dataForStore = array_merge($dataForStore['data'], ['pegawai_id' => $pegawai_id]);
+            // dd($dataForStore);
+            RiwayatCetak::create($dataForStore);
         }
 
         return Inertia::location(route('cetak_dokumen.view-pak'));
@@ -90,12 +91,8 @@ class CetakDokumenController extends Controller
     public function view_pak()
     {
         // dd(Session::get('data'));
-        // Ambil data dari session
-        if (!Session::get('data')['id']) {
-            $data = Session::get('data')['data'];
-        } else {
-            $data = Session::get('data');
-        }
+        $data = Session::get('data');
+
         // Perbarui nilai total_dicetak dengan menambahkannya 1
         $userId = Auth::user()->id;
         User::where('id', $userId)
@@ -103,134 +100,11 @@ class CetakDokumenController extends Controller
                 'jumlah_dicetak' => DB::raw('jumlah_dicetak + 1')
             ]);
 
-        $dataTest = [
-            "pegawai" => [
-                "id" => 4,
-                "Nama" => "DWI SATRIA FIRMANSYAH S.Tr.Stat.",
-                "NIP" => "199803062021041000",
-                "Nomor Seri Karpeg" => "",
-                "Pangkat/Golongan Ruangan/TMT" => "PENATA MUDA /III/a /01-04-2021",
-                "Tempat/Tanggal Lahir" => "JAMBI 06-03-1998",
-                "Jenis Kelamin" => "PRIA",
-                "Pendidikan" => "D-IV STATISTIKA",
-                "Jabatan/TMT" => "Statistisi Ahli Pertama / 18-04-2022",
-                "Masa Kerja Golongan" => "0 TAHUN 0 BULAN",
-                "Unit Kerja" => "BPS KABUPATEN BATANG HARI",
-                "Daerah" => "BATANG HARI",
-                "created_at" => null,
-                "updated_at" => null,
-            ],
-            "nama" => "Agus Sudibyo, M.Stat",
-            "nip" => "197412311996121001",
-            "tgl_ditetapkan" => "2024-08-14",
-            "periode_mulai" => 1,
-            "periode_berakhir" => 2,
-            "angka_periode" => 3,
-            "penanda_tangan" => "",
-            "no_surat1" => "1500.455/KONV/2024",
-            "predikat" => "Baik",
-            "presentase" => 100,
-            "ak_normatif" => 12.5,
-            "angka_kredit" => "235.456",
-            "ak_normatif_ops" => 0,
-            "tebusan1" => [
-                "kepala_reg" => true,
-                "sekretaris" => true,
-                "kepala_bps" => true,
-                "pns" => true,
-                "kepala_biro" => false,
-                "arsip" => false,
-            ],
-            "no_surat2" => "1500.455/AKM/2024",
-            "ak_terakhir" => "232.331",
-            "jumlah_ak_kredit" => "467.787",
-            "tahun_terakhir" => "2023",
-            "tahun_ini" => "2024",
-            "tebusan2" => [
-                "kepala_reg" => true,
-                "sekretaris" => false,
-                "kepala_bps" => true,
-                "pns" => false,
-                "kepala_biro" => false,
-                "arsip" => false,
-            ],
-            "no_surat3" => "1500.455/PAK/2024",
-            "ak_dasar" => [
-                "tipe_ak" => "AK Dasar yang diberikan",
-                "lama" => 22,
-                "baru" => 233,
-                "jumlah" => "255.000",
-                "keterangan" => "wdwdwdwdwdwdwdw",
-            ],
-            "ak_jf" => [
-                "tipe_ak" => "AK JF Lama",
-                "lama" => 230,
-                "baru" => 2,
-                "jumlah" => "232.000",
-                "keterangan" => "",
-            ],
-            "ak_penyesuaian" => [
-                "tipe_ak" => "AK Penyesuaian/ Penyetsaraan",
-                "lama" => 340,
-                "baru" => 33,
-                "jumlah" => "373.000",
-                "keterangan" => "",
-            ],
-            "ak_konversi" => [
-                "tipe_ak" => "AK Konversi",
-                "lama" => "232.331",
-                "baru" => "235.456",
-                "jumlah" => "467.787",
-                "keterangan" => "",
-            ],
-            "ak_peningkatan" => [
-                "tipe_ak" => "AK yang diperoleh dari Peningkatan yang diberikan",
-                "lama" => 30,
-                "baru" => 32.3,
-                "jumlah" => "62.300",
-                "keterangan" => "",
-            ],
-            "ak_tipe_tambahan" => [
-                'ak_tambahan_1' => [
-                    'tipe_ak' => 'AK konversi baru lagi',
-                    'lama' => '27.2',
-                    'baru' => '31.2',
-                    'jumlah' => 58.4,
-                    'keterangan' => '',
-                ],
-            ],
-
-            "jakk" => [
-                "lama" => 854.331,
-                "baru" => 535.756,
-                "jumlah" => 1390.087,
-                "keterangan" => "",
-            ],
-            "pangkat" => "100",
-            "jabatan" => "450",
-            "pangkat_keker" => "1290.087",
-            "jabatan_keker" => "940.087",
-            "tebusan3" => [
-                "kepala_reg" => true,
-                "sekretaris" => false,
-                "kepala_bps" => true,
-                "pns" => false,
-                "kepala_biro" => false,
-                "arsip" => false,
-            ],
-        ];
-
-        // dd($data);
-
         // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
-        // dd($data);
         $this->cleanAllData($data);
 
 
-        // dd($data);
-
-        // Buat PDF
-        // SIZE F4
+        // Buat PDF SIZE F4
         $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
         $customF4Paper = array(0, 0, 595.28, 935.43);
         $pdf = Pdf::loadView('pdf.pak', [

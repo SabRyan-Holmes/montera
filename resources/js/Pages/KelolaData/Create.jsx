@@ -31,22 +31,8 @@ export default function Create({ auth, pegawai, title, flash }) {
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route("pegawai.store"), data);
+        post(route("pegawai.store"), data );
     };
-
-    // useEffect(() => {
-    //     return () => {
-    //         Swal.fire({
-    //             title: "Berhasil!",
-    //             text: `${flash.message}`,
-    //             icon: "success",
-    //             iconColor: "#50C878",
-    //             confirmButtonText: "Oke",
-    //             confirmButtonColor: "#2D95C9",
-    //         })
-    //     };
-    // }, [flash.message]);
 
     // console.log("isi errors", errors);
     return (

@@ -32,17 +32,17 @@
 
                 <td style="font-weight: 400; text-align: right;">
                     {{-- FIXME: mungkin SEBAIKNYA UNTUK BULAN BAGUS VALUE NYA STRING AJ, JANGAN ANGKA --}}
-                    Periode: @bulan($data['periode_mulai']) - @bulan($data['periode_berakhir']) {{ $data['tahun_ini'] }}
+                    Periode: @bulan($data['periode_mulai']) - @bulan($data['periode_berakhir']) {{ $data['tahun_periode'] }}
                 </td>
             </tr>
         </table>
     </div>
 
 
-    <div style="margin-top: 0.4rem ">
+    <div style="margin-top: 0.1rem ">
         {{-- Table --}}
         <table aria-colcount="5" class="table-pak"
-            style="border-collapse: collapse; border-spacing: 0;   font-size: 1rem;
+            style="border-collapse: collapse; border-spacing: 0; font-size: 15px;
                         line-height: 1rem ;">
             {{--  head  --}}
             <thead>
@@ -52,7 +52,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody style="font-size: 0.9rem">
+            <tbody style="font-size: 15px">
                 {{--  Nama  --}}
                 <tr>
                     <th style="border: 1px solid #000;  width: 3.8rem /* 64px */;">
@@ -62,7 +62,7 @@
                     </td>
                     <td colspan="2"
                         style="border: 1px solid #000;
-                        padding: 0.4rem /* 8px */; text-wrap: nowrap;" >
+                        padding: 0.4rem /* 8px */; text-wrap: nowrap;">
                         {{-- FIXME: nama pgeawai harusny ad di dari data useForm --}}
                         :
                         {{-- {{ 'Kiky Amci Ilzania, S.Tr.Stat' }} --}}
@@ -126,7 +126,8 @@
                 <tr>
                     <th style="border: 1px solid #000;">
                         6</th>
-                    <td colspan="2" style="border-right-color: transparent; padding: 0.3rem; text-wrap: nowrap; font-size: 13px">
+                    <td colspan="2"
+                        style="border-right-color: transparent; padding: 0.3rem; padding-right: 0px; margin-right: 0px;  text-wrap: nowrap; font-size: 13.7px">
                         Pangkat/Golongan Ruang/TMT
                     </td>
                     <td colspan="2" style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
@@ -176,9 +177,10 @@
 
             </tbody>
 
-            <tfoot style="font-size: 14px;">
+            <tfoot style="font-size: 15px;">
                 <tr style="text-align: center;  text-transform: uppercase; ">
-                    <th colspan="5" style="border: 1px solid #000;  padding: 0.4rem /* 8px */; font-weight: 700; font-size:15px">
+                    <th colspan="5"
+                        style="border: 1px solid #000;  padding: 0.4rem /* 8px */; font-weight: 700; font-size:15px">
                         konversi predikat kinerja ke angka kredit
                     </th>
                 </tr>
@@ -204,13 +206,13 @@
                     <th style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
                         persentase
                     </th>
-                    <th style="border: 1px solid #000; text-transform: none; font-size: 13px; text-wrap: nowrap; font-weight: 400;"
+                    <th style="border: 1px solid #000; text-transform: none; font-size: 14px; text-wrap: nowrap; font-weight: 400;"
                         class="border border-black normal-case text-xs text-nowrap;">
                         (kolom 2 x kolom 3)
                     </th>
                 </tr>
 
-                <tr style="text-transform: uppercase; width: 100%; font-weight: 400; background-color: #e8f3f3;" >
+                <tr style="text-transform: uppercase; width: 100%; font-weight: 400; background-color: #e8f3f3;">
                     <th colspan="2" style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
                         {{ '1' }}
                     </th>
@@ -236,7 +238,7 @@
                         /12
                     </th>
                     <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
-                        {{ $data['ak_normatif'] }}
+                        {{ number_format($data['ak_normatif'] ?? 0, 3) }}
                     </th>
                     <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
                         {{ $data['angka_kredit'] }}
@@ -265,26 +267,26 @@
         </div>
 
         @if (count(array_filter($data['tebusan1'])) > 0)
-        <div style="margin-top:12rem; font-size: 0.9rem">
-            <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
-            @php
-                $tebusan_list = [
-                    'kepala_reg' => 'Kepala Kantor Regional VII BKN',
-                    'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
-                    'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
-                    'kepala_biro' => 'Kepala Biro SDM BPS',
-                    'pns' => 'PNS Bersangkutan',
-                    'arsip' => 'Arsip',
-                ];
-                $i = 1;
-            @endphp
-            @foreach ($data['tebusan1'] as $key => $value)
-                @if ($value)
-                    <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
-                    @php $i++; @endphp
-                @endif
-            @endforeach
-        </div>
+            <div style="margin-top:12rem; font-size: 15px">
+                <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
+                @php
+                    $tebusan_list = [
+                        'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                        'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                        'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                        'kepala_biro' => 'Kepala Biro SDM BPS',
+                        'pns' => 'PNS Bersangkutan',
+                        'arsip' => 'Arsip',
+                    ];
+                    $i = 1;
+                @endphp
+                @foreach ($data['tebusan1'] as $key => $value)
+                    @if ($value)
+                        <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
+                        @php $i++; @endphp
+                    @endif
+                @endforeach
+            </div>
         @endif
 
 

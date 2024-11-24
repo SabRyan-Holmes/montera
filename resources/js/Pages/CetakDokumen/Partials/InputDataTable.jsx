@@ -60,10 +60,10 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
             "angka_periode",
             Math.abs(data.periode_berakhir - data.periode_mulai + 1)
         );
-        // data.angka_periode = data.periode_berakhir - data.periode_mulai + 1;
-        // parseInt(data.angka_periode);
+
         console.log("periode_mulai", data.periode_mulai)
         console.log("periode_berakhir", data.periode_berakhir)
+        console.log("tahun_periode", data.tahun_periode)
         console.log("angka_periode", data.angka_periode)
 
     }, [data.periode_mulai, data.periode_berakhir]);
@@ -119,11 +119,9 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                     }));
                                     setData((data) => ({
                                         ...data,
-                                        tahun_ini: year,
+                                        tahun_periode: year,
                                     }));
 
-                                    console.log("e.target.value");
-                                    console.log(e.target.value);
                                 }}
                             />
 
@@ -145,18 +143,33 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                     // Mengonversi bulan menjadi integer
                                     const periodeBerakhir = parseInt(month, 10);
 
-                                    if (year !== data.tahun_ini) {
+                                    if (year !== data.tahun_periode) {
                                         alert(
                                             "Tahun periode berakhir harus sama dengan periode mulai!"
                                         );
                                         e.target.value = ""; // Reset input jika tidak sesuai
                                     } else {
                                         // Jika tahun sama, masukkan nilai bulan ke dalam state atau data
-                                        setData(
-                                            "periode_berakhir",
-                                            periodeBerakhir
-                                        );
-                                        data.tahun_periode = year
+                                        setData((data) => ({
+                                            ...data,
+                                            periode_berakhir: periodeBerakhir,
+                                        }));
+                                        setData((data) => ({
+                                            ...data,
+                                            tahun_periode: year,
+                                        }));
+
+                                        // setData(
+                                        //     "periode_berakhir",
+                                        //     periodeBerakhir
+                                        // );
+                                        // setData(
+                                        //     "tahun_periode",
+                                        //     year
+                                        // );
+                                        // data.tahun_periode = year
+                                        // console.log("tahun_periode")
+                                        // console.log(data.tahun_periode)
                                     }
                                 }}
                             />

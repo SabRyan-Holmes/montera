@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
-import {  SecondaryButton, SuccessButton } from "@/Components";
+import { SecondaryButton, SuccessButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -161,19 +161,24 @@ export default function Index({ auth, pegawai, title }) {
         e.preventDefault();
         setIsLoading(true);
 
-        router.post('/cetak_dokumen/cetak', { data: data }, {
-            preserveScroll:true,
-            preserveState: true,
-            onFinish: () => setIsLoading(false),
-            onError: (errors) => {
-                console.error("Error:", errors);
-            },
-            onSuccess: (page) => {
-                // Misalnya, URL PDF dikirim di props dari server
-                const url = page.props.url;
-                window.open(url, '_blank');
+        router.post(
+            "/cetak_dokumen/cetak",
+            data,
+            {
+                preserveScroll: true,
+                preserveState: true,
+
+                onFinish: () => setIsLoading(false),
+                onError: (errors) => {
+                    console.error("Error:", errors);
+                },
+                onSuccess: (page) => {
+                    // Misalnya, URL PDF dikirim di props dari server
+                    const url = page.props.url;
+                    window.open(url, "_blank");
+                },
             }
-        });
+        );
     };
 
     // Jabatan untuk sesuai Koefisien Pertahun
@@ -349,13 +354,14 @@ export default function Index({ auth, pegawai, title }) {
                     </div>
 
                     <div className="flex justify-center w-full pb-12 mt-10 ">
-                        <SuccessButton type="submit"
-                        className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 ">
+                        <SuccessButton
+                            type="submit"
+                            className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 "
+                        >
                             Cetak Dokumen PAK
                             <FaPrint className="mx-1" />
                         </SuccessButton>
                     </div>
-
                 </form>
             </section>
         </Authenticated>

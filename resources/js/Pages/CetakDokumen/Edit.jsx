@@ -168,7 +168,7 @@ export default function Edit({ auth, title, riwayat, flash }) {
 
         router.post(
             "/cetak_dokumen/cetak",
-            { data: data },
+            data,
             {
                 preserveScroll: true,
                 preserveState: true,
@@ -191,11 +191,7 @@ export default function Edit({ auth, title, riwayat, flash }) {
                 onError: (errors) => {
                     console.error("Error:", errors);
                 },
-                onSuccess: (page) => {
-                    // Misalnya, URL PDF dikirim di props dari server
-                    const url = page.props.url;
-                    window.open(url, "_blank");
-                },
+
         });
 
 

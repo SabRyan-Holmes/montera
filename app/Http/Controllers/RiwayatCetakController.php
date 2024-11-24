@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Session;
@@ -56,9 +57,7 @@ class RiwayatCetakController extends Controller
 
     public function show(Request $request)
     {
-        // dd($request);
         Session::put('data', $request->all());
-
         return Inertia::location(route('cetak_dokumen.view-pak'));
     }
 
@@ -74,13 +73,8 @@ class RiwayatCetakController extends Controller
                 'jumlah_dicetak' => DB::raw('jumlah_dicetak + 1')
             ]);
 
-        // dd($data);
-
         // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
-        // dd($data);
         $this->cleanAllData($data);
-
-
         // dd($data);
 
         // Buat PDF
@@ -113,7 +107,15 @@ class RiwayatCetakController extends Controller
      */
     public function update(Request $request, RiwayatCetak $riwayat)
     {
+        // FIXME: Benerin bug pas diedit malah banyak yg keno keedit
+        // dd($request, $riwayat);
+        Log::info('Request data:', $request->all());
+        Log::info('Riwayat data:', $riwayat->toArray());
         // Update data berdasarkan ID
+        if (!$riwayat) {
+            return back()->withErrors('Data yang ingin diupdate tidak ditemukan.');
+        }
+
         $riwayat->update($request->all());
 
         return Redirect::route('cetak_dokumen.show_history', $riwayat->pegawai["NIP"])->with('message', 'Data Riwayat Berhasil Diupdate!');

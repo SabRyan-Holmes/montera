@@ -25,7 +25,9 @@
         }
     </style>
 </head>
-
+{{-- TODO:
+    benerin size font yg dk konsisten, dan jadiin 3 angka dibelakang koma
+--}}
 <body>
     <main>
         {{-- @dd($data)  --}}

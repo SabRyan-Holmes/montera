@@ -10,7 +10,13 @@ import Swal from "sweetalert2";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment/min/moment-with-locales";
 
-export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak, flash }) {
+export default function RiwayatCetak({
+    auth,
+    pegawai,
+    title,
+    riwayatCetak,
+    flash,
+}) {
     moment.locale("id");
     function handleDelete(id) {
         Swal.fire({
@@ -44,7 +50,6 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak, flash
             }
         });
     }
-
 
     const Toast = Swal.mixin({
         toast: true,
@@ -231,10 +236,17 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak, flash
                                             ).format("LL")}
                                         </td>
                                         <td>{riwayat["nama"]}</td>
-                                        <td className="text-success">
+                                        <td
+                                            className={
+                                                riwayat["kesimpulan"]
+                                                    ?.includes("Sudah")
+                                                    ? "text-emerald-500/80"
+                                                    : "text-warning"
+                                            }
+                                        >
                                             {riwayat["kesimpulan"]}
                                         </td>
-                                        <td>
+                                        <td className="capitalize">
                                             {moment(
                                                 riwayat["updated_at"]
                                             ).fromNow()}
@@ -242,7 +254,10 @@ export default function RiwayatCetak({ auth, pegawai, title, riwayatCetak, flash
                                         <td className="text-center whitespace-nowrap text-nowrap">
                                             <Link
                                                 as="a"
-                                                href={route("cetak_dokumen.cetak")} data={riwayat}
+                                                href={route(
+                                                    "cetak_dokumen.cetak"
+                                                )}
+                                                data={riwayat}
                                                 method="post"
                                                 className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                             >

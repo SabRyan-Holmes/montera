@@ -117,7 +117,7 @@ div.sub-title {
 div.sub-title > h2 {
     margin-left: auto;
     margin-right: auto;
-    font-size: 1rem;
+    font-size: 15px;
     line-height: 1.75rem;
     text-transform: uppercase;
     text-align: center;
@@ -140,7 +140,7 @@ div.sub-title > h2 > span > span {
     margin-top: 1rem;
     margin-right: 0.5rem;
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 15px;
 }
 
 .signature-container strong {
@@ -180,7 +180,7 @@ table.table-pak {
     border-spacing: 0;
     border-width: 1px;
     border-color: rgb(51 65 85);
-    font-size: 1rem;
+    font-size: 15px;
     line-height: 1rem;
 }
 
@@ -222,7 +222,7 @@ table.table-pak > tfoot > tr > th {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
-    font-size: 12px; /* Perkecil ukuran font */
+    font-size: 14.5px; /* Perkecil ukuran font */
 }
 
 .table-pak-3 th, .table-pak-3 td {

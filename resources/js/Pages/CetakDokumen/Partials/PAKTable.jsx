@@ -4,7 +4,17 @@ import { MdAddBox, MdDelete } from "react-icons/md";
 import { FaMinus } from "react-icons/fa";
 
 export default function PAKTable({ data, setData, isEdit, historyData }) {
-    // Logika Hitung jakk
+    const dataTipePAK = {
+        ak_dasar: data.ak_dasar,
+        ak_jf: data.ak_jf,
+        ak_penyesuaian: data.ak_penyesuaian,
+        ak_konversi: data.ak_konversi,
+        ak_peningkatan: data.ak_peningkatan,
+        ...data.ak_tipe_tambahan,
+    };
+
+    const [rowKeys, setRowKeys] = useState(Object.keys(dataTipePAK));
+
     useEffect(() => {
         if (isEdit) {
             data.no_surat3 = historyData["no_surat3"];
@@ -23,12 +33,24 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
 
             if (historyData["ak_tipe_tambahan"] != null) {
                 data.ak_tipe_tambahan = historyData["ak_tipe_tambahan"];
+                console.log("data.ak_tipe_tambahan ", data.ak_tipe_tambahan);
+                const updatedTipePAK = {
+                    ak_dasar: data.ak_dasar,
+                    ak_jf: data.ak_jf,
+                    ak_penyesuaian: data.ak_penyesuaian,
+                    ak_konversi: data.ak_konversi,
+                    ak_peningkatan: data.ak_peningkatan,
+                    ...data.ak_tipe_tambahan,
+                };
+                setRowKeys(Object.keys(updatedTipePAK))
             }
+
 
             console.log("data.kesimpulan ", data.kesimpulan);
         }
     }, []);
 
+    // Logika Hitung jakk
     const calculateTotal = () => {
         let jakk_lama =
             parseFloat(data.ak_dasar["lama"]) +
@@ -143,7 +165,8 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
             ...data,
             pangkat_keker: pangkatKeker,
         });
-        // data.pangkat_keker = pangkatKeker;
+        data.pangkat_keker = pangkatKeker;
+        console.log('data.pangkat_keker : ',data.pangkat_keker)
     }, [jakk_jumlah, data.pangkat]);
 
     // Logika Kelebihan/Kekurangan  AK Kredit Untuk Kenaikan Jabatan
@@ -159,15 +182,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
     }, [jakk_jumlah, data.jabatan]);
 
     // <========Logika Tambah Kolom=============>
-    const dataTipePAK = {
-        ak_dasar: data.ak_dasar,
-        ak_jf: data.ak_jf,
-        ak_penyesuaian: data.ak_penyesuaian,
-        ak_konversi: data.ak_konversi,
-        ak_peningkatan: data.ak_peningkatan,
-        ...data.ak_tipe_tambahan,
-    };
-    const [rowKeys, setRowKeys] = useState(Object.keys(dataTipePAK));
+
 
     const handleAddRow = () => {
         const newRowKey = `ak_tambahan_${
@@ -253,13 +268,14 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
     useEffect(() => {
         if (isEdit) {
             data.no_surat3 = historyData["no_surat3"];
+        }
             data.ak_konversi["lama"] = data.ak_terakhir;
             data.ak_konversi["baru"] = data.angka_kredit;
             data.ak_konversi["jumlah"] = (
                 parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit)
             ).toFixed(3);
-        }
     });
+
 
     return (
         <table className="table text-base">
@@ -311,8 +327,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                     </td>
                 </tr>
                 {rowKeys.map((key, index) => (
-                    // FIXME:
-                    // ad bug AK konversi bisa diubah pas createData, padahal harusny cuman bisa diubah di tabel konversi
                     <tr
                         key={key}
                         className="space-x-0 text-base font-semibold capitalize border-separate text-slate-600"
