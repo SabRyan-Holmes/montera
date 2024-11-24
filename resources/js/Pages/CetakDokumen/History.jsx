@@ -219,10 +219,10 @@ export default function RiwayatCetak({
                                     <span>Jumlah Angka </span>
                                     <span className="block">Kredit Kumulatif</span>
                                 </th>
-                                <th scope="col" width="25%">
+                                <th scope="col" width="25%" className="text-center">
                                     Keterangan
                                 </th>
-                                <th scope="col" width="25%">
+                                <th scope="col" width="15%">
                                     Terakhir diubah
                                 </th>
                                 <th scope="col " className="text-center ">
