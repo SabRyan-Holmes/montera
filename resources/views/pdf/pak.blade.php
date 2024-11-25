@@ -11,9 +11,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{$title}}</title>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
-
-    {{-- @vite('public/css/pak.css') --}}
     <link rel="stylesheet" type="text/css" href="{{ URL::asset('css/pak.css') }}" />
+    {{-- @vite('public/css/pak.css') --}}
+
+    {{-- For Production --}}
+    {{-- <link rel="shortcut icon" href="{{ asset('logo.png') }}">
+    <link rel="stylesheet" type="text/css" href="{{ public_path('css/pak.css') }}" /> --}}
+
     <style>
         .page-break {
             page-break-after: always;
