@@ -89,6 +89,21 @@ const Sidebar = ({ active }) => {
                         <FaDatabase />
                         Kelola Data
                     </NavLinkDashboard>
+
+                    {/* Link Kelola Aturan Koefisen */}
+                    <NavLinkDashboard
+                        href={route("pegawai.index")}
+                        active={
+                            route().current("pegawai.index") ||
+                            active === "pegawai.create" ||
+                            active === "pegawai.edit" ||
+                            active === "pegawai.show"
+                        }
+                        className="relative z-20"
+                    >
+                        <FaDatabase />
+                        Kelola Aturan Koefisien
+                    </NavLinkDashboard>
                 </section>
             </ul>
 
