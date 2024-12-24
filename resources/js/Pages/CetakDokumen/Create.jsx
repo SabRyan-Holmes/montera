@@ -123,7 +123,9 @@ export default function Index({ auth, pegawai, title }) {
     });
 
     const predikat = {
-        75: "Cukup",
+        25: "Sangat Kurang",
+        50: "Kurang",
+        75: "Butuh Perbaikan",
         100: "Baik",
         150: "Sangat Baik",
     };

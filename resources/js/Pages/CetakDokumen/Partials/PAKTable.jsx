@@ -514,11 +514,13 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                                 setData("pangkat", e.target.value);
                             }}
                         >
+                            <option value="20">20</option>
+                            <option value="40">40</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
-                            <option value="150">150</option>
                             <option value="200">200</option>
-                            <option value="300">300</option>
+                            <option value="450">450</option>
+                            <option value="600">600</option>
                         </select>
                     </td>
                     <td className="text-center border" colSpan={2}>
