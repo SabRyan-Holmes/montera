@@ -12,9 +12,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
         ak_peningkatan: data.ak_peningkatan,
         ...data.ak_tipe_tambahan,
     };
-
     const [rowKeys, setRowKeys] = useState(Object.keys(dataTipePAK));
-
     useEffect(() => {
         if (isEdit) {
             data.no_surat3 = historyData["no_surat3"];

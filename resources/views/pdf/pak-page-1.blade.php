@@ -1,7 +1,9 @@
     <section class="container-a4">
     <table class="header" style="margin-top: 0px">
         <tr>
-            <td style="width: 20%;"><img src="{{ asset('logo.png') }}" alt="Logo BPS" /></td>
+            {{-- <td style="width: 20%;"><img src="{{ asset('logo.png') }}" alt="Logo BPS" /></td> --}}
+            {{-- For Hosting change to public_path --}}
+            <td style="width: 20%;"><img src="{{ public_path('logo.png') }}" alt="Logo BPS" /></td>
             <td style="font-style: italic; line-height: 1.2; padding: 0; margin: 0;">
                 <strong class="title" style="margin: 0; padding: 0;">Badan Pusat Statistik
                     <span style="display: block; margin: 0; padding: 0;">Provinsi Jambi</span>
