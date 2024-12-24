@@ -6,6 +6,7 @@ import { Link } from "@inertiajs/react";
 import logo from "../../assets/image/logo.png";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLinkDashboard from "@/Components/NavLinkDashboard";
+import { RiUserSettingsFill } from "react-icons/ri";
 
 const Sidebar = ({ active }) => {
     // console.log(active)
@@ -44,6 +45,7 @@ const Sidebar = ({ active }) => {
                         src={logo}
                         className="relative z-20 w-24 h-24 m-3 mx-auto mt-0 filter drop-shadow-lg"
                     /> */}
+
                     <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md bg-slate-300 ">
                         <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary/40 via-hijau/40 to-secondary/40" />
                     </div>
@@ -92,16 +94,11 @@ const Sidebar = ({ active }) => {
 
                     {/* Link Kelola Aturan Koefisen */}
                     <NavLinkDashboard
-                        href={route("pegawai.index")}
-                        active={
-                            route().current("pegawai.index") ||
-                            active === "pegawai.create" ||
-                            active === "pegawai.edit" ||
-                            active === "pegawai.show"
-                        }
-                        className="relative z-20"
+                        href={""}
+                        active={""}
+                        className="relative z-20 disabled hover:cursor-not-allowed"
                     >
-                        <FaDatabase />
+                        <RiUserSettingsFill />
                         Kelola Aturan Koefisien
                     </NavLinkDashboard>
                 </section>
