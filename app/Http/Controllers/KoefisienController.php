@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Koefisien;
+use App\Models\Pegawai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class KoefisienController extends Controller
 {
@@ -12,7 +15,10 @@ class KoefisienController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('KelolaKoefisien/Index', [
+            "title" => "Kelola Aturan Koefisien",
+            "koefisiens" => Koefisien::all(),
+        ]);
     }
 
     /**
@@ -28,7 +34,10 @@ class KoefisienController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validated();
+        Koefisien::create($validated);
+        return Redirect::route('koefisien.index')->with('message', 'Aturan Koefien Berhasil Ditambahkan!');
+
     }
 
     /**
@@ -52,7 +61,11 @@ class KoefisienController extends Controller
      */
     public function update(Request $request, Koefisien $koefisien)
     {
-        //
+        $validated = $request->validated();
+        Pegawai::where('id', $koefisien->id)->update($validated);
+
+        return redirect()->back()->with('message', 'Data Pegawai Berhasil Diupdate!');
+
     }
 
     /**
@@ -60,6 +73,7 @@ class KoefisienController extends Controller
      */
     public function destroy(Koefisien $koefisien)
     {
-        //
+        $koefisien->delete();
+        return redirect()->back()->with('message', 'Data Pegawai Berhasil DiHapus!');
     }
 }

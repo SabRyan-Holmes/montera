@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Koefisien;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Str;
@@ -31,6 +32,45 @@ class DatabaseSeeder extends Seeder
             'email' => 'sdm.bps1500@gmail.com',
             'password' => static::$password ??= Hash::make('tanpaair21'),
             'remember_token' => Str::random(10),
+        ]);
+
+        // const akNormatif = {
+        //     Terampil: 5,
+        //     Mahir: 12.5,
+        //     Penyelia: 25,
+        //     Pertama: 12.5,
+        //     Muda: 25,
+        //     Madya: 37.5,
+        // };
+
+        Koefisien::create([
+            'jabatan' => 'Terampil',
+            'nilai' => 5,
+        ]);
+
+        Koefisien::create([
+            'jabatan' => 'Mahir',
+            'nilai' => 12.5,
+        ]);
+
+        Koefisien::create([
+            'jabatan' => 'Penyelia',
+            'nilai' => 25,
+        ]);
+
+        Koefisien::create([
+            'jabatan' => 'Pertama',
+            'nilai' => 12.5,
+        ]);
+
+        Koefisien::create([
+            'jabatan' => 'Madya',
+            'nilai' => 25,
+        ]);
+
+        Koefisien::create([
+            'jabatan' => 'Muda',
+            'nilai' => 37.5,
         ]);
 
         // User::create([

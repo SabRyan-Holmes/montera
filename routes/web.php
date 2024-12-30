@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CetakDokumenController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KoefisienController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiwayatCetakController;
@@ -36,16 +37,11 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 });
 
 
-// Tes
-// Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
-
-// Route::get('/tes', function () {
-//     return Inertia::render('Test');
-// });
 
 // `Kelola Data
 // Route::resource('riwayat_cetak', RiwayatCetakController::class)->middleware('auth');
 Route::resource('pegawai', PegawaiController::class)->middleware('auth');
+Route::resource('koefisien', KoefisienController::class)->middleware('auth');
 
 
 Route::middleware('auth')->group(function () {
@@ -54,4 +50,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Tes
+// Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
+
+// Route::get('/tes', function () {
+//     return Inertia::render('Test');
+// });
 require __DIR__ . '/auth.php';

@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('koefisiens', function (Blueprint $table) {
             $table->id();
-            $table->string("nama");
+            $table->string("jabatan");
             $table->double("nilai");
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrations.s
      */
     public function down(): void
     {

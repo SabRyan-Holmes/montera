@@ -80,7 +80,7 @@ const Sidebar = ({ active }) => {
                     {/* Link Kelola Data */}
                     <NavLinkDashboard
                         href={route("pegawai.index")}
-                        active={
+                    active={
                             route().current("pegawai.index") ||
                             active === "pegawai.create" ||
                             active === "pegawai.edit" ||
@@ -89,14 +89,14 @@ const Sidebar = ({ active }) => {
                         className="relative z-20"
                     >
                         <FaDatabase />
-                        Kelola Data
+                        Kelola Data Pegawai
                     </NavLinkDashboard>
 
                     {/* Link Kelola Aturan Koefisen */}
                     <NavLinkDashboard
-                        href={""}
-                        active={""}
-                        className="relative z-20 disabled hover:cursor-not-allowed"
+                        href={route("koefisien.index")}
+                        active={"koefisien.index"}
+                        className="relative z-20 disabled "
                     >
                         <RiUserSettingsFill />
                         Kelola Aturan Koefisien
