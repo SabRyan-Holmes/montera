@@ -34,6 +34,14 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
+        User::create([
+            'name' => 'Pimpinan',
+            'nip' => '1000000000000000',
+            'email' => 'pimpinan.bps1500@gmail.com',
+            'password' => static::$password ??= Hash::make('passwordpimpinan'),
+            'remember_token' => Str::random(10),
+        ]);
+
         // const akNormatif = {
         //     Terampil: 5,
         //     Mahir: 12.5,
@@ -43,35 +51,35 @@ class DatabaseSeeder extends Seeder
         //     Madya: 37.5,
         // };
 
-        Koefisien::create([
-            'jabatan' => 'Terampil',
-            'nilai' => 5,
-        ]);
+        // Koefisien::create([
+        //     'jabatan' => 'Terampil',
+        //     'nilai' => 5,
+        // ]);
 
-        Koefisien::create([
-            'jabatan' => 'Mahir',
-            'nilai' => 12.5,
-        ]);
+        // Koefisien::create([
+        //     'jabatan' => 'Mahir',
+        //     'nilai' => 12.5,
+        // ]);
 
-        Koefisien::create([
-            'jabatan' => 'Penyelia',
-            'nilai' => 25,
-        ]);
+        // Koefisien::create([
+        //     'jabatan' => 'Penyelia',
+        //     'nilai' => 25,
+        // ]);
 
-        Koefisien::create([
-            'jabatan' => 'Pertama',
-            'nilai' => 12.5,
-        ]);
+        // Koefisien::create([
+        //     'jabatan' => 'Pertama',
+        //     'nilai' => 12.5,
+        // ]);
 
-        Koefisien::create([
-            'jabatan' => 'Madya',
-            'nilai' => 25,
-        ]);
+        // Koefisien::create([
+        //     'jabatan' => 'Madya',
+        //     'nilai' => 25,
+        // ]);
 
-        Koefisien::create([
-            'jabatan' => 'Muda',
-            'nilai' => 37.5,
-        ]);
+        // Koefisien::create([
+        //     'jabatan' => 'Muda',
+        //     'nilai' => 37.5,
+        // ]);
 
         // User::create([
         //     'name' => 'Dwi Utaminingsih, S.Psi, MM.',

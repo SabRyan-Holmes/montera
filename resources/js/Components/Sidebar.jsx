@@ -8,8 +8,9 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLinkDashboard from "@/Components/NavLinkDashboard";
 import { RiUserSettingsFill } from "react-icons/ri";
 
-const Sidebar = ({ active }) => {
+const Sidebar = ({ active, role }) => {
     // console.log(active)
+
     return (
         <div className="relative shadow-2xl drawer-side">
             <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
@@ -51,6 +52,7 @@ const Sidebar = ({ active }) => {
                     </div>
                 </div>
 
+                {role === "Divisi Sumber Daya Manusia" && (
                 <section>
                     {/* Link Dashboard */}
                     <NavLinkDashboard
@@ -102,6 +104,10 @@ const Sidebar = ({ active }) => {
                         Kelola Aturan Koefisien
                     </NavLinkDashboard>
                 </section>
+                )}
+
+
+
             </ul>
 
             {/* Decorative Bottom Shadow */}
