@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\KoefisienStoreRequest;
 use App\Models\Koefisien;
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
@@ -32,10 +33,11 @@ class KoefisienController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(KoefisienStoreRequest $request)
     {
         $validated = $request->validated();
         Koefisien::create($validated);
+
         return Redirect::route('koefisien.index')->with('message', 'Aturan Koefien Berhasil Ditambahkan!');
 
     }

@@ -2,7 +2,6 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaDatabase, FaNotesMedical, FaPrint } from "react-icons/fa6";
 import { MdSwitchAccount } from "react-icons/md";
-import { Link } from "@inertiajs/react";
 import logo from "../../assets/image/logo.png";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLinkDashboard from "@/Components/NavLinkDashboard";
@@ -97,7 +96,7 @@ const Sidebar = ({ active, role }) => {
                     {/* Link Kelola Aturan Koefisen */}
                     <NavLinkDashboard
                         href={route("koefisien.index")}
-                        active={"koefisien.index"}
+                        active={route().current("koefisien.index")}
                         className="relative z-20 disabled "
                     >
                         <RiUserSettingsFill />

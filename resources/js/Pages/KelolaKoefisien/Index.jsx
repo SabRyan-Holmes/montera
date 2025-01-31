@@ -7,13 +7,9 @@ import Swal from "sweetalert2";
 import { FaEye, FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
+import PopUpForm from "./Partials/PopUpForm";
 
-export default function Index({
-    auth,
-    koefisiens,
-    title,
-    flash,
-}) {
+export default function Index({ auth, koefisiens, title, flash }) {
     // Jadiin format bahasa indonesia
     moment.locale("id");
 
@@ -66,10 +62,32 @@ export default function Index({
         });
     }
 
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
-                <h1 className="text-3xl my-7">Data Aturan Koefisien</h1>
+                <div className="flex justify-between">
+                    <h1 className="text-3xl my-7">Data Aturan Koefisien</h1>
+                    <div className="flex justify-end">
+                        <button
+                            onClick={() => {
+                                setIsPopUpOpen(!isPopUpOpen);
+                                setIsEdit(false);
+                            }}
+                            className="mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                        >
+                            Tambah Koefisien
+                            <IoMdAdd className="w-6 h-6" />
+                        </button>
+                        {isPopUpOpen && (
+                            <PopUpForm
+                                onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                                isEdit={isEdit}
+                            />
+                        )}
+                    </div>
+                </div>
 
                 <div className="pt-3 overflow-hidden rounded-xl">
                     <table className="table overflow-auto text-xs table-bordered rounded-xl ">
@@ -105,7 +123,11 @@ export default function Index({
                                     <td className="text-center">{i + 1}</td>
                                     <td>{koefisien["jabatan"]}</td>
                                     <td>{koefisien["nilai"]}</td>
-                                    <td>{moment(koefisien["updated_at"]).fromNow()}</td>
+                                    <td>
+                                        {moment(
+                                            koefisien["updated_at"]
+                                        ).fromNow()}
+                                    </td>
 
                                     <td className="text-center whitespace-nowrap text-nowrap">
                                         <Link
@@ -119,16 +141,16 @@ export default function Index({
                                             <FaEye className="fill-hijau/75 group-hover/item:fill-white" />
                                         </Link>
                                         <span className="inline-block mx-2"></span>
-                                        <Link
-                                            as="a"
-                                            href={route(
-                                                "koefisien.edit",
-                                                koefisien.id
-                                            )}
+                                        <a
+                                            onClick={() => {
+                                                setIsPopUpOpen(!isPopUpOpen);
+                                                setIsEdit(true);
+                                            }}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >
                                             <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                        </Link>
+                                        </a>
+
                                         <span className="inline-block mx-2"></span>
 
                                         <button
@@ -145,7 +167,6 @@ export default function Index({
                         </tbody>
                     </table>
                 </div>
-
             </section>
         </Authenticated>
     );
