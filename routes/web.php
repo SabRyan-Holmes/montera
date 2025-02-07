@@ -4,6 +4,7 @@ use App\Http\Controllers\CetakDokumenController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KoefisienController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiwayatCetakController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,9 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 Route::resource('pegawai', PegawaiController::class)->middleware('auth');
 Route::resource('koefisien', KoefisienController::class)->middleware('auth');
 
+Route::middleware(['auth', 'pimpinan'])->group(function () {
+    Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

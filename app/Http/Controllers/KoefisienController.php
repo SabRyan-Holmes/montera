@@ -36,10 +36,12 @@ class KoefisienController extends Controller
     public function store(KoefisienStoreRequest $request)
     {
         $validated = $request->validated();
-        Koefisien::create($validated);
-
-        return Redirect::route('koefisien.index')->with('message', 'Aturan Koefien Berhasil Ditambahkan!');
-
+        dd($validated);
+        // Koefisien::create($validated);
+        Koefisien::updateOrCreate(
+            ['jabatan' => $validated['jabatan']], $validated
+        );
+        return Redirect::route('koefisien.index')->with('message', 'Aturan Koefien Berhasil Disimpan!');
     }
 
     /**
@@ -67,7 +69,6 @@ class KoefisienController extends Controller
         Pegawai::where('id', $koefisien->id)->update($validated);
 
         return redirect()->back()->with('message', 'Data Pegawai Berhasil Diupdate!');
-
     }
 
     /**

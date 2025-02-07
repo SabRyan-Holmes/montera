@@ -64,6 +64,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
 
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+    const [dataEdit, setDataEdit] = useState(null);
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
@@ -74,6 +75,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
                             onClick={() => {
                                 setIsPopUpOpen(!isPopUpOpen);
                                 setIsEdit(false);
+                                setDataEdit(null);
                             }}
                             className="mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
                         >
@@ -84,6 +86,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
                             <PopUpForm
                                 onClose={() => setIsPopUpOpen(!isPopUpOpen)}
                                 isEdit={isEdit}
+                                dataEdit={dataEdit}
                             />
                         )}
                     </div>
@@ -145,6 +148,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
                                             onClick={() => {
                                                 setIsPopUpOpen(!isPopUpOpen);
                                                 setIsEdit(true);
+                                                setDataEdit(koefisien)
                                             }}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >

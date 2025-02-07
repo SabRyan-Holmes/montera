@@ -52,61 +52,82 @@ const Sidebar = ({ active, role }) => {
                 </div>
 
                 {role === "Divisi Sumber Daya Manusia" && (
-                <section>
-                    {/* Link Dashboard */}
-                    <NavLinkDashboard
-                        href={route("dashboard")}
-                        active={route().current("dashboard")}
-                        className="relative z-20"
-                    >
-                        <MdSpaceDashboard />
-                        Dashboard
-                    </NavLinkDashboard>
+                    <section>
+                        {/* Link Dashboard */}
+                        <NavLinkDashboard
+                            href={route("dashboard")}
+                            active={route().current("dashboard")}
+                            className="relative z-20"
+                        >
+                            <MdSpaceDashboard />
+                            Dashboard
+                        </NavLinkDashboard>
 
-                    {/* Link Cetak Dokumen */}
-                    <NavLinkDashboard
-                        href={route("cetak_dokumen.index")}
-                        active={
-                            route().current("cetak_dokumen.index") ||
-                            active === "cetak_dokumen.create" ||
-                            active === "cetak_dokumen.show_history" ||
-                            active === "cetak_dokumen.edit"
-                        }
-                        className="relative z-20"
-                    >
-                        <FaPrint />
-                        Cetak Dokumen
-                    </NavLinkDashboard>
+                        {/* Link Cetak Dokumen */}
+                        <NavLinkDashboard
+                            href={route("cetak_dokumen.index")}
+                            active={
+                                route().current("cetak_dokumen.index") ||
+                                active === "cetak_dokumen.create" ||
+                                active === "cetak_dokumen.show_history" ||
+                                active === "cetak_dokumen.edit"
+                            }
+                            className="relative z-20"
+                        >
+                            <FaPrint />
+                            Cetak Dokumen
+                        </NavLinkDashboard>
 
-                    {/* Link Kelola Data */}
-                    <NavLinkDashboard
-                        href={route("pegawai.index")}
-                    active={
-                            route().current("pegawai.index") ||
-                            active === "pegawai.create" ||
-                            active === "pegawai.edit" ||
-                            active === "pegawai.show"
-                        }
-                        className="relative z-20"
-                    >
-                        <FaDatabase />
-                        Kelola Data Pegawai
-                    </NavLinkDashboard>
+                        {/* Link Kelola Data */}
+                        <NavLinkDashboard
+                            href={route("pegawai.index")}
+                            active={
+                                route().current("pegawai.index") ||
+                                active === "pegawai.create" ||
+                                active === "pegawai.edit" ||
+                                active === "pegawai.show"
+                            }
+                            className="relative z-20"
+                        >
+                            <FaDatabase />
+                            Kelola Data Pegawai
+                        </NavLinkDashboard>
 
-                    {/* Link Kelola Aturan Koefisen */}
-                    <NavLinkDashboard
-                        href={route("koefisien.index")}
-                        active={route().current("koefisien.index")}
-                        className="relative z-20 disabled "
-                    >
-                        <RiUserSettingsFill />
-                        Kelola Aturan Koefisien
-                    </NavLinkDashboard>
-                </section>
+                        {/* Link Kelola Aturan Koefisen */}
+                        <NavLinkDashboard
+                            href={route("koefisien.index")}
+                            active={route().current("koefisien.index")}
+                            className="relative z-20 disabled "
+                        >
+                            <RiUserSettingsFill />
+                            Kelola Aturan Koefisien
+                        </NavLinkDashboard>
+                    </section>
                 )}
 
+                {role === "Pimpinan" && (
+                    <section>
+                        {/* Link Dashboard */}
+                        <NavLinkDashboard
+                            href={route("dashboard")}
+                            active={route().current("dashboard")}
+                            className="relative z-20"
+                        >
+                            <MdSpaceDashboard />
+                            Dashboard
+                        </NavLinkDashboard>
 
-
+                        {/* Link Cetak Dokumen */}
+                        <NavLinkDashboard
+                            href={route("pengajuan.index")}
+                            active={route().current("pengajuan.index")}
+                            className="relative z-20"
+                        >
+                            <FaPrint />
+                            Pengajuan PAK
+                        </NavLinkDashboard>
+                    </section>
+                )}
             </ul>
 
             {/* Decorative Bottom Shadow */}
