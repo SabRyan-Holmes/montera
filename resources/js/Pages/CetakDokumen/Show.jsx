@@ -59,10 +59,11 @@ export default function Index({ auth, pegawai, title }) {
                             <td>JABATAN/TMT</td>
                             <td>{pegawai['Jabatan/TMT']}</td>
                         </tr>
-                        <tr>
+                        {/* NOTE: Update 10 Maret 2025 : Masa Kerja Golongan Tidak usah  ditampilkan*/}
+                        {/* <tr>
                             <td>MASA KERJA GOLONGAN</td>
                             <td>{pegawai['Masa Kerja Golongan']}</td>
-                        </tr>
+                        </tr> */}
                         <tr>
                             <td>UNIT KERJA</td>
                             <td>{pegawai['Unit Kerja']}</td>
@@ -71,7 +72,7 @@ export default function Index({ auth, pegawai, title }) {
                 </table>
 
                 <div className="flex justify-center w-full my-4 ">
-                <SecondaryButton className="border  border-oren bg-oren">Edit Data
+                <SecondaryButton className="border border-oren bg-oren">Edit Data
                 <FaEdit className="w-6 h-6 fill-orange-500" />
 
                 </SecondaryButton>

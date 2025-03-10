@@ -502,6 +502,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         pangkat/jabatan
                     </td>
 
+                    {/* NOTE : Update 10 Maret 2025 : Pangkat dan jabatan ditambahkan angka 150 & 300 (ditambahkan jg 250 jaga-jaga) */}
                     <td className="text-center border" colSpan={2}>
                         <select
                             name="pangkat"
@@ -516,7 +517,10 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                             <option value="40">40</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
+                            <option value="100">150</option>
                             <option value="200">200</option>
+                            <option value="250">250</option>
+                            <option value="300">300</option>
                             <option value="450">450</option>
                             <option value="600">600</option>
                         </select>
@@ -535,7 +539,10 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                             <option value="40">40</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
+                            <option value="100">150</option>
                             <option value="200">200</option>
+                            <option value="250">250</option>
+                            <option value="300">300</option>
                             <option value="450">450</option>
                             <option value="600">600</option>
                         </select>
