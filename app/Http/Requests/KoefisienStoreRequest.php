@@ -31,6 +31,8 @@ class KoefisienStoreRequest extends FormRequest
         return [
             'required' => ':attribute wajib diisi.',
             'string' => ':attribute harus berupa teks.',
+            'numeric' => ':attribute harus berupa angka.',
+            // 'double' => ':attribute harus berupa bilangan berkoma.',
             'max' => ':attribute maksimal :max karakter.',
             'min' => ':attribute minimal :min karakter.',
             'in' => ':attribute harus salah satu dari :values.',

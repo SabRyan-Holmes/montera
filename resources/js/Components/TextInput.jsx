@@ -15,7 +15,7 @@ export default forwardRef(function TextInput({ type = 'text', className = '', is
         <input
             {...props}
             type={type}
-            className={`rounded-md shadow-sm placeholder:text-accent text-slate-600 ${borderGradient} ${className}`}
+            className={`rounded-md shadow-sm placeholder:text-accent text-slate-600 disabled:cursor-not-allowed ${borderGradient} ${className}`}
             ref={input}
         />
     );

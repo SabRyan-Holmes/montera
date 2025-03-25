@@ -36,10 +36,11 @@ class KoefisienController extends Controller
     public function store(KoefisienStoreRequest $request)
     {
         $validated = $request->validated();
-        dd($validated);
+        // dd($validated);
         // Koefisien::create($validated);
         Koefisien::updateOrCreate(
-            ['jabatan' => $validated['jabatan']], $validated
+            ['jabatan' => $validated['jabatan']],
+            $validated
         );
         return Redirect::route('koefisien.index')->with('message', 'Aturan Koefien Berhasil Disimpan!');
     }

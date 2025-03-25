@@ -504,6 +504,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
 
                     {/* NOTE : Update 10 Maret 2025 : Pangkat dan jabatan ditambahkan angka 150 & 300 (ditambahkan jg 250 jaga-jaga) */}
                     <td className="text-center border" colSpan={2}>
+                        {/* TODO: jadiin 3 angka dibelakang koma */}
                         <select
                             name="pangkat"
                             id="pangkat"
@@ -526,6 +527,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         </select>
                     </td>
                     <td className="text-center border" colSpan={2}>
+                        {/* TODO: jadiin 3 angka dibelakang koma */}
                         <select
                             name="jabatan"
                             id="jabatan"
