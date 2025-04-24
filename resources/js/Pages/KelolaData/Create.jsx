@@ -22,6 +22,7 @@ export default function Create({ auth, pegawai, title, flash }) {
         "Masa Kerja Golongan": "",
         "Unit Kerja": "",
         Daerah: "",
+        "Gelar Tambahan" : ""
     });
     const [alert, setAlert] = useState(false);
 
@@ -302,7 +303,9 @@ export default function Create({ auth, pegawai, title, flash }) {
                                         />
                                     </td>
                                 </tr>
-                                <tr className="border">
+
+                                {/* Ngehapus Field Masa Kerja Golongan */}
+                                {/* <tr className="border">
                                     <td className="">MASA KERJA GOLONGAN</td>
                                     <td className="border-x">
                                         <TextInput
@@ -327,7 +330,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             className="mt-2"
                                         />
                                     </td>
-                                </tr>
+                                </tr> */}
                                 <tr className="border">
                                     <td className="">UNIT KERJA</td>
                                     <td className="border-x">
@@ -393,6 +396,24 @@ export default function Create({ auth, pegawai, title, flash }) {
                                         <InputError
                                             message={errors["Daerah"]}
                                             className="mt-2"
+                                        />
+                                    </td>
+                                </tr>
+                                {/* Nambahin Field Gelar Tambahan / 10 April 2025 */}
+                                <tr className="border">
+                                    <td className="">Gelar Tambahan</td>
+                                    <td className="flex border-x">
+                                        <TextInput
+                                            type="text"
+                                            name="Gelar Tambahan"
+                                            className="h-9 w-[30rem] px-2  placeholder:text-accent "
+                                            placeholder="Masukkan Gelar Tambahan(opsional)"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Gelar Tambahan",
+                                                    e.target.value
+                                                )
+                                            }
                                         />
                                     </td>
                                 </tr>

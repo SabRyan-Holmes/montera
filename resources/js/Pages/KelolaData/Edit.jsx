@@ -5,6 +5,7 @@ import {
     InputLabel,
     PrimaryButton,
     SuccessButton,
+    DetailPegawai,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
@@ -25,6 +26,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
         "Masa Kerja Golongan": pegawai["Masa Kerja Golongan"],
         "Unit Kerja": pegawai["Unit Kerja"],
         Daerah: pegawai["Daerah"],
+        "Gelar Tambahan": pegawai["Gelar Tambahan"],
     });
 
     const Toast = Swal.mixin({
@@ -293,7 +295,9 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         />
                                     </td>
                                 </tr>
-                                <tr className="border">
+
+                                {/* MASA KERJA GA USAH DITAMPILITN */}
+                                {/* <tr className="border">
                                     <td className="">MASA KERJA GOLONGAN</td>
                                     <td className="flex border-x">
                                         <TextInput
@@ -312,7 +316,8 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             }
                                         />
                                     </td>
-                                </tr>
+                                </tr> */}
+
                                 <tr className="border">
                                     <td className="">UNIT KERJA</td>
                                     <td className="flex border-x">
@@ -333,7 +338,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                 </tr>
                                 <tr className="border">
                                     <td className="">ASAL DAERAH BPS</td>
-
                                     <td className="flex border-x">
                                         <select
                                             className="w-full text-sm border select border-gradient selection:text-accent disabled:text-accent"
@@ -366,6 +370,25 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             <option>BUNGO</option>
                                             <option>TEBO</option>
                                         </select>
+                                    </td>
+                                </tr>
+                                {/* Nambahin Field Gelar Tambahan / 10 April 2025 */}
+                                <tr className="border">
+                                    <td className="">Gelar Tambahan</td>
+                                    <td className="flex border-x">
+                                        <TextInput
+                                            type="text"
+                                            name="Gelar Tambahan"
+                                            defaultValue={pegawai["Gelar Tambahan"] && pegawai["Gelar Tambahan"]}
+                                            className="h-9 w-[30rem] px-2  placeholder:text-accent "
+                                            placeholder="Masukkan Gelar Tambahan(opsional)"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "Gelar Tambahan",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
                                     </td>
                                 </tr>
                             </tbody>

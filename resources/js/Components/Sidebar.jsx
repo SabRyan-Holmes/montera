@@ -6,7 +6,7 @@ import logo from "../../assets/image/logo.png";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLinkDashboard from "@/Components/NavLinkDashboard";
 import { RiUserSettingsFill } from "react-icons/ri";
-
+import { BsFillSendArrowUpFill } from "react-icons/bs";
 const Sidebar = ({ active, role }) => {
     // console.log(active)
 
@@ -34,9 +34,9 @@ const Sidebar = ({ active, role }) => {
                         SIPACAK
                     </strong>
 
-                    <div className="flex items-center justify-center h-16 mx-5 border rounded-xl bg-slate-400/50 border-t-primary/70 border-x-secondary/70 border-b-hijau/70">
+                    <div className="flex items-center justify-center h-20 mx-5 border rounded-xl bg-slate-400/50 border-t-primary/70 border-x-secondary/70 border-b-hijau/70">
                         <strong className="mx-5 text-lg font-semibold leading-6 text-center height text-slate-300 text-opacity-90 ">
-                            Sistem Pencetakan Angka Kredit
+                            Sistem Penetapan dan Pencetakan Angka Kredit
                         </strong>
                     </div>
 
@@ -76,6 +76,16 @@ const Sidebar = ({ active, role }) => {
                         >
                             <FaPrint />
                             Cetak Dokumen
+                        </NavLinkDashboard>
+
+                        {/* Link Pengajuan PAK */}
+                        <NavLinkDashboard
+                            href={route("pengajuan.index")}
+                            active={route().current("pengajuan.index")}
+                            className="relative z-20"
+                        >
+                            <BsFillSendArrowUpFill />
+                            Status Pengajuan
                         </NavLinkDashboard>
 
                         {/* Link Kelola Data */}

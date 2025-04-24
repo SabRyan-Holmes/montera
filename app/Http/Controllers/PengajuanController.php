@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PengajuanController extends Controller
 {
@@ -12,7 +13,22 @@ class PengajuanController extends Controller
      */
     public function index()
     {
-        //
+        // $Pengajuan = Pengajuan::latest();
+        // $subTitle = "";
+
+        // if (request('byDaerah')) {
+        //     // $category = Pengajuan::firstWhere('Daerah', request('byDaerah'));
+        //     $subTitle = 'Berdasarkan Daerah : ' . request('byDaerah');
+        // }
+
+        return Inertia::render('Pengajuan/Index', [
+            "title" => "Pengajuan Dokumen PAK",
+            // "subTitle" => $subTitle,
+            // "Pengajuans" => $Pengajuan->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
+            // "searchReq" => request('search'),
+            // "byDaerahReq" => request('byDaerah'),
+            // "byJabatanReq" => request('byJabatan')
+        ]);
     }
 
     /**

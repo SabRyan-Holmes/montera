@@ -25,8 +25,11 @@ return new class extends Migration
             $table->string('Jabatan/TMT');
             $table->string('Masa Kerja Golongan');
             $table->string('Unit Kerja');
-
             $table->string('Daerah');
+
+            // Jika Seandainya direset
+            $table->string('Gelar Tambahan');
+
             $table->timestamps();
         });
     }

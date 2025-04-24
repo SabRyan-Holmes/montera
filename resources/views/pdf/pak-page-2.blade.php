@@ -116,7 +116,8 @@
                     <th></th>
                     <th style="">
                         6</th>
-                    <td colspan="2" style="padding: 0.3rem; padding-right: 0px; border-right-color: transparent; text-wrap: nowrap;">
+                    <td colspan="2"
+                        style="padding: 0.3rem; padding-right: 0px; border-right-color: transparent; text-wrap: nowrap;">
                         Pangkat/Golongan Ruang/TMT
                     </td>
                     <td colspan="3" style=" padding: 0.3rem;  text-wrap: nowrap;">
@@ -211,7 +212,8 @@
                     <th>{{ '-' }}</th>
                     <th>{{ '-' }}</th>
                     <th>{{ '-' }}</th>
-                    <th>{{ $data['ak_terakhir'] }}</th>
+                    {{-- Ubah jadi 3 angka  belakang koma --}}
+                    <th>{{ number_format($data['ak_terakhir'] ?? 0, 3) }}</th>
                 </tr>
 
                 <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">
@@ -220,13 +222,15 @@
                     <th>{{ $data['predikat'] }}</th>
                     <th>{{ $data['presentase'] }}</th>
                     <th>{{ number_format($data['ak_normatif'] ?? 0, 3) }}</th>
-                    <th>{{ $data['angka_kredit'] }}</th>
+                    <th>{{ number_format($data['angka_kredit'] ?? 0, 3) }}</th>
+                    {{-- <th>{{ $data['angka_kredit'] }}</th> --}}
                 </tr>
 
                 <tr>
                     <th colspan="6" style="padding: 0.25rem; font-weight: 400 text-transform: uppercase;">
                         JUMLAH ANGKA KREDIT YANG DIPEROLEH</th>
-                    <th colspan="1" style=" padding: 0.25rem; font-weight: 400">{{ $data['jumlah_ak_kredit'] }}</th>
+                    <th colspan="1" style=" padding: 0.25rem; font-weight: 400">
+                        {{ number_format($data['jumlah_ak_kredit'] ?? 0, 3) }}</th>
                 </tr>
             </tfoot>
 
@@ -253,26 +257,26 @@
         </div>
 
         @if (count(array_filter($data['tebusan2'])) > 0)
-        <div style="margin-top:12rem; font-size: 15px;">
-            <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
-            @php
-                $tebusan_list = [
-                    'kepala_reg' => 'Kepala Kantor Regional VII BKN',
-                    'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
-                    'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
-                    'pns' => 'PNS Bersangkutan',
-                    'kepala_biro' => 'Kepala Biro SDM BPS',
-                    'arsip' => 'Arsip',
-                ];
-                $i = 1;
-            @endphp
-            @foreach ($data['tebusan2'] as $key => $value)
-                @if ($value)
-                    <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
-                    @php $i++; @endphp
-                @endif
-            @endforeach
-        </div>
+            <div style="margin-top:12rem; font-size: 15px;">
+                <strong style="font-weight: 400">Tembusan Disampaikan kepada :</strong>
+                @php
+                    $tebusan_list = [
+                        'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                        'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                        'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                        'pns' => 'PNS Bersangkutan',
+                        'kepala_biro' => 'Kepala Biro SDM BPS',
+                        'arsip' => 'Arsip',
+                    ];
+                    $i = 1;
+                @endphp
+                @foreach ($data['tebusan2'] as $key => $value)
+                    @if ($value)
+                        <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
+                        @php $i++; @endphp
+                    @endif
+                @endforeach
+            </div>
         @endif
     </div>
 </section>

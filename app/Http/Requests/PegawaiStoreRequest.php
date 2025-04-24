@@ -22,9 +22,12 @@ class PegawaiStoreRequest extends FormRequest
             'Jenis Kelamin' => 'required|string|in:PRIA,WANITA',
             'Pendidikan' => 'required|string|max:50',
             'Jabatan/TMT' => 'required|string|max:100',
-            'Masa Kerja Golongan' => 'required|string|max:40',
+            'Masa Kerja Golongan' => 'nullable|string|max:40',
             'Unit Kerja' => 'required|string|max:40',
             'Daerah' => 'required|string|max:40',
+
+            // Gelar Tambahan
+            'Gelar Tambahan' => 'nullable|string|max:40',
         ];
     }
 
@@ -54,6 +57,7 @@ class PegawaiStoreRequest extends FormRequest
             'Masa Kerja Golongan' => 'Masa Kerja Golongan',
             'Unit Kerja' => 'Unit Kerja',
             'Daerah' => 'Daerah',
+            'Gelar Tambahan' => 'Gelar Tambahan'
         ];
     }
 }

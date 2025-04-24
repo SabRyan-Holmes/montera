@@ -1,3 +1,4 @@
+import DetailPegawai from '@/Pages/Partials/DetailPegawai'
 import ApplicationLogo from './ApplicationLogo'
 import Checkbox from './Checkbox'
 import CollapsedLink from './CollapsedLink'
@@ -25,4 +26,4 @@ import TextInputSecondary from './TextInputSecondary'
 
 export {ApplicationLogo,Checkbox, CollapsedLink, DangerButton, Dropdown,
       InputError, InputLabel, Modal, Navbar, NavLink, NavLinkCollapse, NavLinkDashboard, Paginations,
-     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage, SuccessButton, TextInputSecondary}
+     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage, SuccessButton, TextInputSecondary, DetailPegawai}

@@ -64,3 +64,10 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+==============================================================================================================
+## Tambah Field baru di tabel pegawai setelah di hosting
+Karena file migration 2025_04_09_235840_add_gelar_tambahan_to_pegawai_table.php sudah dibuat,
+maka tinggal php artisan migrate pake SSH

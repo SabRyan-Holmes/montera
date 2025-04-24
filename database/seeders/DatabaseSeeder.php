@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Pimpinan',
             'nip' => '1000000000000000',
             'email' => 'pimpinan.bps1500@gmail.com',
-            'password' => static::$password ??= Hash::make('passwordpimpinan'),
+            'password' => static::$password ??= Hash::make('passwordpimpinan'), //tanpaair21
             'remember_token' => Str::random(10),
         ]);
 

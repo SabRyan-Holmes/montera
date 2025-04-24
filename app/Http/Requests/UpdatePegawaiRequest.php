@@ -19,9 +19,11 @@ class UpdatePegawaiRequest extends FormRequest
             'Pangkat/Golongan Ruangan/TMT' => 'required|string|max:150',
             'Pendidikan' => 'required|string|max:50',
             'Jabatan/TMT' => 'required|string|max:100',
-            'Masa Kerja Golongan' => 'required|string|max:40',
+            'Masa Kerja Golongan' => 'nullable|string|max:40',
             'Unit Kerja' => 'required|string|max:40',
             'Daerah' => 'required|string|max:40',
+            'Gelar Tambahan' => 'nullable|string|max:40',
+
         ];
     }
 
@@ -44,6 +46,8 @@ class UpdatePegawaiRequest extends FormRequest
             'Masa Kerja Golongan' => 'Masa Kerja Golongan',
             'Unit Kerja' => 'Unit Kerja',
             'Daerah' => 'Daerah',
+            'Gelar Tambahan' => 'nullable|string|max:40',
+
         ];
     }
 }

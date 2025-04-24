@@ -1,9 +1,9 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { Link, router, useForm, usePage } from "@inertiajs/react";
-import { SecondaryButton, SuccessButton } from "@/Components";
+import { DetailPegawai, SecondaryButton, SuccessButton } from "@/Components";
 import { FaEye, FaEdit } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa6";
+import { FaPlane, FaTrash } from "react-icons/fa6";
 import { FaPrint } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
@@ -122,80 +122,7 @@ export default function RiwayatCetak({
                     {/* <h1 className="text-2xl font-medium my-7">
                         Data Pegawai Untuk Pencetakan PAK
                     </h1> */}
-                    <table className="table text-base table-bordered">
-                        {/* head */}
-                        <thead>
-                            <tr className="text-lg bg-primary/70">
-                                <th className="px-7" colSpan={2}>
-                                    Detail Pegawai
-                                </th>
-                                {/* <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th> */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* row 1 */}
-                            <tr className="border">
-                                <td className="px-7">Nama</td>
-                                <td className="px-7">{pegawai.Nama}</td>
-                            </tr>
-                            {/* row 2 */}
-                            <tr className="border">
-                                <td className="px-7">NIP/NRP</td>
-                                <td className="px-7">{pegawai["NIP"]}</td>
-                            </tr>
-                            {/* row 3 */}
-                            <tr className="border">
-                                <td className="px-7">NOMOR SERI KARPEG</td>
-                                <td className="px-7">
-                                    {pegawai["Nomor Seri Karpeg"] || '-'}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">PANGKAT/GOLONGAN/TMT</td>
-                                <td className="px-7">
-                                    {pegawai["Pangkat/Golongan Ruangan/TMT"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">TEMPAT/TANGGAL LAHIR</td>
-                                <td className="px-7">
-                                    {pegawai["Tempat/Tanggal Lahir"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">JENIS KELAMIN</td>
-                                <td className="px-7">
-                                    {pegawai["Jenis Kelamin"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">PENDIDIKAN</td>
-                                <td className="px-7">
-                                    {pegawai["Pendidikan"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">JABATAN/TMT</td>
-                                <td className="px-7">
-                                    {pegawai["Jabatan/TMT"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">MASA KERJA GOLONGAN</td>
-                                <td className="px-7">
-                                    {pegawai["Masa Kerja Golongan"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">UNIT KERJA</td>
-                                <td className="px-7">
-                                    {pegawai["Unit Kerja"]}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <DetailPegawai pegawai={pegawai} />
                 </div>
 
                 <section className="px-2 pt-3 mx-auto mb-20 overflow-hidden rounded-xl">
@@ -215,11 +142,21 @@ export default function RiwayatCetak({
                                 {/* <th scope="col" width="15%">
                                     NO Surat PAK
                                 </th> */}
-                                <th scope="col" width="10%"  className="w-16 p-1 text-xs">
+                                <th
+                                    scope="col"
+                                    width="10%"
+                                    className="w-16 p-1 text-xs"
+                                >
                                     <span>Jumlah Angka </span>
-                                    <span className="block">Kredit Kumulatif</span>
+                                    <span className="block">
+                                        Kredit Kumulatif
+                                    </span>
                                 </th>
-                                <th scope="col" width="25%" className="text-center">
+                                <th
+                                    scope="col"
+                                    width="25%"
+                                    className="text-center"
+                                >
                                     Keterangan
                                 </th>
                                 <th scope="col" width="15%">
@@ -240,27 +177,34 @@ export default function RiwayatCetak({
                                         <td className="text-center">{i + 1}</td>
                                         <td>
                                             <span className="text-sm">
-                                            {moment(
-                                                riwayat["tgl_ditetapkan"]
-                                            ).format("LL")}
+                                                {moment(
+                                                    riwayat["tgl_ditetapkan"]
+                                                ).format("LL")}
                                             </span>
                                             <span className="block mt-1 font-serif text-sm font-medium">
-                                                {riwayat['no_surat3']}
+                                                {riwayat["no_surat3"]}
                                             </span>
                                         </td>
-                                        <td className="text-nowrap">{riwayat["nama"]}</td>
+                                        <td className="text-nowrap">
+                                            {riwayat["nama"]}
+                                        </td>
                                         {/* <td className="overflow-x-scroll">{riwayat["no_surat3"]}</td> */}
-                                        <td className="text-center">{parseFloat(riwayat["jakk"]['jumlah']).toFixed(3)}</td>
+                                        <td className="text-center">
+                                            {parseFloat(
+                                                riwayat["jakk"]["jumlah"]
+                                            ).toFixed(3)}
+                                        </td>
                                         <td
                                             className={
-                                                riwayat["kesimpulan"]
-                                                    ?.includes("Sudah")
+                                                riwayat["kesimpulan"]?.includes(
+                                                    "Sudah"
+                                                )
                                                     ? "text-emerald-500/80"
                                                     : "text-warning"
                                             }
                                         >
                                             <small className="text-xs">
-                                            {riwayat["kesimpulan"]}
+                                                {riwayat["kesimpulan"]}
                                             </small>
                                         </td>
                                         <td className="capitalize">
@@ -292,7 +236,17 @@ export default function RiwayatCetak({
                                                 <FaEdit className="fill-secondary group-hover/item:fill-white" />
                                             </Link>
                                             <span className="inline-block mx-2"></span>
-
+                                            <Link
+                                                as="a"
+                                                href={route(
+                                                    "cetak_dokumen.edit",
+                                                    riwayat.id
+                                                )}
+                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            >
+                                                <FaPlane className="fill-secondary group-hover/item:fill-white" />
+                                            </Link>
+                                            <span className="inline-block mx-2"></span>
                                             <button
                                                 onClick={() =>
                                                     handleDelete(riwayat["id"])
@@ -301,6 +255,7 @@ export default function RiwayatCetak({
                                             >
                                                 <FaTrash className="fill-red-500 group-hover/item:fill-white" />
                                             </button>
+
                                         </td>
                                     </tr>
                                 ))

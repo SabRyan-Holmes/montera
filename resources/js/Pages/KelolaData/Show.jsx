@@ -6,7 +6,7 @@ import { FaDatabase } from "react-icons/fa6";
 import { FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { Head, Link } from "@inertiajs/react";
-import { SecondaryButton } from "@/Components";
+import { DetailPegawai, SecondaryButton } from "@/Components";
 
 export default function Show({ auth, pegawai, title }) {
     // console.log('isi current', current)
@@ -56,61 +56,7 @@ export default function Show({ auth, pegawai, title }) {
                 </div>
 
                 <div className="mt-10 overflow-x-auto">
-                    <table className="table text-base table-bordered">
-                        {/* head */}
-                        <thead>
-                            <tr className="text-lg bg-primary/70">
-                                <th colSpan={2}>Detail Pegawai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* row 1 */}
-                            <tr>
-                                <td>Nama</td>
-                                <td>{pegawai.Nama}</td>
-                            </tr>
-                            {/* row 2 */}
-                            <tr>
-                                <td>NIP/NRP</td>
-                                <td>{pegawai["NIP"]}</td>
-                            </tr>
-                            {/* row 3 */}
-                            <tr>
-                                <td>NOMOR SERI KARPEG</td>
-                                <td>{pegawai["NOMOR SERI KARPEG"]}</td>
-                            </tr>
-                            <tr>
-                                <td>PANGKAT/GOLONGAN/TMT</td>
-                                <td>
-                                    {pegawai["Pangkat/Golongan Ruangan/TMT"]}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>TEMPAT/TANGGAL LAHIR</td>
-                                <td>{pegawai["Tempat/Tanggal Lahir"]}</td>
-                            </tr>
-                            <tr>
-                                <td>JENIS KELAMIN</td>
-                                <td>{pegawai["Jenis Kelamin"]}</td>
-                            </tr>
-                            <tr>
-                                <td>PENDIDIKAN</td>
-                                <td>{pegawai["Pendidikan"]}</td>
-                            </tr>
-                            <tr>
-                                <td>JABATAN/TMT</td>
-                                <td>{pegawai["Jabatan/TMT"]}</td>
-                            </tr>
-                            <tr>
-                                <td>MASA KERJA GOLONGAN</td>
-                                <td>{pegawai["Masa Kerja Golongan"]}</td>
-                            </tr>
-                            <tr>
-                                <td>UNIT KERJA</td>
-                                <td>{pegawai["Unit Kerja"]}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                   <DetailPegawai pegawai={pegawai}/>
 
                     <div className="flex items-center justify-center w-full my-9">
                         <Link

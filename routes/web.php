@@ -37,6 +37,11 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
     Route::delete('/show-history/delete/{riwayat:id}', [RiwayatCetakController::class, 'destroy'])->name('destroy');
 });
 
+Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
+
+
+
+
 
 
 // `Kelola Data
@@ -44,6 +49,8 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
 Route::resource('pegawai', PegawaiController::class)->middleware('auth');
 Route::resource('koefisien', KoefisienController::class)->middleware('auth');
 
+
+// PIMPINAN
 Route::middleware(['auth', 'pimpinan'])->group(function () {
     Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
 });

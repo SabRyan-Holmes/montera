@@ -42,6 +42,9 @@ class PegawaiExport implements FromCollection, WithHeadings, WithStyles
             'Masa Kerja Golongan',
             'Unit Kerja',
             'Daerah',
+
+            // Nambahin kolom Gelar Tambahan
+            // 'Gelar Tambahan'
         ];
     }
 

@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
-import { SecondaryButton, SuccessButton } from "@/Components";
+import { DetailPegawai, SecondaryButton, SuccessButton } from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -241,80 +241,7 @@ export default function Index({ auth, pegawai, title }) {
                     <h1 className="text-2xl font-medium my-7">
                         Data Pegawai Untuk Pencetakan PAK
                     </h1>
-                    <table className="table text-base table-bordered">
-                        {/* head */}
-                        <thead>
-                            <tr className="text-lg bg-primary/70">
-                                <th className="px-7" colSpan={2}>
-                                    Detail Pegawai
-                                </th>
-                                {/* <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th> */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* row 1 */}
-                            <tr className="border">
-                                <td className="px-7">Nama</td>
-                                <td className="px-7">{pegawai.Nama}</td>
-                            </tr>
-                            {/* row 2 */}
-                            <tr className="border">
-                                <td className="px-7">NIP/NRP</td>
-                                <td className="px-7">{pegawai["NIP"]}</td>
-                            </tr>
-                            {/* row 3 */}
-                            <tr className="border">
-                                <td className="px-7">NOMOR SERI KARPEG</td>
-                                <td className="px-7">
-                                {pegawai["Nomor Seri Karpeg"] || '-'}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">PANGKAT/GOLONGAN/TMT</td>
-                                <td className="px-7">
-                                    {pegawai["Pangkat/Golongan Ruangan/TMT"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">TEMPAT/TANGGAL LAHIR</td>
-                                <td className="px-7">
-                                    {pegawai["Tempat/Tanggal Lahir"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">JENIS KELAMIN</td>
-                                <td className="px-7">
-                                    {pegawai["Jenis Kelamin"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">PENDIDIKAN</td>
-                                <td className="px-7">
-                                    {pegawai["Pendidikan"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">JABATAN/TMT</td>
-                                <td className="px-7">
-                                    {pegawai["Jabatan/TMT"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">MASA KERJA GOLONGAN</td>
-                                <td className="px-7">
-                                    {pegawai["Masa Kerja Golongan"]}
-                                </td>
-                            </tr>
-                            <tr className="border">
-                                <td className="px-7">UNIT KERJA</td>
-                                <td className="px-7">
-                                    {pegawai["Unit Kerja"]}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                   <DetailPegawai pegawai={pegawai}/>
                 </div>
             </section>
 
@@ -361,6 +288,13 @@ export default function Index({ auth, pegawai, title }) {
                             className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 "
                         >
                             Cetak Dokumen PAK
+                            <FaPrint className="mx-1" />
+                        </SuccessButton>
+                        <SuccessButton
+                            type="submit"
+                            className="scale-125 hover:scale-[1.3] hover:bg-hijau/80 "
+                        >
+                            Cetak dan Ajukan
                             <FaPrint className="mx-1" />
                         </SuccessButton>
                     </div>
