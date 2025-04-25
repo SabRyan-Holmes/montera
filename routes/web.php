@@ -22,7 +22,7 @@ Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'
 
 
 // Cetak Dokumen
-Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->group(function () {
+Route::middleware(['auth', 'divisi_sdm'])->prefix('/cetak_dokumen')->name('cetak_dokumen.')->group(function () {
     Route::get('/pegawai', [CetakDokumenController::class, 'index'])->name('index');
     // Route::get('/show/{pegawai:NIP}', [CetakDokumenController::class, 'show'])->name('show');
     Route::get('/create/{pegawai:NIP}', [CetakDokumenController::class, 'create'])->name('create');
@@ -37,23 +37,26 @@ Route::middleware('auth')->prefix('/cetak_dokumen')->name('cetak_dokumen.')->gro
     Route::delete('/show-history/delete/{riwayat:id}', [RiwayatCetakController::class, 'destroy'])->name('destroy');
 });
 
-Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
+//Status Pengajuan
+Route::resource('pengajuan', PengajuanController::class)->middleware(['auth', 'pimpinan_or_sdm']);
+
+Route::middleware(['auth', 'divisi_sdm'])->group(function () {
+    //Status Pengajuan
+    // Route::resource('pengajuan', PengajuanController::class);
+    // `Kelola Data Pegawai
+    Route::resource('pegawai', PegawaiController::class);
+    //Kelola Koefisien
+    Route::resource('koefisien', KoefisienController::class);
+});
 
 
 
-
-
-
-// `Kelola Data
-// Route::resource('riwayat_cetak', RiwayatCetakController::class)->middleware('auth');
-Route::resource('pegawai', PegawaiController::class)->middleware('auth');
-Route::resource('koefisien', KoefisienController::class)->middleware('auth');
 
 
 // PIMPINAN
-Route::middleware(['auth', 'pimpinan'])->group(function () {
-    Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
-});
+// Route::middleware(['auth', 'pimpinan', 'divisi_sdm'])->group(function () {
+//     Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('documentId');
-            $table->foreign('documentId')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('pegawaiId');
-            $table->foreign('pegawaiId')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('document_id');
+            $table->foreign('document_id')->references('id')->on('riwayat_cetaks')->onDelete('cascade');
+            $table->unsignedBigInteger('pegawai_id');
+            $table->foreign('pegawai_id')->references('id')->on('pegawais')->onDelete('cascade');
             $table->string("path");
             $table->timestamps();
         });

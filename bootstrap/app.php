@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'pegawai' => \App\Http\Middleware\Pegawai::class,
             'divisi_sdm' => \App\Http\Middleware\DivisiSDM::class,
             'pimpinan' => \App\Http\Middleware\Pimpinan::class,
+            'pimpinan_or_sdm' => \App\Http\Middleware\PimpinanOrDivisiSDM::class,
         ]);
 
 
