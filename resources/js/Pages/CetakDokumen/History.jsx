@@ -9,6 +9,7 @@ import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment/min/moment-with-locales";
+import { BsFillSendFill, BsSend } from "react-icons/bs";
 
 export default function RiwayatCetak({
     auth,
@@ -236,17 +237,6 @@ export default function RiwayatCetak({
                                                 <FaEdit className="fill-secondary group-hover/item:fill-white" />
                                             </Link>
                                             <span className="inline-block mx-2"></span>
-                                            <Link
-                                                as="a"
-                                                href={route(
-                                                    "cetak_dokumen.edit",
-                                                    riwayat.id
-                                                )}
-                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                            >
-                                                <FaPlane className="fill-secondary group-hover/item:fill-white" />
-                                            </Link>
-                                            <span className="inline-block mx-2"></span>
                                             <button
                                                 onClick={() =>
                                                     handleDelete(riwayat["id"])
@@ -255,7 +245,18 @@ export default function RiwayatCetak({
                                             >
                                                 <FaTrash className="fill-red-500 group-hover/item:fill-white" />
                                             </button>
-
+                                            <span className="inline-block mx-2">
+                                                ~~
+                                            </span>
+                                            <Link
+                                                as="a"
+                                                href={route("pengajuan.store")}
+                                                data={{id :riwayat.id}}
+                                                method="post"
+                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            >
+                                                <BsFillSendFill className="fill-secondary group-hover/item:fill-white" />
+                                            </Link>
                                         </td>
                                     </tr>
                                 ))

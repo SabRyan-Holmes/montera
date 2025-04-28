@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pegawai;
 use App\Models\Pengajuan;
+use App\Models\RiwayatCetak;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class PengajuanController extends Controller
@@ -14,21 +17,20 @@ class PengajuanController extends Controller
      */
     public function index()
     {
-        // $Pengajuan = Pengajuan::latest();
-        // $subTitle = "";
+        $pengajuan = Pengajuan::latest();
+        $subTitle = "";
 
-        // if (request('byDaerah')) {
-        //     // $category = Pengajuan::firstWhere('Daerah', request('byDaerah'));
-        //     $subTitle = 'Berdasarkan Daerah : ' . request('byDaerah');
-        // }
+        if (request('byDaerah')) {
+            $subTitle = 'Berdasarkan Daerah: ' . request('byDaerah');
+        }
 
         return Inertia::render('Pengajuan/Index', [
-            "title" => "Pengajuan Dokumen PAK",
-            // "subTitle" => $subTitle,
-            // "Pengajuans" => $Pengajuan->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
-            // "searchReq" => request('search'),
-            // "byDaerahReq" => request('byDaerah'),
-            // "byJabatanReq" => request('byJabatan')
+            "title" => "Status Pengajuan Terbaru",
+            "subTitle" => $subTitle,
+            "pengajuans" => $pengajuan->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
+            "searchReq" => request('search'),
+            "byDaerahReq" => request('byDaerah'),
+            "byJabatanReq" => request('byJabatan')
         ]);
     }
 
@@ -43,10 +45,23 @@ class PengajuanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    // Simpan Pengajuan setelah diajukan
     public function store(Request $request)
     {
-        //
+
+        $PAK = RiwayatCetak::find($request->id);
+        $validated = [
+            "document_id" => $PAK->id,
+            "pegawai_id" => $PAK->pegawai_id,
+            // Logic Path nanti
+            "path" => "TES"
+        ];
+        Pengajuan::create($validated);
+
+        return Redirect::route('cetak_dokumen.show_history')->with('message', 'Berhasil Diajukan!');
     }
+
 
     /**
      * Display the specified resource.

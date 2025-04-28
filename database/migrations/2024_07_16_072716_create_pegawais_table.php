@@ -23,12 +23,13 @@ return new class extends Migration
             $table->enum('Jenis Kelamin', ['PRIA', 'WANITA']);
             $table->string('Pendidikan');
             $table->string('Jabatan/TMT');
+            // TODO: Masa kerja golongan harusny nullable aj
             $table->string('Masa Kerja Golongan');
             $table->string('Unit Kerja');
             $table->string('Daerah');
 
             // Jika Seandainya direset
-            $table->string('Gelar Tambahan');
+            $table->string('Gelar Tambahan')->nullable();
 
             $table->timestamps();
         });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CetakPAKRequest;
+use App\Models\Koefisien;
 use Inertia\Inertia;
 use App\Models\Pegawai;
 use App\Models\RiwayatCetak;
@@ -52,7 +53,8 @@ class CetakDokumenController extends Controller
     {
         return Inertia::render('CetakDokumen/Create', [
             "title" => "Cetak Dokumen PAK ",
-            'pegawai' => $pegawai
+            'pegawai' => $pegawai,
+            'koefisien' => Koefisien::select('jabatan', 'nilai')->get()
         ]);
     }
 

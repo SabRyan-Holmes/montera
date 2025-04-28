@@ -12,7 +12,7 @@ import { FaPrint } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 
-export default function Index({ auth, pegawai, title }) {
+export default function Index({ auth, pegawai, koefisien, title }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         pegawai: pegawai,
         // Input Data
@@ -163,39 +163,41 @@ export default function Index({ auth, pegawai, title }) {
         e.preventDefault();
         setIsLoading(true);
 
-        router.post(
-            "/cetak_dokumen/cetak",
-            data,
-            {
-                preserveScroll: true,
-                preserveState: true,
+        router.post("/cetak_dokumen/cetak", data, {
+            preserveScroll: true,
+            preserveState: true,
 
-                onFinish: () => setIsLoading(false),
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                },
-                onSuccess: (page) => {
-                    // Misalnya, URL PDF dikirim di props dari server
-                    const url = page.props.url;
-                    window.open(url, "_blank");
-                },
-            }
-        );
+            onFinish: () => setIsLoading(false),
+            onError: (errors) => {
+                console.error("Error:", errors);
+            },
+            onSuccess: (page) => {
+                // Misalnya, URL PDF dikirim di props dari server
+                const url = page.props.url;
+                window.open(url, "_blank");
+            },
+        });
     };
 
     // Jabatan untuk sesuai Koefisien Pertahun
-    const akNormatif = {
-        Terampil: 5,
-        Mahir: 12.5,
-        Penyelia: 25,
-        Pertama: 12.5,
-        Muda: 25,
-        Madya: 37.5,
-    };
+    // const akNormatif = {
+    //     Terampil: 5,
+    //     Mahir: 12.5,
+    //     Penyelia: 25,
+    //     Pertama: 12.5,
+    //     Muda: 25,
+    //     Madya: 37.5,
+    // };
+
+    const akNormatif = {};
+    // Ak normatif berdasarkan data dari tabel Koefisien
+    koefisien.forEach((item) => {
+        akNormatif[item.jabatan] = item.nilai;
+    });
 
     // CONSOLE
     // console.log("Isi data");
-    // console.log(data);
+    // console.log(akNormatif);
     // console.log("Isi Error");
     // console.log(errors);
     return (
@@ -241,7 +243,7 @@ export default function Index({ auth, pegawai, title }) {
                     <h1 className="text-2xl font-medium my-7">
                         Data Pegawai Untuk Pencetakan PAK
                     </h1>
-                   <DetailPegawai pegawai={pegawai}/>
+                    <DetailPegawai pegawai={pegawai} />
                 </div>
             </section>
 

@@ -16,6 +16,11 @@ class Pegawai extends Model
         return $this->hasMany(RiwayatCetak::class);
     }
 
+    public function pengajuans()
+    {
+        return $this->hasMany(Pengajuan::class);
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         // Search By Nama & NIP
