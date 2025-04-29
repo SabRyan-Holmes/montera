@@ -16,6 +16,7 @@ export default function RiwayatCetak({
     pegawai,
     title,
     riwayatCetak,
+    pengajuans,
     flash,
 }) {
     moment.locale("id");
@@ -213,50 +214,82 @@ export default function RiwayatCetak({
                                                 riwayat["updated_at"]
                                             ).fromNow()}
                                         </td>
-                                        <td className="text-center whitespace-nowrap text-nowrap">
-                                            <Link
-                                                as="a"
-                                                href={route(
-                                                    "cetak_dokumen.cetak"
-                                                )}
-                                                data={riwayat}
-                                                method="post"
-                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
-                                            >
-                                                <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
-                                            </Link>
-                                            <span className="inline-block mx-2"></span>
-                                            <Link
-                                                as="a"
-                                                href={route(
-                                                    "cetak_dokumen.edit",
-                                                    riwayat.id
-                                                )}
-                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                            >
-                                                <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                            </Link>
-                                            <span className="inline-block mx-2"></span>
-                                            <button
-                                                onClick={() =>
-                                                    handleDelete(riwayat["id"])
+                                        <td className="text-center whitespace-nowrap text-nowrap ">
+                                            <div className="grid grid-flow-col-dense gap-4 mx-2">
+                                                <Link
+                                                    as="a"
+                                                    href={route(
+                                                        "cetak_dokumen.cetak"
+                                                    )}
+                                                    data={riwayat}
+                                                    method="post"
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
+                                                >
+                                                    <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
+                                                </Link>
+                                                <Link
+                                                    as="a"
+                                                    href={route(
+                                                        "cetak_dokumen.edit",
+                                                        riwayat.id
+                                                    )}
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                </Link>
+                                                <button
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            riwayat["id"]
+                                                        )
+                                                    }
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                </button>
+
+                                                <div>
+                                                {
+                                                    // Cek udah diajukan atau tidak dengan mengecek apakah sudah ada Pengajuan dengan id riwayatPAK.id(yang dimapping)
+                                                    pengajuans.includes(
+                                                        riwayat.id
+                                                    ) ? (
+                                                        <Link
+                                                            as="a"
+                                                            href={route(
+                                                                "pengajuan.store"
+                                                            )}
+                                                            data={{
+                                                                id: riwayat.id,
+                                                            }}
+                                                            method="post"
+                                                            className="w-full items-center text-xs cursor-not-allowed
+                                                 justify-center inline-block gap-2  font-medium text-center scale-125 transition-all group/button group-hover/item:bg-accent group-hover/item:text-white text-accent action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        >
+                                                            Diajukan
+                                                            <BsFillSendFill className="fill-gray group-hover/item:fill-white" />
+                                                        </Link>
+                                                    ) : (
+                                                        <Link
+                                                            as="a"
+                                                            href={route(
+                                                                "pengajuan.store"
+                                                            )}
+                                                            data={{
+                                                                id: riwayat.id,
+                                                            }}
+                                                            method="post"
+                                                            className="w-full items-center text-xs
+                                                 justify-center inline-block gap-2 font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        >
+                                                            Ajukan
+                                                            <BsFillSendFill className="fill-secondary group-hover/item:fill-white" />
+                                                        </Link>
+                                                    )
                                                 }
-                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                            >
-                                                <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                            </button>
-                                            <span className="inline-block mx-2">
-                                                ~~
-                                            </span>
-                                            <Link
-                                                as="a"
-                                                href={route("pengajuan.store")}
-                                                data={{id :riwayat.id}}
-                                                method="post"
-                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                            >
-                                                <BsFillSendFill className="fill-secondary group-hover/item:fill-white" />
-                                            </Link>
+                                                </div>
+
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

@@ -59,7 +59,7 @@ class PengajuanController extends Controller
         ];
         Pengajuan::create($validated);
 
-        return Redirect::route('cetak_dokumen.show_history')->with('message', 'Berhasil Diajukan!');
+        return redirect()->back()->with('message', 'Berhasil Diajukan!');
     }
 
 

@@ -75,7 +75,7 @@ const Sidebar = ({ active, role }) => {
                             className="relative z-20"
                         >
                             <FaPrint />
-                            Cetak Dokumen
+                            Penetapan Angka Kredit
                         </NavLinkDashboard>
 
                         {/* Link Pengajuan PAK */}

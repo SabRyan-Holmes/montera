@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
+use App\Models\Pengajuan;
 use App\Models\RiwayatCetak;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -46,11 +47,13 @@ class RiwayatCetakController extends Controller
      */
     public function show_history(Pegawai $pegawai)
     {
-        $riwayatCetak = $pegawai->riwayatCetaks;
+
         return Inertia::render('CetakDokumen/History', [
             "title" => "Riwayat Pencetakan Dokumen PAK",
             'pegawai' => $pegawai,
-            'riwayatCetak' => $riwayatCetak
+            'riwayatCetak' => $pegawai->riwayatCetaks,
+            // Ambil semua pengajuan berdasarkan id Pegawai lalu ambil semua document Id dan dimasukkan ke dalam Array
+            'pengajuans' => Pengajuan::where('pegawai_id', $pegawai->id)->pluck('document_id')->toArray(),
         ]);
     }
 
