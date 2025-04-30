@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Pegawai;
 use App\Models\Pengajuan;
 use App\Models\RiwayatCetak;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class PengajuanController extends Controller
@@ -63,6 +65,42 @@ class PengajuanController extends Controller
     }
 
 
+    public function validasi(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer',
+            'signature' => 'required|string',
+        ]);
+
+        $base64Image = $request->input('signature');
+
+        // Jika mau disimpan sebagai file:
+        $image = str_replace('data:image/png;base64,', '', $base64Image);
+        $image = str_replace(' ', '+', $image);
+        $imageName = 'signature_' . $request->id . '.png';
+        Storage::disk('public')->put("signatures/{$imageName}", base64_decode($image));
+
+        session()->flash('signature_path', "storage/signatures/{$imageName}");
+
+        return back()->back()->with('message', 'TTD berhasil diupload!'); // atau redirect ke halaman tertentu
+
+
+        // $data = Pengajuan::find($request->id);
+        // $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
+        // $customF4Paper = array(0, 0, 595.28, 935.43);
+
+        // $pdf = Pdf::loadView('pdf.template_validasi', [
+        //     'pengajuan' => $pengajuan,
+        //     'signaturePath' => storage_path('app/public/' . $imagePath)
+        // ]);
+
+        // $pdf = Pdf::loadView('pdf.pak', [
+        //     "title" => $nama_pak,
+        //     "pegawai" => "pegawai",
+        //     "data" => $data, // Kirim data ke view
+        // ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
+        // Atau simpan langsung base64-nya ke database jika perlu
+    }
     /**
      * Display the specified resource.
      */

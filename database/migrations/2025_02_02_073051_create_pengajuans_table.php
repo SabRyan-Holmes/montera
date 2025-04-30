@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('document_id')->references('id')->on('riwayat_cetaks')->onDelete('cascade');
             $table->unsignedBigInteger('pegawai_id');
             $table->foreign('pegawai_id')->references('id')->on('pegawais')->onDelete('cascade');
+            $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             $table->string("path");
             $table->timestamps();
         });

@@ -7,6 +7,8 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import NavLinkDashboard from "@/Components/NavLinkDashboard";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { BsFillSendArrowUpFill } from "react-icons/bs";
+import { IoMdArchive } from "react-icons/io";
+import { AiFillNotification } from "react-icons/ai";
 const Sidebar = ({ active, role }) => {
     // console.log(active)
 
@@ -135,6 +137,24 @@ const Sidebar = ({ active, role }) => {
                         >
                             <FaPrint />
                             Pengajuan PAK
+                        </NavLinkDashboard>
+                        {/* Log Aktivitas mungkin sebaiknya dibuat */}
+                        {/* TODO :  */}
+                        <NavLinkDashboard
+                            href={route("pengajuan.store")}
+                            active={route().current("pengajuan.store")}
+                            className="relative z-20"
+                        >
+                            <IoMdArchive />
+                            Arsip Dokumen
+                        </NavLinkDashboard>
+                        <NavLinkDashboard
+                            href={route("pengajuan.store")}
+                            active={route().current("pengajuan.store")}
+                            className="relative z-20"
+                        >
+                            <AiFillNotification />
+                            Log Aktivitas
                         </NavLinkDashboard>
                     </section>
                 )}

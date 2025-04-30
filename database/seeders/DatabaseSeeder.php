@@ -42,6 +42,14 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
+         // User::create([
+        //     'name' => 'Siti Marfuah, S.E.',
+        //     'nip' => '198711082006042002',
+        //     'email' => 'siti_marfuah@gmail.com',
+        //     'password' => static::$password ??= Hash::make('password'),
+        //     'remember_token' => Str::random(10),
+        // ]);
+
         // const akNormatif = {
         //     Terampil: 5,
         //     Mahir: 12.5,

@@ -263,8 +263,7 @@ export default function RiwayatCetak({
                                                                 id: riwayat.id,
                                                             }}
                                                             method="post"
-                                                            className="w-full items-center text-xs cursor-not-allowed
-                                                 justify-center inline-block gap-2  font-medium text-center scale-125 transition-all group/button group-hover/item:bg-accent group-hover/item:text-white text-accent action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                            className="items-center justify-center inline-block w-full gap-2 text-xs font-medium text-center transition-all scale-125 cursor-not-allowed group/button group-hover/item:bg-accent group-hover/item:text-white text-accent action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                                         >
                                                             Diajukan
                                                             <BsFillSendFill className="fill-gray group-hover/item:fill-white" />

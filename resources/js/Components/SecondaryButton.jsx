@@ -1,6 +1,9 @@
+import { Link } from "@inertiajs/react";
+
 export default function SecondaryButton({ type = 'button', className = '', disabled, children, ...props }) {
     return (
-        <button
+        <Link
+            as="button"
             {...props}
             type={type}
             className={
@@ -12,6 +15,6 @@ export default function SecondaryButton({ type = 'button', className = '', disab
             disabled={disabled}
         >
             {children}
-        </button>
+        </Link>
     );
 }

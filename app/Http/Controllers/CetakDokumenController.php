@@ -81,7 +81,7 @@ class CetakDokumenController extends Controller
         Session::put('data', $request->all());
 
         // Kalo dibuka dr history(tanpa restore ke database)
-        if (!isset($request->id) ) {
+        if (!isset($request->id)) {
             $dataForStore = $request->except('pegawai');
             $pegawai_id = $request->input('pegawai.id');
             $dataForStore['pegawai_id'] = $pegawai_id;
@@ -92,6 +92,23 @@ class CetakDokumenController extends Controller
 
         return Inertia::location(route('cetak_dokumen.view-pak'));
     }
+
+    public function cetak_saja(Request $request)
+    {
+        // dd($request->all());
+        Session::put('data', $request->all());
+
+        // Kalo dibuka dr history(tanpa restore ke database)
+        if (!isset($request->id)) {
+            $dataForStore = $request->except('pegawai');
+            $pegawai_id = $request->input('pegawai.id');
+            $dataForStore['pegawai_id'] = $pegawai_id;
+            // $dataForStore = array_merge($dataForStore['data'], ['pegawai_id' => $pegawai_id]);
+            // dd($dataForStore);
+            RiwayatCetak::create($dataForStore);
+        }
+    }
+
 
     public function view_pak()
     {
@@ -119,7 +136,11 @@ class CetakDokumenController extends Controller
         ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
 
         // Stream PDF
-        return $pdf->stream($nama_pak);
+        // return $pdf->stream($nama_pak);
+        return response($pdf->output())
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $nama_pak . '"')
+            ->header('X-Frame-Options', 'SAMEORIGIN');
     }
 
     private function cleanData(&$item)

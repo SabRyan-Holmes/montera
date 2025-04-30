@@ -1,3 +1,5 @@
+import { Link } from "@inertiajs/react";
+
 export default function SuccessButton({
     className = "",
     disabled,
@@ -5,7 +7,8 @@ export default function SuccessButton({
     ...props
 }) {
     return (
-        <button
+        <Link
+        as="button"
             {...props}
             className={
                 `${className} inline-flex glass items-center px-4 py-2 bg-hijau border border-transparent rounded-md font-semibold text-xs text-white uppercase
@@ -17,6 +20,6 @@ export default function SuccessButton({
             disabled={disabled}
         >
             {children}
-        </button>
+        </Link>
     );
 }

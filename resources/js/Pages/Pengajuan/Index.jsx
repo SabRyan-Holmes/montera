@@ -10,9 +10,14 @@ import ReactPaginate from "react-paginate";
 import { Link, router } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { InputLabel } from "@/Components";
+import { DetailPegawai, InputLabel } from "@/Components";
 import { TiArrowRight } from "react-icons/ti";
-import { FaTrash } from "react-icons/fa6";
+import { FaFileCircleCheck, FaPrint } from "react-icons/fa6";
+import { HiMiniClipboardDocumentList } from "react-icons/hi2";
+import { RiFileCloseFill } from "react-icons/ri";
+import { TbEyeCheck } from "react-icons/tb";
+import { IoCloseOutline } from "react-icons/io5";
+import ModalCekValidasi from "./Partials/ModalCekValidasi";
 
 export default function Index({
     auth,
@@ -211,20 +216,25 @@ export default function Index({
                                         No
                                     </th>
                                     <th scope="col" width="15%">
-                                        NIP/NRP
+                                        No PAK
                                     </th>
                                     <th scope="col" width="25%">
-                                        Nama
+                                        Nama Pegawai
                                     </th>
                                     {/* <th scope="col">No Seri Karpeg</th> */}
+                                    <th
+                                        scope="col"
+                                        width="10%"
+                                        className="w-16 p-1 text-xs"
+                                    >
+                                        <span>Jumlah Angka </span>
+                                        <span className="block">
+                                            Kredit Kumulatif
+                                        </span>
+                                    </th>
                                     <th scope="col" width="20%">
                                         <span className="flex justify-center">
                                             Jabatan
-                                        </span>
-                                    </th>
-                                    <th scope="col" width="15%">
-                                        <span className="flex justify-center">
-                                            Daerah
                                         </span>
                                     </th>
                                     <th scope="col " className="text-center ">
@@ -240,40 +250,55 @@ export default function Index({
                                         className="group/item hover:bg-secondary/50 hover:cursor-pointer"
                                     >
                                         <td className="text-center">{i + 1}</td>
-                                        <td>{pengajuan.pegawai["NIP"]}</td>
-                                        <td>{pengajuan.pegawai.Nama}</td>
+                                        <td>
+                                            {" "}
+                                            {pengajuan.document["no_surat3"]}
+                                        </td>
+                                        <td>{pengajuan.pegawai["Nama"]}</td>
                                         {/* <td>{pengajuan.pegawai["Nomor Seri Karpeg"]}</td> */}
+                                        <td className="text-center">
+                                            {parseFloat(
+                                                pengajuan.document["jakk"][
+                                                    "jumlah"
+                                                ]
+                                            ).toFixed(3)}
+                                        </td>
                                         <td>
                                             {pengajuan.pegawai["Jabatan/TMT"]
                                                 .split("/")[0]
                                                 .trim()}
-                                        </td>
-                                        <td>{pengajuan.pegawai["Daerah"]}</td>
+                                        </td>{" "}
                                         <td className="text-center whitespace-nowrap text-nowrap">
-                                            <Link
-                                                as="a"
+                                            {/* Dialog Cek dan Validasi, Membuat Tanda Tangan/sign, dan melihat PDF */}
+                                            <ModalCekValidasi
+                                                pengajuan={pengajuan}
+                                            />
+
+                                            <button
                                                 className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                href={route(
-                                                    "cetak_dokumen.create",
-                                                    pengajuan.pegawai["NIP"]
-                                                )}
-                                                target="_blank"
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(
+                                                            `DialogCekValidasi-${pengajuan.id}`
+                                                        )
+                                                        .showModal()
+                                                }
                                             >
-                                                Cetak{" "}
-                                                <FaPrint className="fill-hijau/75 group-hover/item:fill-white" />
-                                            </Link>
+                                                Cek & Validasi
+                                                <TbEyeCheck className="w-6 h-6 fill-hijau/75 group-hover/item:stroke-white group-hover/item:fill-hijau" />
+                                            </button>
                                             <span className="inline-block mx-1"></span>
                                             <Link
                                                 as="a"
-                                                className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-secondary group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                href={route(
-                                                    "cetak_dokumen.show_history",
-                                                    pengajuan.pegawai["NIP"]
-                                                )}
+                                                className="inline-flex items-center justify-center gap-2 mx-auto font-medium text-center group/button group-hover/item:bg-secondary group-hover/item:text-white text-red-500/75 action-btn border-danger/20 hover:bg-danger hover:text-white"
+                                                // href={route(
+                                                //     "pengajuan.show_history",
+                                                //     pengajuan.id
+                                                // )}
                                                 target="_blank"
                                             >
-                                                Riwayat{" "}
-                                                <HiMiniClipboardDocumentList className="fill-secondary group-hover/item:fill-white" />
+                                                Tolak{" "}
+                                                <IoCloseOutline className="w-6 h-6 fill-secondary stroke-red-500 group-hover/item:fill-white" />
                                             </Link>
                                         </td>
                                     </tr>

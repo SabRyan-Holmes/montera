@@ -27,6 +27,7 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/cetak_dokumen')->name('cetak
     // Route::get('/show/{pegawai:NIP}', [CetakDokumenController::class, 'show'])->name('show');
     Route::get('/create/{pegawai:NIP}', [CetakDokumenController::class, 'create'])->name('create');
     Route::post('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
+    Route::post('/cetak-saja', [CetakDokumenController::class, 'cetak_saja'])->name('cetak-saja');
     Route::get('/view-pak', [CetakDokumenController::class, 'view_pak'])->name('view-pak');
 
     // Riwayat Cetak
@@ -39,7 +40,6 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/cetak_dokumen')->name('cetak
 
 //Status Pengajuan
 Route::resource('pengajuan', PengajuanController::class)->middleware(['auth', 'pimpinan_or_sdm']);
-
 Route::middleware(['auth', 'divisi_sdm'])->group(function () {
     //Status Pengajuan
     // Route::resource('pengajuan', PengajuanController::class);
@@ -54,8 +54,8 @@ Route::middleware(['auth', 'divisi_sdm'])->group(function () {
 
 
 // PIMPINAN
-// Route::middleware(['auth', 'pimpinan', 'divisi_sdm'])->group(function () {
-//     Route::resource('pengajuan', PengajuanController::class)->middleware('auth');
+// Route::middleware(['auth', 'pimpinan'])->group(function () {
+//     Route::get('/pengajuan', PengajuanController::class)->middleware('auth');
 // });
 
 Route::middleware('auth')->group(function () {

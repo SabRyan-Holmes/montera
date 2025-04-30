@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Pengajuan extends Model
 {
     protected $guarded = ['id'];
+    protected $with = ['pegawai', 'document'];
     use HasFactory;
 
     public function pegawai()

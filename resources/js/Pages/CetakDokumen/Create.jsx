@@ -169,7 +169,7 @@ export default function Index({ auth, pegawai, koefisien, title }) {
 
             onFinish: () => setIsLoading(false),
             onError: (errors) => {
-                console.error("Error:", errors);
+            console.error("Error:", errors);
             },
             onSuccess: (page) => {
                 // Misalnya, URL PDF dikirim di props dari server
@@ -241,7 +241,7 @@ export default function Index({ auth, pegawai, koefisien, title }) {
 
                 <div className="px-2 mx-auto overflow-x-auto">
                     <h1 className="text-2xl font-medium my-7">
-                        Data Pegawai Untuk Pencetakan PAK
+                        Data Pegawai Untuk PAK
                     </h1>
                     <DetailPegawai pegawai={pegawai} />
                 </div>
