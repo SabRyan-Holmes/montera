@@ -256,7 +256,7 @@
                 </tr>
                 <!-- Baris 6 dan seterusnya -->
                 @php $index = 6; @endphp
-                @if ($data['ak_tipe_tambahan'])
+                @if (isset($data['ak_tipe_tambahan']) && is_array($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 0)
                     @foreach ($data['ak_tipe_tambahan'] as $key => $value)
                         <tr>
                             <th></th>

@@ -16,7 +16,7 @@ class DivisiSDM
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->name == "Divisi Sumber Daya Manusia") {
+        if (Auth::user()->role == "divisi_sdm") {
             return $next($request);
         }
         abort(401);

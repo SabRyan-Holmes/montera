@@ -23,7 +23,7 @@ export default function Authenticated({ user, title, header, children, current }
                 </div>
                 <Sidebar
                     active={(current? current :  route().current("dashbard"))}
-                    role={user.name}
+                    role={user.role}
                 ></Sidebar>
             </div>
         </div>

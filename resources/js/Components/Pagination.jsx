@@ -1,0 +1,79 @@
+import { router } from "@inertiajs/react";
+import {
+    MdOutlineKeyboardDoubleArrowLeft,
+    MdOutlineKeyboardDoubleArrowRight,
+} from "react-icons/md";
+import { TiArrowRight } from "react-icons/ti";
+import ReactPaginate from "react-paginate";
+
+export default function Paginations({ datas, urlRoute, filters }) {
+
+    let filter1= filters.filter1
+    let filter2= filters.filter2
+    let filterSearch= filters.search
+
+    const handlePageClick = (event) => {
+        const selectedPage = event.selected + 1;
+        const newOffset = (selectedPage - 1) * datas.per_page;
+        router.get(
+            urlRoute,
+            { page: selectedPage, filter1, filter2, filterSearch },
+            {
+                replace: true,
+                preserveState: true,
+                onSuccess: () => {
+                    setItemOffset(newOffset); // Update the offset after successful page load
+                },
+            }
+        );
+    };
+    return (
+        <div className="mb-8 text-sm box-footer">
+            <div className="items-center justify-between sm:flex">
+                <div className="flex items-center text-xs">
+                    showing {datas.data.length} Entries{" "}
+                    <TiArrowRight className="w-5 h-5" />
+                </div>
+                <ReactPaginate
+                    breakLabel={<span>...</span>}
+                    nextLabel={
+                        datas.next_page_url && (
+                            <a
+                                className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
+                                href={datas.next_page_url}
+                                onClick={() => setNum(num + 1)}
+                            >
+                                <span className="sr-only">Next</span>
+                                <span aria-hidden="true">Next</span>
+                                <MdOutlineKeyboardDoubleArrowRight className="w-4 h-4 -ml-1 fill-primary group-hover/next:fill-white" />
+                            </a>
+                        )
+                    }
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={1}
+                    pageCount={datas.last_page}
+                    previousLabel={
+                        datas.prev_page_url && (
+                            <a
+                                className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
+                                href={datas.next_page_url}
+                                onClick={() => setNum(num + 1)}
+                            >
+                                <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
+                                <span className="sr-only">Prev</span>
+                                <span aria-hidden="true">Prev</span>
+                            </a>
+                        )
+                    }
+                    renderOnZeroPageCount={null}
+                    containerClassName={
+                        "flex items-center text-center justify-center mt-8 mb-4 gap-4 "
+                    }
+                    pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
+                    activeClassName="bg-primary text-white"
+                    className="flex justify-end gap-2"
+                />
+            </div>
+        </div>
+    );
+}

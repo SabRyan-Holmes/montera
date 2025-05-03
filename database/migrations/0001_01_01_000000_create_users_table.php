@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('nip')->unique();
+            $table->enum('role',['divisi_sdm', 'pimpinan', 'pegawai'])->default('pegawai');
             $table->string('profile_pic')->nullable();
-            $table->integer('jumlah_dicetak')->default(0);
+            // $table->integer('jumlah_dicetak')->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

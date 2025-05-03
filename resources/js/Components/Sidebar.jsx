@@ -1,4 +1,4 @@
-import { MdAdminPanelSettings } from "react-icons/md";
+import { MdAdminPanelSettings, MdPeopleAlt } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaDatabase, FaNotesMedical, FaPrint } from "react-icons/fa6";
 import { MdSwitchAccount } from "react-icons/md";
@@ -8,7 +8,9 @@ import NavLinkDashboard from "@/Components/NavLinkDashboard";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { BsFillSendArrowUpFill } from "react-icons/bs";
 import { IoMdArchive } from "react-icons/io";
+import { GrDocumentPerformance } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
+import { IoDocuments, IoSettings } from "react-icons/io5";
 const Sidebar = ({ active, role }) => {
     // console.log(active)
 
@@ -53,7 +55,7 @@ const Sidebar = ({ active, role }) => {
                     </div>
                 </div>
 
-                {role === "Divisi Sumber Daya Manusia" && (
+                {role === "divisi_sdm" && (
                     <section>
                         {/* Link Dashboard */}
                         <NavLinkDashboard
@@ -65,59 +67,87 @@ const Sidebar = ({ active, role }) => {
                             Dashboard
                         </NavLinkDashboard>
 
-                        {/* Link Cetak Dokumen */}
+                        {/* TODO? : Mungkin sebaiknya dibuat halaman khusus langsung ke pemrosesan penetapan angka kredit,
+                        terus tinggal pilih pegawainy, ketimbang ditampilin daftar tabel pegawainy dulu lalu pilih pegawai mana yang mau dibikin PAK ny   */}
                         <NavLinkDashboard
-                            href={route("cetak_dokumen.index")}
+                            href={route("divisi-sdm.pak.create")}
                             active={
-                                route().current("cetak_dokumen.index") ||
-                                active === "cetak_dokumen.create" ||
-                                active === "cetak_dokumen.show_history" ||
-                                active === "cetak_dokumen.edit"
+                                route().current("divisi-sdm.pak.create") ||
+                                active === "divisi-sdm.pak.create" ||
+                                active === "pak.process"
                             }
                             className="relative z-20"
                         >
-                            <FaPrint />
-                            Penetapan Angka Kredit
+                            <IoDocuments /> Penetapan Angka Kredit
+                        </NavLinkDashboard>
+
+                        {/* Riwayat Dokumen PAK */}
+                        <NavLinkDashboard
+                            href={route("divisi-sdm.riwayat-pak.index")}
+                            active={
+                                route().current(
+                                    "divisi-sdm.riwayat-pak.index"
+                                ) || active === "divisi-sdm.riwayat-pak.edit"
+                                // active === "divisi-sdm.riwayat-pak.edit"
+                            }
+                            className="relative z-20"
+                        >
+                            <IoDocuments /> Kelola Riwayat PAK
+                        </NavLinkDashboard>
+
+                        {/* Link Kelola Data */}
+                        <NavLinkDashboard
+                            href={route("divisi-sdm.pegawai.index")}
+                            active={
+                                route().current("divisi-sdm.pegawai.index") ||
+                                active === "divisi-sdm.pegawai.create" ||
+                                active === "divisi-sdm.pegawai.edit" ||
+                                active === "divisi-sdm.pegawai.show"
+                            }
+                            className="relative z-20"
+                        >
+                            <FaDatabase />
+                            Kelola Pegawai
                         </NavLinkDashboard>
 
                         {/* Link Pengajuan PAK */}
                         <NavLinkDashboard
-                            href={route("pengajuan.index")}
-                            active={route().current("pengajuan.index")}
+                            href={route("divisi-sdm.pengajuan.index")}
+                            active={route().current(
+                                "divisi-sdm.pengajuan.index"
+                            )}
                             className="relative z-20"
                         >
                             <BsFillSendArrowUpFill />
                             Status Pengajuan
                         </NavLinkDashboard>
 
-                        {/* Link Kelola Data */}
-                        <NavLinkDashboard
-                            href={route("pegawai.index")}
-                            active={
-                                route().current("pegawai.index") ||
-                                active === "pegawai.create" ||
-                                active === "pegawai.edit" ||
-                                active === "pegawai.show"
-                            }
-                            className="relative z-20"
-                        >
-                            <FaDatabase />
-                            Kelola Data Pegawai
-                        </NavLinkDashboard>
-
                         {/* Link Kelola Aturan Koefisen */}
                         <NavLinkDashboard
-                            href={route("koefisien.index")}
-                            active={route().current("koefisien.index")}
+                            href={route("divisi-sdm.koefisien.index")}
+                            active={route().current(
+                                "divisi-sdm.koefisien.index"
+                            )}
                             className="relative z-20 disabled "
                         >
-                            <RiUserSettingsFill />
-                            Kelola Aturan Koefisien
+                            <IoSettings /> Kelola Aturan Koefisien
                         </NavLinkDashboard>
+
+                         {/* TODO: Link Arsip Dokumen */}
+                         <NavLinkDashboard className="relative z-20">
+                                <IoMdArchive />
+                                Arsip Dokumen
+                            </NavLinkDashboard>
+
+                            {/* TODO : Link Log Aktivitas */}
+                            <NavLinkDashboard className="relative z-20">
+                                <AiFillNotification />
+                                Log Aktivitas
+                            </NavLinkDashboard>
                     </section>
                 )}
 
-                {role === "Pimpinan" && (
+                {role === "pimpinan" && (
                     <section>
                         {/* Link Dashboard */}
                         <NavLinkDashboard
@@ -129,35 +159,87 @@ const Sidebar = ({ active, role }) => {
                             Dashboard
                         </NavLinkDashboard>
 
-                        {/* Link Cetak Dokumen */}
+                        {/* Link Pengajuan PAK */}
                         <NavLinkDashboard
-                            href={route("pengajuan.index")}
-                            active={route().current("pengajuan.index")}
+                            href={route("pimpinan.pengajuan.index")}
+                            active={route().current("pimpinan.pengajuan.index")}
                             className="relative z-20"
                         >
-                            <FaPrint />
-                            Pengajuan PAK
+                            <IoDocuments /> Pengajuan PAK
                         </NavLinkDashboard>
-                        {/* Log Aktivitas mungkin sebaiknya dibuat */}
-                        {/* TODO :  */}
+
+                        {/* Link Kelola Data */}
                         <NavLinkDashboard
-                            href={route("pengajuan.store")}
-                            active={route().current("pengajuan.store")}
+                            href={route("pimpinan.pegawai.index")}
+                            active={route().current("pimpinan.pegawai.index")}
                             className="relative z-20"
                         >
+                            <MdPeopleAlt  />
+                            Daftar Pegawai
+                        </NavLinkDashboard>
+
+                        {/* TODO: Link Arsip Dokumen */}
+                        <NavLinkDashboard className="relative z-20">
                             <IoMdArchive />
                             Arsip Dokumen
                         </NavLinkDashboard>
-                        <NavLinkDashboard
-                            href={route("pengajuan.store")}
-                            active={route().current("pengajuan.store")}
-                            className="relative z-20"
-                        >
+
+                        {/* TODO : Link Log Aktivitas */}
+                        <NavLinkDashboard className="relative z-20">
                             <AiFillNotification />
                             Log Aktivitas
                         </NavLinkDashboard>
                     </section>
                 )}
+
+                {!role ||
+                    (role == "pegawai" && (
+                        <section>
+                            {/* Link Dashboard */}
+                            <NavLinkDashboard
+                                href={route("pegawai.dashboard")}
+                                active={route().current("pegawai.dashboard")}
+                                className="relative z-20"
+                            >
+                                <MdSpaceDashboard />
+                                Dashboard
+                            </NavLinkDashboard>
+
+                            {/* Link Pengusulan */}
+                            <NavLinkDashboard
+                                href={route("pegawai.pengajuan.index")}
+                                active={route().current("pengajuan.index")}
+                                className="relative z-20"
+                            >
+                                <GrDocumentPerformance />
+                                Pengusulan
+                            </NavLinkDashboard>
+
+                            {/* Link Status Pengajuan PAK */}
+                            <NavLinkDashboard
+                                href={route("pegawai.pengajuan.index")}
+                                active={route().current(
+                                    "pegawai.pengajuan.index"
+                                )}
+                                className="relative z-20"
+                            >
+                                <FaPrint />
+                                Status Pengajuan PAK
+                            </NavLinkDashboard>
+
+                            {/* TODO: Link Arsip Dokumen */}
+                            <NavLinkDashboard className="relative z-20">
+                                <IoMdArchive />
+                                Arsip Dokumen
+                            </NavLinkDashboard>
+
+                            {/* TODO : Link Panduan/Bantuan */}
+                            <NavLinkDashboard className="relative z-20">
+                                <AiFillNotification />
+                                Panduan/Bantuan
+                            </NavLinkDashboard>
+                        </section>
+                    ))}
             </ul>
 
             {/* Decorative Bottom Shadow */}

@@ -11,9 +11,9 @@ class Pegawai extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function riwayatCetaks()
+    public function RiwayatPAK()
     {
-        return $this->hasMany(RiwayatCetak::class);
+        return $this->hasMany(RiwayatPAK::class);
     }
 
     public function pengajuans()

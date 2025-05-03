@@ -26,21 +26,21 @@ class DatabaseSeeder extends Seeder
         // ]);
 
 
-        User::create([
-            'name' => 'Divisi Sumber Daya Manusia',
-            'nip' => '198807032011012019',
-            'email' => 'sdm.bps1500@gmail.com',
-            'password' => static::$password ??= Hash::make('tanpaair21'),
-            'remember_token' => Str::random(10),
-        ]);
+        // User::create([
+        //     'name' => 'Divisi Sumber Daya Manusia',
+        //     'nip' => '198807032011012019',
+        //     'email' => 'sdm.bps1500@gmail.com',
+        //     'password' => static::$password ??= Hash::make('tanpaair21'),
+        //     'remember_token' => Str::random(10),
+        // ]);
 
-        User::create([
-            'name' => 'Pimpinan',
-            'nip' => '1000000000000000',
-            'email' => 'pimpinan.bps1500@gmail.com',
-            'password' => static::$password ??= Hash::make('passwordpimpinan'), //tanpaair21
-            'remember_token' => Str::random(10),
-        ]);
+        // User::create([
+        //     'name' => 'Pimpinan',
+        //     'nip' => '1000000000000000',
+        //     'email' => 'pimpinan.bps1500@gmail.com',
+        //     'password' => static::$password ??= Hash::make('passwordpimpinan'), //tanpaair21
+        //     'remember_token' => Str::random(10),
+        // ]);
 
          // User::create([
         //     'name' => 'Siti Marfuah, S.E.',

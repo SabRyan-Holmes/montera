@@ -1,62 +1,25 @@
 <?php
 
-use App\Http\Controllers\CetakDokumenController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\KoefisienController;
-use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\PengajuanController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RiwayatCetakController;
+use App\Http\Controllers\Auth\DashboardController;
+use App\Http\Controllers\DivisiSDM\KoefisienController;
+use App\Http\Controllers\Pegawai\SSOController;
+use App\Http\Controllers\Shared\DokumenPAKController;
+use App\Http\Controllers\Shared\PegawaiController;
+use App\Http\Controllers\Shared\PengajuanController;
+use App\Http\Controllers\Shared\ProfileController;
+use App\Http\Controllers\Shared\RiwayatPAKController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login');
 })->middleware('guest');
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv');
+Route::get('/pegawai/login', [SSOController::class, 'showLoginForm'])->name('pegawai.login');
+Route::post('/pegawai/login', [SSOController::class, 'loginpegawai']);
 
-// ? :
-Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
-
-
-// Cetak Dokumen
-Route::middleware(['auth', 'divisi_sdm'])->prefix('/cetak_dokumen')->name('cetak_dokumen.')->group(function () {
-    Route::get('/pegawai', [CetakDokumenController::class, 'index'])->name('index');
-    // Route::get('/show/{pegawai:NIP}', [CetakDokumenController::class, 'show'])->name('show');
-    Route::get('/create/{pegawai:NIP}', [CetakDokumenController::class, 'create'])->name('create');
-    Route::post('/cetak', [CetakDokumenController::class, 'cetak'])->name('cetak');
-    Route::post('/cetak-saja', [CetakDokumenController::class, 'cetak_saja'])->name('cetak-saja');
-    Route::get('/view-pak', [CetakDokumenController::class, 'view_pak'])->name('view-pak');
-
-    // Riwayat Cetak
-    Route::get('/show-history/{pegawai:NIP}', [RiwayatCetakController::class, 'show_history'])->name('show_history');
-    Route::get('/show-history/show', [RiwayatCetakController::class, 'show'])->name('show');
-    Route::get('/show-history/edit/{riwayat:id}', [RiwayatCetakController::class, 'edit'])->name('edit');
-    Route::post('/show-history/update/{riwayat:id}', [RiwayatCetakController::class, 'update'])->name('update');
-    Route::delete('/show-history/delete/{riwayat:id}', [RiwayatCetakController::class, 'destroy'])->name('destroy');
-});
-
-//Status Pengajuan
-Route::resource('pengajuan', PengajuanController::class)->middleware(['auth', 'pimpinan_or_sdm']);
-Route::middleware(['auth', 'divisi_sdm'])->group(function () {
-    //Status Pengajuan
-    // Route::resource('pengajuan', PengajuanController::class);
-    // `Kelola Data Pegawai
-    Route::resource('pegawai', PegawaiController::class);
-    //Kelola Koefisien
-    Route::resource('koefisien', KoefisienController::class);
-});
-
-
-
-
-
-// PIMPINAN
-// Route::middleware(['auth', 'pimpinan'])->group(function () {
-//     Route::get('/pengajuan', PengajuanController::class)->middleware('auth');
-// });
+// <============================================================ All Actor ============================================================>
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -64,10 +27,127 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+
+// Preview PAK PDF
+Route::prefix('/pak')->name('pak.')->group(function () {
+    Route::post('/process', [DokumenPAKController::class, 'process'])->name('process');
+    Route::get('/preview', [DokumenPAKController::class, 'preview'])->name('preview');
+});
+
+
+
+// <============================================================ Divisi SDM ============================================================>
+
+Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-sdm.')->group(function () {
+    // Dashboard(=> Export Data Pegawai Ke csv)
+    Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
+    Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
+
+    // Penetapan Angka Kredit => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
+    Route::prefix('/pak')->name('pak.')->group(function () {
+        Route::get('/create-for/pegawai', [DokumenPAKController::class, 'create'])->name('create');
+        Route::post('/create-for-pegawai/{pegawai:NIP}', [DokumenPAKController::class, 'create_for_pegawai'])->name('create-for-pegawai');
+        Route::post('/save', [DokumenPAKController::class, 'save'])->name('save');
+        Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
+    });
+
+    // Riwayat PAK(CRUD)
+    Route::resource('riwayat-pak', RiwayatPAKController::class)
+        ->parameters(['riwayat-pak' => 'riwayat'])->only(['index', 'show', 'edit', 'update', 'destroy']);
+    // Alternatif
+    // Route::get('/pegawai', [RiwayatPAKController::class, 'pegawai'])->name('pegawai'); //Pilih dulu pegawai mana yang mau dilihat dokumen PAK nya
+    // Route::get('/show/{pegawai:NIP}', [RiwayatPAKController::class, 'show'])->name('show');
+
+    // Status Pengajuan(CRUD)
+    Route::resource('pengajuan', PengajuanController::class);
+
+    // Kelola Pegawai(CRUD)
+    Route::resource('pegawai', PegawaiController::class);
+
+    // Kelola Koefisien(CRUD)
+    Route::resource('koefisien', KoefisienController::class);
+
+    //Arsip Dokumen(CRUD)
+    //
+
+    // Log Aktivitas(R)
+    //
+});
+
+
+
+// <============================================================ Pimpinan ============================================================>
+
+Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->group(function () {
+
+    //Pengajuan PAK(Read, Approve,Reject)
+    Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
+        Route::get('', [PengajuanController::class, 'index'])->name('index');
+        Route::get('/approve', [PengajuanController::class, 'approve'])->name('approve');
+        Route::get('/reject', [PengajuanController::class, 'reject'])->name('reject');
+        Route::get('/reject', [PengajuanController::class, 'view_pak'])->name('preview');
+    });
+
+    // Daftar Pegawai(Read)
+    Route::get('/pegawai', [PengajuanController::class, 'index'])->name('pegawai.index');
+
+
+    // Kelola Koefisien(Mungkin Pimpinan bisa kelola koefisien juga?)
+    //
+
+    //Arsip Dokumen
+    //
+
+    // Log Aktivitas
+    //
+
+
+});
+
+
+
+// <============================================================ Pegawai ============================================================>
+Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
+
+    // Pengusulan
+    //
+
+    //Status Proses PAK
+    Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
+        Route::get('/preview', [DokumenPAKController::class, 'view_pak'])->name('preview');
+    });
+
+    // Arsip Dokumen
+    //
+
+    // PanduanBantuan
+});
+
+
+
 // Tes
-// Route::get('/test-pdf', [CetakDokumenController::class, 'test_pdf']);
+// Route::get('/test-pdf', [DokumenPAKController::class, 'test_pdf']);
 
 // Route::get('/tes', function () {
 //     return Inertia::render('Test');
 // });
 require __DIR__ . '/auth.php';
+
+
+
+// Route::prefix('/riwayat-pak')->name('riwayat-pak.')->group(function () {
+//     // Route::get('/pegawai', [RiwayatPAKController::class, 'pegawai'])->name('pegawai'); //Pilih dulu pegawai mana yang mau dilihat dokumen PAK nya
+//     // Route::get('/show/{pegawai:NIP}', [RiwayatPAKController::class, 'show'])->name('show');
+//     // CRUD PAK
+//     Route::get('', [RiwayatPAKController::class, 'index'])->name('index'); //Show All RiwayatPAK by Pegawai
+//     Route::get('/show', [RiwayatPAKController::class, 'show'])->name('show');
+//     Route::get('/edit/{riwayat:id}', [RiwayatPAKController::class, 'edit'])->name('edit');
+//     Route::post('/update/{riwayat:id}', [RiwayatPAKController::class, 'update'])->name('update');
+//     Route::delete('/delete/{riwayat:id}', [RiwayatPAKController::class, 'destroy'])->name('destroy');
+// });
+
+
+// Route::resource('riwayat-pak', RiwayatPAKController::class)
+// ->except(['index', 'preview']) //Resource kecuali index karna beda parameter
+// ->parameters(['riwayat' => 'riwayat']); // kasih parameter riwat semua biar URL pakai {riwayat}

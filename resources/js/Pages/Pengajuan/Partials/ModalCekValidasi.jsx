@@ -23,7 +23,7 @@ export default function ModalCekValidasi({ pengajuan }) {
     });
 
     const handleLihatDokumen = async (pengajuan) => {
-        await router.post("/cetak_dokumen/cetak-saja", pengajuan.document, {
+        await router.post("/riwayat-pak/cetak-saja", pengajuan.document, {
             preserveScroll: true,
             preserveState: true,
 
@@ -88,7 +88,7 @@ export default function ModalCekValidasi({ pengajuan }) {
                             <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
                         </button>
                         <iframe
-                            src={route("cetak_dokumen.view-pak")}
+                            src={route("pak.preview")}
                             width="100%"
                             height="100%"
                             className="border-0"

@@ -20,7 +20,7 @@ class Pengajuan extends Model
 
     public function document()
     {
-        return $this->belongsTo(RiwayatCetak::class, 'document_id');
+        return $this->belongsTo(RiwayatPAK::class, 'document_id');
 
     }
 

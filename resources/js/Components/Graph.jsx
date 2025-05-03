@@ -127,9 +127,9 @@ export default function Graph({ data }) {
         };
     };
     return (
-        <div class="max-w-md w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5 border border-gradient">
+        <div class="max-w-md w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5 border border-gradient cursor-pointer">
 
-            <div class="flex justify-around mb-3 items-center">
+            <div class="flex justify-around mb-3 items-center ">
                 <div class="flex justify-center items-center">
                     <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
                         Data Pegawai Fungsional
@@ -242,7 +242,7 @@ export default function Graph({ data }) {
                     </div>
                 </div>
 
-                    <a href={route('export-csv')}>
+                    <a href={route('divisi-sdm.export-csv')}>
                         <button
                             type="button"
                             data-tooltip-target="data-tooltip"

@@ -17,9 +17,22 @@ const Navbar = ({ user, title }) => {
     }
 
     const nameParts = user.name.split(" ");
-    const first = nameParts[0]
-    const second = nameParts[1]
-    const fullName = first + ' ' + second
+    const first = nameParts[0];
+    const second = nameParts[1];
+    const fullName = first + " " + second;
+
+    function formatRole(role) {
+        return role
+            .replace(/_/g, " ")
+            .toLowerCase()
+            .split(" ")
+            .map((word) =>
+                word === "sdm"
+                    ? "SDM"
+                    : word.charAt(0).toUpperCase() + word.slice(1)
+            )
+            .join(" ");
+    }
 
     return (
         <div className="">
@@ -46,7 +59,9 @@ const Navbar = ({ user, title }) => {
                     </label>
                 </div>
                 <div className="navbar-start">
-                    <a className="-ml-2 text-xl normal-case btn btn-ghost">{title}</a>
+                    <a className="-ml-2 text-xl normal-case btn btn-ghost">
+                        {title}
+                    </a>
                 </div>
                 <div className="navbar-end">
                     <div className="dropdown dropdown-end">
@@ -64,12 +79,12 @@ const Navbar = ({ user, title }) => {
                                         <span
                                             className={
                                                 "block text-xs text-right " +
-                                                (user.role == "Ketua Tim"
+                                                (formatRole(user.role) == "Divisi SDM"  || formatRole(user.role) == "Pimpinan"
                                                     ? "text-primary"
                                                     : "text-secondary")
                                             }
                                         >
-                                            {user.divisi}
+                                            {formatRole(user.role)}
                                         </span>
                                     </div>
                                     {/* {user.profile ? (

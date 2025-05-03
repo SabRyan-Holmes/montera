@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -15,29 +16,40 @@ class UserSeeder extends Seeder
     protected static ?string $password;
     public function run(): void
     {
-        // User::create([
-        //     'name' => 'Divisi Sumber Daya Manusia',
-        //     'nip' => '198807032011012019',
-        //     'email' => 'sdm.bps1500@gmail.com',
-        //     'password' => static::$password ??= Hash::make('tanpaair21'),
-        //     'remember_token' => Str::random(10),
-        // ]);
-
-        // User::create([
-        //     'name' => 'Pimpinan',
-        //     'nip' => '1000000000000000',
-        //     'email' => 'pimpinan.bps1500@gmail.com',
-        //     'password' => static::$password ??= Hash::make('passwordpimpinan'), //tanpaair21
-        //     'remember_token' => Str::random(10),
-        // ]);
-
         User::create([
-            'name' => 'Siti Marfuah, S.E.',
-            'nip' => '198711082006042002',
-            'email' => 'siti_marfuah@gmail.com',
-            'password' => static::$password ??= Hash::make('password'),
+            'name' => 'DWI UTAMANINGSIH S.Psi., M.M.',
+            'nip' => '198807032011012019',
+            'role' => 'divisi_sdm',
+            'email' => 'sdm.bps1500@gmail.com',
+            'password' => Hash::make('tanpaair21'),
             'remember_token' => Str::random(10),
         ]);
 
+        User::create([
+            'name' => 'Pimpinan',
+            'nip' => '1000000000000000',
+            'role' => "pimpinan",
+            'email' => 'pimpinan.bps1500@gmail.com',
+            'password' => Hash::make('passwordpimpinan'),
+            'remember_token' => Str::random(10),
+        ]);
+
+        User::create([
+            'name' => 'Siti Marfuah, S.E.',
+            'role' => "divisi_sdm",
+            'nip' => '198711082006042002',
+            'email' => 'siti_marfuah@gmail.com',
+            'password' => Hash::make('passwordsiti'),
+            'remember_token' => Str::random(10),
+        ]);
+
+        User::create([
+            'name' => 'DIAS KHUSNUL KHOTIMAH S.Tr.Stat',
+            // 'role' => "pegawai",
+            'nip' => '200002122022012003',
+            'email' => 'dias@gmail.com',
+            'password' => Hash::make('passworddias'),
+            'remember_token' => Str::random(10),
+        ]);
     }
 }

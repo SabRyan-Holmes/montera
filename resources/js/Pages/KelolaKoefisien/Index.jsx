@@ -46,7 +46,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("koefisien.destroy", id), {
+                router.delete(route("divisi-sdm.koefisien.destroy", id), {
                     onSuccess: () => {
                         // console.log(
                         //     "data aturan koefisien dengan id ",
@@ -92,11 +92,15 @@ export default function Index({ auth, koefisiens, title, flash }) {
                     </div>
                 </div>
 
-                <div className="pt-3 overflow-hidden rounded-xl">
-                    <table className="table overflow-auto text-xs table-bordered rounded-xl ">
-                        <thead className="text-sm font-medium text-white border bg-primary rounded-xl border-secondary/15">
+                <div className="pt-3">
+                    <table className="table text-xs table-bordered">
+                        <thead className="text-sm font-medium text-white bg-primary ">
                             <tr>
-                                <th scope="col" width="1%">
+                                <th
+                                    scope="col"
+                                    dir="rtl"
+                                    className="rounded-tl-xl"
+                                >
                                     No
                                 </th>
                                 <th scope="col" width="15%">
@@ -111,8 +115,10 @@ export default function Index({ auth, koefisiens, title, flash }) {
                                         Terakhir Diubah
                                     </span>
                                 </th>
-
-                                <th scope="col " className="text-center ">
+                                <th
+                                    scope="col"
+                                    className="text-center rounded-tr-xl"
+                                >
                                     Aksi
                                 </th>
                             </tr>
@@ -136,7 +142,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
                                         <Link
                                             as="a"
                                             href={route(
-                                                "koefisien.show",
+                                                "divisi-sdm.koefisien.show",
                                                 koefisien.id
                                             )}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
@@ -148,7 +154,7 @@ export default function Index({ auth, koefisiens, title, flash }) {
                                             onClick={() => {
                                                 setIsPopUpOpen(!isPopUpOpen);
                                                 setIsEdit(true);
-                                                setDataEdit(koefisien)
+                                                setDataEdit(koefisien);
                                             }}
                                             className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                         >

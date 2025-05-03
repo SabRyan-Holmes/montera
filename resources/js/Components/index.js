@@ -13,7 +13,7 @@ import Navbar from './Navbar'
 import NavLink from './NavLink'
 import NavLinkCollapse from './NavLinkCollapse'
 import NavLinkDashboard from './NavLinkDashboard'
-import Paginations from './Paginations'
+import Pagination from './Pagination'
 import PrimaryButton from './PrimaryButton'
 import ProfileImage from './ProfileImage'
 import ResponsiveNavLink from './ResponsiveNavLink'
@@ -22,9 +22,15 @@ import Sidebar from './Sidebar'
 import SuccessButton from './SuccessButton'
 import TextInput from './TextInput'
 import TextInputSecondary from './TextInputSecondary'
+import SdmPimpinanContent from '@/Pages/Dashboard/SdmPimpinanContent'
+import TooltipHover from './TooltipHover'
+import useFilterSearch from './UseFilterSearch'
+
+
 
 
 
 export {ApplicationLogo,Checkbox, CollapsedLink, DangerButton, Dropdown,
-      InputError, InputLabel, Modal, Navbar, NavLink, NavLinkCollapse, NavLinkDashboard, Paginations,
-     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage, SuccessButton, TextInputSecondary, DetailPegawai, DetailPAKTable}
+      InputError, InputLabel, Modal, Navbar, NavLink, NavLinkCollapse, NavLinkDashboard, Pagination,
+     PrimaryButton, ResponsiveNavLink, SecondaryButton, Sidebar, TextInput, DateInput, ProfileImage, SuccessButton,
+     TextInputSecondary, DetailPegawai, DetailPAKTable, SdmPimpinanContent, TooltipHover, useFilterSearch}

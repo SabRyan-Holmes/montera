@@ -1,13 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,600;1,400;1,600&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html, body, label {
-    font-family: 'Roboto', Signika;
+html,
+body,
+label {
+    font-family: "Roboto", Signika;
     @apply font-roboto text-slate-700;
-  }
+}
 
 /* Ensure the spinner controls are always visible */
 input[type="number"]::-webkit-outer-spin-button,
@@ -67,7 +69,7 @@ input[type="number"] {
 }
 
 .border-gradient {
-    @apply  bg-slate-100/85 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50;
+    @apply bg-slate-100/85 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50;
 }
 
 .large-primary-button {
@@ -111,16 +113,7 @@ input[type="number"] {
 }
 
 .action-btn {
-    @apply inline-flex items-center justify-center p-1 px-2 mx-auto border rounded-lg shadow-md;
-}
-
-table.table-bordered {
-    /* table-layout: auto; */
-    width: 100%;
-    border-collapse: collapse;
-    line-height: 1rem;
-    overflow: hidden;
-    @apply border-slate-600;
+    @apply hover:scale-[1.3] scale-110 transition-all inline-flex items-center justify-center p-1 px-2 mx-auto border rounded-lg shadow-md;
 }
 
 .no-arrow {
@@ -130,18 +123,37 @@ table.table-bordered {
 }
 
 
-table.table-bordered > thead > tr > th {
-    @apply border border-white;
-}
-table.table-bordered > thead > tr > th {
-    @apply border border-secondary/15;
+table.table-bordered {
+    /* table-layout: auto; */
+    width: 100%;
+    border-collapse: collapse;
+    line-height: 1rem;
+    /* overflow: hidden; */
+    @apply overflow-auto border-collapse ;
 }
 
+table.table-bordered > thead {
+    @apply overflow-hidden ;
+}
+table.table-bordered > thead > tr {
+    @apply overflow-hidden ;
+}
+table.table-bordered > thead > tr > th {
+    @apply  border-orange-300/30 border-s-2;
+}
+
+table.table-bordered > tbody {
+    @apply overflow-visible;
+}
 table.table-bordered > tbody > tr > td {
-    @apply border border-secondary/15;
+    @apply border-2 border-secondary/20;
 }
 table.table-bordered > tbody > tr > th {
-    @apply border border-secondary/15;
+    @apply border-2 border-secondary/20;
+}
+
+table.table-bordered > tfoot  > tr > td  {
+    @apply border-2 border-secondary/20;
 }
 
 .box-footer {
@@ -167,7 +179,7 @@ table.table-bordered > tbody > tr > th {
 }
 
 .label-base {
-    @apply p-1 mx-3 text-xs font-semibold text-center uppercase rounded-md;
+    @apply inline-flex p-1 mx-3 text-xs font-semibold text-center uppercase rounded-md;
 }
 
 .user-profile-image {
@@ -180,4 +192,3 @@ table.table-bordered > tbody > tr > th {
 
     @apply bg-gradient-to-br from-sky-800 to-slate-950;
 }
-
