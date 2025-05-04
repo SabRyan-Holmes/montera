@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
-export default function DetailData({ data }) {
-    const [isCollapsed, setIsCollapsed] = useState(true);
+export default function DetailData({ data, collapse = true }) {
+    const [isCollapsed, setIsCollapsed] = useState(collapse);
 
     return (
         <section className="mb-4">
@@ -32,7 +32,7 @@ export default function DetailData({ data }) {
                     <tbody>
                         <tr>
                             <td width="40%">No PAK</td>
-                            <td>{data.no_surat3}</td>
+                            <td>{data["no_surat3"]}</td>
                         </tr>
                         <tr>
                             <td>Tanggal Ditetapkan</td>

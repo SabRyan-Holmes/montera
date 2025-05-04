@@ -258,10 +258,19 @@
                     Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
                 </strong>
                 <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
+                {{-- TTD Validasi --}}
+                {{-- TODO : Mungkin sebaikny rapiin lagi nanti kalo ad ttd --}}
+                @if (!empty($signature))
+                    <div style="margin-top: 0px; margin-bottom: 0px;">
+                        <img src="{{ $signature }}" style="width: 60px; height: 60px;" alt="Tanda Tangan">
+                    </div>
+                @else
+                    <div style="height: 80px;"></div> {{-- Spacer jika tidak ada tanda tangan --}}
+                @endif
+                {{-- TTD Validasi --}}
 
-                {{-- TTD --}}
 
-                <div style="margin-top: 3.2rem;">
+                <div>
                     <strong style="display: block">
                         {{ $data['nama'] }}
                     </strong>

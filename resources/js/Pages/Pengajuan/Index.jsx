@@ -22,6 +22,7 @@ import ModalCekValidasi from "./Partials/ModalCekValidasi";
 import { RiLoader2Fill } from "react-icons/ri";
 import { FaCheck, FaEye } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
+import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 
 export default function Index({
     auth,
@@ -115,7 +116,9 @@ export default function Index({
         initialSearch,
         initialDaerah,
         initialJabatan,
-        routeName: "/divisi-sdm/pengajuan", // bisa diganti tergantung endpoint-nya
+        routeName: canValidate
+            ? "/pimpinan/pengajuan"
+            : "/divisi-sdm/pengajuan", // bisa diganti tergantung endpoint-nya
     });
 
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
@@ -147,104 +150,15 @@ export default function Index({
                 )}
                 {/* Preview PDF di iframe */}
 
-                <form className="max-w-screen-laptop ">
-                    <div className="flex items-center justify-between gap-3 my-3">
-                        <div className="flex items-center justify-start gap-3">
-                            <div className="flex-none w-72">
-                                <InputLabel
-                                    value="Jabatan"
-                                    Htmlfor="Jabatan"
-                                    className="max-w-sm ml-1 text-lg"
-                                />
-                                <select
-                                    className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
-                                    name="byJabatan"
-                                    value={byJabatan}
-                                    onChange={(e) =>
-                                        setByJabatan(e.target.value)
-                                    }
-                                >
-                                    <option>Semua Kategori</option>
-                                    <option value="Terampil">
-                                        Ahli Terampil
-                                    </option>
-                                    <option value="Mahir">Mahir</option>
-                                    <option value="Pertama">
-                                        Ahli Pertama
-                                    </option>
-                                    <option value="Penyelia">
-                                        Ahli Penyelia
-                                    </option>
-                                    <option value="Muda">Ahli Muda</option>
-                                    <option value="Madya">Ahli Madya</option>
-                                </select>
-                            </div>
-                            <div className="flex-none w-72">
-                                <InputLabel
-                                    value="Daerah"
-                                    Htmlfor="Daerah"
-                                    className="max-w-sm ml-1 text-lg"
-                                />
-
-                                <select
-                                    className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
-                                    name="byDaerah"
-                                    id="byDaerah"
-                                    value={byDaerah}
-                                    onChange={(e) =>
-                                        setByDaerah(e.target.value)
-                                    }
-                                >
-                                    <option>Semua Kategori</option>
-                                    <option>PROVINSI JAMBI</option>
-                                    <option>KOTA JAMBI</option>
-                                    <option>KERINCI</option>
-                                    <option>MUARO JAMBI</option>
-                                    <option>BATANG HARI</option>
-                                    <option>SAROLANGUN</option>
-                                    <option>TANJUNG JABUNG BARAT</option>
-                                    <option>TANJUNG JABUNG TIMUR</option>
-                                    <option>MERANGIN</option>
-                                    <option>KOTA SUNGAI PENUH</option>
-                                    <option>BUNGO</option>
-                                    <option>TEBO</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="flex-none w-80">
-                            <InputLabel
-                                value="Nama/NIP"
-                                Htmlfor="search"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-
-                            <label
-                                htmlFor="search"
-                                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                            >
-                                Search
-                            </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                    <MdPersonSearch className="w-6 h-6 fill-primary" />
-                                </div>
-                                <input
-                                    type="search"
-                                    id="search"
-                                    defaultValue={search}
-                                    onSubmit={(e) => setSearch(e.target.value)}
-                                    name="search"
-                                    className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
-                                    placeholder="Cari Nama Pegawai/NIP.."
-                                />
-                                <button className="text-white  bg-sky-600/85 absolute end-2 bottom-[6px] hover:bg-primary/85 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Search
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                {/* FilterSearchPegawai */}
+                <FilterSearchPegawai
+                    byJabatan={byJabatan}
+                    setByJabatan={setByJabatan}
+                    byDaerah={byDaerah}
+                    setByDaerah={setByDaerah}
+                    search={search}
+                    setSearch={setSearch}
+                />
 
                 <div className="pt-3 ">
                     {pengajuans.data.length ? (
@@ -365,45 +279,43 @@ export default function Index({
                                                 </div>
                                             )}
                                         </td>
+                                        <td className="w-5 p-0 m-0 text-center ">
+                                            {pengajuan.status ===
+                                                "diajukan" && (
+                                                <button
+                                                    disabled
+                                                    className=" label-base bg-accent/50 group-hover/item:text-white text-slate-500"
+                                                >
+                                                    DIPROSES
+                                                    <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
+                                                </button>
+                                            )}
 
-                                            <td className="w-5 p-0 m-0 text-center ">
-                                                {pengajuan.status ===
-                                                    "diajukan" && (
-                                                    <button
-                                                        disabled
-                                                        className=" label-base bg-accent/50 group-hover/item:text-white text-slate-500"
-                                                    >
-                                                        DIPROSES
-                                                        <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                                    </button>
-                                                )}
+                                            {pengajuan.status ===
+                                                "divalidasi" && (
+                                                <a
+                                                    disabled
+                                                    className="gap-2 cursor-default group-hover/item:text-white group-hover/item:bg-hijau text-slate-500 action-btn bg-success/50 label-base"
+                                                >
+                                                    DIVALIDASI
+                                                    <FaCheck className="w-4 h-4 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
+                                                </a>
+                                            )}
 
-                                                {pengajuan.status ===
-                                                    "divalidasi" && (
-                                                    <a
-                                                        disabled
-                                                        className="gap-2 cursor-default group-hover/item:text-white group-hover/item:bg-hijau text-slate-500 action-btn bg-success/50 label-base"
-                                                    >
-                                                        DIVALIDASI
-                                                        <FaCheck className="w-4 h-4 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                                    </a>
-                                                )}
-
-                                                {/*
+                                            {/*
                                                 <button className="inline-flex items-center justify-center group-hover/item:text-white group-hover/item:bg-success text-slate-500 action-btn bg-success/70 label-base ">
                                                     DITOLAK
                                                     <RiLoader2Fill className="w-6 h-6 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
                                                 </button> */}
-                                            </td>
-
-
+                                        </td>
                                         {canValidate ? (
-                                            <td className="text-center whitespace-nowrap text-nowrap"> {/* Actor Pimpinan */}
+                                            <td className="text-center whitespace-nowrap text-nowrap">
+                                                {" "}
+                                                {/* Actor Pimpinan */}
                                                 {/* Dialog Cek dan Validasi, Membuat Tanda Tangan/sign, dan melihat PDF */}
                                                 <ModalCekValidasi
                                                     pengajuan={pengajuan}
                                                 />
-
                                                 <button
                                                     className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau"
                                                     onClick={() =>
@@ -427,87 +339,87 @@ export default function Index({
                                                 </Link>
                                             </td>
                                         ) : (
-
-                                            <td className="text-center whitespace-nowrap text-nowrap">   {/* Actor Divisi SDM */}
-                                            {/* Tombol Lihat Detail Riwayat PAK */}
-                                            <div className="relative inline-flex group">
-                                                <Link
-                                                    as="a"
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-110 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
-                                                >
-                                                    <FaEye className="scale-125 fill-hijau/75 group-hover/item:fill-white" />
-                                                </Link>
-                                                <TooltipHover
-                                                    message={"Lihat Detail PAK"}
-                                                />
-                                            </div>
-
-                                            <span className="inline-block mx-1"></span>
-
-                                            {/* TODO : bikin nanti logic kalo ditolak baru bisa diedit */}
-                                            {pengajuan.status === "ditolak" ? (
+                                            <td className="text-center whitespace-nowrap text-nowrap">
+                                                {" "}
+                                                {/* Actor Divisi SDM */}
+                                                {/* Tombol Lihat Detail Riwayat PAK */}
                                                 <div className="relative inline-flex group">
                                                     <Link
                                                         as="a"
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-110 hover:scale-[1.3] transition-all group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau/75 action-btn border-hijau/20 hover:bg-hijau hover:text-white "
                                                     >
-                                                        <FaEdit className="scale-125 fill-secondary group-hover/item:fill-white" />
+                                                        <FaEye className="scale-125 fill-hijau/75 group-hover/item:fill-white" />
                                                     </Link>
-
                                                     <TooltipHover
                                                         message={
                                                             "Lihat Detail PAK"
                                                         }
                                                     />
                                                 </div>
-                                            ) : (
+                                                <span className="inline-block mx-1"></span>
+                                                {/* TODO : bikin nanti logic kalo ditolak baru bisa diedit */}
+                                                {pengajuan.status ===
+                                                "ditolak" ? (
+                                                    <div className="relative inline-flex group">
+                                                        <Link
+                                                            as="a"
+                                                            className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        >
+                                                            <FaEdit className="scale-125 fill-secondary group-hover/item:fill-white" />
+                                                        </Link>
+
+                                                        <TooltipHover
+                                                            message={
+                                                                "Lihat Detail PAK"
+                                                            }
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="relative inline-flex group">
+                                                        <Link
+                                                            as="button"
+                                                            href={route(
+                                                                "pak.process"
+                                                            )}
+                                                            onSuccess={() => {
+                                                                setShowIframe(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            data={
+                                                                pengajuan.document
+                                                            }
+                                                            method="post"
+                                                            className="items-center  justify-center inline-block gap-2 mx-auto font-medium text-center  hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        >
+                                                            <IoDocument className="scale-125 fill-secondary group-hover/item:fill-white" />
+                                                        </Link>{" "}
+                                                        {/* Tooltip Hover  */}
+                                                        <TooltipHover
+                                                            message={
+                                                                "Lihat Tampilan PDF"
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+                                                <span className="inline-block mx-1"></span>
                                                 <div className="relative inline-flex group">
-                                                    <Link
-                                                        as="button"
-                                                        href={route(
-                                                            "pak.process"
-                                                        )}
-                                                        onSuccess={() => {
-                                                            setShowIframe(true);
-                                                        }}
-                                                        data={
-                                                            pengajuan.document
+                                                    <button
+                                                        onClick={() =>
+                                                            handleCancel(
+                                                                pengajuan.id
+                                                            )
                                                         }
-                                                        method="post"
-                                                        className="items-center  justify-center inline-block gap-2 mx-auto font-medium text-center  hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-110 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
                                                     >
-                                                        <IoDocument className="scale-125 fill-secondary group-hover/item:fill-white" />
-                                                    </Link>{" "}
-                                                    {/* Tooltip Hover  */}
+                                                        <MdCancel className="scale-125 fill-red-500 group-hover/item:fill-white" />
+                                                    </button>
                                                     <TooltipHover
-                                                        message={
-                                                            "Lihat Tampilan PDF"
-                                                        }
+                                                        message={"Batalkan"}
                                                     />
                                                 </div>
-                                            )}
-
-                                            <span className="inline-block mx-1"></span>
-
-                                            <div className="relative inline-flex group">
-                                                <button
-                                                    onClick={() =>
-                                                        handleCancel(
-                                                            pengajuan.id
-                                                        )
-                                                    }
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-110 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <MdCancel className="scale-125 fill-red-500 group-hover/item:fill-white" />
-                                                </button>
-                                                <TooltipHover
-                                                    message={"Batalkan"}
-                                                />
-                                            </div>
-                                        </td>
+                                            </td>
                                         )}
-
-
                                     </tr>
                                 ))}
                             </tbody>

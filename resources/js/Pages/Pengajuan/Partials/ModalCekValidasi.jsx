@@ -6,74 +6,132 @@ import {
     SuccessButton,
 } from "@/Components";
 import { router, useForm } from "@inertiajs/react";
-import React, { useRef, useState } from "react";
-import { FaFileSignature } from "react-icons/fa6";
+import React, { useEffect, useRef, useState } from "react";
+import { FaEraser, FaFileSignature, FaTrash } from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SignatureCanvas from "react-signature-canvas";
 import { usePage } from "@inertiajs/react";
-import SignaturePad from "signature_pad";
+import { PiSignature } from "react-icons/pi";
+import Swal from "sweetalert2";
 
 export default function ModalCekValidasi({ pengajuan }) {
     const [showIframe, setShowIframe] = useState(false);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData,get, post, processing, errors } = useForm({
         id: pengajuan.id,
         signature: "", // nanti diisi base64 image
         // data lain jika perlu
     });
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+    useEffect(() => {
+        if (errors && Object.values(errors).length > 0) {
+            // Ambil nilai pertama dari object errors
+            const firstErrorMessage = Object.values(errors)[0];
+            // console.log("firstErrorMessage :");
+            // console.log(firstErrorMessage);
+            Toast.fire({
+                icon: "warning",
+                iconColor: "#fb7185",
+                title: firstErrorMessage,
+                color: "#fb7185",
+            });
+        }
+    }, [errors]);
+
     const handleLihatDokumen = async (pengajuan) => {
-        await router.post("/riwayat-pak/cetak-saja", pengajuan.document, {
+        router.post("/pak/process", pengajuan.document, {
             preserveScroll: true,
             preserveState: true,
 
-            onFinish: () => setIsLoading(false),
+            onFinish: () => setLoading(false),
             onError: (errors) => {
                 console.error("Error:", errors);
             },
             onSuccess: () => {
                 setShowIframe(true); // Munculkan iframe setelah data dikirim
-                const url = page.props.url;
-                window.open(url, "_blank");
+                // const url = page.props.url;
+                // window.open(url, "_blank");
             },
         });
     };
-    const canvasRef = useRef(null);
-    const sigPad = useRef(null);
+    const sigCanvas = useRef(null);
+    const [trimmedDataURL, setTrimmedDataURL] = useState(null);
     const [mode, setMode] = useState("draw"); // 'draw' or 'upload'
+    const [loading, setLoading] = useState(false);
 
-    // const signaturePad = new SignaturePad(canvas);
+    const handleUse = () => {
+        const canvas = sigCanvas.current;
+        const ctx = canvas
+            .getCanvas()
+            .getContext("2d", { willReadFrequently: true });
 
-    // useEffect(() => {
-    //     const signaturePad = new SignaturePad(canvasRef.current)
-    //     // simpan signaturePad ke state jika perlu
-    //   }, [])
-
-    const handleSave = () => {
-        const canvas = canvasRef.current;
-        const signaturePad = new SignaturePad(canvas);
-
-        if (signaturePad.isEmpty()) {
-            alert("Tanda tangan masih kosong");
-            return;
+        if (canvas.isEmpty()) {
+            alert("Tanda tangan belum dibuat!");
         }
 
-        const base64Image = signaturePad.toDataURL("image/png");
-        setData("signature", base64Image);
-        data.signature = base64Image
-        console.log(data)
-        post.route("pengajuan.validasi"),
-            data,
-            {
-                onSuccess: () => {
-                    console.log("Sukses kirim tanda tangan");
-                },
-            };
+        setTrimmedDataURL(canvas.getTrimmedCanvas().toDataURL("image/png"));
+
+        setData("signature", trimmedDataURL);
+        console.log("signature : ", data.signature);
+
+        // TODO : Logika TTD dr image belum
+        //
+    };
+
+    // useEffect(() => {
+    //     const canvas = sigCanvas.current;
+    //     if (canvas) {
+    //         const ctx = canvas.getCanvas().getContext("2d"); // Hapus willReadFrequently: true
+    //         // simpan ctx ke state kalau perlu
+    //     }
+    // }, []);
+
+    const handleApprove = () => {
+        post(route("pimpinan.pengajuan.approve", data), {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => {
+                setLoading(true);
+            },
+            onError: (errors) => {
+                setLoading(false);
+                console.error("Error:", errors);
+                Toast.fire({
+                    icon: "warning",
+                    iconColor: "#fb7185",
+                    title: errors,
+                    color: "#fb7185",
+                });
+            },
+            onSuccess: () => {
+                setLoading(false);
+                setTimeout(() => {
+                    const url= "/pimpinan/pengajuan/approved/show"
+                    window.open(url, "_blank");
+                }, 1000); // kasih delay kecil kalau memang perlu
+                console.log("Sukses Menvalidasi");
+            },
+        });
     };
 
     const { props } = usePage();
-    const signaturePath = props.flash.signature_path;
+
     // TODO ? Mungkin sebaiknya tamabhakna juga Catatan Evaluasi/Review Dari Pimpinan
+    console.log("isi data");
+
+    console.log(data);
     return (
         <dialog id={`DialogCekValidasi-${pengajuan.id}`} className="modal">
             {/* Saya ingin ditampilkan iframe pdf ini setelah ditekan tombol Lihat Dokumen, dan ditampilkan diatas dialog, gimana caranya? */}
@@ -87,31 +145,44 @@ export default function ModalCekValidasi({ pengajuan }) {
                         >
                             <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
                         </button>
-                        <iframe
-                            src={route("pak.preview")}
-                            width="100%"
-                            height="100%"
-                            className="border-0"
-                        ></iframe>
+
+                        {/* Indikator Loading */}
+                        {loading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                <AiOutlineLoading3Quarters className="w-12 h-12 text-white animate-spin" />
+                            </div>
+                        )}
+
+                        {/* Iframe muncul setelah loading selesai */}
+                        {!loading && (
+                            <iframe
+                                src={route("pak.preview")}
+                                width="100%"
+                                height="100%"
+                                className="border-0"
+                            ></iframe>
+                        )}
                     </div>
                 </div>
             )}
 
-            {signaturePath && (
+            {/* TES LIHAT TTD YANG DIGUNAAKN */}
+            {/* {trimmedDataURL && (
                 <div className="mt-4">
                     <h2 className="text-lg font-semibold">
                         Preview Tanda Tangan
                     </h2>
                     <img
-                        src={`/${signaturePath}`}
+                        // src={`/${signaturePath}`}
+                        src={trimmedDataURL}
                         alt="Signature"
                         className="w-64 h-auto border"
                     />
 
-                    {/* Atau pakai iframe */}
-                    {/* <iframe src={`/${signaturePath}`} className="w-64 h-40 border" /> */}
                 </div>
-            )}
+            )} */}
+            {/* Atau pakai iframe */}
+            {/* <iframe src={`/${signaturePath}`} className="w-64 h-40 border" /> */}
 
             <div className="relative w-full max-w-3xl modal-box">
                 <form method="dialog">
@@ -126,7 +197,10 @@ export default function ModalCekValidasi({ pengajuan }) {
                     <h1 className="my-4 text-xl font-medium">
                         Data Ringkasan dalam Penetapan Angka Kredit
                     </h1>
-                    <DetailPAKTable document={pengajuan.document} />
+                    <DetailPAKTable
+                        data={pengajuan.document}
+                        collapse={false}
+                    />
                 </div>
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
@@ -137,16 +211,25 @@ export default function ModalCekValidasi({ pengajuan }) {
                 </div>
 
                 <div className="my-20">
-                    <div className="mb-2">
+                    <div className="flex justify-center w-1/3 gap-2 mx-auto mb-2 ">
                         <button
                             onClick={() => setMode("draw")}
-                            className="action-btn"
+                            className={
+                                "action-btn " +
+                                (mode === "draw" ? "bg-secondary" : "bg-white")
+                            }
                         >
                             Tulis TTD
+                            <PiSignature className="ml-1 scale-110" />
                         </button>
                         <button
                             onClick={() => setMode("upload")}
-                            className="action-btn "
+                            className={
+                                "action-btn " +
+                                (mode === "upload"
+                                    ? "bg-secondary"
+                                    : "bg-white")
+                            }
                         >
                             Upload Gambar
                         </button>
@@ -155,7 +238,7 @@ export default function ModalCekValidasi({ pengajuan }) {
                     {mode === "draw" && (
                         <>
                             <SignatureCanvas
-                                ref={sigPad}
+                                ref={sigCanvas}
                                 penColor="black"
                                 canvasProps={{
                                     width: 400,
@@ -164,18 +247,22 @@ export default function ModalCekValidasi({ pengajuan }) {
                                         "border border-accent p-2 m-2 rounded-md flex justify-center mx-auto",
                                 }}
                             />
-                            <button
-                                onClick={() => sigPad.current.clear()}
-                                className="mx-10 action-btn "
-                            >
-                                Clear
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                className="mx-10 action-btn"
-                            >
-                                Gunakan TTD Ini
-                            </button>
+
+                            <div className="flex justify-center w-1/3 gap-1 mx-auto mb-2">
+                                <button
+                                    onClick={() => sigCanvas.current.clear()}
+                                    className="mx-10 action-btn "
+                                >
+                                    Clear
+                                    <FaEraser className="" />
+                                </button>
+                                <button
+                                    onClick={handleUse}
+                                    className="mx-10 action-btn bg-hijau/50"
+                                >
+                                    Gunakan TTD Ini
+                                </button>
+                            </div>
                         </>
                     )}
 
@@ -183,6 +270,7 @@ export default function ModalCekValidasi({ pengajuan }) {
                         <input
                             type="file"
                             accept="image/*"
+                            className="mt-4"
                             onChange={(e) => {
                                 const reader = new FileReader();
                                 reader.onload = (event) =>
@@ -206,7 +294,7 @@ export default function ModalCekValidasi({ pengajuan }) {
                 </button>
 
                 <SuccessButton
-                    href
+                    onClick={handleApprove}
                     className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
                 >
                     <FaFileSignature className="w-4 h-4 fill-white " />

@@ -84,7 +84,9 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
     //Pengajuan PAK(Read, Approve,Reject)
     Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
         Route::get('', [PengajuanController::class, 'index'])->name('index');
-        Route::get('/approve', [PengajuanController::class, 'approve'])->name('approve');
+        Route::post('/approve', [PengajuanController::class, 'approve'])->name('approve');
+        // Test Preview
+        Route::get('/approved/show', [PengajuanController::class, 'approved_show'])->name('approved-show');
         Route::get('/reject', [PengajuanController::class, 'reject'])->name('reject');
         Route::get('/reject', [PengajuanController::class, 'view_pak'])->name('preview');
     });

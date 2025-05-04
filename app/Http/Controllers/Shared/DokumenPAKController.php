@@ -178,7 +178,7 @@ class DokumenPAKController extends Controller
     }
 
     // Fungsi rekursif untuk memproses semua elemen dalam array atau object
-    private function cleanAllData(&$array)
+    public function cleanAllData(&$array)
     {
         foreach ($array as &$value) {
             if (is_array($value) || is_object($value)) {
