@@ -17,51 +17,35 @@ export default function KonversiTable({
         }
     };
 
+    console.log("data")
+    console.log(data)
+
     useEffect(() => {
-        // Cek jika data pegawai belum tersedia, hentikan eksekusi
-        if (!pegawai || !pegawai["Jabatan/TMT"]) return;
-
-        const findAkNormatifValue = (jabatan) => {
-            const key = Object.keys(akNormatif).find((k) =>
-                jabatan.includes(k)
-            );
-            return key ? akNormatif[key] : null;
-        };
-
-        let akNormatifValue = findAkNormatifValue(pegawai["Jabatan/TMT"]);
-        data.ak_normatif = akNormatifValue;
-
-        // console.log("akNormatifValue", akNormatifValue);
+        if (!isEdit) {
+            const findAkNormatifValue = (jabatan) => {
+                const key = Object.keys(akNormatif).find((k) =>
+                    jabatan.includes(k)
+                );
+                return key ? akNormatif[key] : null;
+            };
+            if(pegawai) {
+                let akNormatifValue = findAkNormatifValue(pegawai["Jabatan/TMT"]);
+                data.ak_normatif = akNormatifValue;
+            }
+        }
     }, [pegawai]); // Tambahkan pegawai sebagai dependency jika datanya bisa berubah
 
-
     useEffect(() => {
+        console.log("isi konversi tabel pegawai");
+        console.log(pegawai);
+
         if (isEdit) {
             data.presentase = historyData["presentase"];
             data.angka_periode = historyData["angka_periode"];
             data.no_surat1 = historyData["no_surat1"];
-
-            // console.log("presentase")
-            // console.log(presentase)
+            data.ak_normatif = historyData["ak_normatif"];
         }
     }, []);
-    // Jabatan untuk sesuai Koefisien Pertahun/Ak Normatif
-
-    // useEffect(() => {
-    //     // const jabatanOnly = pegawai["Jabatan/TMT"].split("/")[0].trim();
-    //     const findAkNormatifValue = (jabatan) => {
-    //         const key = Object.keys(akNormatif).find((k) =>
-    //             jabatan.includes(k)
-    //         );
-    //         return key ? akNormatif[key] : null;
-    //     };
-
-    //     let akNormatifValue = findAkNormatifValue(pegawai["Jabatan/TMT"]);
-    //     data.ak_normatif = akNormatifValue;
-
-    //     // console.log("akNormatifValue");
-    //     // console.log(akNormatifValue);
-    // }, []);
 
     function hitungAk(periode, akNormatif, presentase) {
         const ak_kredit =
@@ -87,7 +71,7 @@ export default function KonversiTable({
         if (akNormatif == null) {
             // Ammbil dari inputan custom
             akNormatif = data.ak_normatif_ops;
-            data.ak_normatif = akNormatif
+            data.ak_normatif = akNormatif;
 
             // console.log("ak_ops");
             // console.log(akNormatif);
@@ -107,14 +91,11 @@ export default function KonversiTable({
         data.ak_normatif_ops,
     ]);
 
-
     useEffect(() => {
-        // data.predikat = predikat[data.presentase]
         setData("predikat", predikat[data.presentase]);
     }, [data.presentase]);
 
-    // data.predikat = predikat[data.presentase];
-    // console.log("historyData.tebusan1[pns]")
+    // console.log(historyData['pegawai'])
     // console.log(historyData.tebusan1["pns"])
 
     return (

@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Intervention\Image\Facades\Image;
+
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -59,16 +61,13 @@ class PengajuanController extends Controller
     // Simpan Pengajuan setelah diajukan
     public function store(Request $request)
     {
-
-        $PAK = RiwayatPAK::find($request->id);
-        $validated = [
-            "document_id" => $PAK->id,
-            "pegawai_id" => $PAK->pegawai_id,
-            // Logic Path nanti
-            "path" => "TES"
+        $rules = [
+            'riwayat_pak_id' => 'required|integer',
+            'pegawai_id' => 'required|integer',
         ];
+        $validated = $request->validate($rules);
         Pengajuan::create($validated);
-        return redirect()->back()->with('message', 'Berhasil Diajukan!');
+        return redirect()->back()->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
     }
 
 
@@ -115,68 +114,82 @@ class PengajuanController extends Controller
     // ===========================================================================================================================================
     public function approve(Request $request)
     {
+        // 1. Validasi request dan ambil data signature
         $request->validate([
             'id' => 'required|integer',
-            'signature' => 'required|string',
+            'signature' => $request->signatureType == 'upload'
+                ? 'required|file|image|max:2000'
+                : 'required|string',
         ]);
 
-        $data = Pengajuan::findOrFail($request->id);
+        // 2. Ambil Pengajuan dan Pegawai
+        $pengajuan = Pengajuan::findOrFail($request->id);
+        $pegawai = $pengajuan->pegawai;
 
-        // Simpan ke session
-        session([
-            'pak_preview' => [
-                'id' => $request->id,
-                'signature' => $request->signature
-            ]
+        // 3. Proses signature (Draw/Upload)
+        $base64Sig = $request->signatureType == 'upload'
+            ? 'data:' . $request->file('signature')->getMimeType() . ';base64,' . base64_encode(file_get_contents($request->file('signature')->getRealPath()))
+            : $request->signature;
+
+        // 4. Ambil dan bersihkan data dokumen
+        $data = $pengajuan->riwayat_pak ? json_decode(json_encode($pengajuan->riwayat_pak), true) : [];
+        (new DokumenPAKController())->cleanAllData($data);  // Membersihkan data jika perlu
+
+        // 5. Siapkan PDF untuk tanda tangan
+        $nama_pak = 'APPROVED_PAK_' . $pegawai['Nama'] . '-' . $pegawai['NIP'] . '.pdf';
+        $customF4Paper = array(0, 0, 595.28, 935.43);
+
+        $pdf = Pdf::loadView('pdf.approved-pak', [
+            'title' => $nama_pak,
+            'data' => $data,
+            'signature' => $base64Sig
+        ])
+            ->setPaper($customF4Paper, 'portrait')
+            ->setWarnings(false);
+
+        // 6. Simpan PDF ke folder
+        $pdfPath = storage_path('app/public/approved_pak/' . $nama_pak);
+        $pdf->save($pdfPath);
+
+        // 7. Update status pengajuan dan path PDF di database
+        $pengajuan->update([
+            'status' => 'divalidasi',
+            'approved_pak_path' => 'approved_pak/' . $nama_pak,
         ]);
 
-
-        // $request->validate([
-        //     'id' => 'required|integer',
-        //     'signature' => 'required|string', //ini sudah dalam bentuk data:image/png;base64,
-        // ]);
+        return redirect()->back(); // atau redirect ke halaman tertentu
+    }
 
 
-        // $data = Pengajuan::findOrFail($request->id);
-        // $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
-        // $customF4Paper = array(0, 0, 595.28, 935.43);
-        // $pdf = Pdf::loadView('pdf.approved-pak', [
-        //     "title" => $nama_pak,
-        //     "pegawai" => "pegawai",
-        //     "data" => $data, // Kirim data ke view
-        //     'signature' => $request->signature // apa request sig ny udah bisa diakses dan ditaruh disini >
-        // ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
 
-        // TODO: Logika save pdf pak yang sudah di validasi/ttd dalam pdf, pathnya nanti ditaruh di pengajuan
-        //  Tolong Logika Imagepath disini
-        // $imagePath = "";
-        // $pdfFileName = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK-Approved.pdf';
-        // $pdfStoragePath = "Approved_PAK/{$pdfFileName}";
-        // Storage::disk('public')->put($pdfStoragePath, $pdf->output());
-
-        // // Update Status Pengajuan setelah dikasi TTD
-        // $data->update([
-        //     "status" => "divalidasi",
-        //     "path" => "storage/{$pdfStoragePath}"
-        // ]);
-
-        // Testing Preview
-         // Simpan Ke local data;
-        // $pengajuan = $data;
-
-         // Kalo dibuka dr history(tanpa restore ke database)
-
-        // return redirect()->back()->with('message', 'Pengajuan PAK berhasil divalidasi!'); // atau redirect ke halaman tertentu
-        // return redirect()->route('pimpinan.pengajuan.preview');
+    public function reject(Pengajuan $pengajuan)
+    {
+        $pengajuan->update(['status' => 'ditolak']);
+        // dd($pengajuan); //ISI ny malah data model doang tanpa field dan id
+        // TODO: Tambahin logic catatan dr pimpinan disni
+        return redirect()->back()->with('message', 'Pengajuan Berhasil Ditolak!'); // atau redirect ke halaman tertentu
 
     }
 
-    public function reject(Request $request)
+    public function cancel(Pengajuan $pengajuan)
     {
+        // dd($pengajuan);
+        // Ambil path file yang akan dihapus
+        $filePath = $pengajuan->approved_pak_path;
 
+        // Hapus file dari storage jika ada
+        if ($filePath && Storage::disk('public')->exists($filePath)) {
+            Storage::disk('public')->delete($filePath);
+        }
 
-        return redirect()->back()->with('message', 'TTD berhasil diupload!'); // atau redirect ke halaman tertentu
+        // Update kolom status dan kosongkan path file
+        $pengajuan->update([
+            "status" => 'diajukan',
+            "approved_pak_path" => null,
+        ]);
 
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('message', 'Validasi pengajuan berhasil dibatalkan');
     }
 
     public function approved_show()
@@ -189,26 +202,23 @@ class PengajuanController extends Controller
 
 
         $pengajuan = Pengajuan::findOrFail($preview['id']);
-        $data = [] ;
+        $data = [];
         $data["pegawai"] = $pengajuan->pegawai;
-        if ($pengajuan->document) {
-            $documentArray = json_decode(json_encode($pengajuan->document), true);
+        if ($pengajuan->riwayat_pak) {
+            $documentArray = json_decode(json_encode($pengajuan->riwayat_pak), true);
             foreach ($documentArray as $key => $value) {
                 $data[$key] = $value;
             }
         }
 
         // dd($data);
-        // Perbarui nilai total_dicetak dengan menambahkannya 1
 
         // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
         $dokumenPAK = new DokumenPAKController();
         $dokumenPAK->cleanAllData($data);
-        // dd($cleanedData);
-
 
         // Buat PDF SIZE F4
-        $nama_pak ='APPROVED' . $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
+        $nama_pak = 'APPROVED' . $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
         $customF4Paper = array(0, 0, 595.28, 935.43);
         $pdf = Pdf::loadView('pdf.approved-pak', [
             "title" => $nama_pak,
@@ -216,52 +226,9 @@ class PengajuanController extends Controller
             'signature' => $preview['signature']
         ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
 
-        // Stream PDF
-        // return $pdf->stream($nama_pak);
         return response($pdf->output())
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="' . $nama_pak . '"')
             ->header('X-Frame-Options', 'SAMEORIGIN');
     }
-    // public function preview(Request $request)
-    // {
-    //     $request->validate([
-    //         'id' => 'required|integer',
-    //         'signature' => 'required|string', //ini sudah dalam bentuk data:image/png;base64,
-    //     ]);
-
-
-    //     $pengajuan = Pengajuan::findOrFail($request->id);
-    //     $data = [] ;
-    //     $data["pegawai"] = $pengajuan->pegawai;
-    //     if ($pengajuan->document) {
-    //         $documentArray = json_decode(json_encode($pengajuan->document), true);
-    //         foreach ($documentArray as $key => $value) {
-    //             $data[$key] = $value;
-    //         }
-    //     }
-
-    //     // Perbarui nilai total_dicetak dengan menambahkannya 1
-
-    //     // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
-    //     $dokumenPAK = new DokumenPAKController();
-    //     $cleanedData = $dokumenPAK->cleanAllData($data);
-
-
-    //     // Buat PDF SIZE F4
-    //     $nama_pak ='APPROVED' . $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
-    //     $customF4Paper = array(0, 0, 595.28, 935.43);
-    //     $pdf = Pdf::loadView('pdf.approved-pak', [
-    //         "title" => $nama_pak,
-    //         "pegawai" => "pegawai",
-    //         "data" => $cleanedData, // Kirim data ke view
-    //     ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
-
-    //     // Stream PDF
-    //     // return $pdf->stream($nama_pak);
-    //     return response($pdf->output())
-    //         ->header('Content-Type', 'application/pdf')
-    //         ->header('Content-Disposition', 'inline; filename="' . $nama_pak . '"')
-    //         ->header('X-Frame-Options', 'SAMEORIGIN');
-    // }
 }

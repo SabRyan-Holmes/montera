@@ -56,7 +56,7 @@ class DokumenPAKController extends Controller
         $nip = $request->query('NIP');
         $pegawai = $nip ? Pegawai::where('NIP', $nip)->first() : null;
 
-        return Inertia::render('RiwayatPAK/Create', [
+        return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Penetapan Angka Kredit',
             'pegawai' => $pegawai,
             'pegawaiList' => Pegawai::select('NIP', 'Nama')->latest()->get(),
@@ -68,18 +68,17 @@ class DokumenPAKController extends Controller
     {
         Session::put('data', $pegawai);
         return redirect()->back();
-        // return Inertia::render('RiwayatPAK/Create', [
-        //     "title" => "Cetak Dokumen PAK ",
-        //     'pegawai' => $pegawai,
-        //     'koefisien' => Koefisien::select('jabatan', 'nilai')->get()
-        // ]);
     }
 
-    public function edit(Pegawai $pegawai)
+    public function edit(Request $request)
     {
-        return Inertia::render('RiwayatPAK/Create', [
-            "title" => "Edit Riwayat Dokumen PAK",
-            'pegawai' => $pegawai
+
+        $riwayat = RiwayatPAK::findOrFail($request->id);
+        return Inertia::render('RiwayatPAK/CreateOrEdit', [
+            'title' => 'Edit Penetapan Angka Kredit',
+            'riwayat' => $riwayat,
+            'koefisien' => Koefisien::select('jabatan', 'nilai')->get(),
+            'isEdit' => true
         ]);
     }
 
@@ -87,7 +86,6 @@ class DokumenPAKController extends Controller
     {
         // Simpan Ke local data;
         Session::put('data', $request->all());
-
         // Kalo dibuka dr history(tanpa restore ke database)
         if (!isset($request->id)) {
             $dataForStore = $request->except('pegawai');
@@ -99,17 +97,17 @@ class DokumenPAKController extends Controller
     public function preview()
     {
         $data = Session::get('data');
-        // dd($data);
 
         // Perbarui nilai total_dicetak dengan menambahkannya 1
         $userId = Auth::user()->id;
         User::where('id', $userId)
-            ->update([
-                'jumlah_dicetak' => DB::raw('jumlah_dicetak + 1')
-            ]);
+        ->update([
+            'jumlah_dicetak' => DB::raw('jumlah_dicetak + 1')
+        ]);
 
         // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
         $this->cleanAllData($data);
+        // dd($data);
 
 
         // Buat PDF SIZE F4
@@ -154,7 +152,7 @@ class DokumenPAKController extends Controller
             $dataForStore['pegawai_id'] = $pegawai_id;
             $newPAK = RiwayatPAK::create($dataForStore);
             $validated = [
-                "document_id" => $newPAK->id,
+                "pak_id" => $newPAK->id,
                 "pegawai_id" => $newPAK->pegawai_id,
                 "pengaju_id" => Auth::user()->id,
                 // Logic Path nanti

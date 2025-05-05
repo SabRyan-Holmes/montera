@@ -20,6 +20,10 @@ class UserSeeder extends Seeder
             'nip' => '198807032011012019',
             'role' => 'divisi_sdm',
             'email' => 'sdm.bps1500@gmail.com',
+            'jumlah' => [
+                'ditetapkan' => 0,
+                'divalidasi' => 0,
+            ],
             'password' => Hash::make('tanpaair21'),
             'remember_token' => Str::random(10),
         ]);
@@ -29,6 +33,10 @@ class UserSeeder extends Seeder
             'nip' => '1000000000000000',
             'role' => "pimpinan",
             'email' => 'pimpinan.bps1500@gmail.com',
+            'jumlah' => [
+                'ditetapkan' => 0,
+                'divalidasi' => 0,
+            ],
             'password' => Hash::make('passwordpimpinan'),
             'remember_token' => Str::random(10),
         ]);
@@ -38,6 +46,10 @@ class UserSeeder extends Seeder
             'role' => "divisi_sdm",
             'nip' => '198711082006042002',
             'email' => 'siti_marfuah@gmail.com',
+            'jumlah' => [
+                'ditetapkan' => 0,
+                'divalidasi' => 0,
+            ],
             'password' => Hash::make('passwordsiti'),
             'remember_token' => Str::random(10),
         ]);

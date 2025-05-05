@@ -11,6 +11,7 @@ import { Link, router } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import {
     InputLabel,
+    Pagination,
     PrimaryButton,
     TooltipHover,
     useFilterSearch,
@@ -55,26 +56,49 @@ export default function Index({
 
     // ===========================================Handling Pop Up,Dialog & Message===========================================
     // SWAL POP UP
+    const [modalMessage, setModalMessage] = useState(null);
+    const [activeModalId, setActiveModalId] = useState(null);
+    // Cek message dan status modal
     useEffect(() => {
         if (flash.message) {
-            Swal.fire({
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
+            if (activeModalId !== null) {
+                Swal.fire({
+                    target: `#DialogCekValidasi-${activeModalId}`,
+                    title: "Berhasil!",
+                    text: `${flash.message}`,
+                    icon: "success",
+                    iconColor: "#50C878",
+                    confirmButtonText: "Oke",
+                    confirmButtonColor: "#2D95C9",
+                });
+                // Kirim pesan ke modal tertentu saja
+                setModalMessage(flash.message);
+            } else {
+                // Tampilkan Swal global
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: `${flash.message}`,
+                    icon: "success",
+                    iconColor: "#50C878",
+                    confirmButtonText: "Oke",
+                    confirmButtonColor: "#2D95C9",
+                });
+            }
+
             setTimeout(() => {
                 flash.message = null;
             }, 3000);
         }
-    }, [flash.message]);
+    }, [flash.message, activeModalId]);
 
-    function handleCancel(id) {
+
+
+    const handleReject = (id) => {
+        console.log("isi id di handleReject");
+        console.log(id);
         Swal.fire({
             icon: "warning",
-            text: "Anda yakin ingin membatalkan pengajuan ini?",
+            text: "Anda yakin ingin menolak pengajuan ini?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
@@ -88,21 +112,19 @@ export default function Index({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("divisi-sdm.pengajuan.destroy", id), {
+                router.post(route("pimpinan.pengajuan.reject", id), {
                     onSuccess: () => {
-                        // console.log(
-                        //     "data pegawai dengan id ",
-                        //     id,
-                        //     "berhasil di delete!"
-                        // );
+                        //
                     },
                     onError: () => {
-                        console.log("Gagal Menghapus Data");
+                        console.log("Gagal Menolak Pengajuan");
                     },
                 });
             }
         });
-    }
+    };
+    console.log("activeModalId");
+    console.log(activeModalId);
 
     // ===========================================Handling Search & Filter===========================================
     const {
@@ -224,7 +246,7 @@ export default function Index({
                                         <td className="text-center">{i + 1}</td>
                                         <td>
                                             {" "}
-                                            {pengajuan.document["no_surat3"]}
+                                            {pengajuan.riwayat_pak["no_surat3"]}
                                         </td>
                                         <td>{pengajuan.pegawai["Nama"]}</td>
                                         {/* <td>{pengajuan.pegawai["Nomor Seri Karpeg"]}</td> */}
@@ -235,7 +257,7 @@ export default function Index({
                                         </td>{" "}
                                         <td className="text-center">
                                             {parseFloat(
-                                                pengajuan.document["jakk"][
+                                                pengajuan.riwayat_pak["jakk"][
                                                     "jumlah"
                                                 ]
                                             ).toFixed(3)}
@@ -253,16 +275,16 @@ export default function Index({
                                             {/* Konten teks */}
                                             <span>
                                                 {expandedRows[pengajuan.id]
-                                                    ? pengajuan.document[
+                                                    ? pengajuan.riwayat_pak[
                                                           "kesimpulan"
                                                       ]
-                                                    : pengajuan.document[
+                                                    : pengajuan.riwayat_pak[
                                                           "kesimpulan"
                                                       ].length > 50
-                                                    ? pengajuan.document[
+                                                    ? pengajuan.riwayat_pak[
                                                           "kesimpulan"
                                                       ].slice(0, 50) + "..."
-                                                    : pengajuan.document[
+                                                    : pengajuan.riwayat_pak[
                                                           "kesimpulan"
                                                       ]}
                                             </span>
@@ -284,7 +306,7 @@ export default function Index({
                                                 "diajukan" && (
                                                 <button
                                                     disabled
-                                                    className=" label-base bg-accent/50 group-hover/item:text-white text-slate-500"
+                                                    className="label-base bg-accent/50 text-slate-500"
                                                 >
                                                     DIPROSES
                                                     <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
@@ -293,50 +315,87 @@ export default function Index({
 
                                             {pengajuan.status ===
                                                 "divalidasi" && (
-                                                <a
-                                                    disabled
-                                                    className="gap-2 cursor-default group-hover/item:text-white group-hover/item:bg-hijau text-slate-500 action-btn bg-success/50 label-base"
-                                                >
+                                                <a className="label-base bg-success text-slate-500">
                                                     DIVALIDASI
-                                                    <FaCheck className="w-4 h-4 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
+                                                    <FaCheck className="w-4 h-4 stroke-slate-400 " />
                                                 </a>
                                             )}
-
-                                            {/*
-                                                <button className="inline-flex items-center justify-center group-hover/item:text-white group-hover/item:bg-success text-slate-500 action-btn bg-success/70 label-base ">
+                                            {pengajuan.status === "ditolak" && (
+                                                <a className="bg-red-500/80 label-base text-slate-500">
                                                     DITOLAK
-                                                    <RiLoader2Fill className="w-6 h-6 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                                </button> */}
+                                                    <FaCheck className="w-4 h-4 fill-slate-500 stroke-slate-500 " />
+                                                </a>
+                                            )}
                                         </td>
                                         {canValidate ? (
                                             <td className="text-center whitespace-nowrap text-nowrap">
-                                                {" "}
                                                 {/* Actor Pimpinan */}
+
                                                 {/* Dialog Cek dan Validasi, Membuat Tanda Tangan/sign, dan melihat PDF */}
-                                                <ModalCekValidasi
-                                                    pengajuan={pengajuan}
-                                                />
-                                                <button
-                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau"
-                                                    onClick={() =>
-                                                        document
-                                                            .getElementById(
-                                                                `DialogCekValidasi-${pengajuan.id}`
-                                                            )
-                                                            .showModal()
-                                                    }
-                                                >
-                                                    Cek & Validasi
-                                                    <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
-                                                </button>
-                                                <span className="inline-block mx-3"></span>
-                                                <Link
-                                                    as="a"
-                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-warning/80 group-hover/item:text-white text-warning/80"
-                                                >
-                                                    Tolak{" "}
-                                                    <IoCloseOutline className="w-6 h-6 fill-secondary stroke-warning/80 group-hover/item:stroke-white" />
-                                                </Link>
+                                                {/* Jika Belum divalidasi */}
+                                                {pengajuan.status ==
+                                                "diajukan" ? (
+                                                    <>
+                                                        <ModalCekValidasi
+                                                            pengajuan={
+                                                                pengajuan
+                                                            }
+                                                            setActiveModalId={setActiveModalId}
+                                                            message={
+                                                                modalMessage
+                                                            }
+                                                        />
+                                                        <button
+                                                            className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
+                                                            onClick={() => {
+                                                                setActiveModalId(
+                                                                    pengajuan.id
+                                                                );
+                                                                document
+                                                                    .getElementById(
+                                                                        `DialogCekValidasi-${pengajuan.id}`
+                                                                    )
+                                                                    .showModal();
+                                                            }}
+                                                        >
+                                                            Cek & Validasi
+                                                            <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
+                                                        </button>
+                                                        <span className="inline-block mx-3"></span>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleReject(
+                                                                    pengajuan.id
+                                                                )
+                                                            }
+                                                            className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-warning/80 group-hover/item:text-white text-warning/80"
+                                                        >
+                                                            Tolak{" "}
+                                                            <IoCloseOutline className="w-6 h-6 fill-secondary stroke-warning/80 group-hover/item:stroke-white" />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ModalCekValidasi
+                                                            pengajuan={
+                                                                pengajuan
+                                                            }
+                                                        />
+                                                        <button
+                                                            className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-hijau group-hover/item:text-white text-hijau"
+                                                            onClick={() =>
+                                                                document
+                                                                    .getElementById(
+                                                                        `DialogCekValidasi-${pengajuan.id}`
+                                                                    )
+                                                                    .showModal()
+                                                            }
+                                                        >
+                                                            Lihat Detail
+                                                            <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </td>
                                         ) : (
                                             <td className="text-center whitespace-nowrap text-nowrap">
@@ -387,7 +446,7 @@ export default function Index({
                                                                 );
                                                             }}
                                                             data={
-                                                                pengajuan.document
+                                                                pengajuan.riwayat_pak
                                                             }
                                                             method="post"
                                                             className="items-center  justify-center inline-block gap-2 mx-auto font-medium text-center  hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
@@ -433,60 +492,19 @@ export default function Index({
                     )}
                 </div>
 
-                {pengajuans.data.length > 0 && (
-                    // Pagination
-                    <div className="mb-8 text-sm box-footer">
-                        <div className="items-center justify-between sm:flex">
-                            <div className="flex items-center text-xs">
-                                showing {pengajuans.data.length} Entries{" "}
-                                <TiArrowRight className="w-5 h-5" />
-                            </div>
-                            <ReactPaginate
-                                breakLabel={<span>...</span>}
-                                nextLabel={
-                                    pengajuans.next_page_url && (
-                                        <a
-                                            className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                            href={pengajuans.next_page_url}
-                                            onClick={() => setNum(num + 1)}
-                                        >
-                                            <span className="sr-only">
-                                                Next
-                                            </span>
-                                            <span aria-hidden="true">Next</span>
-                                            <MdOutlineKeyboardDoubleArrowRight className="w-4 h-4 -ml-1 fill-primary group-hover/next:fill-white" />
-                                        </a>
-                                    )
-                                }
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={1}
-                                pageCount={pengajuans.last_page}
-                                previousLabel={
-                                    pengajuans.prev_page_url && (
-                                        <a
-                                            className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                            href={pengajuans.next_page_url}
-                                            onClick={() => setNum(num + 1)}
-                                        >
-                                            <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
-                                            <span className="sr-only">
-                                                Prev
-                                            </span>
-                                            <span aria-hidden="true">Prev</span>
-                                        </a>
-                                    )
-                                }
-                                renderOnZeroPageCount={null}
-                                containerClassName={
-                                    "flex items-center text-center justify-center mt-8 mb-4 gap-4 "
-                                }
-                                pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
-                                activeClassName="bg-primary text-white"
-                                className="flex justify-end gap-2"
-                            />
-                        </div>
-                    </div>
-                )}
+                {/* Pagination */}
+                <Pagination
+                    datas={pengajuans}
+                    urlRoute={
+                        (canValidate ? "/pimpinan" : "/divisi-sdm") +
+                        "/pengajuan"
+                    }
+                    filters={{
+                        filter1: byDaerah,
+                        filter2: byJabatan,
+                        filterSearch: search,
+                    }}
+                />
             </section>
         </Authenticated>
     );

@@ -1,7 +1,12 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
-import { DetailPegawai, PrimaryButton, SecondaryButton, SuccessButton } from "@/Components";
+import {
+    DetailPegawai,
+    PrimaryButton,
+    SecondaryButton,
+    SuccessButton,
+} from "@/Components";
 import {
     InputDataTable,
     KonversiTable,
@@ -13,126 +18,31 @@ import { FaSave, FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
+import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
+import { IoCloseOutline } from "react-icons/io5";
 
-export default function Edit({ auth, title, riwayat, flash }) {
-    const pegawai = riwayat.pegawai;
-    const { data, setData, post, processing, errors, reset } = useForm({
-        id: riwayat.id,
-        pegawai: pegawai,
-        // Input Data
-        nama: "Agus Sudibyo, M.Stat",
-        nip: "197412311996121001",
-        periode_mulai: 0, //Default: Januari
-        periode_berakhir: 0, //Default Februari
-        tahun_periode: "",
+export default function Edit({ auth, title, riwayat, koefisien, flash }) {
+    const [pegawai, setPegawai] = useState("");
+    useEffect(() => {
+        data.id = riwayat.id;
+        data.pegawai = riwayat.pegawai;
+        setPegawai(riwayat.pegawai);
+    }, []);
 
-        angka_periode: 0,
-        tgl_ditetapkan: "",
-        penanda_tangan: "",
+    // =============================================================Aturan Penetapan==============================================
 
-        // Konversi Predikat
-        no_surat1: "",
-        predikat: "Baik",
-        presentase: 100,
-        ak_normatif: 0, //Koefisien pertahun || Dipakai juga untuk Akumalasi AK
-        angka_kredit: 0, //Angka Kredit || Dipakai juga untuk Akumalasi AK
-        ak_normatif_ops: 0, //AK Normatif opsional(jika tidak ada)
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        predikat,
+        akNormatif,
+    } = UseAturanPenetapan(koefisien);
 
-        tebusan1: {
-            kepala_reg: false,
-            sekretaris: false,
-            kepala_bps: false,
-            pns: false,
-            kepala_biro: false,
-            arsip: false,
-        },
-
-        // Akumulasi angka kredit
-        no_surat2: "",
-        // ak_normatif: 0,
-        // angka_kredit: 0,
-        ak_terakhir: 0,
-        jumlah_ak_kredit: 0,
-        tahun_terakhir: "",
-        tahun_ini: "",
-
-        tebusan2: {
-            kepala_reg: false,
-            sekretaris: false,
-            kepala_bps: false,
-            pns: false,
-            kepala_biro: false,
-            arsip: false,
-        },
-
-        // Penetapan Angka Kredit
-        no_surat3: "",
-        ak_dasar: {
-            tipe_ak: "AK Dasar yang diberikan",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_jf: {
-            tipe_ak: "AK JF Lama",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_penyesuaian: {
-            tipe_ak: "AK Penyesuaian/ Penyetsaraan",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_konversi: {
-            tipe_ak: "AK Konversi",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_peningkatan: {
-            tipe_ak: "AK yang diperoleh dari Peningkatan yang diberikan",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-
-        // Menampung Tambahan Kolom
-        ak_tipe_tambahan: {},
-
-        // Jumlah Angka Kredit Kumulatif
-        jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
-
-        // tambahan
-        pangkat: 50,
-        jabatan: 100,
-        // Kelebihan/Kekurangan
-        pangkat_keker: "",
-        jabatan_keker: "",
-
-        tebusan3: {
-            kepala_reg: false,
-            sekretaris: false,
-            kepala_bps: false,
-            pns: false,
-            kepala_biro: false,
-            arsip: false,
-        },
-
-        kesimpulan: "Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi",
-    });
-
-    const predikat = {
-        75: "Cukup",
-        100: "Baik",
-        150: "Sangat Baik",
-    };
+    // =============================================================Pop Up, Dialog SWAL==============================================
 
     const Toast = Swal.mixin({
         toast: true,
@@ -147,11 +57,25 @@ export default function Edit({ auth, title, riwayat, flash }) {
     });
 
     useEffect(() => {
+        if (flash.message) {
+            Swal.fire({
+                title: "Berhasil!",
+                text: `${flash.message}`,
+                icon: "success",
+                iconColor: "#50C878",
+                confirmButtonText: "Oke",
+                confirmButtonColor: "#2D95C9",
+            });
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
+        }
+    }, [flash.message]);
+
+    useEffect(() => {
         if (errors && Object.values(errors).length > 0) {
             // Ambil nilai pertama dari object errors
             const firstErrorMessage = Object.values(errors)[0];
-            // console.log("firstErrorMessage :");
-            // console.log(firstErrorMessage);
             Toast.fire({
                 icon: "warning",
                 iconColor: "#fb7185",
@@ -161,73 +85,61 @@ export default function Edit({ auth, title, riwayat, flash }) {
         }
     }, [errors]);
 
-    const props = usePage().props;
+    const [showIframe, setShowIframe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const submit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        data.id = riwayat.id
+        data.pegawai = riwayat.pegawai
+        const action = e.nativeEvent.submitter.value;
 
-        router.post(
-            "/divisi-sdm/pak/process",
-            data,
-            {
-                preserveScroll: true,
-                preserveState: true,
-                onFinish: () => setIsLoading(false),
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                },
-            }
-        );
+        let endpoint = "";
+
+        if (action === "preview") {
+            endpoint = "/pak/process";
+        } else if (action === "save") {
+            endpoint = "/divisi-sdm/pak/save";
+        } else if (action === "save_submit") {
+            endpoint = "/divisi-sdm/pak/save-and-submit";
+        }
+
+        router.post(endpoint, data, {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => setIsLoading(true),
+            onFinish: () => setIsLoading(false),
+            onError: (errors) => {
+                console.error("Error:", errors);
+            },
+            onSuccess: (page) => {
+                if (action === "preview") setShowIframe(true);
+                // Tambah logic lain sesuai tombolnya
+            },
+        });
     };
 
     const submitUpdate = (e) => {
         e.preventDefault();
         setIsLoading(true);
 
-        post(route("divisi-sdm.riwayat-pak.update", riwayat.id),{
+        post(route("divisi-sdm.riwayat-pak.update", riwayat.id), {
             preserveScroll: true,
-                preserveState: true,
-                onFinish: () => setIsLoading(false),
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                },
-
+            preserveState: true,
+            onFinish: () => setIsLoading(false),
+            onError: (errors) => {
+                console.error("Error:", errors);
+            },
         });
-
-
     };
-
-    // Jabatan untuk sesuai Koefisien Pertahun
-    const akNormatif = {
-        Terampil: 5,
-        Mahir: 12.5,
-        Penyelia: 25,
-        Pertama: 12.5,
-        Muda: 25,
-        Madya: 37.5,
-    };
-
-    useEffect(() => {
-        if (flash.message) {
-            Toast.fire({
-                icon: "success",
-                title: "Data Pegawai Berhasil Diupdate!!",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
 
     // CONSOLE
     // console.log("Isi data");
     // console.log(data);
     // console.log("Isi Error");
     // console.log(errors);
-
-
+    console.log("Isi state pegawai");
+    console.log(pegawai);
 
     return (
         <Authenticated
@@ -236,6 +148,39 @@ export default function Edit({ auth, title, riwayat, flash }) {
             current={route().current()}
         >
             <section className="m-10 ">
+                {/* Preview PDF di iframe */}
+                {showIframe && (
+                    <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                        <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                            {/* Tombol Close */}
+                            <button
+                                className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
+                                onClick={() => setShowIframe(false)}
+                            >
+                                <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
+                            </button>
+
+                            {/* Loading Spinner (DaisyUI) */}
+                            {isLoading && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70">
+                                    <span className="loading loading-spinner loading-lg text-primary"></span>
+                                </div>
+                            )}
+
+                            {/* Iframe */}
+                            <iframe
+                                src={route("pak.preview")}
+                                width="100%"
+                                height="100%"
+                                className="border-0"
+                                onLoad={() => setIsLoading(false)} // stop loading setelah iframe ready
+                            ></iframe>
+                        </div>
+                    </div>
+                )}
+
+                {/* Preview PDF di iframe */}
+
                 <div className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
                         <ul>
@@ -251,7 +196,7 @@ export default function Edit({ auth, title, riwayat, flash }) {
 
                             <li>
                                 <span className="inline-flex items-center gap-2">
-                                    {"pegawai.Nama"}
+                                    {pegawai.Nama}
                                 </span>
                             </li>
                         </ul>
@@ -264,9 +209,6 @@ export default function Edit({ auth, title, riwayat, flash }) {
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
                 </div>
-                {/* <h1 className="my-10 text-2xl font-[550] capitalize ">
-                    Data Pegawai Untuk Pencetakan PAK
-                </h1> */}
 
                 <div className="px-2 mx-auto overflow-x-auto">
                     <h1 className="text-2xl font-medium my-7">

@@ -68,8 +68,8 @@ export default function AkumulasiTable({
     // console.log("historyData[jumlah_ak_kredit]");
     // console.log(historyData["jumlah_ak_kredit"]);
     // console.log("data.jumlah_ak_kredit");
-    console.log("data.angka_kredit");
-    console.log(data.angka_kredit);
+    // console.log("data.angka_kredit");
+    // console.log(data.angka_kredit);
 
     return (
         <table className="table text-base table-bordered">

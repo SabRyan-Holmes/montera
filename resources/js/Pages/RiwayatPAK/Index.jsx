@@ -14,6 +14,7 @@ import { FaEdit } from "react-icons/fa";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import Show from "./Show";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
+import { BsFillSendFill } from "react-icons/bs";
 
 export default function Index({
     auth,
@@ -91,8 +92,8 @@ export default function Index({
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on riwayatPAK.kesimpulan
     const [showIframe, setShowIframe] = useState(false);
 
-    console.log('subtitle')
-    console.log(subTitle)
+    console.log("subtitle");
+    console.log(subTitle);
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
@@ -196,7 +197,6 @@ export default function Index({
                                             </td>
                                             <td> {pak["no_surat3"]}</td>
                                             <td>{pak.pegawai["Nama"]}</td>
-                                            {/* <td>{pak.pegawai["Nomor Seri Karpeg"]}</td> */}
                                             <td>
                                                 {pak.pegawai["Jabatan/TMT"]
                                                     .split("/")[0]
@@ -246,6 +246,33 @@ export default function Index({
                                                     <Link
                                                         as="button"
                                                         href={route(
+                                                            "divisi-sdm.pengajuan.store"
+                                                        )}
+                                                        data={{
+                                                            riwayat_pak_id:
+                                                                pak.id,
+                                                            pegawai_id:
+                                                                pak.pegawai_id,
+                                                        }}
+                                                        method="post"
+                                                        className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
+                                                    >
+                                                        <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
+                                                    </Link>{" "}
+                                                    {/* Tooltip Hover  */}
+                                                    <TooltipHover
+                                                        message={
+                                                            "Ajukan ke Pimpinan"
+                                                        }
+                                                    />
+                                                </div>
+                                                <span className="inline-block mx-1"></span>
+
+                                                {/* VIEW PAK */}
+                                                {/* <div className="relative inline-flex group">
+                                                    <Link
+                                                        as="button"
+                                                        href={route(
                                                             "pak.process"
                                                         )}
                                                         onSuccess={() => {
@@ -257,16 +284,15 @@ export default function Index({
                                                     >
                                                         <FaFilePdf className="scale-125 fill-primary/70 group-hover/item:fill-white" />
                                                     </Link>{" "}
-                                                    {/* Tooltip Hover  */}
                                                     <TooltipHover
                                                         message={
                                                             "Lihat Tampilan PDF"
                                                         }
                                                     />
                                                 </div>
-                                                <span className="inline-block mx-1"></span>
+                                                <span className="inline-block mx-1"></span> */}
 
-                                                {/* VIEW PAK */}
+                                                {/* Dialog Show Modal */}
                                                 <div className="relative inline-flex group">
                                                     <button
                                                         onClick={() =>
@@ -293,9 +319,9 @@ export default function Index({
                                                     <Link
                                                         as="a"
                                                         href={route(
-                                                            "divisi-sdm.riwayat-pak.edit",
-                                                            pak.id
+                                                            "divisi-sdm.pak.edit", {id : pak.id}
                                                         )}
+
                                                         className="action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70"
                                                     >
                                                         <FaEdit className=" fill-secondary group-hover/item:fill-white" />
@@ -326,8 +352,6 @@ export default function Index({
                                     ))}
                                 </tbody>
                             </table>
-
-
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">

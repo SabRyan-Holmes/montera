@@ -83,12 +83,11 @@ class RiwayatPAKController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RiwayatPAK $riwayat)
+    public function edit(Request $request)
     {
-        // dd($riwayat);
-        return Inertia::render('RiwayatPAK/Edit', [
-            'title' => 'Edit Riwayat Pencetakan Dokumen PAK',
-            // riwayat->with('pegawai)
+        $riwayat = RiwayatPAK::findOrFail($request->id);
+        return Inertia::render('RiwayatPAK/CreateOrEdit', [
+            'title' => 'Edit Penetapan Angka Kredit',
             'riwayat' => $riwayat
         ]);
     }
@@ -99,13 +98,15 @@ class RiwayatPAKController extends Controller
     public function update(Request $request, RiwayatPAK $riwayat)
     {
         // Update data berdasarkan ID
+        // dd($riwayat);
         if (!$riwayat) {
             return back()->withErrors('Data yang ingin diupdate tidak ditemukan.');
         }
 
         $riwayat->update($request->all());
 
-        return Redirect::route('riwayat-pak.index', $riwayat->pegawai["NIP"])->with('message', 'Data Riwayat Berhasil Diupdate!');
+        // return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Riwayat Berhasil Diupdate!');
+        return redirect()->back()->with('message', 'Data Penetapan Angka Kredit Berhasil Diupdate!');
     }
 
     /**
@@ -149,7 +150,7 @@ class RiwayatPAKController extends Controller
             'pegawai' => $pegawai,
             'RiwayatPAK' => RiwayatPAK::where('pegawai_id', $pegawai->id)->get(),
             // Ambil semua pengajuan berdasarkan id Pegawai lalu ambil semua document Id dan dimasukkan ke dalam Array
-            'pengajuans' => Pengajuan::where('pegawai_id', $pegawai->id)->pluck('document_id')->toArray(),
+            'pengajuans' => Pengajuan::where('pegawai_id', $pegawai->id)->pluck('pak_id')->toArray(),
         ]);
     }
 

@@ -1,6 +1,6 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { router, useForm, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import {
     DetailPegawai,
     PrimaryButton,
@@ -19,126 +19,37 @@ import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
+import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
 
-export default function Index({ auth, pegawai, koefisien, title, flash }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        pegawai: pegawai,
-        // Input Data
-        nama: "Agus Sudibyo, M.Stat",
-        nip: "197412311996121001",
-        periode_mulai: 0, //Default: Januari
-        periode_berakhir: 0, //Default Februari
+export default function Index({
+    auth,
+    koefisien,
+    title,
+    flash,
+    pegawai,
+    pegawaiList,
+}) {
+    // =============================================================Aturan Penetapan==============================================
+    // IF EDIT
+    useEffect(() => {
+        data.id = riwayat.id;
+        data.pegawai = riwayat.pegawai;
+        setPegawai(riwayat.pegawai);
+    }, []);
 
-        angka_periode: 0,
-        tgl_ditetapkan: "",
-        penanda_tangan: "",
 
-        // Konversi Predikat
-        no_surat1: "",
-        predikat: "Baik",
-        presentase: 100,
-        ak_normatif: 0, //Koefisien pertahun || Dipakai juga untuk Akumalasi AK
-        angka_kredit: 0, //Angka Kredit || Dipakai juga untuk Akumalasi AK
-        ak_normatif_ops: 0, //AK Normatif opsional(jika tidak ada)
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        predikat,
+        akNormatif,
+    } = UseAturanPenetapan(koefisien);
 
-        tebusan1: {
-            kepala_reg: false,
-            sekretaris: false,
-            kepala_bps: false,
-            pns: false,
-            kepala_biro: false,
-            arsip: false,
-        },
-
-        // Akumulasi angka kredit
-        no_surat2: "",
-        // ak_normatif: 0,
-        // angka_kredit: 0,
-        ak_terakhir: 0,
-        jumlah_ak_kredit: 0,
-        tahun_terakhir: "",
-        tahun_ini: "",
-
-        tebusan2: {
-            kepala_reg: false,
-            sekretaris: false,
-            kepala_bps: false,
-            pns: false,
-            kepala_biro: false,
-            arsip: false,
-        },
-
-        // Penetapan Angka Kredit
-        no_surat3: "",
-        ak_dasar: {
-            tipe_ak: "AK Dasar yang diberikan",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_jf: {
-            tipe_ak: "AK JF Lama",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_penyesuaian: {
-            tipe_ak: "AK Penyesuaian/ Penyetsaraan",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_konversi: {
-            tipe_ak: "AK Konversi",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-        ak_peningkatan: {
-            tipe_ak: "AK yang diperoleh dari Peningkatan yang diberikan",
-            lama: 0,
-            baru: 0,
-            jumlah: 0,
-            keterangan: "",
-        },
-
-        // Menampung Tambahan Kolom
-        ak_tipe_tambahan: {},
-
-        // Jumlah Angka Kredit Kumulatif
-        jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
-
-        // tambahan
-        pangkat: 50,
-        jabatan: 100,
-        // Kelebihan/Kekurangan
-        pangkat_keker: "",
-        jabatan_keker: "",
-
-        tebusan3: {
-            kepala_reg: false,
-            sekretaris: false,
-            kepala_bps: false,
-            pns: false,
-            kepala_biro: false,
-            arsip: false,
-        },
-        kesimpulan: "Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi",
-    });
-
-    //NOTE YG ini mungkin bagsu dimasukin ke database juga?
-    const predikat = {
-        25: "Sangat Kurang",
-        50: "Kurang",
-        75: "Butuh Perbaikan",
-        100: "Baik",
-        150: "Sangat Baik",
-    };
-
+    // =============================================================Pop Up, Dialog SWAL==============================================
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -181,12 +92,13 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
         }
     }, [flash.message]);
 
+    // =============================================================Logic Lainny==============================================
+    const [showIframe, setShowIframe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { props } = usePage();
 
     const submit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
 
         const action = e.nativeEvent.submitter.value;
 
@@ -197,13 +109,13 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
         } else if (action === "save") {
             endpoint = "/divisi-sdm/pak/save";
         } else if (action === "save_submit") {
-            endpoint = "/divisi-sdm/pak/save-and-submit"; // misalnya kamu punya endpoint ini
+            endpoint = "/divisi-sdm/pak/save-and-submit";
         }
 
         router.post(endpoint, data, {
             preserveScroll: true,
             preserveState: true,
-
+            onStart: () => setIsLoading(true),
             onFinish: () => setIsLoading(false),
             onError: (errors) => {
                 console.error("Error:", errors);
@@ -215,37 +127,31 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
         });
     };
 
-    // const submit = (e) => {
-    //     e.preventDefault();
-    //     setIsLoading(true);
+    const [search, setSearch] = useState("");
+    const filtered = pegawaiList.filter((p) =>
+        `${p["Nama"]} ${p.NIP}`.toLowerCase().includes(search.toLowerCase())
+    );
 
-    //     router.post("/divisi-sdm/riwayat-pak/process", data, {
-    //         preserveScroll: true,
-    //         preserveState: true,
-
-    //         onFinish: () => setIsLoading(false),
-    //         onError: (errors) => {
-    //             console.error("Error:", errors);
-    //         },
-    //         onSuccess: (page) => {
-    //             setShowIframe(true); // Munculkan iframe setelah data dikirim
-    //             // Misalnya, URL PDF dikirim di props dari server
-
-    //         },
-    //     });
-    // };
-
-    const akNormatif = {};
-    // Ak normatif berdasarkan data dari tabel Koefisien
-    koefisien.forEach((item) => {
-        akNormatif[item.jabatan] = item.nilai;
-    });
-
-    const [showIframe, setShowIframe] = useState(false);
+    const onSelect = (p) => {
+        // Set input search agar berubah
+        setSearch(`${p.Nama} (${p.NIP})`);
+        // Lanjut redirect ke route dengan query string
+        router.get(
+            route("divisi-sdm.pak.create"),
+            { NIP: p.NIP },
+            {
+                preserveState: true,
+                replace: true,
+                onSuccess: () => {
+                    setData("pegawai", pegawai);
+                },
+            }
+        );
+    };
 
     // CONSOLE
-    // console.log("Isi data");
-    // console.log(akNormatif);
+    console.log("Isi data");
+    console.log(data);
     // console.log("Isi Error");
     // console.log(errors);
     return (
@@ -259,21 +165,33 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
                         <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                            {/* Tombol Close */}
                             <button
                                 className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
                                 onClick={() => setShowIframe(false)}
                             >
                                 <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
                             </button>
+
+                            {/* Loading Spinner (DaisyUI) */}
+                            {isLoading && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70">
+                                    <span className="loading loading-spinner loading-lg text-primary"></span>
+                                </div>
+                            )}
+
+                            {/* Iframe */}
                             <iframe
                                 src={route("pak.preview")}
                                 width="100%"
                                 height="100%"
                                 className="border-0"
+                                onLoad={() => setIsLoading(false)} // stop loading setelah iframe ready
                             ></iframe>
                         </div>
                     </div>
                 )}
+
                 {/* Preview PDF di iframe */}
 
                 <div className="flex justify-between">
@@ -285,15 +203,16 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
                                     className="gap-2"
                                 >
                                     <FaPrint className="w-4 h-4 stroke-current" />
-                                    <span>Cetak Dokumen</span>
+                                    <span>Penetapan Angka Kredit</span>
                                 </a>
                             </li>
-
-                            <li>
-                                <span className="inline-flex items-center gap-2">
-                                    {pegawai.Nama}
-                                </span>
-                            </li>
+                            {pegawai && (
+                                <li>
+                                    <span className="inline-flex items-center gap-2">
+                                        {pegawai.Nama}
+                                    </span>
+                                </li>
+                            )}
                         </ul>
                     </div>
                     <SecondaryButton
@@ -309,9 +228,55 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
                 </h1> */}
 
                 <div className="px-2 mx-auto overflow-x-auto">
-                    <h1 className="text-2xl font-medium my-7">
-                        Data Pegawai Untuk PAK
-                    </h1>
+                    <h1 className="text-2xl font-medium my-7">Pilih Pegawai</h1>
+                    {/* Konten untuk memilih Pegawai Start */}
+                    <div className="mb-6">
+                        <label className="block mb-2 font-medium">
+                            Cari Pegawai (Nama / NIP)
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="Ketik nama atau NIP"
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                            value={search}
+                            defaultValue={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        {search && (
+                            <ul className="mt-2 overflow-y-auto border rounded-md max-h-48">
+                                {filtered.length > 0 || pegawai ? (
+                                    filtered.map((p, i) => (
+                                        <li
+                                            key={i}
+                                            className="p-2 cursor-pointer hover:bg-blue-100"
+                                            onClick={() => onSelect(p)}
+                                        >
+                                            <a>
+                                                {p.Nama} (NIP : {p.NIP})
+                                            </a>
+                                            {/* <Link
+                                                as="a"
+                                                href={route(
+                                                    "divisi-sdm.pak.create",
+                                                    { NIP: p.NIP }
+                                                )}
+                                                onSuccess={()=> { setSearch(`${pegawai.Nama} (${pegawai.NIP})`);}}
+                                                // preserveState
+                                            >
+                                                {p.Nama} (NIP : {p.NIP})
+                                            </Link> */}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="p-2 italic text-gray-500">
+                                        Tidak ditemukan
+                                    </li>
+                                )}
+                            </ul>
+                        )}
+                    </div>
+                    {/* Konten untuk memilih Pegawai End */}
+
                     <DetailPegawai pegawai={pegawai} />
                 </div>
             </section>
@@ -319,6 +284,7 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
             <section className="h-full m-12 mt-4">
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
+                        {/* TODO : Benerin bug dimana setelah pilih pegawai, belum terdeteksi penghitungan otomatisny */}
                         {/* INPUT DATA | START*/}
                         <InputDataTable data={data} setData={setData} />
                         {/* INPUT DATA | END*/}

@@ -17,7 +17,7 @@ export default function Show({ riwayatPAK }) {
     const [showIframe, setShowIframe] = useState(false);
 
     const previewPdf = async (pak) => {
-        await router.post("/divisi-sdm/pak/process", pak, {
+        await router.post("/pak/process", pak, {
             preserveScroll: true,
             preserveState: true,
 

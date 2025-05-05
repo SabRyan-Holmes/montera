@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Pengajuan extends Model
 {
     protected $guarded = ['id'];
-    protected $with = ['pegawai', 'document'];
+    protected $with = ['pegawai', 'riwayat_pak'];
     use HasFactory;
 
     public function pegawai()
@@ -18,9 +18,9 @@ class Pengajuan extends Model
 
     }
 
-    public function document()
+    public function riwayat_pak()
     {
-        return $this->belongsTo(RiwayatPAK::class, 'document_id');
+        return $this->belongsTo(RiwayatPAK::class, 'riwayat_pak_id');
 
     }
 

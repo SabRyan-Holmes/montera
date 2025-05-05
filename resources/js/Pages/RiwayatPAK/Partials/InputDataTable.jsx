@@ -8,6 +8,8 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
             e.preventDefault();
         }
     };
+    console.log('data dari input da table')
+    console.log(data)
 
     const [defaultPeriodeMulai, setdefaultPeriodeMulai] = useState();
     const [defaultPeriodeBerakhir, setdefaultPeriodeBerakhir] = useState();
@@ -158,18 +160,6 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                             ...data,
                                             tahun_periode: year,
                                         }));
-
-                                        // setData(
-                                        //     "periode_berakhir",
-                                        //     periodeBerakhir
-                                        // );
-                                        // setData(
-                                        //     "tahun_periode",
-                                        //     year
-                                        // );
-                                        // data.tahun_periode = year
-                                        // console.log("tahun_periode")
-                                        // console.log(data.tahun_periode)
                                     }
                                 }}
                             />
@@ -208,7 +198,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 className="w-64 appearance-none no-arrow"
                                 maxLength="50"
                                 defaultValue={
-                                    isEdit ? historyData["nama"] : data.nama
+                                    isEdit && historyData ? historyData["nama"] : data.nama
                                 }
                                 list="namaList"
                                 required
@@ -238,7 +228,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 required
                                 list="nipList" // tambahkan list untuk datalist
                                 defaultValue={
-                                    isEdit ? historyData["nip"] : data.nip
+                                    isEdit && historyData["nip"] ? historyData["nip"] : data.nip
                                 }
                                 className="w-64"
                                 maxLength="18"

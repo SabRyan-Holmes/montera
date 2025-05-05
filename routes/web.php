@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\DivisiSDM\KoefisienController;
 use App\Http\Controllers\Pegawai\SSOController;
+use App\Http\Controllers\PengusulanPegawaiController;
 use App\Http\Controllers\Shared\DokumenPAKController;
 use App\Http\Controllers\Shared\PegawaiController;
 use App\Http\Controllers\Shared\PengajuanController;
@@ -44,9 +45,13 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
     Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
 
+    // TODO : Pengusulan Pegawai
+    Route::get('pengusulan-pegawai/', [PengusulanPegawaiController::class, 'index'])->name('pengusulan-pegawai');
+
     // Penetapan Angka Kredit => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
     Route::prefix('/pak')->name('pak.')->group(function () {
         Route::get('/create-for/pegawai', [DokumenPAKController::class, 'create'])->name('create');
+        Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
         Route::post('/create-for-pegawai/{pegawai:NIP}', [DokumenPAKController::class, 'create_for_pegawai'])->name('create-for-pegawai');
         Route::post('/save', [DokumenPAKController::class, 'save'])->name('save');
         Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
@@ -86,9 +91,8 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
         Route::get('', [PengajuanController::class, 'index'])->name('index');
         Route::post('/approve', [PengajuanController::class, 'approve'])->name('approve');
         // Test Preview
-        Route::get('/approved/show', [PengajuanController::class, 'approved_show'])->name('approved-show');
-        Route::get('/reject', [PengajuanController::class, 'reject'])->name('reject');
-        Route::get('/reject', [PengajuanController::class, 'view_pak'])->name('preview');
+        Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel'])->name('cancel');
+        Route::post('/reject/{pengajuan}', [PengajuanController::class, 'reject'])->name('reject');
     });
 
     // Daftar Pegawai(Read)

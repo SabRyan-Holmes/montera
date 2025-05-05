@@ -4,7 +4,10 @@ import { useForm } from '@inertiajs/react';
 export default function UseAturanPenetapan(koefisien = []) {
 
     const { data, setData, post, processing, errors, reset } = useForm({
+        // Kalo Edit Ini langsungg terisi dengan useEffect
+        id: null,
         pegawai: null,
+
         nama: "Agus Sudibyo, M.Stat",
         nip: "197412311996121001",
         periode_mulai: 0,

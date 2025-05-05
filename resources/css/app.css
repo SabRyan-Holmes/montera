@@ -3,6 +3,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer utilities {
+    .swal2-container {
+        z-index: 9999 !important;
+    }
+}
 
 html,
 body,
@@ -17,6 +22,16 @@ input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button !important;
     opacity: 1 !important;
     display: block !important;
+}
+
+.swal2-container {
+    z-index: 9999 !important;
+}
+::ng-deep.swal2-container {
+    z-index: 1000000;
+}
+.swal-overlay {
+    z-index: 100000000000 !important;
 }
 
 input[type="number"] {

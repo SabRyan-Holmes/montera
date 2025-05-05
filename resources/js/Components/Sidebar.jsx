@@ -1,6 +1,16 @@
-import { MdAdminPanelSettings, MdPeopleAlt } from "react-icons/md";
+import {
+    MdAdminPanelSettings,
+    MdAssignment,
+    MdEditDocument,
+    MdPeopleAlt,
+} from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaNotesMedical, FaPrint } from "react-icons/fa6";
+import {
+    FaDatabase,
+    FaNotesMedical,
+    FaPrint,
+    FaUserTie,
+} from "react-icons/fa6";
 import { MdSwitchAccount } from "react-icons/md";
 import logo from "../../assets/image/logo.png";
 import ApplicationLogo from "@/Components/ApplicationLogo";
@@ -11,10 +21,12 @@ import { IoMdArchive } from "react-icons/io";
 import { GrDocumentPerformance } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
+import { NavLinkCollapse, TooltipHover } from ".";
 const Sidebar = ({ active, role }) => {
     // console.log(active)
 
     return (
+        //TODO: Benerin tampilan side barny kadang dk bener
         <div className="relative shadow-2xl drawer-side">
             <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
 
@@ -69,6 +81,19 @@ const Sidebar = ({ active, role }) => {
 
                         {/* TODO? : Mungkin sebaiknya dibuat halaman khusus langsung ke pemrosesan penetapan angka kredit,
                         terus tinggal pilih pegawainy, ketimbang ditampilin daftar tabel pegawainy dulu lalu pilih pegawai mana yang mau dibikin PAK ny   */}
+                        {/* Pengusulan Pegawo */}
+                        <NavLinkDashboard
+                            // href={route("divisi-sdm.pengusulan-pegawai")}
+                            active={route().current(
+                                "divisi-sdm.pengusulan-pegawai"
+                            )}
+                            className="relative z-50 inline-flex cursor-not-allowed group"
+                        >
+                            <MdAssignment /> Pengusulan Pegawai
+                            <TooltipHover message={"Coming Soon!"} />
+                        </NavLinkDashboard>
+
+                        {/* Penetapan Angka Kredit */}
                         <NavLinkDashboard
                             href={route("divisi-sdm.pak.create")}
                             active={
@@ -78,8 +103,19 @@ const Sidebar = ({ active, role }) => {
                             }
                             className="relative z-20"
                         >
-                            <IoDocuments /> Penetapan Angka Kredit
+                            <MdEditDocument /> Penetapan Angka Kredit
                         </NavLinkDashboard>
+
+                        {/* TODO: Nanti Bagus DiCollapse in bisa */}
+                        {/* <NavLinkCollapse
+                            submenu={["Kelola Riwayat PAK", " Kelola Pegawai"]}
+                            routes={[
+                                "divisi-sdm.riwayat-pak.index",
+                                "divisi-sdm.pegawai.index",
+                            ]}
+                        >
+                            Data Master
+                        </NavLinkCollapse> */}
 
                         {/* Riwayat Dokumen PAK */}
                         <NavLinkDashboard
@@ -95,7 +131,19 @@ const Sidebar = ({ active, role }) => {
                             <IoDocuments /> Kelola Riwayat PAK
                         </NavLinkDashboard>
 
-                        {/* Link Kelola Data */}
+                        {/* Link Pengajuan PAK */}
+                        <NavLinkDashboard
+                            href={route("divisi-sdm.pengajuan.index")}
+                            active={route().current(
+                                "divisi-sdm.pengajuan.index"
+                            )}
+                            className="relative z-20"
+                        >
+                            <BsFillSendArrowUpFill />
+                            Kelola Pengajuan PAK
+                        </NavLinkDashboard>
+
+                        {/* Link Kelola Pegawai */}
                         <NavLinkDashboard
                             href={route("divisi-sdm.pegawai.index")}
                             active={
@@ -106,20 +154,8 @@ const Sidebar = ({ active, role }) => {
                             }
                             className="relative z-20"
                         >
-                            <FaDatabase />
+                            <FaUserTie />
                             Kelola Pegawai
-                        </NavLinkDashboard>
-
-                        {/* Link Pengajuan PAK */}
-                        <NavLinkDashboard
-                            href={route("divisi-sdm.pengajuan.index")}
-                            active={route().current(
-                                "divisi-sdm.pengajuan.index"
-                            )}
-                            className="relative z-20"
-                        >
-                            <BsFillSendArrowUpFill />
-                            Status Pengajuan
                         </NavLinkDashboard>
 
                         {/* Link Kelola Aturan Koefisen */}
@@ -133,17 +169,17 @@ const Sidebar = ({ active, role }) => {
                             <IoSettings /> Kelola Aturan Koefisien
                         </NavLinkDashboard>
 
-                         {/* TODO: Link Arsip Dokumen */}
-                         <NavLinkDashboard className="relative z-20">
-                                <IoMdArchive />
-                                Arsip Dokumen
-                            </NavLinkDashboard>
+                        {/* TODO: Link Arsip Dokumen */}
+                        <NavLinkDashboard className="relative z-20">
+                            <IoMdArchive />
+                            Arsip Dokumen
+                        </NavLinkDashboard>
 
-                            {/* TODO : Link Log Aktivitas */}
-                            <NavLinkDashboard className="relative z-20">
-                                <AiFillNotification />
-                                Log Aktivitas
-                            </NavLinkDashboard>
+                        {/* TODO : Link Log Aktivitas */}
+                        <NavLinkDashboard className="relative z-20">
+                            <AiFillNotification />
+                            Log Aktivitas
+                        </NavLinkDashboard>
                     </section>
                 )}
 
@@ -174,7 +210,7 @@ const Sidebar = ({ active, role }) => {
                             active={route().current("pimpinan.pegawai.index")}
                             className="relative z-20"
                         >
-                            <MdPeopleAlt  />
+                            <MdPeopleAlt />
                             Daftar Pegawai
                         </NavLinkDashboard>
 

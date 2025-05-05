@@ -15,15 +15,15 @@ return new class extends Migration
     {
         Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_id');
-            $table->foreign('document_id')->references('id')->on('riwayat_pak')->onDelete('cascade');
+            $table->unsignedBigInteger('riwayat_pak_id');
+            $table->foreign('riwayat_pak_id')->references('id')->on('riwayat_pak')->onDelete('cascade');
             $table->unsignedBigInteger('pegawai_id');
             $table->foreign('pegawai_id')->references('id')->on('pegawais')->onDelete('cascade');
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             // mungkin sebaiknya field "diajukan oleh(foreignId User(divisiSDM)) sebaikny juga ditambahkan
             $table->unsignedBigInteger('pengaju_id');
             $table->foreign('pengaju_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string("path")->nullable(); //mungkin ga perlu?
+            $table->string("approved_pak_path")->nullable(); //for store validated/approved PAK
             $table->timestamps();
         });
     }
