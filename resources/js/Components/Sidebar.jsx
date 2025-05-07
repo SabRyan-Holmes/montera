@@ -79,20 +79,6 @@ const Sidebar = ({ active, role }) => {
                             Dashboard
                         </NavLinkDashboard>
 
-                        {/* TODO? : Mungkin sebaiknya dibuat halaman khusus langsung ke pemrosesan penetapan angka kredit,
-                        terus tinggal pilih pegawainy, ketimbang ditampilin daftar tabel pegawainy dulu lalu pilih pegawai mana yang mau dibikin PAK ny   */}
-                        {/* Pengusulan Pegawo */}
-                        <NavLinkDashboard
-                            // href={route("divisi-sdm.pengusulan-pegawai")}
-                            active={route().current(
-                                "divisi-sdm.pengusulan-pegawai"
-                            )}
-                            className="relative z-50 inline-flex cursor-not-allowed group"
-                        >
-                            <MdAssignment /> Pengusulan Pegawai
-                            <TooltipHover message={"Coming Soon!"} />
-                        </NavLinkDashboard>
-
                         {/* Penetapan Angka Kredit */}
                         <NavLinkDashboard
                             href={route("divisi-sdm.pak.create")}
@@ -123,8 +109,9 @@ const Sidebar = ({ active, role }) => {
                             active={
                                 route().current(
                                     "divisi-sdm.riwayat-pak.index"
-                                ) || active === "divisi-sdm.riwayat-pak.edit"
-                                // active === "divisi-sdm.riwayat-pak.edit"
+                                ) ||
+                                active === "divisi-sdm.riwayat-pak.edit" ||
+                                active === "divisi-sdm.pak.edit"
                             }
                             className="relative z-20"
                         >
@@ -169,17 +156,34 @@ const Sidebar = ({ active, role }) => {
                             <IoSettings /> Kelola Aturan Koefisien
                         </NavLinkDashboard>
 
-                        {/* TODO: Link Arsip Dokumen */}
-                        <NavLinkDashboard className="relative z-20">
-                            <IoMdArchive />
-                            Arsip Dokumen
-                        </NavLinkDashboard>
+                        {/* TODO? : Mungkin sebaiknya dibuat halaman khusus langsung ke pemrosesan penetapan angka kredit,
+                        terus tinggal pilih pegawainy, ketimbang ditampilin daftar tabel pegawainy dulu lalu pilih pegawai mana yang mau dibikin PAK ny   */}
+                        {/* Pengusulan Pegawo */}
+                        <div className="relative z-50 mt-9 hover:cursor-not-allowed">
+                            <p className="ml-5 text-left ">Coming Soon</p>
+                            <NavLinkDashboard
+                                // href={route("divisi-sdm.pengusulan-pegawai")}
+                                active={route().current(
+                                    "divisi-sdm.pengusulan-pegawai"
+                                )}
+                                className="z-50 inline-flex  group"
+                            >
+                                <MdAssignment /> Pengusulan Pegawai
+                            </NavLinkDashboard>
 
-                        {/* TODO : Link Log Aktivitas */}
-                        <NavLinkDashboard className="relative z-20">
-                            <AiFillNotification />
-                            Log Aktivitas
-                        </NavLinkDashboard>
+                            {/* TODO: Link Arsip Dokumen */}
+                            <NavLinkDashboard className="z-50 inline-flex  group">
+                                <IoMdArchive />
+                                Arsip Dokumen
+                            </NavLinkDashboard>
+
+                            {/* TODO : Link Log Aktivitas */}
+                            <NavLinkDashboard className="z-50 inline-flex  group">
+                                <AiFillNotification />
+                                Log Aktivitas
+                            </NavLinkDashboard>
+                            <TooltipHover message={"Coming Soon!"} />
+                        </div>
                     </section>
                 )}
 

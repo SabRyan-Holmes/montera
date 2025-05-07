@@ -15,12 +15,16 @@
     {{-- @vite('public/css/pak.css') --}}
 
     {{-- For Production --}}
-    {{-- <link rel="shortcut icon" href="{{ asset('logo.png') }}">
-    <link rel="stylesheet" type="text/css" href="{{ public_path('css/pak.css') }}" /> --}}
+    <link rel="shortcut icon" href="{{ asset('logo.png') }}">
+    <link rel="stylesheet" type="text/css" href="{{ public_path('css/pak.css') }}" />
 
     <style>
         .page-break {
             page-break-after: always;
+        }
+
+        .break-inside {
+            page-break-inside: avoid
         }
 
         .border-side-transparent {
@@ -38,11 +42,11 @@
 
 
         {{-- Page 1 --}}
-        @include('pdf.pak-page-1', ['pegawai' => 'data'])
+        @include('pdf.pak-page-1')
 
         {{-- Page 2 --}}
         <div class="page-break"></div>
-        @include('pdf.pak-page-2', ['pegawai' => 'data'])
+        @include('pdf.pak-page-2')
 
         {{-- Page 3 --}}
         <div class="page-break"></div>

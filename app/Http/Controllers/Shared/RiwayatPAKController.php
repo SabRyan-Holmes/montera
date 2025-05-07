@@ -36,11 +36,14 @@ class RiwayatPAKController extends Controller
             request('search')
         );
 
+        $submitted = Pengajuan::where('status', "diajukan")->pluck('riwayat_pak_id')->toArray();
+
         return Inertia::render('RiwayatPAK/Index', [
             // "title" => "Riw$riwayatPAK " . $title,
             "title" => "Kelola Riwayat PAK",
             "subTitle" => $subTitle,
             "riwayatPAK" => $riwayatPAK->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
+            'pengajuans' => $submitted,
             "searchReq" => request('search'),
             "byDaerahReq" => request('byDaerah'),
             "byJabatanReq" => request('byJabatan')
@@ -88,7 +91,8 @@ class RiwayatPAKController extends Controller
         $riwayat = RiwayatPAK::findOrFail($request->id);
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Edit Penetapan Angka Kredit',
-            'riwayat' => $riwayat
+            'riwayat' => $riwayat,
+            'isEdit' => true
         ]);
     }
 

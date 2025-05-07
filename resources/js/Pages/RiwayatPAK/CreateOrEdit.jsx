@@ -49,18 +49,43 @@ export default function Index({
     // IF EDIT
 
     useEffect(() => {
-        if (pegawai) {
-            setPegawaiState(pegawaiState);
-            data.pegawai = pegawaiState;
-        }
-
-        if (isEdit) {
-            data.id = riwayat.id;
-            data.pegawai = riwayat.pegawai;
-            data.ak_normatif = riwayat.ak_normatif;
+        // Kalo Edit
+        if (isEdit && riwayat) {
+            setData({
+                ...riwayat,
+                id: riwayat.id,
+                pegawai: riwayat.pegawai,
+            });
+            // console.log("riwayat", riwayat);
             setPegawaiState(riwayat.pegawai);
         }
+        // else {
+        //     // Kalo Create dan ad datany
+        //     console.log("ini dirender pertama kali tanpa pemicu apapun ");
+        //     if (pegawai) {
+        //         // console.log("ini dirender pertama kali ketika ada pegawai yang dipilih ");
+        //         setData("pegawai", pegawai);
+        //         setPegawaiState(pegawai);
+        //     } else {
+        //         // console.log(
+        //         //     "ini dirender pertama kali ketika pegawai belum dipilih/belum ada "
+        //         // );
+        //     }
+        // }
     }, []);
+
+    // Kalo dpt nilai pegawai stelah dipilih
+    // useEffect(() => {
+    //     if (!isEdit && pegawai) {
+    //         // setData("pegawai", pegawai);
+    //         // setPegawaiState(pegawai);
+    //     }
+
+    //     return () => {
+    //         console.log('isi pegawai setelah dipilih pegawai')
+    //         console.log(pegawaiState)
+    //       }
+    // }, [pegawai]);
 
     // =============================================================Pop Up, Dialog SWAL==============================================
     const Toast = Swal.mixin({
@@ -89,6 +114,7 @@ export default function Index({
             });
         }
     }, [errors]);
+
     useEffect(() => {
         if (flash.message) {
             Swal.fire({
@@ -114,37 +140,32 @@ export default function Index({
         e.preventDefault();
 
         const action = e.nativeEvent.submitter.value;
-
         let endpoint = "";
 
-        if (!isEdit) {
-            if (action === "preview") {
-                endpoint = "/pak/process";
-            } else if (action === "save") {
-                endpoint = "/divisi-sdm/pak/save";
-            } else if (action === "save_submit") {
-                endpoint = "/divisi-sdm/pak/save-and-submit";
-
-                router.post(endpoint, data, {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onStart: () => setIsLoading(true),
-                    onFinish: () => setIsLoading(false),
-                    onError: (errors) => {
-                        console.error("Error:", errors);
-                    },
-                    onSuccess: (page) => {
-                        if (action === "preview") setShowIframe(true);
-                        // Tambah logic lain sesuai tombolnya
-                    },
-                });
-            }
+        if (action === "preview") {
+            endpoint = "/pak/process";
+        } else if (action === "save") {
+            endpoint = "/divisi-sdm/pak/save";
+        } else if (action === "save_submit") {
+            endpoint = "/divisi-sdm/pak/save-and-submit";
         }
 
+        // console.log;
+        router.post(endpoint, data, {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => setIsLoading(true),
+            onFinish: () => setIsLoading(false),
+            onError: (errors) => {
+                console.error("Error:", errors);
+            },
+            onSuccess: (page) => {
+                if (action === "preview") setShowIframe(true);
+                // Tambah logic lain sesuai tombolnya
+            },
+        });
+
         // EDIT MODE
-        // } else if (action === "update") {
-        //     endpoint = route("divisi-sdm.riwayat-pak.update", data.id);
-        // }
         if (isEdit && action === "update") {
             console.log("isi Edit :", isEdit);
             let idRiwayatPAK = data.id;
@@ -157,7 +178,7 @@ export default function Index({
                     onStart: () => setIsLoading(true),
                     onFinish: () => setIsLoading(false),
                     onError: (errors) => {
-                        console.error("Error:", errors);
+                        alert("Error:", errors);
                     },
                     onSuccess: (page) => {
                         // Tambah logic lain sesuai tombolnya
@@ -173,12 +194,6 @@ export default function Index({
         `${p["Nama"]} ${p.NIP}`.toLowerCase().includes(search.toLowerCase())
     );
 
-    // if (!isEdit) {
-    //     const filtered = pegawaiList?.filter((p) =>
-    //         `${p["Nama"]} ${p.NIP}`.toLowerCase().includes(search.toLowerCase())
-    //     );
-    // }
-
     const onSelect = (p) => {
         // Set input search agar berubah
         setSearch(`${p.Nama} (${p.NIP})`);
@@ -190,7 +205,8 @@ export default function Index({
                 preserveState: true,
                 replace: true,
                 onSuccess: () => {
-                    setData("pegawai", pegawaiState);
+                    setData("pegawai", pegawai);
+                    setPegawaiState(pegawai);
                 },
             }
         );
@@ -199,10 +215,13 @@ export default function Index({
     // CONSOLE
     // console.log("Isi pegawaiState");
     // console.log(pegawaiState);
-    // console.log("Isi Error");
+    // // console.log("Isi Error");
     // console.log(errors);
-    console.log("Isi Data");
-    console.log(data);
+    // console.log("Isi Data");
+    // console.log(data);
+    const dataNow = data;
+    console.log("data now", dataNow);
+
     return (
         <Authenticated
             user={auth.user}
@@ -255,11 +274,15 @@ export default function Index({
                                     <span>Penetapan Angka Kredit</span>
                                 </a>
                             </li>
-                            {pegawaiState && (
+                            {isEdit && (
                                 <li>
-                                    <span className="inline-flex items-center gap-2">
-                                        {pegawaiState.Nama}
-                                    </span>
+                                    <span className="inline-flex items-center gap-2">{riwayat.pegawai.Nama}</span>
+                                </li>
+                            )}
+
+                            {!isEdit & pegawaiState && (
+                                <li>
+                                    <span className="inline-flex items-center gap-2">{pegawaiState.Nama}</span>
                                 </li>
                             )}
                         </ul>
@@ -272,9 +295,6 @@ export default function Index({
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
                 </div>
-                {/* <h1 className="my-10 text-2xl font-[550] capitalize ">
-                    Data Pegawai Untuk Pencetakan PAK
-                </h1> */}
 
                 <div className="px-2 mx-auto overflow-x-auto">
                     {!isEdit && (
@@ -322,8 +342,11 @@ export default function Index({
                     )}
 
                     {/* Konten untuk memilih Pegawai End */}
-                    <section className="mt-20">
-                        <DetailPegawai pegawai={pegawaiState} />
+                    <section className={(isEdit ? 'mt-20' : 'mt-10')}>
+                        <DetailPegawai
+                            pegawai={!isEdit ? pegawaiState : riwayat.pegawai}
+                            collapse={pegawaiState ? true : false}
+                        />
                     </section>
                 </div>
             </section>
@@ -331,7 +354,7 @@ export default function Index({
             <section className="h-full m-12 mt-4">
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
-                        {/* TODO : Benerin bug dimana setelah pilih pegawai, belum terdeteksi penghitungan otomatisny */}
+
                         {/* INPUT DATA | START*/}
                         <InputDataTable
                             data={data}
@@ -344,7 +367,6 @@ export default function Index({
 
                         {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | START*/}
                         <KonversiTable
-                            pegawai={pegawaiState}
                             data={data}
                             setData={setData}
                             akNormatif={akNormatif}

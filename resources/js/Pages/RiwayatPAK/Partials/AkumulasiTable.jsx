@@ -30,46 +30,23 @@ export default function AkumulasiTable({
         12: "Desember",
     };
 
-    useEffect(() => {
-        if (isEdit) {
-            data.no_surat2 = historyData["no_surat2"];
-            data.ak_terakhir = historyData["ak_terakhir"];
-            data.tahun_terakhir = historyData["tahun_terakhir"];
-            data.tahun_ini = historyData["tahun_ini"];
-        }
-    }, []);
-
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (isEdit && isFirstRender.current) {
-            // Tandai bahwa render pertama sudah selesai
-            // data.angka_kredit = historyData["angka_kredit"];
-            // data.jumlah_ak_kredit = historyData["jumlah_ak_kredit"];
             var jumlahAkKredit =
                 parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
+            setData({
+                ...data,
+                jumlah_ak_kredit: jumlahAkKredit.toFixed(3),
+            });
             data.jumlah_ak_kredit = jumlahAkKredit.toFixed(3);
             isFirstRender.current = false;
             return;
         }
-
-        // if (isEdit) {
-
-        //     setData("angka_kredit", historyData["angka_kredit"].toFixed(3))
-        //     data.angka_kredit = historyData["angka_kredit"];
-        // }
-
         var jumlahAkKredit =
             parseFloat(data.ak_terakhir) + parseFloat(data.angka_kredit);
         setData("jumlah_ak_kredit", jumlahAkKredit.toFixed(3));
     }, [data.ak_terakhir, data.angka_kredit]);
-
-    // console.log("isFirstRender");
-    // console.log(isFirstRender);
-    // console.log("historyData[jumlah_ak_kredit]");
-    // console.log(historyData["jumlah_ak_kredit"]);
-    // console.log("data.jumlah_ak_kredit");
-    // console.log("data.angka_kredit");
-    // console.log(data.angka_kredit);
 
     return (
         <table className="table text-base table-bordered">
@@ -92,7 +69,7 @@ export default function AkumulasiTable({
                             placeholder="contoh: 1500.445/Akm/2024"
                             defaultValue={data.no_surat2}
                             required
-                            className="w-64 h-12"
+                            className="w-64 h-12 border"
                             onChange={(e) =>
                                 setData("no_surat2", e.target.value)
                             }

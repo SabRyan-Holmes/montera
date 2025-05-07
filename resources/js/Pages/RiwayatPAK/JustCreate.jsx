@@ -284,7 +284,6 @@ export default function Index({
             <section className="h-full m-12 mt-4">
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
-                        {/* TODO : Benerin bug dimana setelah pilih pegawai, belum terdeteksi penghitungan otomatisny */}
                         {/* INPUT DATA | START*/}
                         <InputDataTable data={data} setData={setData} />
                         {/* INPUT DATA | END*/}

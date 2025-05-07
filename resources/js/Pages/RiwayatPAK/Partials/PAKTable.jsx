@@ -15,20 +15,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
     const [rowKeys, setRowKeys] = useState(Object.keys(dataTipePAK));
     useEffect(() => {
         if (isEdit) {
-            data.no_surat3 = historyData["no_surat3"];
-            data.ak_dasar = historyData["ak_dasar"];
-            data.ak_jf = historyData["ak_jf"];
-            data.ak_penyesuaian = historyData["ak_penyesuaian"];
-            data.ak_konversi = historyData["ak_konversi"];
-            data.ak_peningkatan = historyData["ak_peningkatan"];
-            data.jakk = historyData["jakk"];
-            data.pangkat = historyData["pangkat"];
-            data.jabatan = historyData["jabatan"];
-            data.pangkat_keker = historyData["pangkat_keker"];
-            data.jabatan_keker = historyData["jabatan_keker"];
-            data.tebusan3 = historyData["tebusan3"];
-            data.kesimpulan = historyData["kesimpulan"];
-
             if (historyData["ak_tipe_tambahan"] != null) {
                 data.ak_tipe_tambahan = historyData["ak_tipe_tambahan"];
                 // console.log("data.ak_tipe_tambahan ", data.ak_tipe_tambahan);
@@ -42,8 +28,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                 };
                 setRowKeys(Object.keys(updatedTipePAK));
             }
-
-            // console.log("data.kesimpulan ", data.kesimpulan);
         }
     }, []);
 
@@ -81,7 +65,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
 
     // Call this function whenever you need to calculate the totals
     const { jakk_lama, jakk_baru, jakk_jumlah } = calculateTotal();
-    // Logika Jumlah AK Dasar
 
     useEffect(() => {
         const newData = data.jakk;
@@ -163,7 +146,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
             pangkat_keker: pangkatKeker,
         });
         data.pangkat_keker = pangkatKeker;
-        console.log("data.pangkat_keker : ", data.pangkat_keker);
+        // console.log("data.pangkat_keker : ", data.pangkat_keker);
     }, [jakk_jumlah, data.pangkat]);
 
     // Logika Kelebihan/Kekurangan  AK Kredit Untuk Kenaikan Jabatan
@@ -232,10 +215,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                     (parseFloat(updatedKeyData.baru) || 0);
             }
 
-            // if (field === "keterangan") {
-            //     updatedKeyData = { ...data[key], [field]: value };
-            // }
-
             setData({
                 ...data,
                 ak_tipe_tambahan: {
@@ -245,9 +224,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
             });
         } else {
             updatedKeyData = { ...data[key], [field]: numericValue };
-
-            // updatedKeyData = { ...data[key], [field]: value };
-
             if (field === "lama" || field === "baru") {
                 updatedKeyData.jumlah =
                     (parseFloat(updatedKeyData.lama) || 0) +
@@ -473,13 +449,20 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         Jumlah Angka Kredit Kumulatif
                     </td>
                     <td className="border ">
-                        {parseFloat(jakk_lama.toFixed(3))}
+                        {isNaN(jakk_lama)
+                            ? 0
+                            : parseFloat(jakk_lama.toFixed(3))}
+                    </td>
+
+                    <td className="border">
+                        {isNaN(jakk_baru)
+                            ? 0
+                            : parseFloat(jakk_baru.toFixed(3))}
                     </td>
                     <td className="border">
-                        {parseFloat(jakk_baru.toFixed(3))}
-                    </td>
-                    <td className="border">
-                        {parseFloat(jakk_jumlah.toFixed(3))}
+                        {isNaN(jakk_jumlah)
+                            ? 0
+                            : parseFloat(jakk_jumlah.toFixed(3))}
                     </td>
                     <td className="border"></td>
                 </tr>
@@ -504,7 +487,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
 
                     {/* NOTE : Update 10 Maret 2025 : Pangkat dan jabatan ditambahkan angka 150 & 300 (ditambahkan jg 250 jaga-jaga) */}
                     <td className="text-center border" colSpan={2}>
-                        {/* TODO: jadiin 3 angka dibelakang koma */}
                         <select
                             name="pangkat"
                             id="pangkat"
@@ -527,7 +509,6 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         </select>
                     </td>
                     <td className="text-center border" colSpan={2}>
-                        {/* TODO: jadiin 3 angka dibelakang koma */}
                         <select
                             name="jabatan"
                             id="jabatan"
@@ -576,14 +557,18 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         colSpan={2}
                         rowSpan={2}
                     >
-                        {Math.abs(data.pangkat_keker)}
+                        {isNaN(data.pangkat_keker)
+                            ? 0
+                            : Math.abs(data.pangkat_keker)}
                     </td>
                     <td
                         className="text-lg text-center border"
                         colSpan={2}
                         rowSpan={2}
                     >
-                        {Math.abs(data.jabatan_keker)}
+                        {isNaN(data.jabatan_keker)
+                            ? 0
+                            : Math.abs(data.jabatan_keker)}{" "}
                     </td>
                 </tr>
                 {/* row 8 */}
@@ -614,11 +599,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                             name="kesimpulan"
                             id="kesimpulan"
                             className="w-3/4 text-center rounded-md border-gradient"
-                            defaultValue={
-                                isEdit
-                                    ? historyData.kesimpulan
-                                    : data.kesimpulan
-                            }
+                            defaultValue={data.kesimpulan}
                             onChange={(e) => {
                                 setData("kesimpulan", e.target.value);
                             }}
@@ -652,8 +633,8 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                 </tr>
             </tbody>
             {/* Tebusan */}
-            <tfoot >
-                <tr >
+            <tfoot>
+                <tr>
                     <td
                         rowSpan={3}
                         colSpan={2}

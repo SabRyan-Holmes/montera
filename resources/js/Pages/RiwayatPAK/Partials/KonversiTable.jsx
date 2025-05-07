@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 export default function KonversiTable({
     data,
     setData,
-    pegawai,
     akNormatif,
     predikat,
     isEdit,
@@ -17,35 +16,20 @@ export default function KonversiTable({
         }
     };
 
-    console.log("data")
-    console.log(data)
-
     useEffect(() => {
-        if (!isEdit) {
+        if (!isEdit && data.pegawai) {
             const findAkNormatifValue = (jabatan) => {
                 const key = Object.keys(akNormatif).find((k) =>
                     jabatan.includes(k)
                 );
                 return key ? akNormatif[key] : null;
             };
-            if(pegawai) {
-                let akNormatifValue = findAkNormatifValue(pegawai["Jabatan/TMT"]);
-                data.ak_normatif = akNormatifValue;
-            }
+            let akNormatifValue = findAkNormatifValue(
+                data.pegawai["Jabatan/TMT"]
+            );
+            setData("ak_normatif", akNormatifValue);
         }
-    }, [pegawai]); // Tambahkan pegawai sebagai dependency jika datanya bisa berubah
-
-    useEffect(() => {
-        console.log("isi konversi tabel pegawai");
-        console.log(pegawai);
-
-        if (isEdit) {
-            data.presentase = historyData["presentase"];
-            data.angka_periode = historyData["angka_periode"];
-            data.no_surat1 = historyData["no_surat1"];
-            data.ak_normatif = historyData["ak_normatif"];
-        }
-    }, []);
+    }, [data.pegawai]); // Tambahkan pegawai sebagai dependency jika datanya bisa berubah
 
     function hitungAk(periode, akNormatif, presentase) {
         const ak_kredit =
@@ -53,13 +37,6 @@ export default function KonversiTable({
             parseFloat(akNormatif) *
             parseFloat(presentase / 100);
         const result = parseFloat(ak_kredit).toFixed(3);
-
-        // console.log("periode : ", periode);
-        // console.log("ak normatif : ", akNormatif);
-        // console.log("presentase : ", presentase);
-        // console.log("isi nilai ak kredit dari fungsi");
-        // console.log(result);
-
         return result;
     }
 
@@ -72,9 +49,6 @@ export default function KonversiTable({
             // Ammbil dari inputan custom
             akNormatif = data.ak_normatif_ops;
             data.ak_normatif = akNormatif;
-
-            // console.log("ak_ops");
-            // console.log(akNormatif);
         }
         const akKreditValue = hitungAk(
             data.angka_periode,
@@ -82,8 +56,6 @@ export default function KonversiTable({
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
-        // console.log("presentase : ", data.presentase);
-        // console.log("ak Kredit Value ", data.angka_kredit);
     }, [
         data.angka_periode,
         data.predikat,
@@ -94,9 +66,6 @@ export default function KonversiTable({
     useEffect(() => {
         setData("predikat", predikat[data.presentase]);
     }, [data.presentase]);
-
-    // console.log(historyData['pegawai'])
-    // console.log(historyData.tebusan1["pns"])
 
     return (
         <table className="table text-base table-bordered">
@@ -149,7 +118,7 @@ export default function KonversiTable({
 
                 <tr className="text-center">
                     <td className="border">{data.predikat}</td>
-                    <td className="flex justify-center w-full">
+                    <td className="flex justify-center w-full border-none">
                         <select
                             name="presentase"
                             id="presentase"

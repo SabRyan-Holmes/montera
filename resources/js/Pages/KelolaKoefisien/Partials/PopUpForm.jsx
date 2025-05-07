@@ -13,7 +13,7 @@ const PopUpForm = ({ onClose, isEdit, dataEdit }) => {
         e.preventDefault();
         // Lakukan sesuatu dengan data form, misalnya kirim ke API
 
-        post(route("koefisien.store"), data);
+        post(route("divisi-sdm.koefisien.store"), data);
         // console.log('Form Data:', formData);
         onClose(); // Tutup pop-up setelah submit
     };

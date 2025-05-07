@@ -133,15 +133,30 @@ div.sub-title > h2 > span > span {
     text-transform: none;
 }
 
+.tebusan-container {
+    float: left;
+    width: 50%;
+    font-size: 15px;
+    margin-top: 1rem;
+}
+
 
 .signature-container {
     float: right;
+    clear: left;
     width: 40%;
-    margin-top: 0.7rem;
+    margin-top: 0.5rem;
     margin-right: 0.5rem;
     text-align: left;
     font-size: 15px;
 }
+
+.clearfix {
+    overflow: auto;
+    content: "";
+    clear: both;
+    display: table;
+  }
 
 .signature-container strong {
     font-weight: 400; /* Menetapkan ketebalan font untuk tag <strong> di dalam signature-container */
@@ -151,6 +166,9 @@ div.sub-title > h2 > span > span {
     margin-top: 1.2rem;
     margin-bottom: 1.5rem;
 }
+
+
+
 .content-container {
     float: left;
     width: 55%;

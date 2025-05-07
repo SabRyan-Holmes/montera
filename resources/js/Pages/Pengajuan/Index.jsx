@@ -91,7 +91,35 @@ export default function Index({
         }
     }, [flash.message, activeModalId]);
 
-
+    // Cancel penagjaun dari divisi SDM
+    const handleCancel = (id) => {
+        Swal.fire({
+            icon: "warning",
+            text: "Anda yakin ingin membatalkan pengajuan PAK ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route("divisi-sdm.pengajuan.cancel", id), {
+                    onSuccess: () => {
+                        //
+                    },
+                    onError: () => {
+                        console.log("Gagal Menghapus Data");
+                    },
+                });
+            }
+        });
+    };
 
     const handleReject = (id) => {
         console.log("isi id di handleReject");

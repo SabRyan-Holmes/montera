@@ -17,7 +17,7 @@ export default function Show({ riwayatPAK }) {
     const [showIframe, setShowIframe] = useState(false);
 
     const previewPdf = async (pak) => {
-        await router.post("/pak/process", pak, {
+        router.post("/pak/process", pak, {
             preserveScroll: true,
             preserveState: true,
 
@@ -96,7 +96,7 @@ export default function Show({ riwayatPAK }) {
 
                 <SecondaryButton
                 asLink
-                href={route('divisi-sdm.riwayat-pak.edit', riwayatPAK.id)}
+                href={route('divisi-sdm.pak.edit', { id: riwayatPAK.id })}
                  className="bg-white"
                 >
                     <FaEdit className="inline-flex items-center justify-center w-4 h-4 mr-1 fill-secondary " />

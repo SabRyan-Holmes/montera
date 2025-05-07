@@ -19,6 +19,7 @@ import { BsFillSendFill } from "react-icons/bs";
 export default function Index({
     auth,
     riwayatPAK,
+    pengajuans,
     title,
     subTitle,
     flash,
@@ -27,7 +28,7 @@ export default function Index({
     byJabatanReq: initialJabatan,
 }) {
     // ===========================================Handling Pop Up,Dialog & Message===========================================
-
+    console.log(pengajuans);
     useEffect(() => {
         if (flash.message) {
             Swal.fire({
@@ -47,7 +48,7 @@ export default function Index({
     function handleDelete(id) {
         Swal.fire({
             icon: "warning",
-            text: "Anda yakin ingin menghapus data pegawai ini?",
+            text: "Anda yakin ingin menghapus data riwayat PAK ini?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
@@ -242,30 +243,50 @@ export default function Index({
                                                 )}
                                             </td>
                                             <td className="text-center whitespace-nowrap text-nowrap">
-                                                <div className="relative inline-flex group">
-                                                    <Link
-                                                        as="button"
-                                                        href={route(
-                                                            "divisi-sdm.pengajuan.store"
-                                                        )}
-                                                        data={{
-                                                            riwayat_pak_id:
-                                                                pak.id,
-                                                            pegawai_id:
-                                                                pak.pegawai_id,
-                                                        }}
-                                                        method="post"
-                                                        className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
-                                                    >
-                                                        <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
-                                                    </Link>{" "}
-                                                    {/* Tooltip Hover  */}
-                                                    <TooltipHover
-                                                        message={
-                                                            "Ajukan ke Pimpinan"
-                                                        }
-                                                    />
-                                                </div>
+                                                {/* CEK SUDAH DIAJUKAN ATAU BELUM */}
+                                                {pengajuans.includes(pak.id) ? (
+                                                    <div className="relative inline-flex group">
+                                                        <Link
+                                                            as="button"
+                                                            disabled
+                                                            className="cursor-not-allowed hover:scale-105 action-btn group/button group-hover/item:bg-accent/80 text-accent/80"
+                                                        >
+                                                            <BsFillSendFill className="scale-125 fill-accent/70 group-hover/item:fill-white" />
+                                                        </Link>{" "}
+                                                        {/* Tooltip Hover  */}
+                                                        <TooltipHover
+                                                            message={
+                                                                "Sudah Diajukan ke Pimpinan"
+                                                            }
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="relative inline-flex group">
+                                                        <Link
+                                                            as="button"
+                                                            href={route(
+                                                                "divisi-sdm.pengajuan.store"
+                                                            )}
+                                                            data={{
+                                                                riwayat_pak_id:
+                                                                    pak.id,
+                                                                pegawai_id:
+                                                                    pak.pegawai_id,
+                                                            }}
+                                                            method="post"
+                                                            className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
+                                                        >
+                                                            <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
+                                                        </Link>{" "}
+                                                        {/* Tooltip Hover  */}
+                                                        <TooltipHover
+                                                            message={
+                                                                "Ajukan ke Pimpinan"
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+
                                                 <span className="inline-block mx-1"></span>
 
                                                 {/* VIEW PAK */}
@@ -319,9 +340,9 @@ export default function Index({
                                                     <Link
                                                         as="a"
                                                         href={route(
-                                                            "divisi-sdm.pak.edit", {id : pak.id}
+                                                            "divisi-sdm.pak.edit",
+                                                            { id: pak.id }
                                                         )}
-
                                                         className="action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70"
                                                     >
                                                         <FaEdit className=" fill-secondary group-hover/item:fill-white" />

@@ -66,6 +66,7 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
 
     // Status Pengajuan(CRUD)
     Route::resource('pengajuan', PengajuanController::class);
+    Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel_pengajuan'])->name('pengajuan.cancel');
 
     // Kelola Pegawai(CRUD)
     Route::resource('pegawai', PegawaiController::class);

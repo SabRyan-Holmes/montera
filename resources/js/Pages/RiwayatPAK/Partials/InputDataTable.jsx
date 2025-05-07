@@ -8,8 +8,8 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
             e.preventDefault();
         }
     };
-    console.log('data dari input da table')
-    console.log(data)
+    // console.log('data dari input da table')
+    // console.log(data)
 
     const [defaultPeriodeMulai, setdefaultPeriodeMulai] = useState();
     const [defaultPeriodeBerakhir, setdefaultPeriodeBerakhir] = useState();
@@ -31,29 +31,16 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
 
     useEffect(() => {
         if (isEdit) {
-            data.angka_kredit = historyData["angka_kredit"];
-            data.angka_periode = historyData["angka_periode"];
-
-            data.periode_mulai = historyData["periode_mulai"];
-            data.periode_berakhir = historyData["periode_berakhir"];
-            data.tahun_periode = historyData["tahun_periode"];
-            data.tgl_ditetapkan = historyData["tgl_ditetapkan"];
-
             setdefaultPeriodeMulai(
-                `${data.tahun_periode}-${String(data.periode_mulai).padStart(
-                    2,
-                    "0"
-                )}`
+                `${historyData["tahun_periode"]}-${String(
+                    historyData["periode_mulai"]
+                ).padStart(2, "0")}`
             );
             setdefaultPeriodeBerakhir(
-                `${data.tahun_periode}-${String(data.periode_berakhir).padStart(
-                    2,
-                    "0"
-                )}`
+                `${historyData["tahun_periode"]}-${String(
+                    historyData["periode_berakhir"]
+                ).padStart(2, "0")}`
             );
-
-            // console.log("angka_kredit : ", data.angka_kredit);
-            // console.log("angka_periode : ", data.angka_periode);
         }
     }, []);
 
@@ -62,17 +49,12 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
             "angka_periode",
             Math.abs(data.periode_berakhir - data.periode_mulai + 1)
         );
-
-        // console.log("periode_mulai", data.periode_mulai)
-        // console.log("periode_berakhir", data.periode_berakhir)
-        // console.log("tahun_periode", data.tahun_periode)
-        // console.log("angka_periode", data.angka_periode)
-
     }, [data.periode_mulai, data.periode_berakhir]);
 
     const today = new Date().toISOString().split("T")[0];
     const namaInput = useRef();
 
+    // console.log("data dari input Data Table", data)
     const [minPeriode, setMinPeriode] = useState("");
 
     return (
@@ -123,7 +105,6 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                         ...data,
                                         tahun_periode: year,
                                     }));
-
                                 }}
                             />
 
@@ -197,9 +178,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 name="nama"
                                 className="w-64 appearance-none no-arrow"
                                 maxLength="50"
-                                defaultValue={
-                                    isEdit && historyData ? historyData["nama"] : data.nama
-                                }
+                                defaultValue={data.nama}
                                 list="namaList"
                                 required
                                 placeholder="Input nama penanda tangan"
@@ -227,9 +206,7 @@ export default function InputDataTable({ data, setData, isEdit, historyData }) {
                                 name="nip"
                                 required
                                 list="nipList" // tambahkan list untuk datalist
-                                defaultValue={
-                                    isEdit && historyData["nip"] ? historyData["nip"] : data.nip
-                                }
+                                defaultValue={data.nip}
                                 className="w-64"
                                 maxLength="18"
                                 placeholder="NIP penanda tangan"

@@ -3,6 +3,24 @@ import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
 export default function DetailData({ data, collapse = true }) {
     const [isCollapsed, setIsCollapsed] = useState(collapse);
+    const bulan = {
+        1: "Januari",
+        2: "Februari",
+        3: "Maret",
+        4: "April",
+        5: "Mei",
+        6: "Juni",
+        7: "Juli",
+        8: "Agustus",
+        9: "September",
+        10: "Oktober",
+        11: "November",
+        12: "Desember",
+    };
+
+    function getBulan(angka) {
+        return bulan[angka]
+    }
 
     return (
         <section className="mb-4">
@@ -40,11 +58,11 @@ export default function DetailData({ data, collapse = true }) {
                         </tr>
                         <tr>
                             <td>Periode Mulai</td>
-                            <td>{data["periode_mulai"]}</td>
+                            <td>{getBulan(data["periode_mulai"])}</td>
                         </tr>
                         <tr>
                             <td>Periode Berakhir</td>
-                            <td>{data["periode_berakhir"]}</td>
+                            <td>{getBulan(data["periode_berakhir"])}</td>
                         </tr>
                         <tr>
                             <td>Presentase</td>

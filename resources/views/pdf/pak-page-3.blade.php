@@ -174,7 +174,7 @@
 
 
         {{-- Bagian 2 Start --}}
-        <table aria-colcount="7" class="table-pak-3">
+        <table aria-colcount="7" class="table-pak-3" style="margin-bottom: 0rem padding-bottom:0rem">
             <thead>
                 <tr>
                     <th colspan="7" style="text-align: center; font-weight: 500;">
@@ -209,9 +209,15 @@
                     {{-- <td style="text-align: center">{{ number_format($data['ak_dasar']['lama'] ?? 0, 3) }}</td> --}}
                     {{-- <td style="text-align: center">{{ is_numeric($data['ak_dasar']['lama'] ?? null) && number_format($data['ak_dasar']['lama'], 3) }}</td> --}}
 
-                    <td style="text-align: center">{{ !empty($data['ak_dasar']['lama']) ? number_format($data['ak_dasar']['lama'] ?? 0, 3) : $data['ak_dasar']['lama'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_dasar']['baru']) ? number_format($data['ak_dasar']['baru'] ?? 0, 3) : $data['ak_dasar']['baru'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_dasar']['jumlah']) ? number_format($data['ak_dasar']['jumlah'] ?? 0, 3) : $data['ak_dasar']['jumlah'] }}</td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_dasar']['lama']) ? number_format($data['ak_dasar']['lama'] ?? 0, 3) : $data['ak_dasar']['lama'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_dasar']['baru']) ? number_format($data['ak_dasar']['baru'] ?? 0, 3) : $data['ak_dasar']['baru'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_dasar']['jumlah']) ? number_format($data['ak_dasar']['jumlah'] ?? 0, 3) : $data['ak_dasar']['jumlah'] }}
+                    </td>
                     <td style="text-align: center">{{ $data['ak_dasar']['keterangan'] }}</td>
                 </tr>
                 <tr>
@@ -219,9 +225,15 @@
                     <th style="width: 30px">2</th>
                     <td style="text-align: left">AK JF Lama</td>
 
-                    <td style="text-align: center">{{ !empty($data['ak_jf']['lama']) ? number_format($data['ak_jf']['lama'] ?? 0, 3) : $data['ak_jf']['lama'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_jf']['baru']) ? number_format($data['ak_jf']['baru'] ?? 0, 3) : $data['ak_jf']['baru'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_jf']['jumlah']) ? number_format($data['ak_jf']['jumlah'] ?? 0, 3) : $data['ak_jf']['jumlah'] }}</td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_jf']['lama']) ? number_format($data['ak_jf']['lama'] ?? 0, 3) : $data['ak_jf']['lama'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_jf']['baru']) ? number_format($data['ak_jf']['baru'] ?? 0, 3) : $data['ak_jf']['baru'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_jf']['jumlah']) ? number_format($data['ak_jf']['jumlah'] ?? 0, 3) : $data['ak_jf']['jumlah'] }}
+                    </td>
                     <td style="text-align: center">{{ $data['ak_jf']['keterangan'] }}</td>
                 </tr>
                 <tr>
@@ -229,9 +241,15 @@
                     <th style="width: 30px">3</th>
                     <td style="text-align: left">AK Penyesuaian/Penyetaraan</td>
 
-                    <td style="text-align: center">{{ !empty($data['ak_penyesuaian']['lama']) ? number_format($data['ak_penyesuaian']['lama'] ?? 0, 3) : $data['ak_penyesuaian']['lama'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_penyesuaian']['baru']) ? number_format($data['ak_penyesuaian']['baru'] ?? 0, 3) : $data['ak_penyesuaian']['baru'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_penyesuaian']['jumlah']) ? number_format($data['ak_penyesuaian']['jumlah'] ?? 0, 3) : $data['ak_penyesuaian']['jumlah'] }}</td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_penyesuaian']['lama']) ? number_format($data['ak_penyesuaian']['lama'] ?? 0, 3) : $data['ak_penyesuaian']['lama'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_penyesuaian']['baru']) ? number_format($data['ak_penyesuaian']['baru'] ?? 0, 3) : $data['ak_penyesuaian']['baru'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_penyesuaian']['jumlah']) ? number_format($data['ak_penyesuaian']['jumlah'] ?? 0, 3) : $data['ak_penyesuaian']['jumlah'] }}
+                    </td>
                     <td style="text-align: center">{{ $data['ak_penyesuaian']['keterangan'] }}</td>
                 </tr>
                 <tr>
@@ -239,9 +257,15 @@
                     <th style="width: 30px">4</th>
                     <td style="text-align: left">AK Konversi</td>
 
-                    <td style="text-align: center">{{ !empty($data['ak_konversi']['lama']) ? number_format($data['ak_konversi']['lama'] ?? 0, 3) : $data['ak_konversi']['lama'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_konversi']['baru']) ? number_format($data['ak_konversi']['baru'] ?? 0, 3) : $data['ak_konversi']['baru'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_konversi']['jumlah']) ? number_format($data['ak_konversi']['jumlah'] ?? 0, 3) : $data['ak_konversi']['jumlah'] }}</td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_konversi']['lama']) ? number_format($data['ak_konversi']['lama'] ?? 0, 3) : $data['ak_konversi']['lama'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_konversi']['baru']) ? number_format($data['ak_konversi']['baru'] ?? 0, 3) : $data['ak_konversi']['baru'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_konversi']['jumlah']) ? number_format($data['ak_konversi']['jumlah'] ?? 0, 3) : $data['ak_konversi']['jumlah'] }}
+                    </td>
                     <td style="text-align: center">{{ $data['ak_konversi']['keterangan'] }}
                     </td>
                 </tr>
@@ -249,9 +273,15 @@
                     <th></th>
                     <th style="width: 30px">5</th>
                     <td style="text-align: left">AK Yang diperoleh dari peningkatan pendidikan</td>
-                    <td style="text-align: center">{{ !empty($data['ak_peningkatan']['lama']) ? number_format($data['ak_peningkatan']['lama'] ?? 0,3) : $data['ak_peningkatan']['lama'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_peningkatan']['baru']) ? number_format($data['ak_peningkatan']['baru'] ?? 0, 3) : $data['ak_peningkatan']['baru'] }}</td>
-                    <td style="text-align: center">{{ !empty($data['ak_peningkatan']['jumlah']) ? number_format($data['ak_peningkatan']['jumlah'] ?? 0, 3) : $data['ak_peningkatan']['jumlah'] }}</td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_peningkatan']['lama']) ? number_format($data['ak_peningkatan']['lama'] ?? 0, 3) : $data['ak_peningkatan']['lama'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_peningkatan']['baru']) ? number_format($data['ak_peningkatan']['baru'] ?? 0, 3) : $data['ak_peningkatan']['baru'] }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ !empty($data['ak_peningkatan']['jumlah']) ? number_format($data['ak_peningkatan']['jumlah'] ?? 0, 3) : $data['ak_peningkatan']['jumlah'] }}
+                    </td>
                     <td style="text-align: center">{{ $data['ak_peningkatan']['keterangan'] }}</td>
                 </tr>
                 <!-- Baris 6 dan seterusnya -->
@@ -262,9 +292,15 @@
                             <th></th>
                             <th style="width: 30px">{{ $index }}</th>
                             <td style="text-align: left">{{ $value['tipe_ak'] }}</td>
-                            <td style="text-align: center">{{ !empty($value['lama']) ? number_format($value['lama'] ?? 0,3) : $value['lama'] }}</td>
-                            <td style="text-align: center">{{ !empty($value['baru']) ? number_format($value['baru'] ?? 0, 3) : $value['baru'] }}</td>
-                            <td style="text-align: center">{{ !empty($value['jumlah']) ? number_format($value['jumlah'] ?? 0, 3) : $value['jumlah'] }}</td>
+                            <td style="text-align: center">
+                                {{ !empty($value['lama']) ? number_format($value['lama'] ?? 0, 3) : $value['lama'] }}
+                            </td>
+                            <td style="text-align: center">
+                                {{ !empty($value['baru']) ? number_format($value['baru'] ?? 0, 3) : $value['baru'] }}
+                            </td>
+                            <td style="text-align: center">
+                                {{ !empty($value['jumlah']) ? number_format($value['jumlah'] ?? 0, 3) : $value['jumlah'] }}
+                            </td>
                             <td style="text-align: center">{{ $value['keterangan'] }}</td>
                         </tr>
                         @php $index++; @endphp
@@ -291,7 +327,7 @@
                         dipenuhi untuk
                         kenaikan pangkat/jenjang</th>
                     <th colspan="2">{{ number_format($data['pangkat'] ?? 0, 3) }}</th>
-                    <th colspan="2">{{ number_format($data['jabatan'] ?? 0, 3)  }}</th>
+                    <th colspan="2">{{ number_format($data['jabatan'] ?? 0, 3) }}</th>
                 </tr>
                 <tr>
                     <th colspan="3" style="text-align: left; font-size: 14px;">
@@ -334,42 +370,19 @@
         </table>
         {{-- Bagian 2 End --}}
 
-        <div style="<?php echo isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? 'margin-top: 7rem;' : ''; ?>">
-            <div class="signature-container">
-                <strong>Ditetapkan di Jambi </strong>
-                <strong style="display:block">
-                    Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
-                </strong>
-                <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
-                {{-- TTD Validasi --}}
-                {{-- TODO : Mungkin sebaikny rapiin lagi nanti kalo ad ttd --}}
-                @if (!empty($signature))
-                    <div style="margin-top: 0px; margin-bottom: 0px;">
-                        <img src="{{ $signature }}" style="width: 60px; height: 60px;" alt="Tanda Tangan">
-                    </div>
-                @else
-                    <div style="height: 80px;"></div> {{-- Spacer jika tidak ada tanda tangan --}}
-                @endif
-                {{-- TTD Validasi --}}
 
-                {{-- TODO: Tampilanny berantakan! Benerin lagi nanti ! --}}
 
-                <div>
-                    <strong style="display: block">
-                        {{ $data['nama'] }}
-                    </strong>
-                    <strong style="display: block">
-                        NIP. {{ $data['nip'] }}
-                    </strong>
-                </div>
-            </div>
-
+        <div
+            style="padding-top:0px;
+            {{ isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? 'margin-top: 7rem;' : 'margin-top: 0rem;' }}">
             @if (count(array_filter($data['tebusan3'])) > 0)
-                <div style="margin-top:0.7rem; width:20rem; font-size: 0.9rem">
-                    <strong style="font-weight: 400">ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang
-                        bersangkutan</strong>
-                    <strong style="font-weight: 400; margin-top: 1.5rem; display: block">Tembusan Disampaikan kepada
-                        :</strong>
+                <div class="tebusan-container">
+                    <strong style="font-weight: 400;  max-width: 40%; word-wrap: break-word;">
+                        ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
+                    </strong>
+                    <strong style="font-weight: 400; margin-top: 0.4rem; display: block">
+                        Tembusan Disampaikan kepada:
+                    </strong>
                     @php
                         $tebusan_list = [
                             'kepala_reg' => 'Kepala Kantor Regional VII BKN',
@@ -389,7 +402,94 @@
                     @endforeach
                 </div>
             @endif
+            <div class="signature-container" style="margin-top: 0.5rem;">
+                <strong>Ditetapkan di Jambi </strong>
+                <strong style="display:block;">
+                    Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
+                </strong>
+                <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
+
+                @if (!empty($signature))
+                    <div style="margin-top: 0px; margin-bottom: 0px;">
+                        <img src="{{ $signature }}" style="width: 60px; height: 60px;" alt="Tanda Tangan">
+                    </div>
+                @else
+                    <div style="height: 70px;"></div>
+                @endif
+
+                <div style="margin-top: 0px ">
+                    <strong style="display: block">{{ $data['nama'] }}</strong>
+                    <strong style="display: block">NIP. {{ $data['nip'] }}</strong>
+                </div>
+
+            </div>
+
+            {{-- <div class="clearfix">
+                @if (count(array_filter($data['tebusan3'])) > 0)
+                    <table
+                        style="{{ isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? ' margin-top: 7rem; ' : ' margin-top: 0rem; padding-top:0px; ' }} width: 100%; height: 5%; border-width: 1px; border-color: #334454;
+     font-size: 15px; page-break-inside: avoid;">
+                        <tr valign="top">
+                            <td style="width: 50%; padding-right: 1rem; font-size: 15px;">
+                                <strong style="font-weight: 400;">
+                                    ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
+                                </strong>
+                                <div style="margin-top: 1rem;">
+                                    <strong style="font-weight: 400;">
+                                        Tembusan Disampaikan kepada:
+                                    </strong>
+                                    <div style="margin-top: 0.5rem;">
+                                        @php
+                                            $tebusan_list = [
+                                                'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                                                'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                                                'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                                                'pns' => 'PNS Bersangkutan',
+                                                'kepala_biro' => 'Kepala Biro SDM BPS',
+                                                'arsip' => 'Arsip',
+                                            ];
+                                            $i = 1;
+                                        @endphp
+                                        @foreach ($data['tebusan3'] as $key => $value)
+                                            @if ($value)
+                                                <div style="margin-bottom: 2px;">{{ $i }}.
+                                                    {{ $tebusan_list[$key] }}</div>
+                                                @php $i++; @endphp
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td style="width: 50%; padding-left: 1rem; font-size: 15px; text-align: left;">
+                                <strong style="font-weight: 400;">Ditetapkan di Jambi</strong><br>
+                                <strong style="font-weight: 400; display: block;">
+                                    Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
+                                </strong>
+                                <strong style="font-weight: 400; display: block; margin-top: 0.7rem;">
+                                    Kepala BPS Provinsi Jambi
+                                </strong>
+
+                                @if (!empty($signature))
+                                    <div style="margin-top: 1.2rem; margin-bottom: 1.5rem;">
+                                        <img src="{{ $signature }}" style="width: 60px; height: 60px;"
+                                            alt="Tanda Tangan">
+                                    </div>
+                                @else
+                                    <div style="height: 0px;"></div>
+                                @endif
+
+                                <div style="margin-top: 0px;">
+                                    <strong style="display: block; font-weight: 400;">{{ $data['nama'] }}</strong>
+                                    <strong style="display: block; font-weight: 400;">NIP. {{ $data['nip'] }}</strong>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                @endif
+            </div> --}}
         </div>
+
 
     </div>
 </section>

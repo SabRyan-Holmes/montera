@@ -171,6 +171,16 @@ class PengajuanController extends Controller
 
     }
 
+    // CANCEL PIMPINAN
+    public function cancel_pengajuan(Pengajuan $pengajuan)
+    {
+        // dd($)
+        $PAK = $pengajuan->riwayat_pak();
+        $pengajuan->delete();
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('message', 'Pengajuan PAK berhasil dibatalkan');
+    }
+
     public function cancel(Pengajuan $pengajuan)
     {
         // dd($pengajuan);
