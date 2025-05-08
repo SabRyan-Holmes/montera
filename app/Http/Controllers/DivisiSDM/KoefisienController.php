@@ -42,7 +42,7 @@ class KoefisienController extends Controller
             ['jabatan' => $validated['jabatan']],
             $validated
         );
-        return Redirect::route('koefisien.index')->with('message', 'Aturan Koefien Berhasil Disimpan!');
+        return Redirect::route('divisi-sdm.koefisien.index')->with('message', 'Aturan Koefien Berhasil Disimpan!');
     }
 
     /**

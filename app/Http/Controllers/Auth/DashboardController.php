@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Pengajuan;
+use App\Models\PengusulanPegawai;
 use App\Models\RiwayatPAK;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -54,16 +55,21 @@ class DashboardController extends Controller
             ];
 
             $pegawaiFungsional = $terampil + $mahir + $penyelia + $pertama + $muda + $madya;
-            $pakCount = $user->jumlah_dicetak;
+            // $pakCount = $user->jumlah_dicetak; //Sebelumnya
+            $pakCount = RiwayatPAK::all()->count(); //Ubah jadi ini
             $userCount =  User::all()->count();
             $pegawaiCount =  Pegawai::all()->count();
+            $pengusulanCount = PengusulanPegawai::all()->count();
+            $pengajuanCount = Pengajuan::all()->count();
+            // TODO: Arsip Dokumen, No PAK terakhir, sebaikny juga ditambahkan
 
             $dataByRole = [
                 'pegawaiFungsional' => $pegawaiFungsional,
                 'PAKCount' => $pakCount,
                 'userCount' => $userCount,
-                'pegawaiCount' => $pegawaiCount
-                // TODO: tambahain lagi nanti
+                'pegawaiCount' => $pegawaiCount,
+                'pengusulanCount' => $pengusulanCount,
+                'pengajuanCount' => $pengajuanCount
             ];
         }
 
@@ -71,7 +77,6 @@ class DashboardController extends Controller
         if ($user->role == "pegawai") {
             $pakCount = RiwayatPAK::where('pegawai_id', $user->id)->count();
             $pengajuanCount = Pengajuan::where('pegawai_id', $user->id)->count();
-
 
             $dataByRole = [
                 'PAKCount' => $pakCount,

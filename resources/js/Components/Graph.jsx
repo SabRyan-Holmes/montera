@@ -127,7 +127,7 @@ export default function Graph({ data }) {
         };
     };
     return (
-        <div class="max-w-md w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5 border border-gradient cursor-pointer">
+        <section class="max-w-md w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5 border border-gradient cursor-pointer">
 
             <div class="flex justify-around mb-3 items-center ">
                 <div class="flex justify-center items-center">
@@ -423,6 +423,6 @@ export default function Graph({ data }) {
                     </a> */}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
