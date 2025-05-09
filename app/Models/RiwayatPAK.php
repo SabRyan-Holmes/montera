@@ -12,12 +12,6 @@ class RiwayatPAK extends Model
     protected $table = 'riwayat_pak';
     protected $guarded = ['id'];
     protected $with = ['pegawai'];
-
-    public function pegawai()
-    {
-        return $this->belongsTo(Pegawai::class);
-    }
-
     protected $casts = [
         'tebusan1' => 'array',
         'tebusan2' => 'array',
@@ -30,6 +24,12 @@ class RiwayatPAK extends Model
         'ak_tipe_tambahan' => 'array',
         'jakk' => 'array',
     ];
+
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class);
+    }
+
 
     public function scopeFilter(Builder $query, array $filters): void
     {
@@ -61,7 +61,4 @@ class RiwayatPAK extends Model
             })
         );
     }
-
-
-
 }
