@@ -1,42 +1,25 @@
-import { Link } from "@inertiajs/react";
-import { MdOutlineDocumentScanner } from "react-icons/md";
-import CollapsedLink from "./CollapsedLink";
+import { NavLinkDashboard } from ".";
 
-export default function NavLink({
-    active = false,
-    className = "",
-    children,
-    submenu,
-    routes,
-    ...props
-}) {
+export default function NavLinkCollapse({ children, submenu }) {
+    // Mengecek apakah salah satu submenu sedang aktif
+    const isAnyActive = submenu.some((item) =>
+        item.actives?.some((r) => route().current(r))
+    );
+
     return (
-        <li className=" active:text-primary">
-            <details open>
-                <summary>{children}</summary>
+        <li className="active:text-primary">
+            <details open={isAnyActive}>
+                <summary className="cursor-pointer">{children}</summary>
                 <ul>
-                {submenu.map((data, i) => (
-                    <CollapsedLink key={i} submenu={data} href={route(routes[i])} active={route().current(routes[i])} />
-                ))}
-                    {/* {submenu.map((data, i) => (
-                        <li
+                    {submenu.map((item, i) => (
+                        <NavLinkDashboard
                             key={i}
-                            className="hover:text-yellow-600 active:text-primary"
+                            href={route(item.route)}
+                            active={item.actives?.some((r) => route().current(r))}
                         >
-                            <Link
-                                {...props}
-                                className={
-                                    "font-bold flex " +
-                                    (active
-                                        ? "border-primary/80 text-yellow-600 focus:border-primary "
-                                        : "border-transparent  hover:text-primary hover:border-gray-300 focus:text-secondary active:text-secondary focus:border-gray-300 ") +
-                                    className
-                                }
-                            >
-                                {data}
-                            </Link>
-                        </li>
-                    ))} */}
+                            {item.label}
+                        </NavLinkDashboard>
+                    ))}
                 </ul>
             </details>
         </li>

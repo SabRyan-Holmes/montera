@@ -272,6 +272,7 @@ export default function Index({
                                                                     pak.id,
                                                                 pegawai_id:
                                                                     pak.pegawai_id,
+                                                                pengaju_id: auth.user.id
                                                             }}
                                                             method="post"
                                                             className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"

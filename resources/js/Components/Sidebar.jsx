@@ -69,6 +69,107 @@ const Sidebar = ({ active, role }) => {
 
                 {role === "divisi_sdm" && (
                     <section>
+                        {/* TODO: Nanti Bagus DiCollapse in bisa */}
+                        {/* <NavLinkCollapse
+                            submenu={["Kelola Riwayat PAK", " Kelola Pegawai"]}
+                            routes={[
+                                "divisi-sdm.riwayat-pak.index",
+                                "divisi-sdm.pegawai.index",
+                            ]}
+                        >
+                            Data Master
+                        </NavLinkCollapse> */}
+
+                        {/* <NavLinkCollapse
+                            submenu={[
+                                <>
+                                     <MdSpaceDashboard />
+                                     Dashboard
+                                </>,
+                                <>
+                                    <MdAssignment />
+                                    Pengusulan Pegawai
+                                </>,
+                                <>
+                                    <MdEditDocument />
+                                    Penetapan Angka Kredit
+                                </>,
+                                <>
+                                  <BsFillSendArrowUpFill />
+                                  Pengajuan PAK
+                                </>
+                            ]}
+                            routes={[
+                                "dashboard",
+                                "divisi-sdm.pengusulan-pegawai",
+                                "divisi-sdm.pak.create",
+                                "divisi-sdm.pengajuan.index"
+                            ]}
+                        >
+                            <span className="flex items-center">
+                                <FaDatabase className="mr-2" />
+                                MAIN
+                            </span>
+                        </NavLinkCollapse> */}
+
+                        {/* <NavLinkCollapse
+                            submenu={[
+                                <>
+                                    <IoDocuments className="mr-2" />
+                                    Kelola Riwayat PAK
+                                </>,
+                                <>
+                                    <FaUserTie className="mr-2" />
+                                    Kelola Pegawai
+                                </>,
+                            ]}
+                            routes={[
+                                "divisi-sdm.riwayat-pak.index",
+                                "divisi-sdm.pegawai.index",
+                            ]}
+                        >
+                            <span className="flex items-center">
+                                <FaDatabase className="mr-2" />
+                                Data Master
+                            </span>
+                        </NavLinkCollapse> */}
+
+                        <NavLinkCollapse
+                            submenu={[
+                                {
+                                    label: (
+                                        <>
+                                            <IoDocuments className="mr-2" />
+                                            Kelola Riwayat PAK
+                                        </>
+                                    ),
+                                    route: "divisi-sdm.riwayat-pak.index",
+                                    actives: [
+                                        "divisi-sdm.riwayat-pak.index",
+                                        "divisi-sdm.riwayat-pak.edit",
+                                        "divisi-sdm.pak.edit",
+                                    ],
+                                },
+                                {
+                                    label: (
+                                        <>
+                                            <FaUserTie className="mr-2" />
+                                            Kelola Pegawai
+                                        </>
+                                    ),
+                                    route: "divisi-sdm.pegawai.index",
+                                    actives: ["divisi-sdm.pegawai.index", "divisi-sdm.pegawai.edit"],
+                                },
+                            ]}
+                        >
+                            <span className="flex items-center">
+                                <FaDatabase className="mr-2" />
+                                Data Master
+                            </span>
+                        </NavLinkCollapse>
+
+
+
                         {/* Link Dashboard */}
                         <NavLinkDashboard
                             href={route("dashboard")}
@@ -91,17 +192,6 @@ const Sidebar = ({ active, role }) => {
                         >
                             <MdEditDocument /> Penetapan Angka Kredit
                         </NavLinkDashboard>
-
-                        {/* TODO: Nanti Bagus DiCollapse in bisa */}
-                        {/* <NavLinkCollapse
-                            submenu={["Kelola Riwayat PAK", " Kelola Pegawai"]}
-                            routes={[
-                                "divisi-sdm.riwayat-pak.index",
-                                "divisi-sdm.pegawai.index",
-                            ]}
-                        >
-                            Data Master
-                        </NavLinkCollapse> */}
 
                         {/* Riwayat Dokumen PAK */}
                         <NavLinkDashboard
@@ -166,19 +256,19 @@ const Sidebar = ({ active, role }) => {
                                 active={route().current(
                                     "divisi-sdm.pengusulan-pegawai"
                                 )}
-                                className="z-50 inline-flex  group"
+                                className="z-50 inline-flex group"
                             >
                                 <MdAssignment /> Pengusulan Pegawai
                             </NavLinkDashboard>
 
                             {/* TODO: Link Arsip Dokumen */}
-                            <NavLinkDashboard className="z-50 inline-flex  group">
+                            <NavLinkDashboard className="z-50 inline-flex group">
                                 <IoMdArchive />
                                 Arsip Dokumen
                             </NavLinkDashboard>
 
                             {/* TODO : Link Log Aktivitas */}
-                            <NavLinkDashboard className="z-50 inline-flex  group">
+                            <NavLinkDashboard className="z-50 inline-flex group">
                                 <AiFillNotification />
                                 Log Aktivitas
                             </NavLinkDashboard>

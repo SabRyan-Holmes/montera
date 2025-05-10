@@ -61,9 +61,11 @@ class PengajuanController extends Controller
     // Simpan Pengajuan setelah diajukan
     public function store(Request $request)
     {
+
         $rules = [
             'riwayat_pak_id' => 'required|integer',
             'pegawai_id' => 'required|integer',
+            'pengaju_id' => 'required|integer',
         ];
         $validated = $request->validate($rules);
         Pengajuan::create($validated);
