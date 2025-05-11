@@ -77,19 +77,17 @@ class AturanPAKSeeder extends Seeder
         ]);
 
         // NOTE : Belum tau ini bisa dijadiin ke database nanti dan bisa diedit
-        AturanPAK::create(
-            ['name' => 'rumus_penghitungan'],
-            [
-                'value' => json_encode([
-                    'angka_kredit' => '(periode / 12) * ak_normatif * (presentase / 100)',
-                    'jumlah_ak_kumulatif' => 'ak_terakhir + ak_terbaru',
-                    'ak_minimal_naik_pangkat' => 'jakk - pangkat_minimal',
-                    'ak_minimal_naik_jabatan' => 'jakk - jabatan_minimal',
-                ]),
-                'default_pointer' => 'angka_kredit', // misal default rumus yang dipakai utama
-                // 'is_locked' => true, // jika ingin mencegah edit via UI
-            ]
-        );
+        AturanPAK::create([
+            'name' => 'rumus_penghitungan',
+            'value' => json_encode([
+                'angka_kredit' => '(periode / 12) * ak_normatif * (presentase / 100)',
+                'jumlah_ak_kumulatif' => 'ak_terakhir + ak_terbaru',
+                'ak_minimal_naik_pangkat' => 'jakk - pangkat_minimal',
+                'ak_minimal_naik_jabatan' => 'jakk - jabatan_minimal',
+            ]),
+            'default_config' => 'angka_kredit', // misal default rumus yang dipakai utama
+            // 'is_locked' => true, // jika ingin mencegah edit via UI
 
+        ]);
     }
 }

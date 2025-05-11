@@ -4,6 +4,7 @@ namespace App\Http\Controllers\DivisiSDM;
 
 use App\Http\Controllers\Controller;
 use App\Models\AturanPAK;
+use App\Models\Koefisien;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,10 +16,15 @@ class AturanPAKController extends Controller
     public function index()
     {
         // dd("test");
+        $DB_koefisien_pertahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first();
+        $predikat_presentase = AturanPAK::where('name', 'Predikat & Presentase')->first();
+
         return Inertia::render('KelolaAturanPAK/Index', [
             'title' => 'Kelola Aturan PAK',
             'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(),
-            'koefisienPertahun' => AturanPAK::where('name', 'Penanda Tangan')->first(),
+            'koefisienPertahun' => $DB_koefisien_pertahun->value,
+            'predikatPresentase' => $predikat_presentase->value,
+            // 'koefisienPertahun2' => Koefisien::all(),
         ]);
     }
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');           // ex: Penanda Tangan, Koefisien Pertahun
             $table->json('value');            // bisa array atau associative array
-            $table->json('default_pointer')->nullable(); // info pointer default (index atau map key->index)
+            $table->json('default_config')->nullable(); // info pointer default (index atau map key->index)
             $table->timestamps();
         });
     }
