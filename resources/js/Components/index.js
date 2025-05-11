@@ -11,8 +11,8 @@ import InputLabel from "./InputLabel";
 import Modal from "./Modal";
 import Navbar from "./Navbar";
 import NavLink from "./NavLink";
-import NavLinkCollapse from "./NavLinkCollapse";
-import NavLinkDashboard from "./NavLinkDashboard";
+import SidebarLinkCollapse from "./SidebarLinkCollapse";
+import SidebarLink from "./SidebarLink";
 import Pagination from "./Pagination";
 import PrimaryButton from "./PrimaryButton";
 import ProfileImage from "./ProfileImage";
@@ -39,8 +39,8 @@ export {
     Modal,
     Navbar,
     NavLink,
-    NavLinkCollapse,
-    NavLinkDashboard,
+    SidebarLinkCollapse,
+    SidebarLink,
     Pagination,
     PrimaryButton,
     ResponsiveNavLink,

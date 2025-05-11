@@ -192,9 +192,6 @@ class DokumenPAKController extends Controller
     }
 
 
-
-
-
     // Maybe Unused
     public function cetak(Request $request)
     {
@@ -214,23 +211,16 @@ class DokumenPAKController extends Controller
         return Inertia::location(route('pak.preview'));
     }
 
-    public function cetak_saja(Request $request)
+
+
+
+
+    public function download_template()
     {
-        // dd($request->all());
-        Session::put('data', $request->all());
 
-        // Kalo dibuka dr history(tanpa restore ke database)
-        if (!isset($request->id)) {
-            $dataForStore = $request->except('pegawai');
-            $pegawai_id = $request->input('pegawai.id');
-            $dataForStore['pegawai_id'] = $pegawai_id;
-            // $dataForStore = array_merge($dataForStore['data'], ['pegawai_id' => $pegawai_id]);
-            // dd($dataForStore);
-            RiwayatPAK::create($dataForStore);
-        }
+        // TODO : Download template logic(dalam docx kalo bisa)
+        // return $download;
     }
-
-
 
     public function test_pdf()
     {

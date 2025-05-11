@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\DivisiSDM;
 
-use App\Models\PengusulanPegawai;
+use App\Http\Controllers\Controller;
+use App\Models\AturanPAK;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PengusulanPegawaiController extends Controller
+class AturanPAKController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('PengusulanPegawai/Index', [
-            "title" => "Pengusulan Pegawai ",
-
+        // dd("test");
+        return Inertia::render('KelolaAturanPAK/Index', [
+            'title' => 'Kelola Aturan PAK',
+            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(),
+            'koefisienPertahun' => AturanPAK::where('name', 'Penanda Tangan')->first(),
         ]);
     }
 
@@ -38,7 +41,7 @@ class PengusulanPegawaiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PengusulanPegawai $pengusulanPegawai)
+    public function show(AturanPAK $aturanPAK)
     {
         //
     }
@@ -46,7 +49,7 @@ class PengusulanPegawaiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PengusulanPegawai $pengusulanPegawai)
+    public function edit(AturanPAK $aturanPAK)
     {
         //
     }
@@ -54,7 +57,7 @@ class PengusulanPegawaiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PengusulanPegawai $pengusulanPegawai)
+    public function update(Request $request, AturanPAK $aturanPAK)
     {
         //
     }
@@ -62,7 +65,7 @@ class PengusulanPegawaiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PengusulanPegawai $pengusulanPegawai)
+    public function destroy(AturanPAK $aturanPAK)
     {
         //
     }

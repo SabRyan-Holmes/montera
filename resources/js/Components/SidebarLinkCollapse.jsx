@@ -1,24 +1,24 @@
-import { NavLinkDashboard } from ".";
+import { SidebarLink } from ".";
 
-export default function NavLinkCollapse({ children, submenu }) {
+export default function SidebarLinkCollapse({ children, submenu }) {
     // Mengecek apakah salah satu submenu sedang aktif
     const isAnyActive = submenu.some((item) =>
         item.actives?.some((r) => route().current(r))
     );
 
     return (
-        <li className="active:text-primary">
+        <li className="mx-2 active:text-primary">
             <details open={isAnyActive}>
-                <summary className="cursor-pointer">{children}</summary>
+                <summary className="font-bold text-white cursor-pointer">{children}</summary>
                 <ul>
                     {submenu.map((item, i) => (
-                        <NavLinkDashboard
+                        <SidebarLink
                             key={i}
                             href={route(item.route)}
                             active={item.actives?.some((r) => route().current(r))}
                         >
                             {item.label}
-                        </NavLinkDashboard>
+                        </SidebarLink>
                     ))}
                 </ul>
             </details>

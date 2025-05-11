@@ -1,18 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shared;
 
-use App\Models\AturanPAK;
+use App\Http\Controllers\Controller;
+use App\Models\PengusulanPegawai;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-class AturanPAKController extends Controller
+
+class PengusulanPegawaiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return Inertia::render('PengusulanPegawai/Index', [
+            "title" => "Pengusulan Pegawai ",
+
+        ]);
     }
 
     /**
@@ -34,7 +40,7 @@ class AturanPAKController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AturanPAK $aturanPAK)
+    public function show(PengusulanPegawai $pengusulanPegawai)
     {
         //
     }
@@ -42,7 +48,7 @@ class AturanPAKController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AturanPAK $aturanPAK)
+    public function edit(PengusulanPegawai $pengusulanPegawai)
     {
         //
     }
@@ -50,7 +56,7 @@ class AturanPAKController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AturanPAK $aturanPAK)
+    public function update(Request $request, PengusulanPegawai $pengusulanPegawai)
     {
         //
     }
@@ -58,7 +64,7 @@ class AturanPAKController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AturanPAK $aturanPAK)
+    public function destroy(PengusulanPegawai $pengusulanPegawai)
     {
         //
     }

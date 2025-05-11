@@ -1,14 +1,17 @@
 <?php
 
 use App\Http\Controllers\Auth\DashboardController;
+use App\Http\Controllers\DivisiSDM\AturanPAKController;
 use App\Http\Controllers\DivisiSDM\KoefisienController;
 use App\Http\Controllers\Pegawai\SSOController;
-use App\Http\Controllers\PengusulanPegawaiController;
+use App\Http\Controllers\Shared\PengusulanPegawaiController;
 use App\Http\Controllers\Shared\DokumenPAKController;
+use App\Http\Controllers\Shared\LogAktivitasController;
 use App\Http\Controllers\Shared\PegawaiController;
 use App\Http\Controllers\Shared\PengajuanController;
 use App\Http\Controllers\Shared\ProfileController;
 use App\Http\Controllers\Shared\RiwayatPAKController;
+use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -45,10 +48,10 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
     Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
 
-    // TODO : Pengusulan Pegawai
+    // TODO : Pengusulan Pegawai(R, Accept, Reject)
     Route::get('pengusulan-pegawai/', [PengusulanPegawaiController::class, 'index'])->name('pengusulan-pegawai');
 
-    // Penetapan Angka Kredit => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
+    // Penetapan Angka Kredit => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf (CRUD, Submit)
     Route::prefix('/pak')->name('pak.')->group(function () {
         Route::get('/create-for/pegawai', [DokumenPAKController::class, 'create'])->name('create');
         Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
@@ -57,29 +60,49 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
         Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
     });
 
-    // Riwayat PAK(CRUD)
+    // Pengajuan PAK(CRUD, Cancel)
+    Route::resource('pengajuan', PengajuanController::class);
+    Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel_pengajuan'])->name('pengajuan.cancel');
+
+    // Arsip Dokumen(CRUD)
+    Route::resource('arsip-dokumen', PengajuanController::class);
+
+
+    // =======Data Master========
+
+    // Kelola Riwayat PAK(CRUD)
     Route::resource('riwayat-pak', RiwayatPAKController::class)
         ->parameters(['riwayat-pak' => 'riwayat'])->only(['index', 'show', 'edit', 'update', 'destroy']);
     // Alternatif
     // Route::get('/pegawai', [RiwayatPAKController::class, 'pegawai'])->name('pegawai'); //Pilih dulu pegawai mana yang mau dilihat dokumen PAK nya
     // Route::get('/show/{pegawai:NIP}', [RiwayatPAKController::class, 'show'])->name('show');
 
-    // Status Pengajuan(CRUD)
-    Route::resource('pengajuan', PengajuanController::class);
-    Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel_pengajuan'])->name('pengajuan.cancel');
-
     // Kelola Pegawai(CRUD)
     Route::resource('pegawai', PegawaiController::class);
+
+    // Kelola Aturan PAK(CRUD)
+    Route::resource('aturan-pak', AturanPAKController::class);
+
 
     // Kelola Koefisien(CRUD)
     Route::resource('koefisien', KoefisienController::class);
 
-    //Arsip Dokumen(CRUD)
-    //
+
+    // =========INFO=========
 
     // Log Aktivitas(R)
-    //
+    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas');
+
+    // Panduan/Bantuan
+    Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
+
+
+    // Download Template
+    Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
+
+
 });
+
 
 
 
@@ -108,9 +131,11 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
 
     // Log Aktivitas
     //
+    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas');
 
 
 });
+
 
 
 
