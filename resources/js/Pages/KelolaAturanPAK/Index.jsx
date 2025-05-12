@@ -8,17 +8,16 @@ import {
     InputLabel,
     InputLabelCustom,
     PrimaryButton,
+    SecondaryButton,
     RadioWithLabel,
     SuccessButton,
     TextInput,
+    TooltipHover,
 } from "@/Components";
 import { FaSave, FaEdit } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment/min/moment-with-locales";
-
-// const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-// const [isEdit, setIsEdit] = useState(false);
-// const [dataEdit, setDataEdit] = useState(null);
+// ANCHOR : Import Here!
 
 export default function Index({
     auth,
@@ -26,25 +25,35 @@ export default function Index({
     flash,
     koefisienPertahun,
     predikatPresentase,
+    pangkatJabatan,
+    tebusan,
+    kesimpulan,
+    rumus,
+    // ANCHOR : Handle Props Here!!
 }) {
     moment.locale("id");
+    let pangkat = pangkatJabatan.pangkat;
+    let jabatan = pangkatJabatan.jabatan;
 
-    // const koefisienPertahun = Object.entries(DBkoefisienPertahun).map(([jabatan, nilai]) => ({
-    //     jabatan,
-    //     nilai,
-    //   }));
-
-    // console.log(koefisienPertahun)
-
+    // const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    // const [isEdit, setIsEdit] = useState(false);
+    // const [dataEdit, setDataEdit] = useState(null);
+    // ANCHOR : Logic & Function Here!
     return (
         <Authenticated user={auth.user} title={title}>
-            <main className="grid content-end w-full h-full grid-cols-2 grid-rows-3 gap-12 mx-auto mt-5 text-slate-600 px-7">
-                {/* SECTION : PENANDA TANGAN */}
-                <section className="px-4 border rounded-lg mt-7 border-gradient">
-                    <div className="m-5">
+            <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto content-normal justify-items-center text-slate-600 px-7">
+                {/* SECTION : Penanda Tangan */}
+                <section className="mt-10 border rounded-lg bg-slate-700 justify-self-stretch place-self-center border-gradient">
+                    <div className="m-12 h-[27rem]">
                         <div className="flex justify-between ">
                             <strong className="text-2xl">Penanda Tangan</strong>
-                            <GoQuestion className="w-10 h-10" />
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Daftar nama dan NIP pejabat yang berwenang menandatangani dokumen PAK."
+                                />
+                            </div>
                         </div>
 
                         <form>
@@ -143,34 +152,126 @@ export default function Index({
                         </form>
                     </div>
                 </section>
+                {/* !SECTION : Penanda Tangan */}
 
-                {/* SECTION : RUMUS */}
-                <section className="px-4 border rounded-lg mt-7 border-gradient">
-                    <div className="m-5">
-                        <div className="flex justify-between ">
+                {/* SECTION : Rumus*/}
+                <section className="mt-10 border rounded-lg bg-slate-700 justify-self-stretch place-self-center border-gradient">
+                    <div className="m-12 h-[27rem]">
+                        <div className="flex justify-between mb-10">
                             <strong className="text-2xl">
-                                Rumus Penghitungan PAK
+                                Rumus Penghitungan
                             </strong>
-                            <GoQuestion className="w-10 h-10" />
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Formula resmi yang digunakan untuk menghitung angka kredit berdasarkan periode dan bobot kinerja."
+                                />
+                            </div>
                         </div>
 
-                        <form>{/*  NAMA */}</form>
+                        <form>
+                            <div className="flex items-center h-24 gap-2 p-3 text-sm font-bold border rounded-md border-accent">
+                                <strong className="text-base font-extrabold underline">
+                                    Angka kredit
+                                </strong>
+                                <span className="scale-125 ">=</span>
+                                <div className="flex-col m-2">
+                                    <span>Angka Periode</span>
+                                    <div className="border-b-2 border-accent" />
+                                    <span className="block text-center">
+                                        12
+                                    </span>{" "}
+                                </div>
+                                <span className="font-bold scale-110">x</span>
+                                <strong className="">AK Normatif</strong>
+                                <span className="scale-110 ">x</span>
+                                <div className="flex-col m-2">
+                                    <span>Angka Periode</span>
+                                    <div className="border-b-2 border-accent" />
+                                    <span className="block text-center">
+                                        12
+                                    </span>{" "}
+                                </div>
+                            </div>
+                            {/* FOCUS! */}
+                            {/* Keterangan */}
+                            <div className="my-6 space-y-2 text-sm leading-relaxed ">
+                                <strong className="text-xl font-bold">
+                                    Keterangan
+                                </strong>
+                                <p>
+                                    <strong>Angka Periode</strong> = Periode
+                                    Berakhir - Periode Mulai
+                                </p>
+                                <p>
+                                    <strong>Akumulasi Angka Kredit</strong>
+                                </p>
+                                <p>
+                                    <strong>
+                                        Jumlah Angka Kredit Kumulatif
+                                    </strong>{" "}
+                                    = AK Terakhir + AK Terbaru
+                                </p>
+                                <p>
+                                    <strong>
+                                        AK Minimal untuk Kenaikan Pangkat
+                                    </strong>{" "}
+                                    = JAKK - Pangkat Minimal
+                                </p>
+                                <p>
+                                    <strong>
+                                        AK Minimal untuk Kenaikan Jabatan
+                                    </strong>{" "}
+                                    = JAKK - Jabatan Minimal
+                                </p>
+                            </div>
+                            {/* Simpan Button */}
+
+                            <div className="flex justify-end w-full gap-7">
+                                <SecondaryButton
+                                    disabled
+                                    type="submit"
+                                    className="inline-flex justify-end my-5 "
+                                    // disabled={processing}
+                                >
+                                    Edit
+                                    <FaEdit className="mx-1" />
+                                </SecondaryButton>
+                                <SuccessButton
+                                    disabled
+                                    type="submit"
+                                    className="inline-flex justify-end my-5 "
+                                    // disabled={processing}
+                                >
+                                    Simpan
+                                    <FaSave className="mx-1" />
+                                </SuccessButton>
+                            </div>
+                        </form>
                     </div>
                 </section>
+                {/* !SECTION : Rumus*/}
 
-                {/* SECTION : KOEFISIEN PERTAHUN */}
-                <section className="px-4 border rounded-lg mt-7 border-gradient">
-                    <div className="m-5">
+                {/* SECTION : Koefisien Pertahun */}
+                <section className="border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <div className="p-12 h-[36rem]">
                         <div className="flex justify-between ">
                             <strong className="text-2xl">
                                 Koefisien Pertahun
                             </strong>
-                            <GoQuestion className="w-10 h-10" />
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Nilai standar koefisien per tahun berdasarkan jenjang jabatan fungsional."
+                                />
+                            </div>
                         </div>
 
-                        <div className="pt-3">
-                            <table className="table text-xs table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
+                        <div className="pt-7">
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
                                     <tr>
                                         <th
                                             scope="col"
@@ -185,12 +286,14 @@ export default function Index({
                                         </th>
                                         <th
                                             scope="col"
-                                            width="20%"
+                                            width="15%"
                                             className="text-center"
                                         >
                                             Nilai
                                         </th>
-
+                                        <th scope="col" width="20%">
+                                            Terakhir Diubah
+                                        </th>
                                         <th
                                             scope="col"
                                             className="text-center rounded-tr-xl"
@@ -199,11 +302,10 @@ export default function Index({
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="border-secondary/15 ">
-                                    {/* <td className="text-center">{koefisien["nilai"]}</td> */}
-                                    {Object.entries(koefisienPertahun)
+                                <tbody className=" border-secondary/15">
+                                    {koefisienPertahun
                                         .sort((a, b) => a[1] - b[1]) // urutkan dari nilai kecil ke besar
-                                        .map(([jabatan, nilai], i) => (
+                                        .map((data, i) => (
                                             <tr
                                                 key={i}
                                                 className="group/item hover:bg-secondary/50 hover:cursor-pointer"
@@ -211,9 +313,14 @@ export default function Index({
                                                 <td className="text-center">
                                                     {i + 1}
                                                 </td>
-                                                <td>{jabatan}</td>
-                                                <td className="text-center">
-                                                    {nilai}
+                                                <td>{data.jabatan}</td>
+                                                <td className="font-semibold text-center ">
+                                                    {data.nilai}
+                                                </td>
+                                                <td className="text-sm text-center">
+                                                    {moment(
+                                                        data.updated_at
+                                                    ).fromNow()}
                                                 </td>
 
                                                 <td className="p-3 text-center whitespace-nowrap text-nowrap">
@@ -272,20 +379,159 @@ export default function Index({
                         </div>
                     </div>
                 </section>
+                {/* !SECTION Koefisien Pertahun */}
 
-                {/* SECTION : KOEFISIEN PERTAHUN */}
-                <section className="px-4 border rounded-lg mt-7 border-gradient">
-                    <div className="m-5">
+                {/* SECTION : Predikat Presentase */}
+                <section className="self-start border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <div className="m-12 h-[30rem]">
                         <div className="flex justify-between ">
                             <strong className="text-2xl">
-                                Koefisien Pertahun
+                                Predikat & Presentase
                             </strong>
-                            <GoQuestion className="w-10 h-10" />
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Kategori penilaian kinerja beserta presentase konversi terhadap angka kredit."
+                                />
+                            </div>{" "}
                         </div>
 
-                        <div className="pt-3">
-                            <table className="table m-auto text-xs table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
+                        <div className="pt-7">
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
+                                    <tr>
+                                        <th
+                                            scope="col"
+                                            dir="rtl"
+                                            className="rounded-tl-xl"
+                                            width="3%"
+                                        >
+                                            No
+                                        </th>
+                                        <th scope="col" width="30%">
+                                            Predikat
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            width="15%"
+                                            className="text-xs text-center"
+                                        >
+                                            Presentase
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            width="20%"
+                                            className="text-sm"
+                                        >
+                                            Terakhir Diubah
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="text-center rounded-tr-xl"
+                                        >
+                                            Aksi
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="border-secondary/15 ">
+                                    {/* <td className="text-center">{koefisien["nilai"]}</td> */}
+                                    {predikatPresentase
+                                        .sort((a, b) => a[1] - b[1]) // urutkan dari nilai kecil ke besar
+                                        .map((data, i) => (
+                                            <tr key={i}>
+                                                <td className="text-center">
+                                                    {i + 1}
+                                                </td>
+                                                <td className="p-2 text-nowrap">
+                                                    {data.predikat}
+                                                </td>
+                                                <td className="font-semibold text-center">
+                                                    {data.presentase}%
+                                                </td>
+                                                <td className="text-xs text-center ">
+                                                    {moment(
+                                                        data.updated_at
+                                                    ).fromNow()}
+                                                </td>
+
+                                                <td className="p-3 text-center whitespace-nowrap text-nowrap">
+                                                    <a
+                                                        onClick={() => {
+                                                            setIsPopUpOpen(
+                                                                !isPopUpOpen
+                                                            );
+                                                            setIsEdit(true);
+                                                            setDataEdit(
+                                                                koefisien
+                                                            );
+                                                        }}
+                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                    >
+                                                        <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                    </a>
+
+                                                    <span className="inline-block mx-1"></span>
+
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                koefisien.id
+                                                            )
+                                                        }
+                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                    >
+                                                        <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => {
+                                    // setIsPopUpOpen(!isPopUpOpen);
+                                    // setIsEdit(false);
+                                    // setDataEdit(null);
+                                }}
+                                className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
+                            >
+                                Tambah Koefisien
+                                <IoMdAdd className="w-6 h-6" />
+                            </button>
+                            {/* {isPopUpOpen && (
+                                <PopUpForm
+                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                                    isEdit={isEdit}
+                                    dataEdit={dataEdit}
+                                />
+                            )} */}
+                        </div>
+                    </div>
+                </section>
+                {/* !SECTION : Predikat Presentase */}
+
+                {/* SECTION : Angka Minimal Pangkat Dan Jabatan */}
+                <section className="w-3/5 col-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <div className="m-16">
+                        <div className="flex justify-between ">
+                            <strong className="text-2xl">
+                                Angka Minimal Pangkat Dan Jabatan
+                            </strong>
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Batas minimal angka kredit kumulatif untuk kenaikan pangkat dan jabatan."
+                                />
+                            </div>
+                        </div>
+
+                        <div className="pt-7">
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
                                     <tr>
                                         <th
                                             scope="col"
@@ -295,17 +541,19 @@ export default function Index({
                                         >
                                             No
                                         </th>
-                                        <th scope="col" width="30%">
-                                            Predikat
+                                        <th scope="col" width="20%">
+                                            Pangkat
                                         </th>
                                         <th
                                             scope="col"
                                             width="20%"
                                             className="text-center"
                                         >
-                                            Presentase
+                                            Jabatan
                                         </th>
-
+                                        <th scope="col" width="20%">
+                                            Terakhir Diubah
+                                        </th>
                                         <th
                                             scope="col"
                                             className="text-center rounded-tr-xl"
@@ -314,11 +562,10 @@ export default function Index({
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="border-secondary/15 ">
-                                    {/* <td className="text-center">{koefisien["nilai"]}</td> */}
-                                    {Object.entries(predikatPresentase)
+                                <tbody className=" border-secondary/15">
+                                    {pangkatJabatan.pangkat
                                         .sort((a, b) => a[1] - b[1]) // urutkan dari nilai kecil ke besar
-                                        .map(([predikat, presentase], i) => (
+                                        .map((data, i) => (
                                             <tr
                                                 key={i}
                                                 className="group/item hover:bg-secondary/50 hover:cursor-pointer"
@@ -326,9 +573,16 @@ export default function Index({
                                                 <td className="text-center">
                                                     {i + 1}
                                                 </td>
-                                                <td>{predikat}</td>
-                                                <td className="text-center">
-                                                    {presentase}%
+                                                <td className="font-semibold text-center">
+                                                    {data.nilai}
+                                                </td>
+                                                <td className="font-semibold text-center">
+                                                    {jabatan[i]?.nilai ?? "-"}
+                                                </td>
+                                                <td className="text-sm text-center">
+                                                    {moment(
+                                                        data.updated_at
+                                                    ).fromNow()}
                                                 </td>
 
                                                 <td className="p-3 text-center whitespace-nowrap text-nowrap">
@@ -387,6 +641,453 @@ export default function Index({
                         </div>
                     </div>
                 </section>
+                {/* !SECTION : Angka Minimal Pangkat Dan Jabatan */}
+
+                {/* SECTION : Tebusan */}
+                <section className="w-4/5 col-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <div className="m-16">
+                        <div className="flex justify-between ">
+                            <strong className="text-2xl">Tebusan</strong>
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Pihak-pihak yang menerima salinan hasil penilaian PAK sesuai jenis prosesnya."
+                                />
+                            </div>
+                        </div>
+                        <div className="pt-7">
+                            <strong className="block mb-4 text-xl">
+                                Konversi Predikat Angka Kredit
+                            </strong>
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
+                                    <tr>
+                                        <th
+                                            scope="col"
+                                            dir="rtl"
+                                            className="rounded-tl-xl"
+                                            width="5%"
+                                        >
+                                            No
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            width="60%"
+                                            className="text-left"
+                                        >
+                                            Pihak Tebusan
+                                        </th>
+                                        <th scope="col" width="10%">
+                                            Terakhir Diubah
+                                        </th>
+
+                                        <th
+                                            scope="col"
+                                            className="text-center rounded-tr-xl"
+                                        >
+                                            Aksi
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className=" border-secondary/15">
+                                    {tebusan.konversi.map((data, i) => (
+                                        <tr
+                                            key={i}
+                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
+                                        >
+                                            <td className="text-center">
+                                                {i + 1}
+                                            </td>
+                                            <td className="font-semibold text-left">
+                                                {data.choice}
+                                            </td>
+                                            <td className="text-sm text-center">
+                                                {moment(
+                                                    data.updated_at
+                                                ).fromNow()}
+                                            </td>
+
+                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
+                                                <a
+                                                    // onClick={() => {
+                                                    //     setIsPopUpOpen(
+                                                    //         !isPopUpOpen
+                                                    //     );
+                                                    //     setIsEdit(true);
+                                                    //     setDataEdit(koefisien);
+                                                    // }}
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                </a>
+
+                                                <span className="inline-block mx-1"></span>
+
+                                                <button
+                                                    // onClick={() =>
+                                                    //     handleDelete(
+                                                    //         koefisien.id
+                                                    //     )
+                                                    // }
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <div className="flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        // setIsPopUpOpen(!isPopUpOpen);
+                                        // setIsEdit(false);
+                                        // setDataEdit(null);
+                                    }}
+                                    className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
+                                >
+                                    Tambah
+                                    <IoMdAdd className="w-6 h-6" />
+                                </button>
+                                {/* {isPopUpOpen && (
+                                <PopUpForm
+                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                                    isEdit={isEdit}
+                                    dataEdit={dataEdit}
+                                />
+                            )} */}
+                            </div>
+                        </div>
+
+                        <div className="pt-7">
+                            <strong className="block mb-4 text-xl">
+                                Akumulasi Angka Kredit
+                            </strong>
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
+                                    <tr>
+                                        <th
+                                            scope="col"
+                                            dir="rtl"
+                                            className="rounded-tl-xl"
+                                            width="5%"
+                                        >
+                                            No
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            width="60%"
+                                            className="text-left"
+                                        >
+                                            Pihak Tebusan
+                                        </th>
+                                        <th scope="col" width="10%">
+                                            Terakhir Diubah
+                                        </th>
+
+                                        <th
+                                            scope="col"
+                                            className="text-center rounded-tr-xl"
+                                        >
+                                            Aksi
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className=" border-secondary/15">
+                                    {tebusan.akumulasi.map((data, i) => (
+                                        <tr
+                                            key={i}
+                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
+                                        >
+                                            <td className="text-center">
+                                                {i + 1}
+                                            </td>
+                                            <td className="font-semibold text-left">
+                                                {data.choice}
+                                            </td>
+                                            <td className="text-sm text-center">
+                                                {moment(
+                                                    data.updated_at
+                                                ).fromNow()}
+                                            </td>
+
+                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
+                                                <a
+                                                    // onClick={() => {
+                                                    //     setIsPopUpOpen(
+                                                    //         !isPopUpOpen
+                                                    //     );
+                                                    //     setIsEdit(true);
+                                                    //     setDataEdit(koefisien);
+                                                    // }}
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                </a>
+
+                                                <span className="inline-block mx-1"></span>
+
+                                                <button
+                                                    // onClick={() =>
+                                                    //     handleDelete(
+                                                    //         koefisien.id
+                                                    //     )
+                                                    // }
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <div className="flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        // setIsPopUpOpen(!isPopUpOpen);
+                                        // setIsEdit(false);
+                                        // setDataEdit(null);
+                                    }}
+                                    className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
+                                >
+                                    Tambah
+                                    <IoMdAdd className="w-6 h-6" />
+                                </button>
+                                {/* {isPopUpOpen && (
+                                <PopUpForm
+                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                                    isEdit={isEdit}
+                                    dataEdit={dataEdit}
+                                />
+                            )} */}
+                            </div>
+                        </div>
+
+                        <div className="pt-7">
+                            <strong className="block mb-4 text-xl">
+                                Penetapan Angka Kredit
+                            </strong>
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
+                                    <tr>
+                                        <th
+                                            scope="col"
+                                            dir="rtl"
+                                            className="rounded-tl-xl"
+                                            width="5%"
+                                        >
+                                            No
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            width="60%"
+                                            className="text-left"
+                                        >
+                                            Pihak Tebusan
+                                        </th>
+                                        <th scope="col" width="10%">
+                                            Terakhir Diubah
+                                        </th>
+
+                                        <th
+                                            scope="col"
+                                            className="text-center rounded-tr-xl"
+                                        >
+                                            Aksi
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className=" border-secondary/15">
+                                    {tebusan.penetapan.map((data, i) => (
+                                        <tr
+                                            key={i}
+                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
+                                        >
+                                            <td className="text-center">
+                                                {i + 1}
+                                            </td>
+                                            <td className="font-semibold text-left">
+                                                {data.choice}
+                                            </td>
+                                            <td className="text-sm text-center">
+                                                {moment(
+                                                    data.updated_at
+                                                ).fromNow()}
+                                            </td>
+
+                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
+                                                <a
+                                                    // onClick={() => {
+                                                    //     setIsPopUpOpen(
+                                                    //         !isPopUpOpen
+                                                    //     );
+                                                    //     setIsEdit(true);
+                                                    //     setDataEdit(koefisien);
+                                                    // }}
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                </a>
+
+                                                <span className="inline-block mx-1"></span>
+
+                                                <button
+                                                    // onClick={() =>
+                                                    //     handleDelete(
+                                                    //         koefisien.id
+                                                    //     )
+                                                    // }
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <div className="flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        // setIsPopUpOpen(!isPopUpOpen);
+                                        // setIsEdit(false);
+                                        // setDataEdit(null);
+                                    }}
+                                    className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
+                                >
+                                    Tambah
+                                    <IoMdAdd className="w-6 h-6" />
+                                </button>
+                                {/* {isPopUpOpen && (
+                                <PopUpForm
+                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                                    isEdit={isEdit}
+                                    dataEdit={dataEdit}
+                                />
+                            )} */}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {/* !SECTION : Tebusan */}
+
+                {/* SECTION  : Kesimpulan */}
+                <section className="w-4/5 col-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <div className="m-16">
+                        <div className="flex justify-between ">
+                            <strong className="text-2xl">Kesimpulan </strong>
+                            <div className="relative group">
+                                <GoQuestion className="w-10 h-10" />
+                                <TooltipHover
+                                    className="text-sm w-36"
+                                    message="Pernyataan akhir hasil penilaian PAK terkait kelayakan kenaikan pangkat atau jabatan."
+                                />
+                            </div>
+                        </div>
+
+                        <div className="pt-7">
+                            <table className="table text-sm table-bordered">
+                                <thead className="text-base font-medium text-white bg-primary ">
+                                    <tr>
+                                        <th
+                                            scope="col"
+                                            dir="rtl"
+                                            className="rounded-tl-xl"
+                                            width="5%"
+                                        >
+                                            No
+                                        </th>
+                                        <th scope="col" width="60%">
+                                            Kesimpulan
+                                        </th>
+                                        <th scope="col" width="20%">
+                                            Terakhir Diubah
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="text-center rounded-tr-xl"
+                                        >
+                                            Aksi
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className=" border-secondary/15">
+                                    {kesimpulan.map((data, i) => (
+                                        <tr
+                                            key={i}
+                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
+                                        >
+                                            <td className="text-center">
+                                                {i + 1}
+                                            </td>
+                                            <td className="font-semibold text-left">
+                                                {data.teks}
+                                            </td>
+
+                                            <td className="text-sm text-center">
+                                                {moment(
+                                                    data.updated_at
+                                                ).fromNow()}
+                                            </td>
+
+                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
+                                                <a
+                                                    onClick={() => {
+                                                        setIsPopUpOpen(
+                                                            !isPopUpOpen
+                                                        );
+                                                        setIsEdit(true);
+                                                        setDataEdit(koefisien);
+                                                    }}
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                </a>
+
+                                                <span className="inline-block mx-1"></span>
+
+                                                <button
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            koefisien.id
+                                                        )
+                                                    }
+                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                >
+                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => {
+                                    // setIsPopUpOpen(!isPopUpOpen);
+                                    // setIsEdit(false);
+                                    // setDataEdit(null);
+                                }}
+                                className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
+                            >
+                                Tambah Koefisien
+                                <IoMdAdd className="w-6 h-6" />
+                            </button>
+                            {/* {isPopUpOpen && (
+                                <PopUpForm
+                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                                    isEdit={isEdit}
+                                    dataEdit={dataEdit}
+                                />
+                            )} */}
+                        </div>
+                    </div>
+                </section>
+                {/* !SECTION : Kesimpulan */}
             </main>
         </Authenticated>
     );

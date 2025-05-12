@@ -16,15 +16,23 @@ class AturanPAKController extends Controller
     public function index()
     {
         // dd("test");
+        // IMPORTANT! Don't Touch this code !
         $DB_koefisien_pertahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first();
         $predikat_presentase = AturanPAK::where('name', 'Predikat & Presentase')->first();
+        $pangkat_jabatan = AturanPAK::where('name', 'Angka Minimal Pangkat dan Jabatan')->first();
+        $tebusan = AturanPAK::where('name', 'Tebusan')->first();
+        $kesimpulan = AturanPAK::where('name', 'Kesimpulan')->first();
+        $rumus = AturanPAK::where('name', 'Rumus')->first();
 
         return Inertia::render('KelolaAturanPAK/Index', [
             'title' => 'Kelola Aturan PAK',
             'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(),
             'koefisienPertahun' => $DB_koefisien_pertahun->value,
             'predikatPresentase' => $predikat_presentase->value,
-            // 'koefisienPertahun2' => Koefisien::all(),
+            'pangkatJabatan' => $pangkat_jabatan->value,
+            'tebusan' => $tebusan->value,
+            'kesimpulan' => $kesimpulan->value,
+            'rumus' => $rumus->value,
         ]);
     }
 
