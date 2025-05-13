@@ -127,17 +127,17 @@ export default function Graph({ data }) {
         };
     };
     return (
-        <section class="max-w-md w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mx-auto mt-5 border border-gradient cursor-pointer">
+        <section className="w-full max-w-md p-4 mx-auto mt-5 bg-white border rounded-lg shadow cursor-pointer dark:bg-gray-800 md:p-6 border-gradient">
 
-            <div class="flex justify-around mb-3 items-center ">
-                <div class="flex justify-center items-center">
-                    <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
+            <div className="flex items-center justify-around mb-3 ">
+                <div className="flex items-center justify-center">
+                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
                         Data Pegawai Fungsional
                     </h5>
                     <svg
                         data-popover-target="chart-info"
                         data-popover-placement="bottom"
-                        class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1"
+                        className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -149,10 +149,10 @@ export default function Graph({ data }) {
                         data-popover
                         id="chart-info"
                         role="tooltip"
-                        class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+                        className="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
                     >
-                        <div class="p-3 space-y-2">
-                            <h3 class="font-semibold text-gray-900 dark:text-white">
+                        <div className="p-3 space-y-2">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
                                 Pegawai Fungsional di BPS Provinsi Jambi
                             </h3>
                             <p className="text-[12px]">
@@ -218,11 +218,11 @@ export default function Graph({ data }) {
                             </p> */}
                             <a
                                 href="https://infoasn.id/jabatan-fungsional/uraian-tugas-jabatan-fungsional-statistisi-ahli-muda.html"
-                                class="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline"
+                                className="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline"
                             >
                                 Read more{" "}
                                 <svg
-                                    class="w-2 h-2 ms-1.5 rtl:rotate-180"
+                                    className="w-2 h-2 ms-1.5 rtl:rotate-180"
                                     aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -247,10 +247,10 @@ export default function Graph({ data }) {
                             type="button"
                             data-tooltip-target="data-tooltip"
                             data-tooltip-placement="bottom"
-                            class="hidden sm:inline-flex items-center justify-center text-gray-500 w-8 h-8 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm"
+                            className="items-center justify-center hidden w-8 h-8 text-sm text-gray-500 rounded-lg sm:inline-flex dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700"
                         >
                             <svg
-                                class="w-3.5 h-3.5"
+                                className="w-3.5 h-3.5"
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -264,26 +264,26 @@ export default function Graph({ data }) {
                                     d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3"
                                 />
                             </svg>
-                            <span class="sr-only">Download data</span>
+                            <span className="sr-only">Download data</span>
                         </button>
                     </a>
 
                     <div
                         id="data-tooltip"
                         role="tooltip"
-                        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+                        className="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
                     >
                         Unduh CSV
-                        <div class="tooltip-arrow" data-popper-arrow></div>
+                        <div className="tooltip-arrow" data-popper-arrow></div>
                     </div>
             </div>
 
             <div className="visible hidden">
                 <div
-                    class="grid grid-cols-4 gap-4 items-center place-content-center"
+                    className="grid items-center grid-cols-4 gap-4 place-content-center"
                     id="devices"
                 >
-                    <div class="flex items-center me-4">
+                    <div className="flex items-center me-4">
                         <Checkbox id="terampil" value="terampil" />
                         <InputLabel
                             value="Terampil"
@@ -291,7 +291,7 @@ export default function Graph({ data }) {
                             className="ml-2 font-normal"
                         />
                     </div>
-                    <div class="flex items-center me-4">
+                    <div className="flex items-center me-4">
                         <Checkbox id="mahir" value="mahir" />
                         <InputLabel
                             value="Mahir"
@@ -300,7 +300,7 @@ export default function Graph({ data }) {
                         />
                     </div>
 
-                    <div class="flex items-center me-4">
+                    <div className="flex items-center me-4">
                         <Checkbox id="penyelia" value="penyelia" />
                         <InputLabel
                             value="Penyelia"
@@ -308,7 +308,7 @@ export default function Graph({ data }) {
                             className="ml-2 font-normal"
                         />
                     </div>
-                    <div class="flex items-center me-4">
+                    <div className="flex items-center me-4">
                         <Checkbox id="pertama" value="pertama" />
                         <InputLabel
                             value="Pertama"
@@ -316,7 +316,7 @@ export default function Graph({ data }) {
                             className="ml-2 font-normal"
                         />
                     </div>
-                    <div class="flex items-center me-4 justify-self-center col-span-2">
+                    <div className="flex items-center col-span-2 me-4 justify-self-center">
                         <Checkbox id="muda" value="muda" />
                         <InputLabel
                             value="Muda"
@@ -324,7 +324,7 @@ export default function Graph({ data }) {
                             className="ml-2 font-normal"
                         />
                     </div>
-                    <div class="flex items-center me-4 justify-self-center col-span-2">
+                    <div className="flex items-center col-span-2 me-4 justify-self-center">
                         <Checkbox id="madya" value="madya" />
                         <InputLabel
                             value="Madya"
@@ -336,21 +336,21 @@ export default function Graph({ data }) {
             </div>
 
             {/* <!-- Donut Chart --> */}
-            <div class="py-6" id="donut-chart"></div>
+            <div className="py-6" id="donut-chart"></div>
 
-            <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
-                <div class="flex justify-between items-center pt-5">
+            <div className="grid items-center justify-between grid-cols-1 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between pt-5">
                     {/* <!-- Button --> */}
                     {/* <button
                         id="dropdownDefaultButton"
                         data-dropdown-toggle="lastDaysdropdown"
                         data-dropdown-placement="bottom"
-                        class="text-sm font-medium text-gray-500 dark:text-gray-400  hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
+                        className="inline-flex items-center text-sm font-medium text-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                         type="button"
                     >
                         Semua Waktu
                         <svg
-                            class="w-2.5 m-2.5 ms-1.5"
+                            className="w-2.5 m-2.5 ms-1.5"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -367,17 +367,17 @@ export default function Graph({ data }) {
                     </button> */}
                     <div
                         id="lastDaysdropdown"
-                        class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+                        className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
                     >
                         {/* Todo? */}
                         {/* <ul
-                            class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                            className="py-2 text-sm text-gray-700 dark:text-gray-200"
                             aria-labelledby="dropdownDefaultButton"
                         >
                             <li>
                                 <a
                                     href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
                                     7 Hari Terakhir
                                 </a>
@@ -385,7 +385,7 @@ export default function Graph({ data }) {
                             <li>
                                 <a
                                     href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
                                     30 Hari Terakhir
                                 </a>
@@ -393,7 +393,7 @@ export default function Graph({ data }) {
                             <li>
                                 <a
                                     href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
                                     90 Hari Terakhir
                                 </a>
@@ -402,11 +402,11 @@ export default function Graph({ data }) {
                     </div>
                     {/* <a
                         href="#"
-                        class="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500  hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2"
+                        className="inline-flex items-center px-3 py-2 text-sm font-semibold text-blue-600 uppercase rounded-lg hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                     >
                         Analisis
                         <svg
-                            class="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
+                            className="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"

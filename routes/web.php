@@ -50,6 +50,8 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
 
     // TODO : Pengusulan Pegawai(R, Accept, Reject)
     Route::get('pengusulan-pegawai/', [PengusulanPegawaiController::class, 'index'])->name('pengusulan-pegawai');
+    // Accept
+    // Reject
 
     // Penetapan Angka Kredit => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf (CRUD, Submit)
     Route::prefix('/pak')->name('pak.')->group(function () {
@@ -99,8 +101,6 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
 
     // Download Template
     Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
-
-
 });
 
 
@@ -122,18 +122,24 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
     // Daftar Pegawai(Read)
     Route::get('/pegawai', [PengajuanController::class, 'index'])->name('pegawai.index');
 
+    Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
 
     // Kelola Koefisien(Mungkin Pimpinan bisa kelola koefisien juga?)
     //
 
     //Arsip Dokumen
-    //
+    Route::resource('arsip-dokumen', PengajuanController::class);
 
-    // Log Aktivitas
-    //
+
+    // Log Aktivitas(R)
     Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas');
 
+    // Panduan/Bantuan
+    Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
 
+
+    // Download Template
+    Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
 });
 
 
@@ -143,17 +149,24 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
 Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
 
     // Pengusulan
-    //
+    Route::resource('pengusulan-pegawai', PengusulanPegawaiController::class);
 
     //Status Proses PAK
-    Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
-        Route::get('/preview', [DokumenPAKController::class, 'view_pak'])->name('preview');
-    });
+    Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('pengajuan.index');
 
-    // Arsip Dokumen
-    //
 
-    // PanduanBantuan
+    // Aturan PAK (R)
+    Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
+
+    // Log Aktivitas(R)
+    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas');
+
+    // Panduan/Bantuan
+    Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
+
+
+    // Download Template
+    Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
 });
 
 

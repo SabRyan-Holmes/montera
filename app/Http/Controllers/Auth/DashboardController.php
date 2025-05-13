@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
+use App\Models\ArsipDokumen;
 use App\Models\Pengajuan;
 use App\Models\PengusulanPegawai;
 use App\Models\RiwayatPAK;
@@ -76,17 +77,19 @@ class DashboardController extends Controller
         //  TODO: Kalo role nya Pegawai data untuk dashboard beda lagi. JAngan lupa tambahin nanti logikany, kalo lah bisa SSO
         if ($user->role == "pegawai") {
             $pakCount = RiwayatPAK::where('pegawai_id', $user->id)->count();
+            $pengusulanCount = PengusulanPegawai::all()->count();
             $pengajuanCount = Pengajuan::where('pegawai_id', $user->id)->count();
+            $arsipDokumenCount = ArsipDokumen::where('pegawai_nip', $user->nip)->count();
 
             $dataByRole = [
                 'PAKCount' => $pakCount,
+                'pengusulanCount' => $pengusulanCount,
                 'pengajuanCount' => $pengajuanCount,
-                'pegawaiCount' => $pegawaiCount
+                'arsipDokumenCount' => $arsipDokumenCount,
                 // TODO: tambahain lagi nanti
             ];
 
 
-            // Jumlah arsip dokumen
         }
 
         return Inertia::render('Dashboard/AuthDashboard', [

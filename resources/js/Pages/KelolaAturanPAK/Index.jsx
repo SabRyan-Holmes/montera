@@ -1,5 +1,5 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsPatchQuestion } from "react-icons/bs";
 import { GoQuestion } from "react-icons/go";
 import { FaTrash } from "react-icons/fa6";
@@ -17,6 +17,12 @@ import {
 import { FaSave, FaEdit } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment/min/moment-with-locales";
+import PopUpForm from "../KelolaKoefisien/Partials/PopUpForm";
+import { router } from "@inertiajs/react";
+import Swal from "sweetalert2";
+import { useRemember } from "@inertiajs/react";
+import DynamicTableSection from "./Partials/DynamicTableSection";
+
 // ANCHOR : Import Here!
 
 export default function Index({
@@ -31,14 +37,110 @@ export default function Index({
     rumus,
     // ANCHOR : Handle Props Here!!
 }) {
-    moment.locale("id");
+    // const [shownMessages, setShownMessages] = useRemember([]);
+    // useEffect(() => {
+    //     if (flash.message && !shownMessages.includes(flash.message)) {
+    //         Swal.fire({
+    //             title: "Berhasil!",
+    //             text: `${flash.message}`,
+    //             icon: "success",
+    //             iconColor: "#50C878",
+    //             confirmButtonText: "Oke",
+    //             confirmButtonColor: "#2D95C9",
+    //         });
+    //         setShownMessages([...shownMessages, flash.message]);
+    //     }
+    // }, [flash.message]);
+    // 1. Gunakan useRef untuk tracking pesan yang sudah ditampilkan
+    const shownMessages = useRef(new Set());
+
+    useEffect(() => {
+        if (flash.message && !shownMessages.current.has(flash.message)) {
+            Swal.fire({
+                title: "Berhasil!",
+                text: flash.message,
+                icon: "success",
+                confirmButtonText: "Oke",
+            }).then(() => {
+                shownMessages.current.add(flash.message);
+
+                // Bersihkan flash message
+                router.get(
+                    "",
+                    {},
+                    {
+                        preserveScroll: true,
+                        preserveState: true,
+                        onFinish: () => {
+                            shownMessages.current.delete(flash.message);
+                        },
+                    }
+                );
+            });
+        }
+    }, [flash.message]);
+
+    function handleDelete(id, name) {
+        Swal.fire({
+            icon: "warning",
+            text: "Anda yakin ingin menghapus data koefisien ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(route("divisi-sdm.aturan-pak.destroy", id), {
+                    data: {
+                        id: id,
+                        name: name,
+                    },
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        console.log(
+                            "Dihapus!",
+                            "Data berhasil dihapus.",
+                            "success"
+                        );
+                    },
+                    onError: (err) => {
+                        alert(
+                            "Gagal!",
+                            "Terjadi kesalahan saat menghapus data.",
+                            err
+                        );
+                    },
+                    onFinish: () => {
+                        // Optional: Lakukan sesuatu setelah request selesai
+                    },
+                });
+            }
+        });
+    }
+
     let pangkat = pangkatJabatan.pangkat;
     let jabatan = pangkatJabatan.jabatan;
 
-    // const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-    // const [isEdit, setIsEdit] = useState(false);
-    // const [dataEdit, setDataEdit] = useState(null);
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [popUpData, setPopUpData] = useState({
+        title: "",
+        fields: [],
+        routeName: "",
+    });
+    const [isEdit, setIsEdit] = useState(false);
+    const [dataEdit, setDataEdit] = useState(null);
     // ANCHOR : Logic & Function Here!
+
+    // Console
+    // console.log("field")
+    // console.log(field)
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto content-normal justify-items-center text-slate-600 px-7">
@@ -153,7 +255,6 @@ export default function Index({
                     </div>
                 </section>
                 {/* !SECTION : Penanda Tangan */}
-
                 {/* SECTION : Rumus*/}
                 <section className="mt-10 border rounded-lg bg-slate-700 justify-self-stretch place-self-center border-gradient">
                     <div className="m-12 h-[27rem]">
@@ -253,268 +354,113 @@ export default function Index({
                 </section>
                 {/* !SECTION : Rumus*/}
 
+                {/* POP UP For Add/Edit */}
+                {isPopUpOpen && (
+                    <PopUpForm
+                        onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                        isEdit={isEdit}
+                        popUpData={popUpData}
+                        dataEdit={dataEdit}
+                    />
+                )}
                 {/* SECTION : Koefisien Pertahun */}
-                <section className="border rounded-lg justify-self-stretch place-self-start border-gradient">
-                    <div className="p-12 h-[36rem]">
-                        <div className="flex justify-between ">
-                            <strong className="text-2xl">
-                                Koefisien Pertahun
-                            </strong>
-                            <div className="relative group">
-                                <GoQuestion className="w-10 h-10" />
-                                <TooltipHover
-                                    className="text-sm w-36"
-                                    message="Nilai standar koefisien per tahun berdasarkan jenjang jabatan fungsional."
-                                />
-                            </div>
-                        </div>
-
-                        <div className="pt-7">
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="5%"
-                                        >
-                                            No
-                                        </th>
-                                        <th scope="col" width="30%">
-                                            Jabatan
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="15%"
-                                            className="text-center"
-                                        >
-                                            Nilai
-                                        </th>
-                                        <th scope="col" width="20%">
-                                            Terakhir Diubah
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className=" border-secondary/15">
-                                    {koefisienPertahun
-                                        .sort((a, b) => a[1] - b[1]) // urutkan dari nilai kecil ke besar
-                                        .map((data, i) => (
-                                            <tr
-                                                key={i}
-                                                className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                            >
-                                                <td className="text-center">
-                                                    {i + 1}
-                                                </td>
-                                                <td>{data.jabatan}</td>
-                                                <td className="font-semibold text-center ">
-                                                    {data.nilai}
-                                                </td>
-                                                <td className="text-sm text-center">
-                                                    {moment(
-                                                        data.updated_at
-                                                    ).fromNow()}
-                                                </td>
-
-                                                <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                    <a
-                                                        onClick={() => {
-                                                            setIsPopUpOpen(
-                                                                !isPopUpOpen
-                                                            );
-                                                            setIsEdit(true);
-                                                            setDataEdit(
-                                                                koefisien
-                                                            );
-                                                        }}
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                    >
-                                                        <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                    </a>
-
-                                                    <span className="inline-block mx-1"></span>
-
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                koefisien.id
-                                                            )
-                                                        }
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                    >
-                                                        <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => {
-                                    // setIsPopUpOpen(!isPopUpOpen);
-                                    // setIsEdit(false);
-                                    // setDataEdit(null);
-                                }}
-                                className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                            >
-                                Tambah Koefisien
-                                <IoMdAdd className="w-6 h-6" />
-                            </button>
-                            {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
-                                />
-                            )} */}
-                        </div>
-                    </div>
+                <section className="flex flex-col h-full p-12 border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <DynamicTableSection
+                        title="Koefisien Pertahun"
+                        tooltipMessage="Nilai standar koefisien per tahun berdasarkan jenjang jabatan fungsional."
+                        columns={[
+                            {
+                                header: "Jabatan",
+                                field: "jabatan",
+                                width: "30%",
+                            },
+                            {
+                                header: "Nilai",
+                                field: "nilai",
+                                width: "15%",
+                                center: true,
+                            },
+                        ]}
+                        data={koefisienPertahun}
+                        onAdd={() => {
+                            setPopUpData({
+                                title: "Koefisien Per Tahun",
+                                fields: ["jabatan", "nilai"],
+                                routeName: route("divisi-sdm.aturan-pak.store"),
+                            });
+                            setIsPopUpOpen(true);
+                            setIsEdit(false);
+                        }}
+                        onEdit={(item) => {
+                            setPopUpData({
+                                title: "Koefisien Per Tahun",
+                                fields: ["jabatan", "nilai"],
+                                routeName: route(
+                                    "divisi-sdm.aturan-pak.update",
+                                    item.id
+                                ),
+                            });
+                            setIsPopUpOpen(true);
+                            setIsEdit(true);
+                            setDataEdit(item);
+                        }}
+                        onDelete={(id) =>
+                            handleDelete(id, "Koefisien Per Tahun")
+                        }
+                    />
                 </section>
                 {/* !SECTION Koefisien Pertahun */}
 
                 {/* SECTION : Predikat Presentase */}
-                <section className="self-start border rounded-lg justify-self-stretch place-self-start border-gradient">
-                    <div className="m-12 h-[30rem]">
-                        <div className="flex justify-between ">
-                            <strong className="text-2xl">
-                                Predikat & Presentase
-                            </strong>
-                            <div className="relative group">
-                                <GoQuestion className="w-10 h-10" />
-                                <TooltipHover
-                                    className="text-sm w-36"
-                                    message="Kategori penilaian kinerja beserta presentase konversi terhadap angka kredit."
-                                />
-                            </div>{" "}
-                        </div>
-
-                        <div className="pt-7">
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="3%"
-                                        >
-                                            No
-                                        </th>
-                                        <th scope="col" width="30%">
-                                            Predikat
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="15%"
-                                            className="text-xs text-center"
-                                        >
-                                            Presentase
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="20%"
-                                            className="text-sm"
-                                        >
-                                            Terakhir Diubah
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="border-secondary/15 ">
-                                    {/* <td className="text-center">{koefisien["nilai"]}</td> */}
-                                    {predikatPresentase
-                                        .sort((a, b) => a[1] - b[1]) // urutkan dari nilai kecil ke besar
-                                        .map((data, i) => (
-                                            <tr key={i}>
-                                                <td className="text-center">
-                                                    {i + 1}
-                                                </td>
-                                                <td className="p-2 text-nowrap">
-                                                    {data.predikat}
-                                                </td>
-                                                <td className="font-semibold text-center">
-                                                    {data.presentase}%
-                                                </td>
-                                                <td className="text-xs text-center ">
-                                                    {moment(
-                                                        data.updated_at
-                                                    ).fromNow()}
-                                                </td>
-
-                                                <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                    <a
-                                                        onClick={() => {
-                                                            setIsPopUpOpen(
-                                                                !isPopUpOpen
-                                                            );
-                                                            setIsEdit(true);
-                                                            setDataEdit(
-                                                                koefisien
-                                                            );
-                                                        }}
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                    >
-                                                        <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                    </a>
-
-                                                    <span className="inline-block mx-1"></span>
-
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                koefisien.id
-                                                            )
-                                                        }
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                    >
-                                                        <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => {
-                                    // setIsPopUpOpen(!isPopUpOpen);
-                                    // setIsEdit(false);
-                                    // setDataEdit(null);
-                                }}
-                                className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                            >
-                                Tambah Koefisien
-                                <IoMdAdd className="w-6 h-6" />
-                            </button>
-                            {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
-                                />
-                            )} */}
-                        </div>
-                    </div>
+                <section className="flex flex-col h-full p-12 border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <DynamicTableSection
+                        title="Predikat & Presentase"
+                        tooltipMessage="Kategori penilaian kinerja beserta presentase konversi terhadap angka kredit."
+                        columns={[
+                            {
+                                header: "Predikat",
+                                field: "predikat",
+                                width: "30%",
+                            },
+                            {
+                                header: "Presentase",
+                                field: "presentase",
+                                width: "15%",
+                                center: true,
+                            },
+                        ]}
+                        data={predikatPresentase}
+                        onAdd={() => {
+                            setPopUpData({
+                                title: "Predikat & Presentase",
+                                fields: ["predikat", "presentase"],
+                                routeName: route("divisi-sdm.aturan-pak.store"),
+                            });
+                            setIsPopUpOpen(true);
+                            setIsEdit(false);
+                        }}
+                        onEdit={(item) => {
+                            setPopUpData({
+                                title: "Predikat & Presentase",
+                                fields: ["predikat", "presentase"],
+                                routeName: route(
+                                    "divisi-sdm.aturan-pak.update",
+                                    item.id
+                                ),
+                            });
+                            setIsPopUpOpen(true);
+                            setIsEdit(true);
+                            setDataEdit(item);
+                        }}
+                        onDelete={(id) =>
+                            handleDelete(id, "Predikat & Presentase")
+                        }
+                    />
                 </section>
                 {/* !SECTION : Predikat Presentase */}
 
                 {/* SECTION : Angka Minimal Pangkat Dan Jabatan */}
-                <section className="w-3/5 col-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                <section className="w-3/5 col-span-2 row-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
                     <div className="m-16">
                         <div className="flex justify-between ">
                             <strong className="text-2xl">
@@ -644,9 +590,9 @@ export default function Index({
                 {/* !SECTION : Angka Minimal Pangkat Dan Jabatan */}
 
                 {/* SECTION : Tebusan */}
-                <section className="w-4/5 col-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                <section className="w-4/5 col-span-2 row-span-4 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
                     <div className="m-16">
-                        <div className="flex justify-between ">
+                        <div className="flex justify-between mx-auto ">
                             <strong className="text-2xl">Tebusan</strong>
                             <div className="relative group">
                                 <GoQuestion className="w-10 h-10" />
@@ -656,436 +602,175 @@ export default function Index({
                                 />
                             </div>
                         </div>
-                        <div className="pt-7">
-                            <strong className="block mb-4 text-xl">
+
+                        <div className="pt-2">
+                            <strong className="block text-xl">
                                 Konversi Predikat Angka Kredit
                             </strong>
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="5%"
-                                        >
-                                            No
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="60%"
-                                            className="text-left"
-                                        >
-                                            Pihak Tebusan
-                                        </th>
-                                        <th scope="col" width="10%">
-                                            Terakhir Diubah
-                                        </th>
 
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className=" border-secondary/15">
-                                    {tebusan.konversi.map((data, i) => (
-                                        <tr
-                                            key={i}
-                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                        >
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-                                            <td className="font-semibold text-left">
-                                                {data.choice}
-                                            </td>
-                                            <td className="text-sm text-center">
-                                                {moment(
-                                                    data.updated_at
-                                                ).fromNow()}
-                                            </td>
-
-                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                <a
-                                                    // onClick={() => {
-                                                    //     setIsPopUpOpen(
-                                                    //         !isPopUpOpen
-                                                    //     );
-                                                    //     setIsEdit(true);
-                                                    //     setDataEdit(koefisien);
-                                                    // }}
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                </a>
-
-                                                <span className="inline-block mx-1"></span>
-
-                                                <button
-                                                    // onClick={() =>
-                                                    //     handleDelete(
-                                                    //         koefisien.id
-                                                    //     )
-                                                    // }
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={() => {
-                                        // setIsPopUpOpen(!isPopUpOpen);
-                                        // setIsEdit(false);
-                                        // setDataEdit(null);
-                                    }}
-                                    className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                                >
-                                    Tambah
-                                    <IoMdAdd className="w-6 h-6" />
-                                </button>
-                                {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
-                                />
-                            )} */}
-                            </div>
+                            <DynamicTableSection
+                                title="Konversi Predikat Angka Kredit"
+                                showHeader={false}
+                                columns={[
+                                    {
+                                        header: "Pihak Tebusan",
+                                        field: "choice",
+                                        width: "60%",
+                                    },
+                                ]}
+                                data={tebusan.konversi}
+                                onAdd={() => {
+                                    setPopUpData({
+                                        title: "Pihak Tebusan",
+                                        fields: ["choice"],
+                                        routeName: route(
+                                            "divisi-sdm.aturan-pak.store"
+                                        ),
+                                    });
+                                    setIsPopUpOpen(true);
+                                    setIsEdit(false);
+                                }}
+                                onEdit={(item) => {
+                                    setPopUpData({
+                                        title: "Tebusan",
+                                        fields: ["choice"],
+                                        routeName: route(
+                                            "divisi-sdm.aturan-pak.update",
+                                            item.id
+                                        ),
+                                    });
+                                    setIsPopUpOpen(true);
+                                    setIsEdit(true);
+                                    setDataEdit(item);
+                                }}
+                                onDelete={(id) => handleDelete(id, "Tebusan")}
+                            />
                         </div>
-
                         <div className="pt-7">
-                            <strong className="block mb-4 text-xl">
+                            <strong className="block text-xl">
                                 Akumulasi Angka Kredit
                             </strong>
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="5%"
-                                        >
-                                            No
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="60%"
-                                            className="text-left"
-                                        >
-                                            Pihak Tebusan
-                                        </th>
-                                        <th scope="col" width="10%">
-                                            Terakhir Diubah
-                                        </th>
-
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className=" border-secondary/15">
-                                    {tebusan.akumulasi.map((data, i) => (
-                                        <tr
-                                            key={i}
-                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                        >
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-                                            <td className="font-semibold text-left">
-                                                {data.choice}
-                                            </td>
-                                            <td className="text-sm text-center">
-                                                {moment(
-                                                    data.updated_at
-                                                ).fromNow()}
-                                            </td>
-
-                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                <a
-                                                    // onClick={() => {
-                                                    //     setIsPopUpOpen(
-                                                    //         !isPopUpOpen
-                                                    //     );
-                                                    //     setIsEdit(true);
-                                                    //     setDataEdit(koefisien);
-                                                    // }}
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                </a>
-
-                                                <span className="inline-block mx-1"></span>
-
-                                                <button
-                                                    // onClick={() =>
-                                                    //     handleDelete(
-                                                    //         koefisien.id
-                                                    //     )
-                                                    // }
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={() => {
-                                        // setIsPopUpOpen(!isPopUpOpen);
-                                        // setIsEdit(false);
-                                        // setDataEdit(null);
-                                    }}
-                                    className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                                >
-                                    Tambah
-                                    <IoMdAdd className="w-6 h-6" />
-                                </button>
-                                {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
-                                />
-                            )} */}
-                            </div>
+                            <DynamicTableSection
+                                title="Akumulasi Angka Kredit"
+                                showHeader={false}
+                                columns={[
+                                    {
+                                        header: "Pihak Tebusan",
+                                        field: "choice",
+                                        width: "60%",
+                                    },
+                                ]}
+                                data={tebusan.akumulasi}
+                                onAdd={() => {
+                                    setPopUpData({
+                                        title: "Pihak Tebusan",
+                                        fields: ["choice"],
+                                        routeName: route(
+                                            "divisi-sdm.aturan-pak.store"
+                                        ),
+                                    });
+                                    setIsPopUpOpen(true);
+                                    setIsEdit(false);
+                                }}
+                                onEdit={(item) => {
+                                    setPopUpData({
+                                        title: "Tebusan",
+                                        fields: ["choice"],
+                                        routeName: route(
+                                            "divisi-sdm.aturan-pak.update",
+                                            item.id
+                                        ),
+                                    });
+                                    setIsPopUpOpen(true);
+                                    setIsEdit(true);
+                                    setDataEdit(item);
+                                }}
+                                onDelete={(id) => handleDelete(id, "Tebusan")}
+                            />
                         </div>
-
                         <div className="pt-7">
-                            <strong className="block mb-4 text-xl">
-                                Penetapan Angka Kredit
+                            <strong className="block text-xl">
+                                Akumulasi Angka Kredit
                             </strong>
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="5%"
-                                        >
-                                            No
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="60%"
-                                            className="text-left"
-                                        >
-                                            Pihak Tebusan
-                                        </th>
-                                        <th scope="col" width="10%">
-                                            Terakhir Diubah
-                                        </th>
-
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className=" border-secondary/15">
-                                    {tebusan.penetapan.map((data, i) => (
-                                        <tr
-                                            key={i}
-                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                        >
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-                                            <td className="font-semibold text-left">
-                                                {data.choice}
-                                            </td>
-                                            <td className="text-sm text-center">
-                                                {moment(
-                                                    data.updated_at
-                                                ).fromNow()}
-                                            </td>
-
-                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                <a
-                                                    // onClick={() => {
-                                                    //     setIsPopUpOpen(
-                                                    //         !isPopUpOpen
-                                                    //     );
-                                                    //     setIsEdit(true);
-                                                    //     setDataEdit(koefisien);
-                                                    // }}
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                </a>
-
-                                                <span className="inline-block mx-1"></span>
-
-                                                <button
-                                                    // onClick={() =>
-                                                    //     handleDelete(
-                                                    //         koefisien.id
-                                                    //     )
-                                                    // }
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={() => {
-                                        // setIsPopUpOpen(!isPopUpOpen);
-                                        // setIsEdit(false);
-                                        // setDataEdit(null);
-                                    }}
-                                    className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                                >
-                                    Tambah
-                                    <IoMdAdd className="w-6 h-6" />
-                                </button>
-                                {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
-                                />
-                            )} */}
-                            </div>
+                            <DynamicTableSection
+                                title="Akumulasi Angka Kredit"
+                                showHeader={false}
+                                columns={[
+                                    {
+                                        header: "Pihak Tebusan",
+                                        field: "choice",
+                                        width: "60%",
+                                    },
+                                ]}
+                                data={tebusan.akumulasi}
+                                onAdd={() => {
+                                    setPopUpData({
+                                        title: "Pihak Tebusan",
+                                        fields: ["choice"],
+                                        routeName: route(
+                                            "divisi-sdm.aturan-pak.store"
+                                        ),
+                                    });
+                                    setIsPopUpOpen(true);
+                                    setIsEdit(false);
+                                }}
+                                onEdit={(item) => {
+                                    setPopUpData({
+                                        title: "Tebusan",
+                                        fields: ["choice"],
+                                        routeName: route(
+                                            "divisi-sdm.aturan-pak.update",
+                                            item.id
+                                        ),
+                                    });
+                                    setIsPopUpOpen(true);
+                                    setIsEdit(true);
+                                    setDataEdit(item);
+                                }}
+                                onDelete={(id) => handleDelete(id, "Tebusan")}
+                            />
                         </div>
                     </div>
                 </section>
                 {/* !SECTION : Tebusan */}
 
                 {/* SECTION  : Kesimpulan */}
-                <section className="w-4/5 col-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
-                    <div className="m-16">
-                        <div className="flex justify-between ">
-                            <strong className="text-2xl">Kesimpulan </strong>
-                            <div className="relative group">
-                                <GoQuestion className="w-10 h-10" />
-                                <TooltipHover
-                                    className="text-sm w-36"
-                                    message="Pernyataan akhir hasil penilaian PAK terkait kelayakan kenaikan pangkat atau jabatan."
-                                />
-                            </div>
-                        </div>
-
-                        <div className="pt-7">
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="5%"
-                                        >
-                                            No
-                                        </th>
-                                        <th scope="col" width="60%">
-                                            Kesimpulan
-                                        </th>
-                                        <th scope="col" width="20%">
-                                            Terakhir Diubah
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className=" border-secondary/15">
-                                    {kesimpulan.map((data, i) => (
-                                        <tr
-                                            key={i}
-                                            className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                        >
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-                                            <td className="font-semibold text-left">
-                                                {data.teks}
-                                            </td>
-
-                                            <td className="text-sm text-center">
-                                                {moment(
-                                                    data.updated_at
-                                                ).fromNow()}
-                                            </td>
-
-                                            <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                <a
-                                                    onClick={() => {
-                                                        setIsPopUpOpen(
-                                                            !isPopUpOpen
-                                                        );
-                                                        setIsEdit(true);
-                                                        setDataEdit(koefisien);
-                                                    }}
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                </a>
-
-                                                <span className="inline-block mx-1"></span>
-
-                                                <button
-                                                    onClick={() =>
-                                                        handleDelete(
-                                                            koefisien.id
-                                                        )
-                                                    }
-                                                    className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                >
-                                                    <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => {
-                                    // setIsPopUpOpen(!isPopUpOpen);
-                                    // setIsEdit(false);
-                                    // setDataEdit(null);
-                                }}
-                                className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                            >
-                                Tambah Koefisien
-                                <IoMdAdd className="w-6 h-6" />
-                            </button>
-                            {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
-                                />
-                            )} */}
-                        </div>
-                    </div>
+                <section className="w-4/5 col-span-2 row-span-2 p-12 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                    <DynamicTableSection
+                        title="Kesimpulan"
+                        tooltipMessage="Pernyataan akhir hasil penilaian PAK terkait kelayakan kenaikan pangkat atau jabatan."
+                        columns={[
+                            {
+                                header: "Kesimpulan",
+                                field: "teks",
+                                width: "50%",
+                            },
+                        ]}
+                        data={kesimpulan}
+                        onAdd={() => {
+                            setPopUpData({
+                                title: "Kesimpulan",
+                                fields: ["teks"],
+                                routeName: route("divisi-sdm.aturan-pak.store"),
+                            });
+                            setIsPopUpOpen(true);
+                            setIsEdit(false);
+                        }}
+                        onEdit={(item) => {
+                            setPopUpData({
+                                title: "Kesimpulan",
+                                fields: ["teks"],
+                                routeName: route(
+                                    "divisi-sdm.aturan-pak.update",
+                                    item.id
+                                ),
+                            });
+                            setIsPopUpOpen(true);
+                            setIsEdit(true);
+                            setDataEdit(item);
+                        }}
+                        onDelete={(id) => handleDelete(id, "Kesimpulan")}
+                    />
                 </section>
                 {/* !SECTION : Kesimpulan */}
             </main>

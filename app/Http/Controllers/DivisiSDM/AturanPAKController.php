@@ -47,9 +47,43 @@ class AturanPAKController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    //atau lebih tepatny update(karna tidak nambah id pada Aturan PAK)
     public function store(Request $request)
     {
-        //
+        if ($request->storeName) {
+            $aturan = AturanPAK::where('name', $request->storeName)->first();
+
+            // Ambil value dan pastikan sebagai array
+            $currentValue = is_array($aturan->value)
+                ? $aturan->value
+                : json_decode($aturan->value, true);
+
+            // Cari ID terakhir
+            $lastId = collect($currentValue)->max('id') ?? 0;
+
+            // Data baru - ambil semua field dari request->datas secara dinamis
+            $newData = [
+                'id' => $lastId + 1,
+                'updated_at' => now()->toDateTimeString()
+            ];
+
+            // Loop melalui semua field dalam datas
+            foreach ($request->datas as $field => $value) {
+                // Konversi nilai ke tipe yang sesuai
+                $newData[$field] = is_numeric($value) ? (float)$value : $value;
+            }
+
+            // Gabungkan data
+            $mergedData = [...$currentValue, $newData];
+
+            // Update database
+            $aturan->update([
+                'value' => $mergedData
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'Berhasil Menyimpan Data');
     }
 
     /**
@@ -73,14 +107,97 @@ class AturanPAKController extends Controller
      */
     public function update(Request $request, AturanPAK $aturanPAK)
     {
-        //
+        if ($request->updateName) {
+            $aturan = AturanPAK::where('name', $request->updateName)->first();
+
+            // Get current value and ensure it's an array
+            $currentValue = is_array($aturan->value)
+                ? $aturan->value
+                : json_decode($aturan->value, true);
+
+            // Find and update the specific item by ID
+            $updatedValue = array_map(function ($item) use ($request) {
+                if ($item['id'] == $request->id) {
+                    // Update all fields from request->datas
+                    foreach ($request->datas as $field => $value) {
+                        // Convert numeric values to float
+                        $item[$field] = is_numeric($value) ? (float)$value : $value;
+                    }
+                    // Update timestamp
+                    $item['updated_at'] = now()->toDateTimeString();
+                }
+                return $item;
+            }, $currentValue);
+
+            // Update database
+            $aturan->update([
+                'value' => $updatedValue
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'Berhasil Mengupdate Data!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AturanPAK $aturanPAK)
+    public function destroy(AturanPAK $aturanPAK, Request $request)
     {
-        //
+        // dd($aturanPAK, $request);
+        $aturan = AturanPAK::where('name', $request->name)->first();
+
+        // Ambil value (pastikan sebagai array)
+        $currentValue = is_array($aturan->value)
+            ? $aturan->value
+            : json_decode($aturan->value, true);
+
+        // Filter data: hapus item dengan ID yang sesuai
+        $updatedValue = array_filter($currentValue, fn($item) => $item['id'] != $request->id);
+
+        // Update database
+        $aturan->update([
+            'value' => array_values($updatedValue) // Reset index array
+        ]);
+
+        return redirect()->back()->with('message', 'Data Berhasil dihapus!');
+    }
+
+
+
+    public function store_or_update(Request $request)
+    {
+        if ($request->storeName) {
+            $aturan = AturanPAK::where('name', $request->storeName)->first();
+
+            // Ambil value dan pastikan sebagai array
+            $currentValue = is_array($aturan->value)
+                ? $aturan->value
+                : json_decode($aturan->value, true);
+
+            // Cari ID terakhir
+            $lastId = collect($currentValue)->max('id') ?? 0;
+
+            // Data baru - ambil semua field dari request->datas secara dinamis
+            $newData = [
+                'id' => $lastId + 1,
+                'updated_at' => now()->toDateTimeString()
+            ];
+
+            // Loop melalui semua field dalam datas
+            foreach ($request->datas as $field => $value) {
+                // Konversi nilai ke tipe yang sesuai
+                $newData[$field] = is_numeric($value) ? (float)$value : $value;
+            }
+
+            // Gabungkan data
+            $mergedData = [...$currentValue, $newData];
+
+            // Update database
+            $aturan->update([
+                'value' => $mergedData
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'Berhasil Menyimpan Data');
     }
 }
