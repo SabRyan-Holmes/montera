@@ -395,14 +395,14 @@ const Sidebar = ({ role }) => {
                                             <>
                                                 {/* Pengusulan Pegawai */}
                                                 <MdOutlineAssignmentInd />
-                                                Pengusulan Pegawai
+                                                Pengusulan PAK
                                             </>
                                         ),
-                                        route: "pegawai.pengusulan-pegawai.index",
+                                        route: "pegawai.pengusulan-pak.index",
                                         actives: [
-                                            "pegawai.pengusulan-pegawai.index",
-                                            "pegawai.pengusulan-pegawai.edit",
-                                            "pegawai.pengusulan-pegawai.create",
+                                            "pegawai.pengusulan-pak.index",
+                                            "pegawai.pengusulan-pak.edit",
+                                            "pegawai.pengusulan-pak.create",
                                         ],
                                     },
                                     {
@@ -413,8 +413,8 @@ const Sidebar = ({ role }) => {
                                                 Status Proses PAK
                                             </>
                                         ),
-                                        route: "pegawai.pengajuan.index",
-                                        actives: ["pegawai.pengajuan.index"],
+                                        route: "pegawai.proses-pak.index",
+                                        actives: ["pegawai.proses-pak.index"],
                                     },
 
                                     // Tanyoin Nanti boleh dk pegawai melihat aturan PAK
@@ -472,8 +472,8 @@ const Sidebar = ({ role }) => {
                                                 Log Aktivitas
                                             </>
                                         ),
-                                        route: "pegawai.log-aktivitas",
-                                        active: "pegawai.log-aktivitas",
+                                        route: "pegawai.log-aktivitas.index",
+                                        active: "pegawai.log-aktivitas.index",
                                     },
                                     {
                                         label: (

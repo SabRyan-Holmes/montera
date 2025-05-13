@@ -10,8 +10,8 @@ use App\Http\Controllers\Shared\LogAktivitasController;
 use App\Http\Controllers\Shared\PegawaiController;
 use App\Http\Controllers\Shared\PengajuanController;
 use App\Http\Controllers\Shared\ProfileController;
+use App\Http\Controllers\Shared\RiwayatKarirController;
 use App\Http\Controllers\Shared\RiwayatPAKController;
-use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -149,17 +149,19 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
 Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
 
     // Pengusulan
-    Route::resource('pengusulan-pegawai', PengusulanPegawaiController::class);
+    Route::resource('pengusulan-pak', PengusulanPegawaiController::class);
 
-    //Status Proses PAK
-    Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('pengajuan.index');
-
+    //Status Proses PAK/Pengajuan
+    Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('proses-pak.index');
 
     // Aturan PAK (R)
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
 
+    // Riwayat Karir (R)
+    Route::get('/riwayat-karir', [RiwayatKarirController::class, 'index'])->name('riwayat-karir.index');
+
     // Log Aktivitas(R)
-    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas');
+    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
 
     // Panduan/Bantuan
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv

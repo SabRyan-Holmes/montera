@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
 use App\Models\ArsipDokumen;
+use App\Models\AturanPAK;
 use App\Models\Pengajuan;
 use App\Models\PengusulanPegawai;
 use App\Models\RiwayatPAK;
@@ -28,68 +29,77 @@ class DashboardController extends Controller
         $dataGraph = null;
 
         if ($user->role == "divisi_sdm" || $user->role == "pimpinan") {
-            $terampil = Pegawai::where('Jabatan/TMT', 'LIKE', '%Terampil%')
-                ->count();
 
-            $mahir = Pegawai::where('Jabatan/TMT', 'LIKE', '%Mahir%')
-                ->count();
+            // TODO : Bikin lebih dinamis dari Aturan PAK
+            $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+            //
+            // isi value :
+            // [
+            // {"id": 1, "nilai": 5, "jabatan": "Terampil", "updated_at": "2025-05-11 23:24:54"},
+            // {"id": 2, "nilai": 12.5, "jabatan": "Mahir", "updated_at": "2025-05-11 23:24:54"},
+            // {"id": 3, "nilai": 25, "jabatan": "Penyelia", "updated_at": "2025-05-11 23:24:54"},
+            // {"id": 4, "nilai": 12.5, "jabatan": "Pertama", "updated_at": "2025-05-11 23:24:54"},
+            // {"id": 5, "nilai": 25, "jabatan": "Madya", "updated_at": "2025-05-11 23:24:54"},
+            // {"id": 6, "nilai": 37.5, "jabatan": "Muda", "updated_at": "2025-05-11 23:24:54"}]
+            // ambil dari jabatan lalu ditaruh  dan modif kode dibawah
+            // Ambil data koefisien dari AturanPAK
 
-            $penyelia = Pegawai::where('Jabatan/TMT', 'LIKE', '%Penyelia%')
-                ->count();
+            // Inisialisasi array untuk menyimpan hasil
+            $dataGraph = [];
 
-            $pertama = Pegawai::where('Jabatan/TMT', 'LIKE', '%Pertama%')
-                ->count();
+            foreach ($koefisien_per_tahun as $koefisien) {
+                $jabatan = $koefisien['jabatan'];
+                $count = Pegawai::where('Jabatan/TMT', 'LIKE', "%{$jabatan}%")->count();
 
-            $muda = Pegawai::where('Jabatan/TMT', 'LIKE', '%Muda%')
-                ->count();
+                // Gunakan nama jabatan sebagai key (dalam lowercase)
+                // $key = strtolower($jabatan);
+                $dataGraph[$jabatan] = $count;
+            }
 
-            $madya = Pegawai::where('Jabatan/TMT', 'LIKE', '%Madya%')
-                ->count();
-
-            $dataGraph = [
-                'terampil' => $terampil,
-                'mahir' => $mahir,
-                'penyelia' => $penyelia,
-                'pertama' => $pertama,
-                'muda' => $muda,
-                'madya' => $madya,
-            ];
-
-            $pegawaiFungsional = $terampil + $mahir + $penyelia + $pertama + $muda + $madya;
-            // $pakCount = $user->jumlah_dicetak; //Sebelumnya
-            $pakCount = RiwayatPAK::all()->count(); //Ubah jadi ini
-            $userCount =  User::all()->count();
-            $pegawaiCount =  Pegawai::all()->count();
-            $pengusulanCount = PengusulanPegawai::all()->count();
-            $pengajuanCount = Pengajuan::all()->count();
-            // TODO: Arsip Dokumen, No PAK terakhir, sebaikny juga ditambahkan
+            $pegawai_fungsional = array_sum($dataGraph);
+            $pak_count = RiwayatPAK::all()->count();
+            $no_pak_terakhir = RiwayatPAK::latest('created_at')->first()?->no_surat3;;
+            $user_count =  User::all()->count();
+            $pegawai_count =  Pegawai::all()->count();
+            $pengusulan_count = PengusulanPegawai::all()->count();
+            $pengajuan_count = Pengajuan::all()->count();
+            $arsip_dokumen_count = ArsipDokumen::where('user_id', $user->id)->count();
 
             $dataByRole = [
-                'pegawaiFungsional' => $pegawaiFungsional,
-                'PAKCount' => $pakCount,
-                'userCount' => $userCount,
-                'pegawaiCount' => $pegawaiCount,
-                'pengusulanCount' => $pengusulanCount,
-                'pengajuanCount' => $pengajuanCount
+                'pegawaiFungsional' => $pegawai_fungsional,
+                'PAKCount' => $pak_count,
+                'noPAKTerakhir' => $no_pak_terakhir,
+                'userCount' => $user_count,
+                'pegawaiCount' => $pegawai_count,
+                'pengusulanCount' => $pengusulan_count,
+                'pengajuanCount' => $pengajuan_count,
+                'arsipDokumenCount' => $arsip_dokumen_count
             ];
         }
 
         //  TODO: Kalo role nya Pegawai data untuk dashboard beda lagi. JAngan lupa tambahin nanti logikany, kalo lah bisa SSO
         if ($user->role == "pegawai") {
-            $pakCount = RiwayatPAK::where('pegawai_id', $user->id)->count();
-            $pengusulanCount = PengusulanPegawai::all()->count();
-            $pengajuanCount = Pengajuan::where('pegawai_id', $user->id)->count();
-            $arsipDokumenCount = ArsipDokumen::where('pegawai_nip', $user->nip)->count();
+            $pak_count = RiwayatPAK::where('pegawai_id', $user->id)->count();
+            $pengusulan_count = PengusulanPegawai::all()->count();
+            $pengajuan_count = Pengajuan::where('pegawai_id', $user->id)->count();
+            $arsip_dokumen_count = ArsipDokumen::where('pegawai_nip', $user->nip)->count();
 
             $dataByRole = [
-                'PAKCount' => $pakCount,
-                'pengusulanCount' => $pengusulanCount,
-                'pengajuanCount' => $pengajuanCount,
-                'arsipDokumenCount' => $arsipDokumenCount,
-                // TODO: tambahain lagi nanti
+                'PAKCount' => $pak_count,
+                'pengusulanCount' => $pengusulan_count,
+                'pengajuanCount' => $pengajuan_count,
+                'arsipDokumenCount' => $arsip_dokumen_count,
             ];
 
+            $diajukan = Pengajuan::where('pegawai_id', $user->id)->where('status', 'diajukan')->count();
+            $ditolak = Pengajuan::where('pegawai_id', $user->id)->where('status', 'ditolak')->count();
+            $divalidasi = Pengajuan::where('pegawai_id', $user->id)->where('status', 'divalidasi')->count();
 
+            $dataGraph = [
+                'diajukan' => $diajukan,
+                'ditolak' => $ditolak,
+                'divalidasi' => $divalidasi,
+            ];
         }
 
         return Inertia::render('Dashboard/AuthDashboard', [
