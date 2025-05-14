@@ -43,6 +43,7 @@ export default function Index({
         reset,
         predikat,
         akNormatif,
+        setDefaults
     } = UseAturanPenetapan(koefisien);
     const [pegawaiState, setPegawaiState] = useState(null);
 
@@ -58,20 +59,21 @@ export default function Index({
             });
             // console.log("riwayat", riwayat);
             setPegawaiState(riwayat.pegawai);
+
+
+        } else {
+            // Kalo Create dan ad datany
+            console.log("ini dirender pertama kali tanpa pemicu apapun ");
+            if (pegawai) {
+                // console.log("ini dirender pertama kali ketika ada pegawai yang dipilih ");
+                setData("pegawai", pegawai);
+                setPegawaiState(pegawai);
+            } else {
+                // console.log(
+                //     "ini dirender pertama kali ketika pegawai belum dipilih/belum ada "
+                // );
+            }
         }
-        // else {
-        //     // Kalo Create dan ad datany
-        //     console.log("ini dirender pertama kali tanpa pemicu apapun ");
-        //     if (pegawai) {
-        //         // console.log("ini dirender pertama kali ketika ada pegawai yang dipilih ");
-        //         setData("pegawai", pegawai);
-        //         setPegawaiState(pegawai);
-        //     } else {
-        //         // console.log(
-        //         //     "ini dirender pertama kali ketika pegawai belum dipilih/belum ada "
-        //         // );
-        //     }
-        // }
     }, []);
 
     // Kalo dpt nilai pegawai stelah dipilih
@@ -186,6 +188,21 @@ export default function Index({
                 }
             );
         }
+        // // Tambah Sebgai Salinan
+        // if (isEdit && action === "update") {
+        //     router.post(route("divisi-sdm.pak.save", idRiwayatPAK), data, {
+        //         preserveScroll: true,
+        //         preserveState: true,
+        //         onStart: () => setIsLoading(true),
+        //         onFinish: () => setIsLoading(false),
+        //         onError: (errors) => {
+        //             alert("Error:", errors);
+        //         },
+        //         onSuccess: (page) => {
+        //             // Tambah logic lain sesuai tombolnya
+        //         },
+        //     });
+        // }
     };
 
     const [search, setSearch] = useState("");
@@ -276,13 +293,17 @@ export default function Index({
                             </li>
                             {isEdit && (
                                 <li>
-                                    <span className="inline-flex items-center gap-2">{riwayat.pegawai.Nama}</span>
+                                    <span className="inline-flex items-center gap-2">
+                                        {riwayat.pegawai.Nama}
+                                    </span>
                                 </li>
                             )}
 
                             {!isEdit & pegawaiState && (
                                 <li>
-                                    <span className="inline-flex items-center gap-2">{pegawaiState.Nama}</span>
+                                    <span className="inline-flex items-center gap-2">
+                                        {pegawaiState.Nama}
+                                    </span>
                                 </li>
                             )}
                         </ul>
@@ -342,7 +363,7 @@ export default function Index({
                     )}
 
                     {/* Konten untuk memilih Pegawai End */}
-                    <section className={(isEdit ? 'mt-20' : 'mt-10')}>
+                    <section className={isEdit ? "mt-20" : "mt-10"}>
                         <DetailPegawai
                             pegawai={!isEdit ? pegawaiState : riwayat.pegawai}
                             collapse={pegawaiState ? true : false}
@@ -354,7 +375,6 @@ export default function Index({
             <section className="h-full m-12 mt-4">
                 <form onSubmit={submit} method="post">
                     <div className="overflow-x-auto">
-
                         {/* INPUT DATA | START*/}
                         <InputDataTable
                             data={data}
@@ -412,15 +432,26 @@ export default function Index({
                         </SecondaryButton>
 
                         {isEdit ? (
-                            <SuccessButton
-                                type="submit"
-                                name="action"
-                                value="update"
-                                className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
-                            >
-                                Update
-                                <FaSave className="mx-1" />
-                            </SuccessButton>
+                            <>
+                                <SuccessButton
+                                    type="submit"
+                                    name="action"
+                                    value="update"
+                                    className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                >
+                                    Update
+                                    <FaSave className="mx-1" />
+                                </SuccessButton>
+                                <SuccessButton
+                                    type="submit"
+                                    name="action"
+                                    value="save"
+                                    className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                >
+                                    Simpan Sebagai Salinan
+                                    <FaSave className="mx-1" />
+                                </SuccessButton>
+                            </>
                         ) : (
                             <SuccessButton
                                 type="submit"
@@ -428,7 +459,7 @@ export default function Index({
                                 value="save"
                                 className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
                             >
-                                Simpan
+                                Tambah
                                 <FaSave className="mx-1" />
                             </SuccessButton>
                         )}

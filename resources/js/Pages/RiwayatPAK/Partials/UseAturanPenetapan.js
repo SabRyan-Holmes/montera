@@ -3,7 +3,7 @@ import { useForm } from '@inertiajs/react';
 
 export default function UseAturanPenetapan(koefisien = []) {
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, setDefaults } = useForm({
         // Kalo Edit Ini langsungg terisi dengan useEffect
         id: null,
         pegawai: null,
@@ -88,8 +88,8 @@ export default function UseAturanPenetapan(koefisien = []) {
         ak_tipe_tambahan: {},
         jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
 
-        pangkat: 50,
-        jabatan: 100,
+        pangkat: '',
+        jabatan: '',
         pangkat_keker: "",
         jabatan_keker: "",
 
@@ -126,5 +126,6 @@ export default function UseAturanPenetapan(koefisien = []) {
         reset,
         predikat,
         akNormatif,
+        setDefaults
     };
 }

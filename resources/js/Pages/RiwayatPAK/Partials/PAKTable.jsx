@@ -245,6 +245,10 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
         ).toFixed(3);
     });
 
+    console.log("isi data.pangkat");
+    console.log(data.pangkat);
+    console.log("Current pangkat value:", data.pangkat, typeof data.pangkat);
+
     return (
         <table className="table text-base table-bordered">
             {/* head */}
@@ -486,50 +490,104 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                     </td>
 
                     {/* NOTE : Update 10 Maret 2025 : Pangkat dan jabatan ditambahkan angka 150 & 300 (ditambahkan jg 250 jaga-jaga) */}
-                    <td className="text-center border" colSpan={2}>
-                        <select
-                            name="pangkat"
-                            id="pangkat"
-                            className="w-20 text-center rounded-md border-gradient"
-                            defaultValue={data.pangkat}
-                            onChange={(e) => {
-                                setData("pangkat", e.target.value);
-                            }}
-                        >
-                            <option value="20">20</option>
-                            <option value="40">40</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="100">150</option>
-                            <option value="200">200</option>
-                            <option value="250">250</option>
-                            <option value="300">300</option>
-                            <option value="450">450</option>
-                            <option value="600">600</option>
-                        </select>
-                    </td>
-                    <td className="text-center border" colSpan={2}>
-                        <select
-                            name="jabatan"
-                            id="jabatan"
-                            className="w-20 text-center rounded-md border-gradient"
-                            defaultValue={data.jabatan}
-                            onChange={(e) => {
-                                setData("jabatan", e.target.value);
-                            }}
-                        >
-                            <option value="20">20</option>
-                            <option value="40">40</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="100">150</option>
-                            <option value="200">200</option>
-                            <option value="250">250</option>
-                            <option value="300">300</option>
-                            <option value="450">450</option>
-                            <option value="600">600</option>
-                        </select>
-                    </td>
+
+                    {!isEdit ? (
+                        <>
+                            <td className="text-center border" colSpan={2}>
+                                <select
+                                    name="pangkat"
+                                    id="pangkat"
+                                    className="w-20 text-center rounded-md border-gradient"
+                                    defaultValue={String(data.pangkat)}
+                                    onChange={(e) => {
+                                        setData("pangkat", e.target.value);
+                                    }}
+                                >
+                                    <option value="20">20</option>
+                                    <option value="40">40</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="100">150</option>
+                                    <option value="200">200</option>
+                                    <option value="250">250</option>
+                                    <option value="300">300</option>
+                                    <option value="450">450</option>
+                                    <option value="600">600</option>
+                                </select>
+                            </td>
+                            <td className="text-center border" colSpan={2}>
+                                <select
+                                    name="jabatan"
+                                    id="jabatan"
+                                    className="w-20 text-center rounded-md border-gradient"
+                                    defaultValue={data.jabatan}
+                                    onChange={(e) => {
+                                        setData("jabatan", e.target.value);
+                                    }}
+                                >
+                                    <option value="20">20</option>
+                                    <option value="40">40</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="100">150</option>
+                                    <option value="200">200</option>
+                                    <option value="250">250</option>
+                                    <option value="300">300</option>
+                                    <option value="450">450</option>
+                                    <option value="600">600</option>
+                                </select>
+                            </td>
+                        </>
+                    ) : !data.pangkat && !data.jabatan ? (
+                        <div>Loading...</div>
+                    ) : (
+                        <>
+                            <td className="text-center border" colSpan={2}>
+                                <select
+                                    name="pangkat"
+                                    id="pangkat"
+                                    className="w-20 text-center rounded-md border-gradient"
+                                    defaultValue={String(data.pangkat)}
+                                    onChange={(e) => {
+                                        setData("pangkat", e.target.value);
+                                    }}
+                                >
+                                    <option value="20">20</option>
+                                    <option value="40">40</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="100">150</option>
+                                    <option value="200">200</option>
+                                    <option value="250">250</option>
+                                    <option value="300">300</option>
+                                    <option value="450">450</option>
+                                    <option value="600">600</option>
+                                </select>
+                            </td>
+                            <td className="text-center border" colSpan={2}>
+                                <select
+                                    name="jabatan"
+                                    id="jabatan"
+                                    className="w-20 text-center rounded-md border-gradient"
+                                    defaultValue={data.jabatan}
+                                    onChange={(e) => {
+                                        setData("jabatan", e.target.value);
+                                    }}
+                                >
+                                    <option value="20">20</option>
+                                    <option value="40">40</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="100">150</option>
+                                    <option value="200">200</option>
+                                    <option value="250">250</option>
+                                    <option value="300">300</option>
+                                    <option value="450">450</option>
+                                    <option value="600">600</option>
+                                </select>
+                            </td>
+                        </>
+                    )}
                 </tr>
                 {/* row 8 */}
                 <tr className="space-x-0 text-xs font-semibold text-left capitalize border-separate text-slate-600">

@@ -67,6 +67,60 @@ export default function KonversiTable({
         setData("predikat", predikat[data.presentase]);
     }, [data.presentase]);
 
+    useEffect(() => {
+        // Cek perubahan jabatan setiap kali data pegawai berubah
+        if (data.pegawai) {
+            isJabatanChanged();
+        }
+    }, [data.pegawai]);
+
+    const [jabatanChanged, setJabatanChanged] = useState(false);
+
+    // Fungsi untuk mengecek perubahan jabatan
+    const isJabatanChanged = () => {
+        if (!data.pegawai || !data.ak_normatif) return false;
+
+        const currentJabatan = data.pegawai["Jabatan/TMT"];
+        const findAkNormatifValue = (jabatan) => {
+            const key = Object.keys(akNormatif).find((k) =>
+                jabatan.includes(k)
+            );
+            return key ? akNormatif[key] : null;
+        };
+
+        const expectedValue = findAkNormatifValue(currentJabatan);
+        const changed = expectedValue !== data.ak_normatif;
+        setJabatanChanged(changed); // Update state
+        return changed;
+    };
+
+    const handleSesuaikan = () => {
+        // Update ke nilai yang sesuai jabatan baru
+        const currentJabatan = data.pegawai["Jabatan/TMT"];
+        const findAkNormatifValue = (jabatan) => {
+            const key = Object.keys(akNormatif).find((k) =>
+                jabatan.includes(k)
+            );
+            return key ? akNormatif[key] : null;
+        };
+
+        const newValue = findAkNormatifValue(currentJabatan);
+
+        // Update nilai normatif
+        setData("ak_normatif", newValue);
+        setData("ak_normatif_ops", null);
+
+        // Hitung ulang angka kredit
+        const akKreditValue = hitungAk(
+            data.angka_periode,
+            newValue,
+            data.presentase
+        );
+        setData("angka_kredit", akKreditValue);
+        setJabatanChanged(false); // Kembalikan status ke false
+
+    };
+
     return (
         <table className="table text-base table-bordered">
             {/* head */}
@@ -136,31 +190,45 @@ export default function KonversiTable({
                         </select>
                     </td>
                     <td className="border">
-                        {data.ak_normatif ? (
-                            <span>{data.ak_normatif}</span>
-                        ) : (
-                            <TextInput
-                                id="ak_normatif_ops"
-                                type="text"
-                                name="ak_normatif_ops"
-                                className="text-center w-28 placeholder:text-xs"
-                                maxLength="5"
-                                placeholder="Input Manual"
-                                defaultValue={
-                                    isEdit && historyData["ak_normatif_ops"]
-                                }
-                                onKeyPress={handleKeyPress}
-                                onChange={(e) => {
-                                    let value = e.target.value;
-                                    // Mengganti koma dengan titik untuk parsing
-                                    value = value.replace(",", ".");
+                        {/* TODO: Tambahkan logika apakah ak_normatif dr database apakah masih cocok dgn data pegawai terbaru yang bisa saja berubah */}
 
-                                    setData(
-                                        "ak_normatif_ops",
-                                        parseFloat(value).toFixed(2)
-                                    );
-                                }}
-                            />
+                        {!isEdit && data.ak_normatif && (
+                            <span>{data.ak_normatif}</span>
+                        )}
+
+                        {isEdit & jabatanChanged ? (
+                            <div className="flex flex-col justify-center gap-1">
+                                <div className="text-xs text-red-500">
+                                    Jabatan pegawai telah berubah! Koefisien
+                                    pertahun perlu disesuaikan.
+                                </div>
+                                <div className="flex justify-center gap-2">
+                                    <button
+                                        type="button"
+                                        className="px-2 py-1 text-xs bg-blue-100 rounded"
+                                        onClick={handleSesuaikan}
+                                    >
+                                        Sesuaikan Otomatis
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="px-2 py-1 text-xs bg-gray-100 rounded"
+                                        onClick={() => {
+                                            // Reset semua perubahan
+                                            setData(
+                                                "ak_normatif",
+                                                data.ak_normatif
+                                            );
+                                            setData("ak_normatif_ops", null);
+                                            setJabatanChanged(false); // Kembalikan status ke false
+                                        }}
+                                    >
+                                        Biarkan seperti semula
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <span>{data.ak_normatif}</span>
                         )}
                     </td>
                     <td className="border">

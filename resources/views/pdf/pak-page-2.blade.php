@@ -191,7 +191,7 @@
                     <th colspan="2">Tahun</th>
                     <th>Periodik(Bulan)</th>
                     <th>Predikat</th>
-                    <th>Prosentase</th>
+                    <th>Presentase</th>
                 </tr>
 
                 <tr style="text-transform: uppercase; width: 100%; font-weight: 400; background-color: #e8f3f3;">
@@ -213,7 +213,9 @@
                     <th>{{ '-' }}</th>
                     <th>{{ '-' }}</th>
                     {{-- Ubah jadi 3 angka  belakang koma --}}
-                    <th>{{ number_format($data['ak_terakhir'] ?? 0, 3) }}</th>
+                    {{-- <th>{{ number_format($data['ak_terakhir'] ?? '0', 3) }}</th> --}}
+                    <th>{{ isset($data['ak_terakhir']) && is_numeric($data['ak_terakhir']) ? number_format((float) $data['ak_terakhir'], 3) : '0.000' }}
+                    </th>
                 </tr>
 
                 <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">

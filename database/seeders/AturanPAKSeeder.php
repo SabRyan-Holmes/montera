@@ -55,14 +55,14 @@ class AturanPAKSeeder extends Seeder
                 ],
                 [
                     "id" => 5,
-                    "jabatan" => 'Madya',
+                    "jabatan" => 'Muda',
                     "nilai" => 25,
                     "updated_at" => $timestamp,
                 ],
                 [
-                    "id" => 6,
-                    "jabatan" => 'Muda',
-                    "nilai" => 37.5,
+                    "id" => 5,
+                    "jabatan" => 'Madya',
+                    "nilai" => 37,5,
                     "updated_at" => $timestamp,
                 ],
             ],

@@ -133,16 +133,11 @@ class DokumenPAKController extends Controller
 
     public function save(Request $request)
     {
-        // dd($request->all());
-        Session::put('data', $request->all());
-
-        // Kalo si store ke database)
-        if (!isset($request->id)) {
-            $dataForStore = $request->except('pegawai');
-            $pegawai_id = $request->input('pegawai.id');
-            $dataForStore['pegawai_id'] = $pegawai_id;
-            RiwayatPAK::create($dataForStore);
-        }
+        // Session::put('data', $request->all());
+        $dataForStore = $request->except(['id', 'pegawai']);
+        $pegawai_id = $request->input('pegawai.id');
+        $dataForStore['pegawai_id'] = $pegawai_id;
+        RiwayatPAK::create($dataForStore);
         return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan ke dalam Database');
     }
 
@@ -210,9 +205,6 @@ class DokumenPAKController extends Controller
 
         return Inertia::location(route('pak.preview'));
     }
-
-
-
 
 
     public function download_template()

@@ -312,7 +312,9 @@
                 <tr>
                     <th colspan="3" style="text-align: center; text-transform: uppercase;">Jumlah Angka kredit
                         kumulatif</th>
-                    <th>{{ number_format($data['jakk']['lama'] ?? 0, 3) }}</th>
+                    {{-- <th>{{ number_format($data['jakk']['lama'] ?? 0, 3) }}</th> --}}
+                    <th>{{ isset($data['jakk']['lama']) && is_numeric($data['jakk']['lama']) ? number_format((float) $data['jakk']['lama'], 3) : '0.000' }}
+                    </th>
                     <th>{{ number_format($data['jakk']['baru'] ?? 0, 3) }}</th>
                     <th>{{ number_format($data['jakk']['jumlah'] ?? 0, 3) }}</th>
                     <th>{{ $data['jakk']['keterangan'] }}</th>
