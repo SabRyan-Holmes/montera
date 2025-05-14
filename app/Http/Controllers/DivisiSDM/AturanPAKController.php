@@ -15,24 +15,23 @@ class AturanPAKController extends Controller
      */
     public function index()
     {
-        // dd("test");
         // IMPORTANT! Don't Touch this code !
-        $DB_koefisien_pertahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first();
-        $predikat_presentase = AturanPAK::where('name', 'Predikat & Presentase')->first();
-        $pangkat_jabatan = AturanPAK::where('name', 'Angka Minimal Pangkat dan Jabatan')->first();
-        $tebusan = AturanPAK::where('name', 'Tebusan')->first();
-        $kesimpulan = AturanPAK::where('name', 'Kesimpulan')->first();
-        $rumus = AturanPAK::where('name', 'Rumus')->first();
+        $aturan_pak = [
+            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first()->value,
+            'koefisienPertahun' => AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value,
+            'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first()->value,
+            'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first()->value,
+            'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first()->value,
+            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
+            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first()->value,
+            'rumus' => AturanPAK::where('name', 'Rumus')->first()->value,
+        ];
 
         return Inertia::render('KelolaAturanPAK/Index', [
             'title' => 'Kelola Aturan PAK',
-            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(),
-            'koefisienPertahun' => $DB_koefisien_pertahun->value,
-            'predikatPresentase' => $predikat_presentase->value,
-            'pangkatJabatan' => $pangkat_jabatan->value,
-            'tebusan' => $tebusan->value,
-            'kesimpulan' => $kesimpulan->value,
-            'rumus' => $rumus->value,
+            'aturanPAK' => $aturan_pak,
         ]);
     }
 

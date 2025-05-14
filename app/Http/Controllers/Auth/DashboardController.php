@@ -14,7 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ArsipDokumen;
 use App\Models\AturanPAK;
 use App\Models\Pengajuan;
-use App\Models\PengusulanPegawai;
+use App\Models\PengusulanPAK;
 use App\Models\RiwayatPAK;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -61,7 +61,7 @@ class DashboardController extends Controller
             $no_pak_terakhir = RiwayatPAK::latest('created_at')->first()?->no_surat3;;
             $user_count =  User::all()->count();
             $pegawai_count =  Pegawai::all()->count();
-            $pengusulan_count = PengusulanPegawai::all()->count();
+            $pengusulan_count = PengusulanPAK::all()->count();
             $pengajuan_count = Pengajuan::all()->count();
             $arsip_dokumen_count = ArsipDokumen::where('user_id', $user->id)->count();
 
@@ -80,7 +80,7 @@ class DashboardController extends Controller
         //  TODO: Kalo role nya Pegawai data untuk dashboard beda lagi. JAngan lupa tambahin nanti logikany, kalo lah bisa SSO
         if ($user->role == "pegawai") {
             $pak_count = RiwayatPAK::where('pegawai_id', $user->id)->count();
-            $pengusulan_count = PengusulanPegawai::all()->count();
+            $pengusulan_count = PengusulanPAK::all()->count();
             $pengajuan_count = Pengajuan::where('pegawai_id', $user->id)->count();
             $arsip_dokumen_count = ArsipDokumen::where('pegawai_nip', $user->nip)->count();
 

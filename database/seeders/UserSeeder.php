@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'DWI UTAMANINGSIH S.Psi., M.M.',
             'nip' => '198807032011012019',
-            'role' => 'divisi_sdm',
+            'role' => 'Divisi SDM',
             'email' => 'sdm.bps1500@gmail.com',
             'jumlah' => [
                 'ditetapkan' => 0,
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Pimpinan',
             'nip' => '1000000000000000',
-            'role' => "pimpinan",
+            'role' => "Pimpinan",
             'email' => 'pimpinan.bps1500@gmail.com',
             'jumlah' => [
                 'ditetapkan' => 0,
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Siti Marfuah, S.E.',
-            'role' => "divisi_sdm",
+            'role' => "Divisi SDM",
             'nip' => '198711082006042002',
             'email' => 'siti_marfuah@gmail.com',
             'jumlah' => [
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'DIAS KHUSNUL KHOTIMAH S.Tr.Stat',
-            // 'role' => "pegawai",
+            // 'role' => "Pegawai",
             'nip' => '200002122022012003',
             'email' => 'dias@gmail.com',
             'password' => Hash::make('passworddias'),

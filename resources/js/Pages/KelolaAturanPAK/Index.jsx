@@ -22,21 +22,23 @@ import { router } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { useRemember } from "@inertiajs/react";
 import DynamicTableSection from "./Partials/DynamicTableSection";
-
+import { usePage } from "@inertiajs/react";
 // ANCHOR : Import Here!
 
-export default function Index({
-    auth,
-    title,
-    flash,
-    koefisienPertahun,
-    predikatPresentase,
-    pangkatJabatan,
-    tebusan,
-    kesimpulan,
-    rumus,
-    // ANCHOR : Handle Props Here!!
-}) {
+export default function Index({ auth, title, flash }) {
+    // INITIALIZE DATA
+    const {
+        koefisienPertahun,
+        predikatPresentase,
+        pangkat,
+        jabatan,
+        tebusanKonversi,
+        tebusanAkumulasi,
+        tebusanPenetapan,
+        kesimpulan,
+        rumus,
+    } = usePage().props.aturanPAK;
+
     // const [shownMessages, setShownMessages] = useRemember([]);
     // useEffect(() => {
     //     if (flash.message && !shownMessages.includes(flash.message)) {
@@ -125,9 +127,6 @@ export default function Index({
         });
     }
 
-    let pangkat = pangkatJabatan.pangkat;
-    let jabatan = pangkatJabatan.jabatan;
-
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState({
         title: "",
@@ -145,6 +144,7 @@ export default function Index({
         <Authenticated user={auth.user} title={title}>
             <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto content-normal justify-items-center text-slate-600 px-7">
                 {/* SECTION : Penanda Tangan */}
+                {/* TODO : Ini belum terintegrasi database */}
                 <section className="mt-10 border rounded-lg bg-slate-700 justify-self-stretch place-self-center border-gradient">
                     <div className="m-12 h-[27rem]">
                         <div className="flex justify-between ">
@@ -168,13 +168,15 @@ export default function Index({
                                 />
 
                                 <RadioWithLabel
-                                    name={"Agus Subidyo"}
-                                    value={"Agus Subidyo"}
-                                    checked
+                                    name={"Agus Sudibyo, M.Stat"}
+                                    value={"Agus Sudibyo, M.Stat"}
+                                    onChange={() => {}}
+                                    defaultChecked
                                 />
                                 <RadioWithLabel
                                     name={"Nama Lain"}
                                     value={"Nama Lain"}
+                                    onChange={() => {}}
                                 />
 
                                 <div className="flex">
@@ -211,11 +213,13 @@ export default function Index({
                                 <RadioWithLabel
                                     name={"197412311996121001"}
                                     value={"197412311996121001"}
-                                    checked
+                                    defaultChecked
+                                    onChange={() => {}}
                                 />
                                 <RadioWithLabel
                                     name={"NIP lain"}
                                     value={"NIP Lain"}
+                                    onChange={() => {}}
                                 />
 
                                 <div className="flex">
@@ -256,6 +260,8 @@ export default function Index({
                 </section>
                 {/* !SECTION : Penanda Tangan */}
                 {/* SECTION : Rumus*/}
+                {/* TODO : Ini belum terintegrasi database || mungkin fiturny read saja karna kayakny ribet kalo CRUD  */}
+
                 <section className="mt-10 border rounded-lg bg-slate-700 justify-self-stretch place-self-center border-gradient">
                     <div className="m-12 h-[27rem]">
                         <div className="flex justify-between mb-10">
@@ -288,14 +294,13 @@ export default function Index({
                                 <strong className="">AK Normatif</strong>
                                 <span className="scale-110 ">x</span>
                                 <div className="flex-col m-2">
-                                    <span>Angka Periode</span>
+                                    <span>Presentase</span>
                                     <div className="border-b-2 border-accent" />
                                     <span className="block text-center">
-                                        12
+                                        100
                                     </span>{" "}
                                 </div>
                             </div>
-                            {/* FOCUS! */}
                             {/* Keterangan */}
                             <div className="my-6 space-y-2 text-sm leading-relaxed ">
                                 <strong className="text-xl font-bold">
@@ -363,10 +368,10 @@ export default function Index({
                         dataEdit={dataEdit}
                     />
                 )}
-                {/* SECTION : Koefisien Pertahun */}
+                {/* SECTION : Koefisien Per Tahun */}
                 <section className="flex flex-col h-full p-12 border rounded-lg justify-self-stretch place-self-start border-gradient">
                     <DynamicTableSection
-                        title="Koefisien Pertahun"
+                        title="Koefisien Per Tahun"
                         tooltipMessage="Nilai standar koefisien per tahun berdasarkan jenjang jabatan fungsional."
                         columns={[
                             {
@@ -460,8 +465,7 @@ export default function Index({
                 {/* !SECTION : Predikat Presentase */}
 
                 {/* SECTION : Angka Minimal Pangkat Dan Jabatan */}
-                <section className="w-3/5 col-span-2 row-span-2 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
-                    <div className="m-16">
+                <section className="w-full col-span-2 row-span-2 p-12 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
                         <div className="flex justify-between ">
                             <strong className="text-2xl">
                                 Angka Minimal Pangkat Dan Jabatan
@@ -475,117 +479,95 @@ export default function Index({
                             </div>
                         </div>
 
-                        <div className="pt-7">
-                            <table className="table text-sm table-bordered">
-                                <thead className="text-base font-medium text-white bg-primary ">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            className="rounded-tl-xl"
-                                            width="5%"
-                                        >
-                                            No
-                                        </th>
-                                        <th scope="col" width="20%">
-                                            Pangkat
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            width="20%"
-                                            className="text-center"
-                                        >
-                                            Jabatan
-                                        </th>
-                                        <th scope="col" width="20%">
-                                            Terakhir Diubah
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="text-center rounded-tr-xl"
-                                        >
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className=" border-secondary/15">
-                                    {pangkatJabatan.pangkat
-                                        .sort((a, b) => a[1] - b[1]) // urutkan dari nilai kecil ke besar
-                                        .map((data, i) => (
-                                            <tr
-                                                key={i}
-                                                className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                            >
-                                                <td className="text-center">
-                                                    {i + 1}
-                                                </td>
-                                                <td className="font-semibold text-center">
-                                                    {data.nilai}
-                                                </td>
-                                                <td className="font-semibold text-center">
-                                                    {jabatan[i]?.nilai ?? "-"}
-                                                </td>
-                                                <td className="text-sm text-center">
-                                                    {moment(
-                                                        data.updated_at
-                                                    ).fromNow()}
-                                                </td>
+                        <div className="flex items-center justify-between gap-10 pt-7">
 
-                                                <td className="p-3 text-center whitespace-nowrap text-nowrap">
-                                                    <a
-                                                        onClick={() => {
-                                                            setIsPopUpOpen(
-                                                                !isPopUpOpen
-                                                            );
-                                                            setIsEdit(true);
-                                                            setDataEdit(
-                                                                koefisien
-                                                            );
-                                                        }}
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                    >
-                                                        <FaEdit className="fill-secondary group-hover/item:fill-white" />
-                                                    </a>
-
-                                                    <span className="inline-block mx-1"></span>
-
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                koefisien.id
-                                                            )
-                                                        }
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
-                                                    >
-                                                        <FaTrash className="fill-red-500 group-hover/item:fill-white" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => {
-                                    // setIsPopUpOpen(!isPopUpOpen);
-                                    // setIsEdit(false);
-                                    // setDataEdit(null);
-                                }}
-                                className="mt-6 text-white scale-95 btn glass bg-sky-600 hover:bg-primary/90"
-                            >
-                                Tambah Koefisien
-                                <IoMdAdd className="w-6 h-6" />
-                            </button>
-                            {/* {isPopUpOpen && (
-                                <PopUpForm
-                                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                                    isEdit={isEdit}
-                                    dataEdit={dataEdit}
+                                <DynamicTableSection
+                                    title="Angka Minimal Pangkat"
+                                    showHeader={false}
+                                    columns={[
+                                        {
+                                            header: "Angka Pangkat",
+                                            field: "angka",
+                                            center: true,
+                                        },
+                                    ]}
+                                    data={pangkat}
+                                    onAdd={() => {
+                                        setPopUpData({
+                                            title: "Angka Minimal Pangkat",
+                                            fields: ["angka"],
+                                            routeName: route(
+                                                "divisi-sdm.aturan-pak.store"
+                                            ),
+                                        });
+                                        setIsPopUpOpen(true);
+                                        setIsEdit(false);
+                                    }}
+                                    onEdit={(item) => {
+                                        setPopUpData({
+                                            title: "Angka Minimal Pangkat",
+                                            fields: ["angka"],
+                                            routeName: route(
+                                                "divisi-sdm.aturan-pak.update",
+                                                item.id
+                                            ),
+                                        });
+                                        setIsPopUpOpen(true);
+                                        setIsEdit(true);
+                                        setDataEdit(item);
+                                    }}
+                                    onDelete={(id) =>
+                                        handleDelete(
+                                            id,
+                                            "Angka Minimal Pangkat"
+                                        )
+                                    }
                                 />
-                            )} */}
+
+
+                                <DynamicTableSection
+                                    title="Angka Minimal Jabatan"
+                                    showHeader={false}
+                                    columns={[
+                                        {
+                                            header: "Angka Jabatan",
+                                            field: "angka",
+                                            center: true,
+                                        },
+                                    ]}
+                                    data={jabatan}
+                                    onAdd={() => {
+                                        setPopUpData({
+                                            title: "Angka Minimal Jabatan",
+                                            fields: ["angka"],
+                                            routeName: route(
+                                                "divisi-sdm.aturan-pak.store"
+                                            ),
+                                        });
+                                        setIsPopUpOpen(true);
+                                        setIsEdit(false);
+                                    }}
+                                    onEdit={(item) => {
+                                        setPopUpData({
+                                            title: "Angka Minimal Jabatan",
+                                            fields: ["angka"],
+                                            routeName: route(
+                                                "divisi-sdm.aturan-pak.update",
+                                                item.id
+                                            ),
+                                        });
+                                        setIsPopUpOpen(true);
+                                        setIsEdit(true);
+                                        setDataEdit(item);
+                                    }}
+                                    onDelete={(id) =>
+                                        handleDelete(
+                                            id,
+                                            "Angka Minimal Jabatan"
+                                        )
+                                    }
+                                />
                         </div>
-                    </div>
                 </section>
                 {/* !SECTION : Angka Minimal Pangkat Dan Jabatan */}
 
@@ -614,15 +596,15 @@ export default function Index({
                                 columns={[
                                     {
                                         header: "Pihak Tebusan",
-                                        field: "choice",
+                                        field: "pihak_tebusan",
                                         width: "60%",
                                     },
                                 ]}
-                                data={tebusan.konversi}
+                                data={tebusanKonversi}
                                 onAdd={() => {
                                     setPopUpData({
-                                        title: "Pihak Tebusan",
-                                        fields: ["choice"],
+                                        title: "Tebusan Konversi",
+                                        fields: ["pihak_tebusan"],
                                         routeName: route(
                                             "divisi-sdm.aturan-pak.store"
                                         ),
@@ -632,8 +614,8 @@ export default function Index({
                                 }}
                                 onEdit={(item) => {
                                     setPopUpData({
-                                        title: "Tebusan",
-                                        fields: ["choice"],
+                                        title: "Tebusan Konversi",
+                                        fields: ["pihak_tebusan"],
                                         routeName: route(
                                             "divisi-sdm.aturan-pak.update",
                                             item.id
@@ -643,7 +625,9 @@ export default function Index({
                                     setIsEdit(true);
                                     setDataEdit(item);
                                 }}
-                                onDelete={(id) => handleDelete(id, "Tebusan")}
+                                onDelete={(id) =>
+                                    handleDelete(id, "Tebusan Konversi")
+                                }
                             />
                         </div>
                         <div className="pt-7">
@@ -656,15 +640,15 @@ export default function Index({
                                 columns={[
                                     {
                                         header: "Pihak Tebusan",
-                                        field: "choice",
+                                        field: "pihak_tebusan",
                                         width: "60%",
                                     },
                                 ]}
-                                data={tebusan.akumulasi}
+                                data={tebusanAkumulasi}
                                 onAdd={() => {
                                     setPopUpData({
-                                        title: "Pihak Tebusan",
-                                        fields: ["choice"],
+                                        title: "Tebusan Akumulasi",
+                                        fields: ["pihak_tebusan"],
                                         routeName: route(
                                             "divisi-sdm.aturan-pak.store"
                                         ),
@@ -674,8 +658,8 @@ export default function Index({
                                 }}
                                 onEdit={(item) => {
                                     setPopUpData({
-                                        title: "Tebusan",
-                                        fields: ["choice"],
+                                        title: "Tebusan Akumulasi",
+                                        fields: ["pihak_tebusan"],
                                         routeName: route(
                                             "divisi-sdm.aturan-pak.update",
                                             item.id
@@ -685,28 +669,30 @@ export default function Index({
                                     setIsEdit(true);
                                     setDataEdit(item);
                                 }}
-                                onDelete={(id) => handleDelete(id, "Tebusan")}
+                                onDelete={(id) =>
+                                    handleDelete(id, "Tebusan Akumulasi")
+                                }
                             />
                         </div>
                         <div className="pt-7">
                             <strong className="block text-xl">
-                                Akumulasi Angka Kredit
+                                Penetapan Angka Kredit
                             </strong>
                             <DynamicTableSection
-                                title="Akumulasi Angka Kredit"
+                                title="Penetapan Angka Kredit"
                                 showHeader={false}
                                 columns={[
                                     {
                                         header: "Pihak Tebusan",
-                                        field: "choice",
+                                        field: "pihak_tebusan",
                                         width: "60%",
                                     },
                                 ]}
-                                data={tebusan.akumulasi}
+                                data={tebusanPenetapan}
                                 onAdd={() => {
                                     setPopUpData({
-                                        title: "Pihak Tebusan",
-                                        fields: ["choice"],
+                                        title: "Tebusan Penetapan",
+                                        fields: ["pihak_tebusan"],
                                         routeName: route(
                                             "divisi-sdm.aturan-pak.store"
                                         ),
@@ -716,8 +702,8 @@ export default function Index({
                                 }}
                                 onEdit={(item) => {
                                     setPopUpData({
-                                        title: "Tebusan",
-                                        fields: ["choice"],
+                                        title: "Tebusan Penetapan",
+                                        fields: ["pihak_tebusan"],
                                         routeName: route(
                                             "divisi-sdm.aturan-pak.update",
                                             item.id
@@ -727,7 +713,9 @@ export default function Index({
                                     setIsEdit(true);
                                     setDataEdit(item);
                                 }}
-                                onDelete={(id) => handleDelete(id, "Tebusan")}
+                                onDelete={(id) =>
+                                    handleDelete(id, "Tebusan Penetapan")
+                                }
                             />
                         </div>
                     </div>
@@ -735,14 +723,14 @@ export default function Index({
                 {/* !SECTION : Tebusan */}
 
                 {/* SECTION  : Kesimpulan */}
-                <section className="w-4/5 col-span-2 row-span-2 p-12 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
+                <section className="w-4/5 col-span-2 row-span-2 p-12 mx-auto mb-20 border rounded-lg justify-self-stretch place-self-start border-gradient">
                     <DynamicTableSection
                         title="Kesimpulan"
                         tooltipMessage="Pernyataan akhir hasil penilaian PAK terkait kelayakan kenaikan pangkat atau jabatan."
                         columns={[
                             {
                                 header: "Kesimpulan",
-                                field: "teks",
+                                field: "kesimpulan",
                                 width: "50%",
                             },
                         ]}
@@ -750,7 +738,7 @@ export default function Index({
                         onAdd={() => {
                             setPopUpData({
                                 title: "Kesimpulan",
-                                fields: ["teks"],
+                                fields: ["kesimpulan"],
                                 routeName: route("divisi-sdm.aturan-pak.store"),
                             });
                             setIsPopUpOpen(true);
@@ -759,7 +747,7 @@ export default function Index({
                         onEdit={(item) => {
                             setPopUpData({
                                 title: "Kesimpulan",
-                                fields: ["teks"],
+                                fields: ["kesimpulan"],
                                 routeName: route(
                                     "divisi-sdm.aturan-pak.update",
                                     item.id

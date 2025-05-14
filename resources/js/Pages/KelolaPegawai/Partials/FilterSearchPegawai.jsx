@@ -7,7 +7,7 @@ export default function FilterSearchPegawai({byJabatan, setByJabatan, byDaerah, 
     <form className="max-w-screen-laptop ">
     <div className="flex items-center justify-between gap-3 my-3">
         <div className="flex items-center justify-start gap-3">
-            <div className="flex-none w-72">
+            <div className="flex-none w-60">
                 <InputLabel
                     value="Jabatan"
                     Htmlfor="Jabatan"
@@ -36,7 +36,7 @@ export default function FilterSearchPegawai({byJabatan, setByJabatan, byDaerah, 
                     <option value="Madya">Ahli Madya</option>
                 </select>
             </div>
-            <div className="flex-none w-72">
+            <div className="flex-none w-fit">
                 <InputLabel
                     value="Daerah"
                     Htmlfor="Daerah"

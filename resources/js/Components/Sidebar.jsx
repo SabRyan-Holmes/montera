@@ -88,11 +88,11 @@ const Sidebar = ({ role }) => {
                                         <>
                                             {/* Pengusulan Pegawai */}
                                             <MdOutlineAssignmentInd />{" "}
-                                            Pengusulan Pegawai
+                                            Pengusulan PAK
                                         </>
                                     ),
-                                    route: "divisi-sdm.pengusulan-pegawai",
-                                    actives: ["divisi-sdm.pengusulan-pegawai"],
+                                    route: "divisi-sdm.pengusulan-pak.index",
+                                    actives: ["divisi-sdm.pengusulan-pak.index"],
                                 },
                                 {
                                     label: (
@@ -230,8 +230,8 @@ const Sidebar = ({ role }) => {
                                             Download Template
                                         </>
                                     ),
-                                    route: "divisi-sdm.pengusulan-pegawai",
-                                    active: "divisi-sdm.pengusulan-pegawai",
+                                    route: "divisi-sdm.pengusulan-pak.index",
+                                    active: "divisi-sdm.pengusulan-pak.index",
                                 },
                             ]}
                         >

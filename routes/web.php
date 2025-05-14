@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\DivisiSDM\AturanPAKController;
 use App\Http\Controllers\DivisiSDM\KoefisienController;
 use App\Http\Controllers\Pegawai\SSOController;
-use App\Http\Controllers\Shared\PengusulanPegawaiController;
+use App\Http\Controllers\Shared\PengusulanPAKController;
 use App\Http\Controllers\Shared\DokumenPAKController;
 use App\Http\Controllers\Shared\LogAktivitasController;
 use App\Http\Controllers\Shared\PegawaiController;
@@ -48,8 +48,8 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
     Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
 
-    // TODO : Pengusulan Pegawai(R, Accept, Reject)
-    Route::get('pengusulan-pegawai/', [PengusulanPegawaiController::class, 'index'])->name('pengusulan-pegawai');
+    // TODO : Pengusulan PAK(R, Accept, Reject)
+    Route::get('pengusulan-pak/', [PengusulanPAKController::class, 'index'])->name('pengusulan-pak.index');
     // Accept
     // Reject
 
@@ -149,7 +149,7 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
 Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
 
     // Pengusulan
-    Route::resource('pengusulan-pak', PengusulanPegawaiController::class);
+    Route::resource('pengusulan-pak', PengusulanPAKController::class);
 
     //Status Proses PAK/Pengajuan
     Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('proses-pak.index');

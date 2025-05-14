@@ -11,14 +11,14 @@ const PopUpForm = ({
     // Membuat objek datas dengan field dinamis
     const dynamicFields = {};
     if (isEdit && dataEdit) {
-      fields.forEach(field => {
-        // Cek semua kemungkinan struktur
-        dynamicFields[field] =
-          dataEdit.datas?.[field] ??
-          dataEdit?.data?.attributes?.[field] ??
-          dataEdit?.[field] ??
-          '';
-      });
+        fields.forEach((field) => {
+            // Cek semua kemungkinan struktur
+            dynamicFields[field] =
+                dataEdit.datas?.[field] ??
+                dataEdit?.data?.attributes?.[field] ??
+                dataEdit?.[field] ??
+                "";
+        });
     }
 
     const formState = {
@@ -27,21 +27,6 @@ const PopUpForm = ({
         storeName: !isEdit ? title : null,
         updateName: isEdit ? title : null,
     };
-
-    /*
-    Hasilnya akan seperti:
-    {
-        datas: {
-            // Field custom
-            jabatan: '',  // atau nilai dari dataEdit jika isEdit
-            nilai: '',    // atau nilai dari dataEdit jika isEdit
-            // ... field lainnya
-        },
-        id: dataEdit?.id ?? null,
-        storeName: !isEdit ? title : null,
-        updateName: isEdit ? title : null,
-    }
-    */
 
     const { data, setData, post, patch, processing, errors, reset } =
         useForm(formState);
@@ -57,7 +42,7 @@ const PopUpForm = ({
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if(isEdit) {
+        if (isEdit) {
             patch(routeName, {
                 preserveState: true,
                 preserveScroll: true,
@@ -80,13 +65,11 @@ const PopUpForm = ({
             // console.log('Form Data:', formData);
             onClose(); // Tutup pop-up setelah submit
         }
-
-
     };
 
     useEffect(() => {
         if (isEdit && dataEdit) {
-            console.log("Memproses dataEdit:", dataEdit);
+            // console.log("Memproses dataEdit:", dataEdit);
 
             // Pastikan kita mengambil dari property yang benar
             const initialData = {};
@@ -103,12 +86,12 @@ const PopUpForm = ({
                 updateName: title,
             });
 
-            console.log("Form setelah reset:", {
-                datas: initialData,
-                id: dataEdit.id,
-                storeName: null,
-                updateName: title,
-            });
+            // console.log("Form setelah reset:", {
+            //     datas: initialData,
+            //     id: dataEdit.id,
+            //     storeName: null,
+            //     updateName: title,
+            // });
         }
     }, [isEdit, dataEdit, fields, reset, title]);
 
@@ -135,13 +118,18 @@ const PopUpForm = ({
                 <form onSubmit={handleSubmit}>
                     {fields.map((fieldName) => (
                         <div className="mb-4" key={fieldName}>
-                            <InputLabel>{fieldName =='choice' ? 'Pihak Tebusan' : toUpperCase(fieldName)}</InputLabel>
+                            <InputLabel>{toUpperCase(fieldName)}</InputLabel>
 
                             <TextInput
                                 key={fieldName}
                                 name={fieldName}
+                                isFocused={true}
                                 value={data.datas[fieldName] || ""}
-                                type={fieldName == "nilai" ? "number" : "text"}
+                                type={
+                                    fieldName == "nilai" || fieldName == "angka"
+                                        ? "number"
+                                        : "text"
+                                }
                                 {...(fieldName === "nilai" && {
                                     step: "0.5",
                                     min: 0,
@@ -152,6 +140,10 @@ const PopUpForm = ({
                                             e.target.value
                                         ).toFixed(1);
                                     },
+                                })}
+                                {...(fieldName === "angka" && {
+                                    step: "10",
+                                    min: 0,
                                 })}
                                 // disabled={isEdit && fieldName === "jabatan"} // contoh: hanya disable field 'jabatan'
                                 onChange={(e) =>
@@ -170,28 +162,6 @@ const PopUpForm = ({
                         </div>
                     ))}
 
-                    {/* <div className="mb-4">
-                        <InputLabel>Nilai</InputLabel>
-                        <TextInput
-                            type="t
-
-
-
-
-                            ext"
-                            name="nilai"
-                            defaultValue={data.nilai}
-                            placeholder="masukkan nilai angka, contoh: 12.5, 25.."
-                            onChange={(e) => {
-                                setData("nilai", e.target.value);
-                                data.nilai = e.target.value;
-                                console.log("nilai sekarang : ", data.nilai);
-                            }}
-                            className="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
-                            required
-                        />
-                        <InputError message={errors.nilai} className="mt-2" />
-                    </div> */}
                     <div className="flex justify-end space-x-3">
                         <button
                             type="button"

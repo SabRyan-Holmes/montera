@@ -18,7 +18,8 @@ export default function DynamicTableSection({
     showHeader = true,
 }) {
     moment.locale("id");
-
+    console.log('data')
+    console.log(data)
     return (
         <section className="flex flex-col flex-1">
             {/* Header */}
@@ -69,8 +70,7 @@ export default function DynamicTableSection({
                         </tr>
                     </thead>
                     <tbody className="border-secondary/15">
-                        {data
-                            .sort((a, b) => a[sortField] - b[sortField])
+                        {data?.sort((a, b) => a[sortField] - b[sortField])
                             .map((item, i) => (
                                 <tr
                                     key={i}

@@ -106,73 +106,81 @@ class AturanPAKSeeder extends Seeder
         ]);
 
         AturanPAK::create([
-            'name' => 'Angka Minimal Pangkat dan Jabatan',
+            'name' => 'Angka Minimal Pangkat',
             'value' => [
-                "pangkat" => [
-                    ["id" => 1, "nilai" => 20, "updated_at" => $timestamp],
-                    ["id" => 2, "nilai" => 40, "updated_at" => $timestamp],
-                    ["id" => 3, "nilai" => 50, "updated_at" => $timestamp],
-                    ["id" => 4, "nilai" => 100, "updated_at" => $timestamp],
-                    ["id" => 5, "nilai" => 150, "updated_at" => $timestamp],
-                    ["id" => 6, "nilai" => 200, "updated_at" => $timestamp],
-                    ["id" => 7, "nilai" => 250, "updated_at" => $timestamp],
-                    ["id" => 8, "nilai" => 300, "updated_at" => $timestamp],
-                    ["id" => 9, "nilai" => 450, "updated_at" => $timestamp],
-                    ["id" => 10, "nilai" => 600, "updated_at" => $timestamp],
-                ],
-                "jabatan" => [
-                    ["id" => 1, "nilai" => 20, "updated_at" => $timestamp],
-                    ["id" => 2, "nilai" => 40, "updated_at" => $timestamp],
-                    ["id" => 3, "nilai" => 50, "updated_at" => $timestamp],
-                    ["id" => 4, "nilai" => 100, "updated_at" => $timestamp],
-                    ["id" => 5, "nilai" => 150, "updated_at" => $timestamp],
-                    ["id" => 6, "nilai" => 200, "updated_at" => $timestamp],
-                    ["id" => 7, "nilai" => 300, "updated_at" => $timestamp],
-                    ["id" => 8, "nilai" => 450, "updated_at" => $timestamp],
-                    ["id" => 9, "nilai" => 600, "updated_at" => $timestamp],
-                ],
+                ["id" => 1, "angka" => 20, "updated_at" => $timestamp],
+                ["id" => 2, "angka" => 40, "updated_at" => $timestamp],
+                ["id" => 3, "angka" => 50, "updated_at" => $timestamp],
+                ["id" => 4, "angka" => 100, "updated_at" => $timestamp],
+                ["id" => 5, "angka" => 150, "updated_at" => $timestamp],
+                ["id" => 6, "angka" => 200, "updated_at" => $timestamp],
+                ["id" => 7, "angka" => 250, "updated_at" => $timestamp],
+                ["id" => 8, "angka" => 300, "updated_at" => $timestamp],
+                ["id" => 9, "angka" => 450, "updated_at" => $timestamp],
+                ["id" => 10, "angka" => 600, "updated_at" => $timestamp],
             ],
         ]);
 
         AturanPAK::create([
-            'name' => 'Tebusan',
+            'name' => 'Angka Minimal Jabatan',
             'value' => [
-                "konversi" => [
-                    ["id" => 1, "choice" => "Kepala Kantor Regional VII BKN", "updated_at" => $timestamp],
-                    ["id" => 2, "choice" => 'Sekretaris Tim Penilai Yang Bersangkutan', "updated_at" => $timestamp],
-                    ["id" => 3, "choice" => 'Kepala BPS Kabupaten/Kota', "updated_at" => $timestamp],
-                    ["id" => 4, "choice" => 'PNS Bersangkutan', "updated_at" => $timestamp],
-                    ["id" => 5, "choice" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
-                    ["id" => 6, "choice" => 'Arsip', "updated_at" => $timestamp],
-                ],
-                "akumulasi" => [
-                    ["id" => 1, "choice" => "Kepala Kantor Regional VII BKN", "updated_at" => $timestamp],
-                    ["id" => 2, "choice" => 'Sekretaris Tim Penilai Yang Bersangkutan', "updated_at" => $timestamp],
-                    ["id" => 3, "choice" => 'Kepala BPS Kabupaten/Kota', "updated_at" => $timestamp],
-                    ["id" => 4, "choice" => 'PNS Bersangkutan', "updated_at" => $timestamp],
-                    ["id" => 5, "choice" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
-                    ["id" => 6, "choice" => 'Arsip', "updated_at" => $timestamp],
-                ],
-                "penetapan" => [
-                    ["id" => 1, "choice" => "Kepala Kantor Regional VII BKN", "updated_at" => $timestamp],
-                    ["id" => 2, "choice" => 'Sekretaris Tim Penilai Yang Bersangkutan', "updated_at" => $timestamp],
-                    ["id" => 3, "choice" => 'Kepala BPS Kabupaten/Kota', "updated_at" => $timestamp],
-                    ["id" => 4, "choice" => 'PNS Bersangkutan', "updated_at" => $timestamp],
-                    ["id" => 5, "choice" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
-                    ["id" => 6, "choice" => 'Arsip', "updated_at" => $timestamp],
-                ],
+                ["id" => 1, "angka" => 20, "updated_at" => $timestamp],
+                ["id" => 2, "angka" => 40, "updated_at" => $timestamp],
+                ["id" => 3, "angka" => 50, "updated_at" => $timestamp],
+                ["id" => 4, "angka" => 100, "updated_at" => $timestamp],
+                ["id" => 5, "angka" => 150, "updated_at" => $timestamp],
+                ["id" => 6, "angka" => 200, "updated_at" => $timestamp],
+                ["id" => 7, "angka" => 300, "updated_at" => $timestamp],
+                ["id" => 8, "angka" => 450, "updated_at" => $timestamp],
+                ["id" => 9, "angka" => 600, "updated_at" => $timestamp],
+            ],
+        ]);
+
+        AturanPAK::create([
+            'name' => 'Tebusan Konversi',
+            'value' => [
+                ["id" => 1, "pihak_tebusan" => "Kepala Kantor Regional VII BKN", "updated_at" => $timestamp],
+                ["id" => 2, "pihak_tebusan" => 'Sekretaris Tim Penilai Yang Bersangkutan', "updated_at" => $timestamp],
+                ["id" => 3, "pihak_tebusan" => 'Kepala BPS Kabupaten/Kota', "updated_at" => $timestamp],
+                ["id" => 4, "pihak_tebusan" => 'PNS Bersangkutan', "updated_at" => $timestamp],
+                ["id" => 5, "pihak_tebusan" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
+                ["id" => 6, "pihak_tebusan" => 'Arsip', "updated_at" => $timestamp],
+            ],
+        ]);
+
+        AturanPAK::create([
+            'name' => 'Tebusan Akumulasi',
+            'value' => [
+                ["id" => 1, "pihak_tebusan" => "Kepala Kantor Regional VII BKN", "updated_at" => $timestamp],
+                ["id" => 2, "pihak_tebusan" => 'Sekretaris Tim Penilai Yang Bersangkutan', "updated_at" => $timestamp],
+                ["id" => 3, "pihak_tebusan" => 'Kepala BPS Kabupaten/Kota', "updated_at" => $timestamp],
+                ["id" => 4, "pihak_tebusan" => 'PNS Bersangkutan', "updated_at" => $timestamp],
+                ["id" => 5, "pihak_tebusan" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
+                ["id" => 6, "pihak_tebusan" => 'Arsip', "updated_at" => $timestamp],
+            ],
+        ]);
+
+        AturanPAK::create([
+            'name' => 'Tebusan Penetapan',
+            'value' => [
+                ["id" => 1, "pihak_tebusan" => "Kepala Kantor Regional VII BKN", "updated_at" => $timestamp],
+                ["id" => 2, "pihak_tebusan" => 'Sekretaris Tim Penilai Yang Bersangkutan', "updated_at" => $timestamp],
+                ["id" => 3, "pihak_tebusan" => 'Kepala BPS Kabupaten/Kota', "updated_at" => $timestamp],
+                ["id" => 4, "pihak_tebusan" => 'PNS Bersangkutan', "updated_at" => $timestamp],
+                ["id" => 5, "pihak_tebusan" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
+                ["id" => 6, "pihak_tebusan" => 'Arsip', "updated_at" => $timestamp],
             ],
         ]);
 
         AturanPAK::create([
             'name' => 'Kesimpulan',
             'value' => [
-                ["id" => 1, "teks" => 'Belum Dapat Dipertimbangkan untuk  Kenaikan Pangkat Setingkat Lebih Tinggi', "updated_at" => $timestamp],
-                ["id" => 2, "teks" => 'Belum Dapat Dipertimbangkan untuk  Kenaikan Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
-                ["id" => 3, "teks" => 'Belum Dapat Dipertimbangkan untuk  Kenaikan Pangkat & Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
-                ["id" => 4, "teks" => 'Sudah Dapat Dipertimbangkan untuk  Kenaikan Pangkat Setingkat Lebih Tinggi', "updated_at" => $timestamp],
-                ["id" => 5, "teks" => 'Sudah Dapat Dipertimbangkan untuk Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
-                ["id" => 6, "teks" => 'Sudah Dapat Dipertimbangkan untuk  Kenaikan Pangkat & Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
+                ["id" => 1, "kesimpulan" => 'Belum Dapat Dipertimbangkan untuk  Kenaikan Pangkat Setingkat Lebih Tinggi', "updated_at" => $timestamp],
+                ["id" => 2, "kesimpulan" => 'Belum Dapat Dipertimbangkan untuk  Kenaikan Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
+                ["id" => 3, "kesimpulan" => 'Belum Dapat Dipertimbangkan untuk  Kenaikan Pangkat & Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
+                ["id" => 4, "kesimpulan" => 'Sudah Dapat Dipertimbangkan untuk  Kenaikan Pangkat Setingkat Lebih Tinggi', "updated_at" => $timestamp],
+                ["id" => 5, "kesimpulan" => 'Sudah Dapat Dipertimbangkan untuk Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
+                ["id" => 6, "kesimpulan" => 'Sudah Dapat Dipertimbangkan untuk  Kenaikan Pangkat & Jabatan Setingkat Lebih Tinggi', "updated_at" => $timestamp],
             ],
             'default_config' => 1
         ]);
@@ -216,5 +224,3 @@ class AturanPAKSeeder extends Seeder
         ]);
     }
 }
-
-

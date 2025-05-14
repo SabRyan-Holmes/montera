@@ -5,13 +5,11 @@ namespace App\Http\Controllers\Shared;
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Models\Pengajuan;
-use App\Models\RiwayatPAK;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
-use Intervention\Image\Facades\Image;
+
 
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
