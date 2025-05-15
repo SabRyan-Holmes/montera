@@ -46,7 +46,7 @@ export default function DetailPegawai({ pegawai , collapse = true}) {
                     <>
                         <tr>
                             <td>Nama</td>
-                            <td>{pegawai.Nama}</td>
+                            <td>{pegawai.Nama} {pegawai['Gelar Tambahan'] ?? ''} </td>
                         </tr>
                         <tr>
                             <td>NIP/NRP</td>

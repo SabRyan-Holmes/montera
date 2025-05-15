@@ -56,8 +56,15 @@ export default function KonversiTable({
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
+
+        if (data.angka_periode === 0 && data.angka_kredit === 0) {
+            setIsPeriodeExist(false);
+        } else {
+            setIsPeriodeExist(true);
+        }
     }, [
         data.angka_periode,
+        data.ak_normatif,
         data.predikat,
         data.presentase,
         data.ak_normatif_ops,
@@ -74,6 +81,7 @@ export default function KonversiTable({
         }
     }, [data.pegawai]);
 
+    const [isPeriodeExist, setIsPeriodeExist] = useState(false);
     const [jabatanChanged, setJabatanChanged] = useState(false);
 
     // Fungsi untuk mengecek perubahan jabatan
@@ -118,8 +126,10 @@ export default function KonversiTable({
         );
         setData("angka_kredit", akKreditValue);
         setJabatanChanged(false); // Kembalikan status ke false
-
     };
+
+    console.log("data.ak_normatif");
+    console.log(data.ak_normatif);
 
     return (
         <table className="table text-base table-bordered">
@@ -196,12 +206,14 @@ export default function KonversiTable({
                             <span>{data.ak_normatif}</span>
                         )}
 
-                        {isEdit & jabatanChanged ? (
+                        {isEdit && jabatanChanged ? (
                             <div className="flex flex-col justify-center gap-1">
-                                <div className="text-xs text-red-500">
-                                    Jabatan pegawai telah berubah! Koefisien
-                                    pertahun perlu disesuaikan.
-                                </div>
+                                <small className="block text-xs rounded-lg text-warning bg-warning/10">
+                                    Jabatan pegawai telah berubah!
+                                    <br />
+                                    Koefisien per
+                                    tahun perlu disesuaikan.
+                                </small>
                                 <div className="flex justify-center gap-2">
                                     <button
                                         type="button"
@@ -223,15 +235,22 @@ export default function KonversiTable({
                                             setJabatanChanged(false); // Kembalikan status ke false
                                         }}
                                     >
-                                        Biarkan seperti semula
+                                        Biarkan
                                     </button>
                                 </div>
                             </div>
                         ) : (
-                            <span>{data.ak_normatif}</span>
+                            isEdit &&
+                            data.ak_normatif && <span>{data.ak_normatif}</span>
                         )}
                     </td>
                     <td className="border">
+                        {!isPeriodeExist && (
+                            <small className="block text-xs rounded-lg text-warning bg-warning/10">
+                                Periode Penilaian Harus Diisi Terlebih dahulu!
+                            </small>
+                        )}
+
                         {data.angka_kredit && !isNaN(data.angka_kredit)
                             ? data.angka_kredit
                             : "0"}

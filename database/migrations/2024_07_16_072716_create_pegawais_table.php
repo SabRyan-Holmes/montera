@@ -28,8 +28,8 @@ return new class extends Migration
             $table->string('Unit Kerja');
             $table->string('Daerah');
 
-            // Jika Seandainya direset
-            $table->string('Gelar Tambahan')->nullable();
+            // Jika Seandainya direset dan migrasi ulang, ini di uncomment
+            // $table->string('Gelar Tambahan')->nullable();
 
             $table->timestamps();
         });

@@ -228,7 +228,7 @@ export default function Index({
                                 >
                                     <td className="text-center">{i + 1}</td>
                                     <td>{pegawai["NIP"]}</td>
-                                    <td>{pegawai.Nama}</td>
+                                    <td>{pegawai.Nama} {pegawai['Gelar Tambahan'] ?? ''} </td>
                                     {/* <td>{pegawai["Nomor Seri Karpeg"]}</td> */}
                                     <td>
                                         {pegawai["Jabatan/TMT"]

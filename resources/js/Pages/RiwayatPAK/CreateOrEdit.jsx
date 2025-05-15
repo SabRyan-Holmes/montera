@@ -188,21 +188,6 @@ export default function Index({
                 }
             );
         }
-        // // Tambah Sebgai Salinan
-        // if (isEdit && action === "update") {
-        //     router.post(route("divisi-sdm.pak.save", idRiwayatPAK), data, {
-        //         preserveScroll: true,
-        //         preserveState: true,
-        //         onStart: () => setIsLoading(true),
-        //         onFinish: () => setIsLoading(false),
-        //         onError: (errors) => {
-        //             alert("Error:", errors);
-        //         },
-        //         onSuccess: (page) => {
-        //             // Tambah logic lain sesuai tombolnya
-        //         },
-        //     });
-        // }
     };
 
     const [search, setSearch] = useState("");
@@ -219,7 +204,7 @@ export default function Index({
             route("divisi-sdm.pak.create"),
             { NIP: p.NIP },
             {
-                preserveState: true,
+                preserveState: false,
                 replace: true,
                 onSuccess: () => {
                     setData("pegawai", pegawai);
@@ -299,7 +284,7 @@ export default function Index({
                                 </li>
                             )}
 
-                            {!isEdit & pegawaiState && (
+                            {!isEdit && pegawaiState && (
                                 <li>
                                     <span className="inline-flex items-center gap-2">
                                         {pegawaiState.Nama}
