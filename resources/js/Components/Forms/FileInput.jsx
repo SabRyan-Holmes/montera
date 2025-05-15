@@ -1,6 +1,30 @@
 import React from "react";
 
 export default function FileInput({ name, type = "file" }) {
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const validTypes = ["application/pdf", "image/jpeg", "image/png"];
+            const fileType = file.type;
+
+            if (!validTypes.includes(fileType)) {
+                alert("Hanya file PDF, JPG, atau PNG yang diizinkan");
+                e.target.value = ""; // Reset input file
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                // 2MB
+                alert("Ukuran file maksimal 2MB");
+                e.target.value = "";
+                return;
+            }
+
+            if (onChange) {
+                onChange(e); // Panggil prop onChange jika ada
+            }
+        }
+    };
 
     return (
         <div className="flex items-center justify-center w-full">
@@ -25,16 +49,20 @@ export default function FileInput({ name, type = "file" }) {
                         />
                     </svg>
                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-semibold">Klik untuk Upload{" "}</span>
+                        <span className="font-semibold">
+                            Klik untuk Upload{" "}
+                        </span>
                         atau seret dan jatuhkan
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                        PDF, PNG, OR JPG  (MAX. 2MB)
+                        PDF, PNG, OR JPG (MAX. 2MB)
                     </p>
                 </div>
                 <input
                     id={name}
                     type={type}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleFileChange}
                     name={name}
                     className="hidden"
                 />

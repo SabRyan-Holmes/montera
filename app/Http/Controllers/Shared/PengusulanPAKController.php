@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Shared;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pegawai\PengusulanPAKRequest;
 use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 
@@ -29,7 +32,7 @@ class PengusulanPAKController extends Controller
         return Inertia::render('PengusulanPAK/Index', [
             "title" => "Pengusulan PAK ",
             "subTitle" => $subTitle,
-            "pengusulanPAK" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan']))->paginate(10),
+            "pengusulanPAK" => PengusulanPAK::latest()->paginate(10),
             'canValidate' => $user->role == 'divisi_sdm',
             "searchReq" => request('search'),
             "byDaerahReq" => request('byDaerah'),
@@ -52,7 +55,22 @@ class PengusulanPAKController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //   dd($request);
+        //   $validated = $request->validated();
+        $validated = $request->except(['nama', 'dokumen_pendukung_path', 'periode_mulai', 'periode_berakhir']);
+
+        $periodeMulai = new DateTime($request->periode_mulai);
+        $periodeBerakhir = new DateTime($request->periode_berakhir);
+
+        // Format hasil ke dalam bentuk "Maret - Juni 2025"
+        $periodePenilaian = $periodeMulai->format('F') . ' - ' . $periodeBerakhir->format('F Y');
+
+        // Masukkan ke dalam array validasi
+        $validated['periode_penilaian'] = $periodePenilaian;
+
+        PengusulanPAK::create($validated);
+
+        return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Data Pengusulan Berhasil Ditambahkan!');
     }
 
     /**

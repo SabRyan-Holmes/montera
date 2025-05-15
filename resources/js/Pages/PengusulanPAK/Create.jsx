@@ -22,16 +22,16 @@ export default function Create({ auth, pegawai, title, flash }) {
         // REVIEW : Ini kalo data ny dr SSO tolong dirubah
         nama: auth.user.name,
         nip: auth.user.nip,
-        "Jabatan ": "",
+        jabatan: "",
         periode_mulai: "",
         periode_berakhir: "",
         jumlah_ak_terakhir: 0.0,
         jumlah_ak_diajukan: 0.0,
 
         // data pendukung(opsional)
-        uraian_tugas: 0.0,
-        dokumen_pendukung_path: 0.0,
-        catatan_tambahan: ''
+        uraian_tugas: "",
+        dokumen_pendukung_path: [],
+        catatan_pegawai: ''
 
     });
     const [alert, setAlert] = useState(false);
@@ -42,7 +42,11 @@ export default function Create({ auth, pegawai, title, flash }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("divisi-sdm.pegawai.store"), data);
+        post(route("pegawai.pengusulan-pak.store"), {
+            onSuccess: () => {
+                console.log('berhasil')
+            }
+        });
     };
 
     const [minPeriode, setMinPeriode] = useState("");
@@ -109,22 +113,18 @@ export default function Create({ auth, pegawai, title, flash }) {
                                     </td>
                                     <td className="border-x" width="60%">
                                         <TextInput
-                                            id="Nama"
+                                            id="nama"
                                             type="text"
-                                            name="Nama"
-                                            defaultValue={data.Nama}
+                                            name="nama"
+                                            defaultValue={data.nama}
+                                            disabled
                                             placeholder="Masukkan Nama Pegawai"
                                             maxLength={100}
                                             isFocused={true}
-                                            className="w-full px-2 h-9 border-slate-100"
+                                            className="w-full px-2 h-9 "
                                             onChange={(e) =>
-                                                setData("Nama", e.target.value)
+                                                setData("nama", e.target.value)
                                             }
-                                        />
-
-                                        <InputError
-                                            message={errors.Nama}
-                                            className="mt-2"
                                         />
                                     </td>
                                 </tr>
@@ -142,18 +142,13 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             type="text"
                                             name="nip"
                                             defaultValue={data.nip}
-                                            placeholder="Masukkan NIP/NRP"
+                                            disabled
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
                                             maxLength={18}
                                             onChange={(e) =>
-                                                setData("NIP", e.target.value)
+                                                setData("nip", e.target.value)
                                             }
-                                        />
-
-                                        <InputError
-                                            message={errors["NIP"]}
-                                            className="mt-2"
                                         />
                                     </td>
                                 </tr>
@@ -316,7 +311,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                     name="uraian_tugas"
                                                     className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
                                                     placeholder="Masukkan Uraian Tugas."
-                                                    maxLength={100}
+                                                    maxLength={1000}
                                                     onChange={(e) =>
                                                         setData(
                                                             "uraian_tugas",
@@ -338,7 +333,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             forName="dokumen_pendukung_path"
                                             value="Dokumen Pendukung"
                                         />
-                                    </td>{" "}
+                                    </td>
                                     <td>
                                         <fieldset>
                                             <div
@@ -346,7 +341,6 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                 className="relative inline "
                                             >
                                                 <FileInput name="dokumen_pendukung_path" />
-
                                                 <span className="mt-2 badge-optional">
                                                     Opsional
                                                 </span>
@@ -372,7 +366,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                     maxLength={100}
                                                     onChange={(e) =>
                                                         setData(
-                                                            "catatan_tambahan",
+                                                            "catatan_pegawai",
                                                             e.target.value
                                                         )
                                                     }

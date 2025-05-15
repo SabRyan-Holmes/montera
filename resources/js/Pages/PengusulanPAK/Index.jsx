@@ -7,7 +7,8 @@ import { RiLoader2Fill } from "react-icons/ri";
 import { TbEyeCheck } from "react-icons/tb";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
-import { Link } from "@inertiajs/react";
+import { Link, useRemember } from "@inertiajs/react";
+import Swal from "sweetalert2";
 
 export default function Index({
     auth,
@@ -19,6 +20,21 @@ export default function Index({
     byDaerahReq: initialDaerah,
     byJabatanReq: initialJabatan,
 }) {
+    const [shownMessages, setShownMessages] = useRemember([]);
+    useEffect(() => {
+        if (flash.message && !shownMessages.includes(flash.message)) {
+            Swal.fire({
+                title: "Berhasil!",
+                text: `${flash.message}`,
+                icon: "success",
+                iconColor: "#50C878",
+                confirmButtonText: "Oke",
+                confirmButtonColor: "#2D95C9",
+            });
+            setShownMessages([...shownMessages, flash.message]);
+        }
+    }, [flash.message]);
+
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
@@ -108,91 +124,97 @@ export default function Index({
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>
-                                        <strong>Dias</strong>
-                                        <strong className="block">
-                                            98302320390392
-                                        </strong>
-                                    </td>
-                                    <td>Ahli Muda</td>
-                                    <td>MAret-Juni</td>
-                                    <td>250,753</td>
-                                    <td>340,753</td>
-                                    <td>Ada</td>
-                                    <td className="p-0 m-0">
-                                        <button
-                                            disabled
-                                            className="label-base bg-accent/50 text-slate-500"
-                                        >
-                                            DIPROSES
-                                            <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                        </button>
-                                    </td>
-                                    <td className="text-center whitespace-nowrap text-nowrap">
-                                        {canValidate ? (
-                                            <>
-                                                {/* <ModalCekValidasi
-                                                        pengajuan={
-                                                            pengajuan
-                                                        }
-                                                        setActiveModalId={setActiveModalId}
-                                                        message={
-                                                            modalMessage
-                                                        }
-                                                    /> */}
-                                                <button
-                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
-                                                    // onClick={() => {
-                                                    //     setActiveModalId(
-                                                    //         pengajuan.id
-                                                    //     );
-                                                    //     document
-                                                    //         .getElementById(
-                                                    //             `DialogCekValidasi-${pengajuan.id}`
-                                                    //         )
-                                                    //         .showModal();
-                                                    // }}
-                                                >
-                                                    Cek & Validasi
-                                                    <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
-                                                </button>
-                                                <span className="inline-block mx-3"></span>
-                                                <button
-                                                    // onClick={() =>
-                                                    //     handleReject(
-                                                    //         pengajuan.id
-                                                    //     )
-                                                    // }
-                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-warning/80 group-hover/item:text-white text-warning/80"
-                                                >
-                                                    Tolak
-                                                    <IoCloseOutline className="w-6 h-6 fill-secondary stroke-warning/80 group-hover/item:stroke-white" />
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <td className="text-center text-nowrap">
-                                                <button
-                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
-                                                    // onClick={() => {
-                                                    //     setActiveModalId(
-                                                    //         pengajuan.id
-                                                    //     );
-                                                    //     document
-                                                    //         .getElementById(
-                                                    //             `DialogCekValidasi-${pengajuan.id}`
-                                                    //         )
-                                                    //         .showModal();
-                                                    // }}
-                                                >
-                                                    Lihat
-                                                    <FaEye className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
-                                                </button>
-                                            </td>
-                                        )}
-                                    </td>
-                                </tr>
+                                {
+                                    pengusulanPAK.data?.map((data, i) =>  (
+                                        <tr>
+                                        <td>1</td>
+                                        <td>
+                                            <strong>{data.pegawai.Nama}</strong>
+                                            <strong className="block">
+                                                {data.nip}
+                                            </strong>
+                                        </td>
+                                        <td>{data.jabatan}</td>
+                                        <td>{data.periode_penilaian}</td>
+                                        <td>{data.jumlah_ak_terakhir}</td>
+                                        <td>{data.jumlah_ak_diajukan}</td>
+                                        <td>{data.dokumen_pendukung_path ? 'Ada' : 'Tidak ADa'}</td>
+                                        <td className="p-0 m-0">
+                                            <button
+                                                disabled
+                                                className="label-base bg-accent/50 text-slate-500"
+                                            >
+                                                {data.status}
+                                                <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
+                                            </button>
+                                        </td>
+                                        <td className="text-center whitespace-nowrap text-nowrap">
+                                            {canValidate ? (
+                                                <>
+                                                    {/* <ModalCekValidasi
+                                                            pengajuan={
+                                                                pengajuan
+                                                            }
+                                                            setActiveModalId={setActiveModalId}
+                                                            message={
+                                                                modalMessage
+                                                            }
+                                                        /> */}
+                                                    <button
+                                                        className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
+                                                        // onClick={() => {
+                                                        //     setActiveModalId(
+                                                        //         pengajuan.id
+                                                        //     );
+                                                        //     document
+                                                        //         .getElementById(
+                                                        //             `DialogCekValidasi-${pengajuan.id}`
+                                                        //         )
+                                                        //         .showModal();
+                                                        // }}
+                                                    >
+                                                        Cek & Validasi
+                                                        <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
+                                                    </button>
+                                                    <span className="inline-block mx-3"></span>
+                                                    <button
+                                                        // onClick={() =>
+                                                        //     handleReject(
+                                                        //         pengajuan.id
+                                                        //     )
+                                                        // }
+                                                        className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-warning/80 group-hover/item:text-white text-warning/80"
+                                                    >
+                                                        Tolak
+                                                        <IoCloseOutline className="w-6 h-6 fill-secondary stroke-warning/80 group-hover/item:stroke-white" />
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <td className="text-center text-nowrap">
+                                                    <button
+                                                        className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
+                                                        // onClick={() => {
+                                                        //     setActiveModalId(
+                                                        //         pengajuan.id
+                                                        //     );
+                                                        //     document
+                                                        //         .getElementById(
+                                                        //             `DialogCekValidasi-${pengajuan.id}`
+                                                        //         )
+                                                        //         .showModal();
+                                                        // }}
+                                                    >
+                                                        Lihat
+                                                        <FaEye className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
+                                                    </button>
+                                                </td>
+                                            )}
+                                        </td>
+                                    </tr>
+
+                                    ))
+                                }
+
                             </tbody>
                         </table>
                     ) : (
