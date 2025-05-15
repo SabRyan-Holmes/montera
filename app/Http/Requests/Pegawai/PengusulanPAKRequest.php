@@ -28,7 +28,7 @@ class PengusulanPAKRequest extends FormRequest
             'jumlah_ak_terakhir' => 'required|doubleval',
             'jumlah_ak_diajukan' => 'required|doubleval',
             'uraian_tugas' => 'nullable|string|max:1000',
-            'dokumen_pendukung_path' => 'nullable|file|max:2000',
+            'dokumen_pendukung_path' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
     }
 }

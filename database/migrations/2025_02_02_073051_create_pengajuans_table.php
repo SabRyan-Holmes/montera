@@ -23,6 +23,8 @@ return new class extends Migration
             // mungkin sebaiknya field "diajukan oleh(foreignId User(divisiSDM)) sebaikny juga ditambahkan
             $table->unsignedBigInteger('pengaju_id');
             $table->foreign('pengaju_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('catatan_id')->nullable();
+            $table->foreign('catatan_id')->references('id')->on('catatans')->onDelete('cascade');
             $table->string("approved_pak_path")->nullable(); //for store validated/approved PAK
             $table->timestamps();
         });

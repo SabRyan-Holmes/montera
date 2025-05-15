@@ -26,6 +26,10 @@ return new class extends Migration
 
             $table->text('keterangan')->nullable(); // Catatan tambahan jika ada
             $table->ipAddress('ip_address')->nullable();
+
+            //
+            // $table->string('nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
+            // $table->foreign('nip')->references('NIP')->on('pegawais')->onDelete('cascade');
             $table->timestamps();
         });
     }

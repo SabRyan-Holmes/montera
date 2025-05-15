@@ -27,15 +27,17 @@ return new class extends Migration
             $table->string('judul', 150)->nullable();
             $table->foreignId('user_id')->constrained('users');
             // Untuk tracking penting/tidak
-             // Status baca
-             $table->boolean('sudah_dibaca')->default(false);
+            // Status baca
+            $table->boolean('sudah_dibaca')->default(false);
             $table->boolean('penting')->default(false);
 
             // Soft delete
             $table->softDeletes();
-
-
             $table->timestamps();
+
+            // $table->index(['pengusulan_pak_id', 'proses_pak_id']);
+            $table->index('tipe');
+            $table->index('sudah_dibaca');
         });
     }
 

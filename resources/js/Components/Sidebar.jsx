@@ -1,3 +1,4 @@
+
 import {
     MdAdminPanelSettings,
     MdAssignment,
@@ -124,7 +125,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Arsip Dokumen */}
-                                            <RiArchive2Fill />
+                                            <RiArchive2Fill/>
                                             Arsip Dokumen
                                         </>
                                     ),
@@ -207,14 +208,14 @@ const Sidebar = ({ role }) => {
                                             Log Aktivitas
                                         </>
                                     ),
-                                    route: "divisi-sdm.log-aktivitas",
-                                    active: "divisi-sdm.log-aktivitas",
+                                    route: "divisi-sdm.log-aktivitas.index",
+                                    active: "divisi-sdm.log-aktivitas.index",
                                 },
                                 {
                                     label: (
                                         <>
                                             {/* Kelola Pegawai */}
-                                            <GrHelpBook className="mr-2" />
+                                            <GrHelpBook  />
                                             Panduan/Bantuan
                                         </>
                                     ),
@@ -225,7 +226,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <IoSettings className="mr-2" />
+                                            <IoSettings  />
                                             Download Template
                                         </>
                                     ),
@@ -393,7 +394,7 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Pengusulan Pegawai */}
-                                                <MdOutlineAssignmentInd />
+                                                <MdOutlineAssignmentInd className="mr-2" />
                                                 Pengusulan PAK
                                             </>
                                         ),
@@ -408,7 +409,7 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Pengajuan PAK */}
-                                                <BsFillSendArrowUpFill />
+                                                <BsFillSendArrowUpFill className="mr-2" />
                                                 Status Proses PAK
                                             </>
                                         ),
@@ -443,7 +444,7 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Arsip Dokumen */}
-                                                <RiArchive2Fill />
+                                                <RiArchive2Fill className="mr-2" />
                                                 Arsip Dokumen
                                             </>
                                         ),
@@ -467,7 +468,7 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Log Aktivitas */}
-                                                <AiFillNotification />
+                                                <AiFillNotification className="mr-2" />
                                                 Log Aktivitas
                                             </>
                                         ),

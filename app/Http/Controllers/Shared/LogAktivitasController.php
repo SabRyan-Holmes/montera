@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Shared;
 
+use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class LogAktivitasController extends Controller
 {
@@ -13,7 +16,19 @@ class LogAktivitasController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $pengajuan = LogAktivitas::latest();
+
+        $subTitle = GetSubtitle::getSubtitle(
+            request('byStatus'),
+            request('byJabatan'),
+            request('search')
+        );
+        return Inertia::render('PengusulanPAK/Index', [
+            "title" => "Pengusulan PAK ",
+            "subTitle" => $subTitle,
+            "logAktivitas" => LogAktivitas::latest()->paginate(10),
+        ]);
     }
 
     /**
