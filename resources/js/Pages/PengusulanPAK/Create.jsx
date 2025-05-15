@@ -3,6 +3,7 @@ import {
     SecondaryButton,
     InputLabel,
     SuccessButton,
+    FileInput,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
@@ -19,19 +20,19 @@ export default function Create({ auth, pegawai, title, flash }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         // ANCHOR
         // REVIEW : Ini kalo data ny dr SSO tolong dirubah
-        Nama: auth.user.name,
-        NIP: auth.user.nip,
+        nama: auth.user.name,
+        nip: auth.user.nip,
         "Jabatan ": "",
         periode_mulai: "",
         periode_berakhir: "",
-        jumlah_ak_terakhir: 0.000,
-        jumlah_ak_diajukan: 0.000,
+        jumlah_ak_terakhir: 0.0,
+        jumlah_ak_diajukan: 0.0,
 
         // data pendukung(opsional)
-        uraian_tugas: 0.000,
-        dokumen_pendukung_path: 0.000,
+        uraian_tugas: 0.0,
+        dokumen_pendukung_path: 0.0,
+        catatan_tambahan: ''
 
-        "Masa Kerja Golongan": "-", //Anggap Default value karna belum dimigrasi ulang
     });
     const [alert, setAlert] = useState(false);
 
@@ -86,8 +87,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                     </SecondaryButton>
                 </div>
 
-                <div className="mx-auto overflow-x-auto max-w-screen-laptop">
-                    <h1 className="mt-8 mb-4 text-3xl capitalize">{title}</h1>
+                <div className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-bordered ">
                             {/* head */}
@@ -100,8 +100,12 @@ export default function Create({ auth, pegawai, title, flash }) {
                                 {/* ANCHOR */}
                                 {/* row 1 */}
                                 <tr className="border">
-                                    <td className="" width="40%">
-                                        Nama
+                                    <td width="35%">
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="nama"
+                                            value="Nama"
+                                        />
                                     </td>
                                     <td className="border-x" width="60%">
                                         <TextInput
@@ -126,12 +130,18 @@ export default function Create({ auth, pegawai, title, flash }) {
                                 </tr>
                                 {/* row 2 */}
                                 <tr className="border">
-                                    <td className="">NIP</td>
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="nip"
+                                            value="NIP"
+                                        />
+                                    </td>
                                     <td className="border-x">
                                         <TextInput
                                             type="text"
-                                            name="NIP"
-                                            defaultValue={data.NIP}
+                                            name="nip"
+                                            defaultValue={data.nip}
                                             placeholder="Masukkan NIP/NRP"
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
@@ -149,7 +159,13 @@ export default function Create({ auth, pegawai, title, flash }) {
                                 </tr>
 
                                 <tr className="border">
-                                    <td className="">JABATAN/TMT</td>
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="jabatan"
+                                            value="Jabatan/TMT"
+                                        />
+                                    </td>
                                     <td className="border-x">
                                         <TextInput
                                             type="text"
@@ -165,24 +181,24 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                 )
                                             }
                                         />
-
-                                        <InputError
-                                            message={errors["Jabatan"]}
-                                            className="mt-2"
-                                        />
                                     </td>
                                 </tr>
                                 {/* row 3 */}
 
                                 <tr className="border-x">
-                                    <td className="">
-                                        Jumlah Angka Kredit Terakhir
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="periode_mulai"
+                                            value="Periode Penilaian"
+                                        />
                                     </td>
-                                    <td className="border-x">
+                                    <td className="laptop:w-3/4 border-x">
                                         <input
                                             type="month"
                                             name="periode_mulai"
-                                            className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                            className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                            isFocused={true}
                                             onChange={(e) => {
                                                 // Set min periode untuk untuk periode berakhir
                                                 setMinPeriode(e.target.value);
@@ -192,13 +208,13 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                 );
                                             }}
                                         />
-                                        <span>sd</span>
+                                        <span className="mx-3">sd</span>
                                         <input
                                             type="month"
                                             name="periode_berakhir"
                                             id="periode_berakhir"
                                             min={minPeriode}
-                                            className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
+                                            className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                             onChange={(e) =>
                                                 setData(
                                                     "periode_mulai",
@@ -210,64 +226,168 @@ export default function Create({ auth, pegawai, title, flash }) {
                                 </tr>
 
                                 <tr className="border">
-                                    <td className="">
-                                        Jumlah Angka Kredit Terakhir
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="jumlah_ak_terakhir"
+                                            value="Jumlah Angka Kredit Terakhir"
+                                        />
                                     </td>
                                     <td className="border-x">
                                         <TextInput
-                                            type="text"
-                                            name="Jabatan/TMT"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
-                                            isFocused={true}
-                                            placeholder="Masukkan Jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
+                                            type="number"
+                                            name="jumlah_ak_terakhir"
+                                            min={0}
+                                            step={0.01}
+                                            max={5000}
+                                            className="px-2 laptop:w-full h-9 placeholder:text-accent "
+                                            placeholder="Masukkan Jumlah AK Terakhir. contoh: 240.256"
                                             maxLength={100}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "Jabatan/TMT",
+                                            onChange={(e) => {
+                                                const value = parseFloat(
                                                     e.target.value
-                                                )
-                                            }
-                                        />
-
-                                        <InputError
-                                            message={errors["Jabatan/TMT"]}
-                                            className="mt-2"
+                                                );
+                                                setData(
+                                                    "jumlah_ak_terakhir",
+                                                    isNaN(value)
+                                                        ? ""
+                                                        : value.toFixed(3)
+                                                );
+                                            }}
+                                            onInput={(e) => {
+                                                // Untuk memastikan 1 digit desimal
+                                                e.target.value = parseFloat(
+                                                    e.target.value
+                                                ).toFixed(3);
+                                            }}
                                         />
                                     </td>
                                 </tr>
-                                {/* Ngehapus Field Masa Kerja Golongan */}
-                                {/* <tr className="border">
-                                    <td className="">MASA KERJA GOLONGAN</td>
-                                    <td className="border-x">
-                                        <TextInput
-                                            type="text"
-                                            name="Masa Kerja Golongan"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
-                                            isFocused={true}
-                                            maxLength={100}
-                                            placeholder="Masukkan Masa Kerja Golongan. contoh: 2 TAHUN 3 BULAN  "
-                                            onChange={(e) =>
-                                                setData(
-                                                    "Masa Kerja Golongan",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-
-                                        <InputError
-                                            message={
-                                                errors["Masa Kerja Golongan"]
-                                            }
-                                            className="mt-2"
+                                <tr className="border">
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="jumlah_ak_diajukan"
+                                            value="Jumlah Angka Kredit Diajukan"
                                         />
                                     </td>
-                                </tr> */}
+                                    <td className="border-x">
+                                        <TextInput
+                                            type="number"
+                                            name="jumlah_ak_diajukan"
+                                            min={0}
+                                            step={0.01}
+                                            max={5000}
+                                            className="px-2 laptop:w-full h-9 placeholder:text-accent "
+                                            placeholder="Masukkan Jumlah AK Diajukan. contoh: 272.234"
+                                            onChange={(e) => {
+                                                const value = parseFloat(
+                                                    e.target.value
+                                                );
+                                                setData(
+                                                    "jumlah_ak_diajukan",
+                                                    isNaN(value)
+                                                        ? ""
+                                                        : value.toFixed(3)
+                                                );
+                                            }}
+                                            onInput={(e) => {
+                                                // Untuk memastikan 1 digit desimal
+                                                e.target.value = parseFloat(
+                                                    e.target.value
+                                                ).toFixed(3);
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
 
-                                {/* Nambahin Field Gelar Tambahan / 10 April 2025 */}
+                                <tr>
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forHtml="uraian_tugas"
+                                            value="Uraian Tugas"
+                                        />
+                                    </td>
+                                    <td>
+                                        <fieldset>
+                                            <div className="relative laptop:w-full">
+                                                <textarea
+                                                    name="uraian_tugas"
+                                                    className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
+                                                    placeholder="Masukkan Uraian Tugas."
+                                                    maxLength={100}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "uraian_tugas",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                ></textarea>
+                                                <span className="mt-2 badge-optional">
+                                                    Opsional
+                                                </span>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="dokumen_pendukung_path"
+                                            value="Dokumen Pendukung"
+                                        />
+                                    </td>{" "}
+                                    <td>
+                                        <fieldset>
+                                            <div
+                                                div
+                                                className="relative inline "
+                                            >
+                                                <FileInput name="dokumen_pendukung_path" />
+
+                                                <span className="mt-2 badge-optional">
+                                                    Opsional
+                                                </span>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="catatan_tambahan"
+                                            value="Catatan Tambahan"
+                                        />
+                                    </td>{" "}
+                                    <td>
+                                        <fieldset>
+                                            <div className="relative laptop:w-full">
+                                                <textarea
+                                                    name="catatan_tambahan"
+                                                    className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
+                                                    placeholder="Masukkan Uraian Tugas."
+                                                    maxLength={100}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "catatan_tambahan",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                ></textarea>
+                                                <span className="mt-2 badge-optional">
+                                                    Opsional
+                                                </span>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
 
-                        <Transition
+                        {/* <Transition
                             show={alert}
                             enter="transition ease-in-out duration-700"
                             enterFrom="opacity-0"
@@ -300,7 +420,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                     <FaCheck className="inline w-4 h-4 ml-1 fill-emerald-900 group-hover/btn:fill-emerald-600" />
                                 </a>
                             </div>
-                        </Transition>
+                        </Transition> */}
 
                         <div className="my-1"></div>
                         <div className="flex justify-center w-full my-4 ">

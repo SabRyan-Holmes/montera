@@ -134,7 +134,7 @@ export default function AkumulasiTable({
                             id="ak_terakhir"
                             name="ak_terakhir"
                             min={0}
-                            max={1000}
+                            max={5000}
                             step={0.001}
                             type="number"
                             required

@@ -27,6 +27,7 @@ import TooltipHover from "./TooltipHover";
 import useFilterSearch from "./UseFilterSearch";
 import InputLabelCustom from "./InputLabelCustom.jsx";
 import RadioWithLabel from "./Forms/RadioWithLabel";
+import FileInput from "./Forms/FileInput";
 
 export {
     ApplicationLogo,
@@ -58,4 +59,5 @@ export {
     useFilterSearch,
     InputLabelCustom,
     RadioWithLabel,
+    FileInput
 };

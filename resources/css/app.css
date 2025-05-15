@@ -207,3 +207,7 @@ table.table-bordered > tfoot  > tr > td  {
 
     @apply bg-gradient-to-br from-sky-800 to-slate-950;
 }
+
+.badge-optional {
+    @apply absolute right-3 top-0.5 bottom-0.5 badge badge-secondary bg-opacity-90 badge-sm text-slate-600;
+}
