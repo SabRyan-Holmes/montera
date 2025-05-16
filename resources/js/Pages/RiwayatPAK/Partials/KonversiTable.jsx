@@ -4,8 +4,11 @@ import React, { useEffect, useState } from "react";
 export default function KonversiTable({
     data,
     setData,
-    akNormatif,
-    predikat,
+    aturanKonvTableProps: {
+        koefisienPertahun,
+        predikatPresentase,
+        tebusanKonversi,
+    },
     isEdit,
     historyData,
 }) {
@@ -18,23 +21,23 @@ export default function KonversiTable({
 
     useEffect(() => {
         if (!isEdit && data.pegawai) {
-            const findAkNormatifValue = (jabatan) => {
-                const key = Object.keys(akNormatif).find((k) =>
+            const findkoefisienPertahunValue = (jabatan) => {
+                const key = Object.keys(koefisienPertahun).find((k) =>
                     jabatan.includes(k)
                 );
-                return key ? akNormatif[key] : null;
+                return key ? koefisienPertahun[key] : null;
             };
-            let akNormatifValue = findAkNormatifValue(
+            let koefisienPertahunValue = findkoefisienPertahunValue(
                 data.pegawai["Jabatan/TMT"]
             );
-            setData("ak_normatif", akNormatifValue);
+            setData("ak_normatif", koefisienPertahunValue);
         }
     }, [data.pegawai]); // Tambahkan pegawai sebagai dependency jika datanya bisa berubah
 
-    function hitungAk(periode, akNormatif, presentase) {
+    function hitungAk(periode, koefisienPertahun, presentase) {
         const ak_kredit =
             parseFloat(periode / 12) *
-            parseFloat(akNormatif) *
+            parseFloat(koefisienPertahun) *
             parseFloat(presentase / 100);
         const result = parseFloat(ak_kredit).toFixed(3);
         return result;
@@ -42,17 +45,17 @@ export default function KonversiTable({
 
     // Logika Hitung AK dijalankan ketika ada perubahan
     useEffect(() => {
-        let akNormatif = data.ak_normatif
+        let koefisienPertahun = data.ak_normatif
             ? data.ak_normatif
             : data.ak_normatif_ops;
-        if (akNormatif == null) {
+        if (koefisienPertahun == null) {
             // Ammbil dari inputan custom
-            akNormatif = data.ak_normatif_ops;
-            data.ak_normatif = akNormatif;
+            koefisienPertahun = data.ak_normatif_ops;
+            data.ak_normatif = koefisienPertahun;
         }
         const akKreditValue = hitungAk(
             data.angka_periode,
-            akNormatif,
+            koefisienPertahun,
             data.presentase
         );
         setData("angka_kredit", akKreditValue);
@@ -71,7 +74,7 @@ export default function KonversiTable({
     ]);
 
     useEffect(() => {
-        setData("predikat", predikat[data.presentase]);
+        setData("predikat", predikatPresentase[data.presentase]);
     }, [data.presentase]);
 
     useEffect(() => {
@@ -89,14 +92,14 @@ export default function KonversiTable({
         if (!data.pegawai || !data.ak_normatif) return false;
 
         const currentJabatan = data.pegawai["Jabatan/TMT"];
-        const findAkNormatifValue = (jabatan) => {
-            const key = Object.keys(akNormatif).find((k) =>
+        const findkoefisienPertahunValue = (jabatan) => {
+            const key = Object.keys(koefisienPertahun).find((k) =>
                 jabatan.includes(k)
             );
-            return key ? akNormatif[key] : null;
+            return key ? koefisienPertahun[key] : null;
         };
 
-        const expectedValue = findAkNormatifValue(currentJabatan);
+        const expectedValue = findkoefisienPertahunValue(currentJabatan);
         const changed = expectedValue !== data.ak_normatif;
         setJabatanChanged(changed); // Update state
         return changed;
@@ -105,14 +108,14 @@ export default function KonversiTable({
     const handleSesuaikan = () => {
         // Update ke nilai yang sesuai jabatan baru
         const currentJabatan = data.pegawai["Jabatan/TMT"];
-        const findAkNormatifValue = (jabatan) => {
-            const key = Object.keys(akNormatif).find((k) =>
+        const findkoefisienPertahunValue = (jabatan) => {
+            const key = Object.keys(koefisienPertahun).find((k) =>
                 jabatan.includes(k)
             );
-            return key ? akNormatif[key] : null;
+            return key ? koefisienPertahun[key] : null;
         };
 
-        const newValue = findAkNormatifValue(currentJabatan);
+        const newValue = findkoefisienPertahunValue(currentJabatan);
 
         // Update nilai normatif
         setData("ak_normatif", newValue);
@@ -211,8 +214,7 @@ export default function KonversiTable({
                                 <small className="block text-xs rounded-lg text-warning bg-warning/10">
                                     Jabatan pegawai telah berubah!
                                     <br />
-                                    Koefisien per
-                                    tahun perlu disesuaikan.
+                                    Koefisien per tahun perlu disesuaikan.
                                 </small>
                                 <div className="flex justify-center gap-2">
                                     <button
@@ -261,6 +263,38 @@ export default function KonversiTable({
                     <td rowSpan={3} className="text-lg font-semibold ">
                         Tebusan
                     </td>
+
+                    {/* {tebusanKonversi.map((data, index) => (
+                        <td key={index} className="border">
+                            <input
+                                type="checkbox"
+                                value={true}
+                                className="w-5 h-5 rounded-sm"
+                                defaultChecked={
+                                    isEdit && historyData.tebusan1.checked
+                                }
+                                onChange={() => {
+                                    // Salin array-nya dulu biar tidak langsung mutate state
+                                    const updatedTebusan = [...data.tebusan1];
+                                    updatedTebusan[index] = {
+                                        ...item,
+                                        checked: !item.checked,
+                                    };
+
+                                    setData({
+                                        ...data,
+                                        tebusan1: updatedTebusan,
+                                    });
+                                }}
+                            />
+                            <InputLabel
+                                forName={data.pihak_tebusan}
+                                className="inline-block ml-2 text-sm"
+                                value={data.pihak_tebusan}
+                            />
+                        </td>
+                    ))} */}
+
                     <td className="border">
                         <input
                             type="checkbox"
@@ -280,7 +314,7 @@ export default function KonversiTable({
                         />
                         <InputLabel
                             htmlFor="kepala_reg"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala Kantor Regional VII BKN"
                         />
                     </td>
@@ -304,7 +338,7 @@ export default function KonversiTable({
                         />
                         <InputLabel
                             htmlFor="sekretaris"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Sekretaris Tim Penilai Yang Bersangkutan"
                         />
                     </td>
@@ -330,7 +364,7 @@ export default function KonversiTable({
                         />
                         <InputLabel
                             htmlFor="kepala_bps"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala BPS Kabupaten/Kota"
                         />
                     </td>
@@ -353,7 +387,7 @@ export default function KonversiTable({
                         />
                         <InputLabel
                             htmlFor="pns"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="PNS Bersangkutan"
                         />
                     </td>
@@ -379,7 +413,7 @@ export default function KonversiTable({
                         />
                         <InputLabel
                             htmlFor="kepala_biro"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala Biro SDM BPS"
                         />
                     </td>
@@ -402,7 +436,7 @@ export default function KonversiTable({
                         />
                         <InputLabel
                             htmlFor="arsip"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Arsip"
                         />
                     </td>

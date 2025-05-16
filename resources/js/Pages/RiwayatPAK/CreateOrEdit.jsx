@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
-import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
+import UseAturanPenetapan from "./Partials/UseAturanPenetapan.1";
 
 export default function Index({
     auth,
@@ -28,7 +28,7 @@ export default function Index({
     flash,
     pegawai,
     pegawaiList,
-
+    aturanPAK,
     // IF Edit
     isEdit,
     riwayat,
@@ -41,14 +41,15 @@ export default function Index({
         processing,
         errors,
         reset,
-        predikat,
-        akNormatif,
-        setDefaults
-    } = UseAturanPenetapan(koefisien);
+        aturanKonvTableProps,
+        aturanAkmTableProps,
+        aturanPAKTableProps,
+    } = UseAturanPenetapan((aturanPAK = aturanPAK), koefisien);
+    // ANCHOR
+
+
     const [pegawaiState, setPegawaiState] = useState(null);
-
     // IF EDIT
-
     useEffect(() => {
         // Kalo Edit
         if (isEdit && riwayat) {
@@ -59,8 +60,6 @@ export default function Index({
             });
             // console.log("riwayat", riwayat);
             setPegawaiState(riwayat.pegawai);
-
-
         } else {
             // Kalo Create dan ad datany
             console.log("ini dirender pertama kali tanpa pemicu apapun ");
@@ -366,6 +365,7 @@ export default function Index({
                             setData={setData}
                             // EDIT
                             isEdit={true}
+
                             historyData={isEdit ? riwayat : {}}
                         />
                         {/* INPUT DATA | END*/}
@@ -374,9 +374,8 @@ export default function Index({
                         <KonversiTable
                             data={data}
                             setData={setData}
-                            akNormatif={akNormatif}
-                            predikat={predikat}
                             isEdit={isEdit}
+                            aturanKonvTableProps={aturanKonvTableProps}
                             historyData={riwayat}
                         />
                         {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | END*/}
@@ -386,21 +385,20 @@ export default function Index({
                             pegawai={pegawaiState}
                             data={data}
                             setData={setData}
-                            akNormatif={akNormatif}
-                            predikat={predikat}
+                            aturanAkmTableProps={aturanAkmTableProps}
                             isEdit={isEdit}
                             historyData={isEdit ? riwayat : {}}
                         />
                         {/* AKUMULASI ANGKA KREDIT | END */}
-
+                        {/* ANCHOR */}
                         {/* PENETAPAN ANGKA KREDIT | START*/}
                         <PAKTable
                             pegawai={pegawaiState}
                             data={data}
                             setData={setData}
-                            akNormatif={akNormatif}
                             isEdit={isEdit}
                             historyData={isEdit ? riwayat : {}}
+                            aturanPAKTableProps={aturanPAKTableProps}
                         />
                         {/* PENETAPAN ANGKA KREDIT | END*/}
                     </div>

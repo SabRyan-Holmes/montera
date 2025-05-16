@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CetakPAKRequest;
+use App\Models\AturanPAK;
 use App\Models\Koefisien;
 use Inertia\Inertia;
 use App\Models\Pegawai;
@@ -56,11 +57,24 @@ class DokumenPAKController extends Controller
         $nip = $request->query('NIP');
         $pegawai = $nip ? Pegawai::where('NIP', $nip)->first() : null;
 
+        $aturan_pak = [
+            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(['value', 'default_config']),
+            'koefisienPertahun' => AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value,
+            'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first()->value,
+            'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first()->value,
+            'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first()->value,
+            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
+            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first(['value', 'default_config']),
+            'rumus' => AturanPAK::where('name', 'Rumus')->first()->value,
+        ];
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Penetapan Angka Kredit',
             'pegawai' => $pegawai,
             'pegawaiList' => Pegawai::select('NIP', 'Nama')->latest()->get(),
             'koefisien' => Koefisien::select('jabatan', 'nilai')->get(),
+            'aturanPAK' => $aturan_pak
         ]);
     }
 
@@ -73,12 +87,25 @@ class DokumenPAKController extends Controller
     public function edit(Request $request)
     {
 
+        $aturan_pak = [
+            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(['value', 'default_config']),
+            'koefisienPertahun' => AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value,
+            'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first()->value,
+            'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first()->value,
+            'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first()->value,
+            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
+            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first(['value', 'default_config']),
+            'rumus' => AturanPAK::where('name', 'Rumus')->first()->value,
+        ];
         $riwayat = RiwayatPAK::findOrFail($request->id);
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Edit Penetapan Angka Kredit',
+            'isEdit' => true,
             'riwayat' => $riwayat,
             'koefisien' => Koefisien::select('jabatan', 'nilai')->get(),
-            'isEdit' => true
+            'aturanPAK' => $aturan_pak
         ]);
     }
 

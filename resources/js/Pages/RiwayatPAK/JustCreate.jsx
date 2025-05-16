@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
-import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
+import UseAturanPenetapan from "./Partials/UseAturanPenetapan.1";
 
 export default function Index({
     auth,

@@ -6,7 +6,7 @@ export default function AkumulasiTable({
     setData,
     isEdit,
     historyData,
-    predikat,
+    aturanAkmTableProps : {predikatPresentase, tebusanAkumulasi},
 }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
@@ -178,8 +178,8 @@ export default function AkumulasiTable({
                         {bulan[data.periode_mulai]}-
                         {bulan[data.periode_berakhir]}
                     </td>
-                    <td className="border">{predikat[data.presentase]}</td>
-                    <td className="border">{data.presentase}</td>
+                    <td className="border">{data.predikat}</td>
+                    <td className="border">{data.presentase}%</td>
                     <td className="border">{data.ak_normatif}</td>
                     <td className="border">
                         {isEdit && !data["angka_kredit"]
@@ -226,7 +226,7 @@ export default function AkumulasiTable({
                         />
                         <InputLabel
                             htmlFor="kepala_reg"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala Kantor Regional VII BKN"
                         />
                     </td>
@@ -250,7 +250,7 @@ export default function AkumulasiTable({
                         />
                         <InputLabel
                             htmlFor="sekretaris"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Sekretaris Tim Penilai Yang Bersangkutan"
                         />
                     </td>
@@ -276,7 +276,7 @@ export default function AkumulasiTable({
                         />
                         <InputLabel
                             htmlFor="kepala_bps"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala BPS Kabupaten/Kota"
                         />
                     </td>
@@ -299,7 +299,7 @@ export default function AkumulasiTable({
                         />
                         <InputLabel
                             htmlFor="pns"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="PNS Bersangkutan"
                         />
                     </td>
@@ -325,7 +325,7 @@ export default function AkumulasiTable({
                         />
                         <InputLabel
                             htmlFor="kepala_biro"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala Biro SDM BPS"
                         />
                     </td>
@@ -348,7 +348,7 @@ export default function AkumulasiTable({
                         />
                         <InputLabel
                             htmlFor="arsip"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Arsip"
                         />
                     </td>

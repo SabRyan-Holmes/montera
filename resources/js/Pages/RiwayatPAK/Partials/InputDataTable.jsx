@@ -1,7 +1,7 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useRef, useState } from "react";
 
-export default function InputDataTable({ data, setData, isEdit, historyData }) {
+export default function InputDataTable({ data,  setData, isEdit, historyData }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {

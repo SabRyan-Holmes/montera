@@ -280,7 +280,44 @@
                 </div>
             </div>
 
-            @if (count(array_filter($data['tebusan1'])) > 0)
+
+            @if (!empty($data['tebusan1']))
+                <div style="margin-top:12rem; font-size: 15px">
+                    <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
+                    @php
+                        $tebusan_list = [
+                            'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                            'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                            'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                            'kepala_biro' => 'Kepala Biro SDM BPS',
+                            'pns' => 'PNS Bersangkutan',
+                            'arsip' => 'Arsip',
+                        ];
+
+                        $i = 1;
+
+                        // Cek tipe data tebusan1
+                        if (is_array($data['tebusan1']) && isset($data['tebusan1'][0]['pihak_tebusan'])) {
+                            // Format baru (array of objects)
+                            foreach ($data['tebusan1'] as $item) {
+                                if ($item['checked']) {
+                                    echo "<span style='display: block'>$i. {$item['pihak_tebusan']}</span>";
+                                    $i++;
+                                }
+                            }
+                        } else {
+                            // Format lama (associative array)
+                            foreach ($data['tebusan1'] as $key => $value) {
+                                if ($value && isset($tebusan_list[$key])) {
+                                    echo "<span style='display: block'>$i. {$tebusan_list[$key]}</span>";
+                                    $i++;
+                                }
+                            }
+                        }
+                    @endphp
+
+                    {{-- KODE LAMA --}}
+                    {{-- @if (count(array_filter($data['tebusan1'])) > 0)
                 <div style="margin-top:12rem; font-size: 15px">
                     <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
                     @php
@@ -300,6 +337,8 @@
                             @php $i++; @endphp
                         @endif
                     @endforeach
+                </div>
+            @endif --}}
                 </div>
             @endif
 

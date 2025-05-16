@@ -18,7 +18,7 @@ import { FaSave, FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
-import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
+import UseAturanPenetapan from "./Partials/UseAturanPenetapan.1";
 import { IoCloseOutline } from "react-icons/io5";
 
 export default function Edit({ auth, title, riwayat, koefisien, flash }) {

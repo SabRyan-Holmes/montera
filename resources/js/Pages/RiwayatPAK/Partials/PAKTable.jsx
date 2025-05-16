@@ -3,7 +3,24 @@ import React, { useEffect, useState } from "react";
 import { MdAddBox, MdDelete } from "react-icons/md";
 import { FaMinus } from "react-icons/fa";
 
-export default function PAKTable({ data, setData, isEdit, historyData }) {
+export default function PAKTable({
+    data,
+    setData,
+    isEdit,
+    historyData,
+    aturanPAKTableProps: {
+        angkaPangkat,
+        angkaJabatan,
+        tebusanPenetapan,
+        kesimpulan,
+    },
+}) {
+    // ANCHOR
+    console.log("angkaPangkat");
+    console.log(angkaPangkat);
+    // const { angkaPangkat, angkaJabatan, tebusanPenetapan, kesimpulan } =
+    //     aturanPAKTableProps;
+
     const dataTipePAK = {
         ak_dasar: data.ak_dasar,
         ak_jf: data.ak_jf,
@@ -12,6 +29,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
         ak_peningkatan: data.ak_peningkatan,
         ...data.ak_tipe_tambahan,
     };
+
     const [rowKeys, setRowKeys] = useState(Object.keys(dataTipePAK));
     useEffect(() => {
         if (isEdit) {
@@ -245,9 +263,9 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
         ).toFixed(3);
     });
 
-    console.log("isi data.pangkat");
-    console.log(data.pangkat);
-    console.log("Current pangkat value:", data.pangkat, typeof data.pangkat);
+    // console.log("isi data.pangkat");
+    // console.log(data.pangkat);
+    // console.log("Current pangkat value:", data.pangkat, typeof data.pangkat);
 
     return (
         <table className="table text-base table-bordered">
@@ -498,21 +516,14 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                                     name="pangkat"
                                     id="pangkat"
                                     className="w-20 text-center rounded-md border-gradient"
-                                    defaultValue={String(data.pangkat)}
+                                    defaultValue={data.pangkat}
                                     onChange={(e) => {
                                         setData("pangkat", e.target.value);
                                     }}
                                 >
-                                    <option value="20">20</option>
-                                    <option value="40">40</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                    <option value="100">150</option>
-                                    <option value="200">200</option>
-                                    <option value="250">250</option>
-                                    <option value="300">300</option>
-                                    <option value="450">450</option>
-                                    <option value="600">600</option>
+                                    {angkaPangkat.map((angka) => (
+                                        <option value={angka}>{angka}</option>
+                                    ))}
                                 </select>
                             </td>
                             <td className="text-center border" colSpan={2}>
@@ -525,16 +536,9 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                                         setData("jabatan", e.target.value);
                                     }}
                                 >
-                                    <option value="20">20</option>
-                                    <option value="40">40</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                    <option value="100">150</option>
-                                    <option value="200">200</option>
-                                    <option value="250">250</option>
-                                    <option value="300">300</option>
-                                    <option value="450">450</option>
-                                    <option value="600">600</option>
+                                    {angkaJabatan.map((angka) => (
+                                        <option value={angka}>{angka}</option>
+                                    ))}
                                 </select>
                             </td>
                         </>
@@ -552,16 +556,9 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                                         setData("pangkat", e.target.value);
                                     }}
                                 >
-                                    <option value="20">20</option>
-                                    <option value="40">40</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                    <option value="100">150</option>
-                                    <option value="200">200</option>
-                                    <option value="250">250</option>
-                                    <option value="300">300</option>
-                                    <option value="450">450</option>
-                                    <option value="600">600</option>
+                                    {angkaPangkat.map((angka) => (
+                                        <option value={angka}>{angka}</option>
+                                    ))}
                                 </select>
                             </td>
                             <td className="text-center border" colSpan={2}>
@@ -574,16 +571,9 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                                         setData("jabatan", e.target.value);
                                     }}
                                 >
-                                    <option value="20">20</option>
-                                    <option value="40">40</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                    <option value="100">150</option>
-                                    <option value="200">200</option>
-                                    <option value="250">250</option>
-                                    <option value="300">300</option>
-                                    <option value="450">450</option>
-                                    <option value="600">600</option>
+                                    {angkaJabatan.map((angka) => (
+                                        <option value={angka}>{angka}</option>
+                                    ))}
                                 </select>
                             </td>
                         </>
@@ -657,35 +647,14 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                             name="kesimpulan"
                             id="kesimpulan"
                             className="w-3/4 text-center rounded-md border-gradient"
-                            defaultValue={data.kesimpulan}
+                            defaultValue={kesimpulan.default_config}
                             onChange={(e) => {
                                 setData("kesimpulan", e.target.value);
                             }}
                         >
-                            <option>
-                                Belum Dapat Dipertimbangkan untuk Kenaikan
-                                Pangkat Setingkat Lebih Tinggi
-                            </option>
-                            <option>
-                                Belum Dapat Dipertimbangkan untuk Kenaikan
-                                Jabatan Setingkat Lebih Tinggi
-                            </option>
-                            <option>
-                                Belum Dapat Dipertimbangkan untuk Kenaikan
-                                Pangkat dan Jabatan Setingkat Lebih Tinggi
-                            </option>
-                            <option>
-                                Sudah Dapat Dipertimbangkan untuk Kenaikan
-                                Pangkat Setingkat Lebih Tinggi
-                            </option>
-                            <option>
-                                Sudah Dapat Dipertimbangkan untuk Kenaikan
-                                Jabatan Setingkat Lebih Tinggi
-                            </option>
-                            <option>
-                                Sudah Dapat Dipertimbangkan untuk Kenaikan
-                                Pangkat dan Jabatan Setingkat Lebih Tinggi
-                            </option>
+                            {kesimpulan.value.map((kesimpulan) => (
+                                <option >{kesimpulan}</option>
+                            ))}
                         </select>
                     </td>
                 </tr>
@@ -719,7 +688,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         />
                         <InputLabel
                             htmlFor="kepala_reg"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala Kantor Regional VII BKN"
                         />
                     </td>
@@ -743,7 +712,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         />
                         <InputLabel
                             htmlFor="sekretaris"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Sekretaris Tim Penilai Yang Bersangkutan"
                         />
                     </td>
@@ -769,7 +738,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         />
                         <InputLabel
                             htmlFor="kepala_bps"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala BPS Kabupaten/Kota"
                         />
                     </td>
@@ -792,7 +761,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         />
                         <InputLabel
                             htmlFor="pns"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="PNS Bersangkutan"
                         />
                     </td>
@@ -818,7 +787,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         />
                         <InputLabel
                             htmlFor="kepala_biro"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Kepala Biro SDM BPS"
                         />
                     </td>
@@ -841,7 +810,7 @@ export default function PAKTable({ data, setData, isEdit, historyData }) {
                         />
                         <InputLabel
                             htmlFor="arsip"
-                            className="inline-block ml-1"
+                            className="inline-block ml-2 text-sm"
                             value="Arsip"
                         />
                     </td>
