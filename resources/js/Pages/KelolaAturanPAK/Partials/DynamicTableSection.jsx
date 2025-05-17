@@ -3,7 +3,8 @@ import { IoMdAdd } from "react-icons/io";
 import { GoQuestion } from "react-icons/go";
 import { TooltipHover } from "@/Components";
 import moment from "moment/min/moment-with-locales";
-
+import { router } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 
 export default function DynamicTableSection({
     title,
@@ -16,10 +17,54 @@ export default function DynamicTableSection({
     addButtonText = "Tambah Data",
     sortField = "nilai",
     showHeader = true,
+    defaultConfig,
 }) {
     moment.locale("id");
-    console.log('data')
-    console.log(data)
+    // console.log('data')
+
+    const [dataForm, setDataForm] = useState({
+        updateName: title, // Langsung isi dengan title
+        value: defaultConfig || "", // Langsung isi dengan defaultConfig
+    });
+
+    const handleSetDefault = async (id) => {
+        if (!id) {
+            console.error("ID tidak valid:", id);
+            return;
+        }
+
+        try {
+            // Buat objek form data langsung
+            const formData = {
+                updateName: title,
+                value: id,
+            };
+
+            // Update state dan langsung gunakan nilai baru
+            setDataForm(formData);
+
+            const response = await router.post(
+                route("divisi-sdm.aturan-pak.set-default-config"),
+                formData, // Gunakan objek langsung, bukan dataForm
+                {
+                    preserveState: false,
+                    preserveScroll: true,
+                }
+            );
+
+            if (response?.error) {
+                throw new Error(response.error);
+            }
+        } catch (err) {
+            console.error("Gagal mengupdate default:", err);
+            Swal.fire({
+                title: "Gagal!",
+                text: err.message || "Terjadi kesalahan saat menyimpan",
+                icon: "error",
+            });
+        }
+    };
+    // console.log(data)
     return (
         <section className="flex flex-col flex-1">
             {/* Header */}
@@ -70,25 +115,43 @@ export default function DynamicTableSection({
                         </tr>
                     </thead>
                     <tbody className="border-secondary/15">
-                        {data?.sort((a, b) => a[sortField] - b[sortField])
+                        {data
+                            ?.sort((a, b) => a[sortField] - b[sortField])
                             .map((item, i) => (
-                                <tr
-                                    key={i}
-                                    className="group/item hover:bg-secondary/50 hover:cursor-pointer"
-                                >
-                                    <td className="font-bold text-center">{i + 1}</td>
+                                <tr key={i} className="group/item ">
+                                    <td className="font-bold text-center">
+                                        {i + 1}
+                                    </td>
                                     {columns.map((col, idx) => (
                                         <td
+                                            onClick={() =>
+                                                item.id &&
+                                                handleSetDefault(item.id)
+                                            }
                                             key={idx}
                                             className={
-                                                col.center
-                                                    ? "font-semibold text-center"
-                                                    : "font-semibold"
+                                                "cursor-pointer relative group " +
+                                                (col.center
+                                                    ? "font-semibold text-center "
+                                                    : "font-semibold ") +
+                                                (defaultConfig &&
+                                                    "hover:text-secondary hover:bg-secondary/15")
                                             }
                                         >
                                             {col.percent
                                                 ? `${item[col.field]}%`
                                                 : item[col.field]}
+                                            {item.id == defaultConfig && (
+                                                <>
+                                                    <span className="badge-optional">
+                                                        Default
+                                                    </span>
+                                                </>
+                                            )}
+                                            <TooltipHover
+                                                className="text-sm w-36"
+                                                message="Atur sebagai default"
+                                            />
                                         </td>
                                     ))}
                                     <td className="text-sm text-center">
@@ -97,18 +160,18 @@ export default function DynamicTableSection({
                                     <td className="p-3 text-center whitespace-nowrap">
                                         <button
                                             onClick={() => onEdit(item)}
-                                            className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center scale-125 hover:scale-[1.3] transition-all group/button group-hover/item:bg-secondary group-hover/item:text-white text-secondary action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            className="transition-all scale-100 hover:scale-125 group/button text-secondary action-btn hover:bg-secondary "
                                         >
-                                            <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                            <FaEdit className="fill-secondary group-hover/button:fill-white" />
                                         </button>
                                         <span className="inline-block mx-1"></span>
                                         <button
                                             onClick={() =>
                                                 onDelete(item.id, title)
                                             }
-                                            className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500 hover:scale-[1.3] transition-all scale-125 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                            className="transition-all scale-100 hover:scale-125 group/button text-warning/80 action-btn hover:bg-warning/80"
                                         >
-                                            <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                            <FaTrash className="fill-warning/80 group-hover/button:fill-white" />
                                         </button>
                                     </td>
                                 </tr>

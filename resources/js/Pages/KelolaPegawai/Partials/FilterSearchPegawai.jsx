@@ -95,7 +95,7 @@ export default function FilterSearchPegawai({byJabatan, setByJabatan, byDaerah, 
                     className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
                     placeholder="Cari Nama Pegawai/NIP.."
                 />
-                <PrimaryButton type="button" className=" absolute end-2 bottom-[6px] ">
+                <PrimaryButton type="submit" className=" absolute end-2 bottom-[6px] ">
                     Search
                 </PrimaryButton>
             </div>

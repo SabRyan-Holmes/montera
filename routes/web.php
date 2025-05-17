@@ -84,6 +84,7 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
 
     // Kelola Aturan PAK(CRUD)
     Route::resource('aturan-pak', AturanPAKController::class);
+    Route::post('/aturan-pak/set-default-config', [AturanPAKController::class, 'set_default_config'])->name('aturan-pak.set-default-config');
 
 
     // Kelola Koefisien(CRUD)

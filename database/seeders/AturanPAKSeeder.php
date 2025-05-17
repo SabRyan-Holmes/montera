@@ -22,6 +22,12 @@ class AturanPAKSeeder extends Seeder
                     "nip" => "197412311996121001",
                     "updated_at" => $timestamp,
                 ],
+                [
+                    "id" => 2,
+                    "nama" => 'Wasi Riyanto, S.ST., M.E.',
+                    "nip" => "197405221997031001",
+                    "updated_at" => $timestamp,
+                ],
             ],
             "default_config" => 1
         ]);
@@ -62,7 +68,8 @@ class AturanPAKSeeder extends Seeder
                 [
                     "id" => 5,
                     "jabatan" => 'Madya',
-                    "nilai" => 37,5,
+                    "nilai" => 37,
+                    5,
                     "updated_at" => $timestamp,
                 ],
             ],
@@ -119,6 +126,7 @@ class AturanPAKSeeder extends Seeder
                 ["id" => 9, "angka" => 450, "updated_at" => $timestamp],
                 ["id" => 10, "angka" => 600, "updated_at" => $timestamp],
             ],
+            'default_config' => 4
         ]);
 
         AturanPAK::create([
@@ -134,6 +142,8 @@ class AturanPAKSeeder extends Seeder
                 ["id" => 8, "angka" => 450, "updated_at" => $timestamp],
                 ["id" => 9, "angka" => 600, "updated_at" => $timestamp],
             ],
+            'default_config' => 4
+
         ]);
 
         AturanPAK::create([

@@ -6,7 +6,7 @@ export default function AkumulasiTable({
     setData,
     isEdit,
     historyData,
-    aturanAkmTableProps : {predikatPresentase, tebusanAkumulasi},
+    aturanAkmTableProps: { predikatPresentase, tebusanAkumulasi },
 }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
@@ -112,7 +112,7 @@ export default function AkumulasiTable({
                     <td className="border">
                         <TextInput
                             id="tahun_terakhir"
-                            type="text"
+                            type="number"
                             name="tahun_terakhir"
                             placeholder="tahun sebelumnya"
                             maxLength={4}
@@ -140,20 +140,27 @@ export default function AkumulasiTable({
                             required
                             className="text-center placeholder:text-accent"
                             placeholder="0,0"
-                            defaultValue={
-                                isEdit
-                                    ? historyData["ak_terakhir"]
-                                    : data.ak_terakhir
-                            }
+                            defaultValue={data.ak_terakhir}
+                            value={isEdit && data.ak_terakhir}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                let value = e.target.value;
 
-                                // Jika input dikosongkan, set nilai ke 0
-                                setData(
-                                    "ak_terakhir",
-                                    value == "" || value == null ? 0 : value
-                                );
-                            }}
+                                // Kalau kosong, set ke 0
+                                if (value === "" || value === null) {
+                                  setData("ak_terakhir", 0);
+                                  return;
+                                }
+
+                                // Paksa jadi float maksimal 3 digit desimal
+                                const floatValue = parseFloat(value);
+                                const formatted = floatValue.toFixed(3);
+
+                                // Update input dan data hanya jika user ngetik valid number
+                                if (!isNaN(floatValue)) {
+                                  setData("ak_terakhir", formatted);
+                                  e.target.value = formatted;
+                                }
+                              }}
                         />
                     </td>
                 </tr>
@@ -161,7 +168,7 @@ export default function AkumulasiTable({
                     <td className="border">
                         <TextInput
                             id="tahun_ini"
-                            type="text"
+                            type="number"
                             name="tahun_ini"
                             defaultValue={data.tahun_ini}
                             required
@@ -203,156 +210,54 @@ export default function AkumulasiTable({
                 </tr>
             </tbody>
             <tfoot>
-                <tr>
-                    <td rowSpan={3} className="text-lg border text-slate-700">
-                        Tebusan
-                    </td>
-                    <td colSpan={3} className="border-y">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan2["kepala_reg"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan2;
-                                newData["kepala_reg"] = !newData["kepala_reg"];
-                                setData({
-                                    ...data,
-                                    tebusan2: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="kepala_reg"
-                            className="inline-block ml-2 text-sm"
-                            value="Kepala Kantor Regional VII BKN"
-                        />
-                    </td>
-
-                    <td colSpan={3} className="border">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan2["sekretaris"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan2;
-                                newData["sekretaris"] = !newData["sekretaris"];
-                                setData({
-                                    ...data,
-                                    tebusan2: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="sekretaris"
-                            className="inline-block ml-2 text-sm"
-                            value="Sekretaris Tim Penilai Yang Bersangkutan"
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colSpan={3} className="border-y">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan2["kepala_bps"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan2;
-                                newData["kepala_bps"] = !newData["kepala_bps"];
-                                setData({
-                                    ...data,
-                                    tebusan2: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="kepala_bps"
-                            className="inline-block ml-2 text-sm"
-                            value="Kepala BPS Kabupaten/Kota"
-                        />
-                    </td>
-                    <td className="border" colSpan={2}>
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan2["pns"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan2;
-                                newData["pns"] = !newData["pns"];
-                                setData({
-                                    ...data,
-                                    tebusan2: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="pns"
-                            className="inline-block ml-2 text-sm"
-                            value="PNS Bersangkutan"
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td colSpan={3} className="border-y">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan2["kepala_biro"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan2;
-                                newData["kepala_biro"] =
-                                    !newData["kepala_biro"];
-                                setData({
-                                    ...data,
-                                    tebusan2: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="kepala_biro"
-                            className="inline-block ml-2 text-sm"
-                            value="Kepala Biro SDM BPS"
-                        />
-                    </td>
-                    <td className="border" colSpan={2}>
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan2["arsip"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan2;
-                                newData["arsip"] = !newData["arsip"];
-                                setData({
-                                    ...data,
-                                    tebusan2: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="arsip"
-                            className="inline-block ml-2 text-sm"
-                            value="Arsip"
-                        />
-                    </td>
-                </tr>
+                {data.tebusan2
+                    .reduce((rows, item, index) => {
+                        if (index % 2 === 0) rows.push([item]);
+                        else rows[rows.length - 1].push(item);
+                        return rows;
+                    }, [])
+                    .map((pair, index) => (
+                        <tr key={index}>
+                            {index === 0 && (
+                                <td
+                                    rowSpan={Math.ceil(
+                                        data.tebusan2.length / 2
+                                    )}
+                                    className="text-lg border text-slate-700"
+                                >
+                                    Tebusan
+                                </td>
+                            )}
+                            {pair.map((item, i) => (
+                                <td
+                                    key={item.id}
+                                    colSpan={3}
+                                    className="border-y"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="w-5 h-5 rounded-sm"
+                                        checked={item.checked}
+                                        onChange={() => {
+                                            const updated = [...data.tebusan2];
+                                            const indexInGlobal = index * 2 + i;
+                                            updated[indexInGlobal].checked =
+                                                !updated[indexInGlobal].checked;
+                                            setData("tebusan2", updated);
+                                        }}
+                                    />
+                                    <InputLabel
+                                        htmlFor={`tebusan2_${index * 2 + i}`}
+                                        className="inline-block ml-2 text-sm"
+                                        value={item.pihak_tebusan}
+                                    />
+                                </td>
+                            ))}
+                            {pair.length === 1 && (
+                                <td colSpan={3} className="border" />
+                            )}
+                        </tr>
+                    ))}
             </tfoot>
         </table>
     );

@@ -13,21 +13,23 @@ import {
     SuccessButton,
     TextInput,
     TooltipHover,
+    RadioWithEditableLabel,
 } from "@/Components";
 import { FaSave, FaEdit } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment/min/moment-with-locales";
 import PopUpForm from "../KelolaKoefisien/Partials/PopUpForm";
-import { router } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { useRemember } from "@inertiajs/react";
 import DynamicTableSection from "./Partials/DynamicTableSection";
 import { usePage } from "@inertiajs/react";
 // ANCHOR : Import Here!
 
-export default function Index({ auth, title, flash }) {
+export default function Index({ auth, title, flash, aturanPAK }) {
     // INITIALIZE DATA
     const {
+        penandaTangan,
         koefisienPertahun,
         predikatPresentase,
         pangkat,
@@ -37,7 +39,7 @@ export default function Index({ auth, title, flash }) {
         tebusanPenetapan,
         kesimpulan,
         rumus,
-    } = usePage().props.aturanPAK;
+    } = aturanPAK;
 
     // const [shownMessages, setShownMessages] = useRemember([]);
     // useEffect(() => {
@@ -85,7 +87,7 @@ export default function Index({ auth, title, flash }) {
     function handleDelete(id, name) {
         Swal.fire({
             icon: "warning",
-            text: "Anda yakin ingin menghapus data koefisien ini?",
+            text: "Anda yakin ingin menghapus data ini?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
@@ -135,16 +137,61 @@ export default function Index({ auth, title, flash }) {
     });
     const [isEdit, setIsEdit] = useState(false);
     const [dataEdit, setDataEdit] = useState(null);
+
     // ANCHOR : Logic & Function Here!
 
+    // Handle Default Penanda Tangan(change config)
+    // const [namaPT, setNamaPT] = useState([]);
+    const { data, setData, post, processing, errors, reset } = useForm({
+        selectedPTId: null, // Tambahkan field untuk selected ID
+    });
+
+    useEffect(() => {
+        // Penanda Tangan
+        if (aturanPAK) {
+            setData("selectedPTId", penandaTangan.default_config);
+        }
+    }, [aturanPAK]);
+
+    const handleSelectPT = (id) => {
+        setData("selectedPTId", id);
+    };
+
+    // Pastikan form memiliki handler submit dan prevent default
+    const handleSubmit = (e, updateName) => {
+        console.log("updateName");
+        console.log(updateName);
+        // let field = `${updateName}-${data.value}`
+        setData({
+            ...data,
+            value: data.selectedPTId,
+            updateName: updateName,
+        });
+        e.preventDefault();
+        post(route("divisi-sdm.aturan-pak.set-default-config"), {
+            preserveState: true,
+            preserveScroll: true,
+        });
+        // Logika submit...
+    };
+
     // Console
-    // console.log("field")
-    // console.log(field)
+    console.log("data");
+    console.log(data);
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto content-normal justify-items-center text-slate-600 px-7">
+                {/* POP UP For Add/Edit */}
+                {isPopUpOpen && (
+                    <PopUpForm
+                        onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                        isEdit={isEdit}
+                        popUpData={popUpData}
+                        dataEdit={dataEdit}
+                    />
+                )}
+
                 {/* SECTION : Penanda Tangan */}
-                {/* TODO : Ini belum terintegrasi database */}
                 <section className="mt-10 border rounded-lg bg-slate-700 justify-self-stretch place-self-center border-gradient">
                     <div className="m-12 h-[27rem]">
                         <div className="flex justify-between ">
@@ -158,104 +205,120 @@ export default function Index({ auth, title, flash }) {
                             </div>
                         </div>
 
-                        <form>
+                        <div>
                             {/*  NAMA */}
-                            <div className="mt-5">
+                            <fieldset className="mt-5">
                                 <InputLabelCustom
                                     htmlFor="nama"
-                                    value="Nama"
+                                    value="Nama dan NIP"
                                     className="text-xl"
                                 />
 
-                                <RadioWithLabel
-                                    name={"Agus Sudibyo, M.Stat"}
-                                    value={"Agus Sudibyo, M.Stat"}
-                                    onChange={() => {}}
-                                    defaultChecked
-                                />
-                                <RadioWithLabel
-                                    name={"Nama Lain"}
-                                    value={"Nama Lain"}
-                                    onChange={() => {}}
-                                />
+                                {/* ANCHOR */}
 
-                                <div className="flex">
-                                    <RadioWithLabel />
-                                    <TextInput
-                                        id="nama"
-                                        type="text"
-                                        name="nama"
-                                        className="block w-full mt-1 h-11"
-                                        placeholder="Tambahkan Nama Baru"
-                                        isFocused={true}
-                                        // value={data.nama}
-                                        // autoComplete={data.nama}
-                                        // onChange={(e) =>
-                                        //     setData("nama", e.target.value)
-                                        // }
-                                    />
-                                </div>
-
-                                <InputError
-                                    // message={errors.nama}
-                                    className="mt-2"
-                                />
-                            </div>
-
-                            {/* NIP */}
-                            <div className="mt-5">
-                                <InputLabelCustom
-                                    htmlFor="nip"
-                                    value="NIP"
-                                    className="text-xl"
-                                />
-
-                                <RadioWithLabel
-                                    name={"197412311996121001"}
-                                    value={"197412311996121001"}
-                                    defaultChecked
-                                    onChange={() => {}}
-                                />
-                                <RadioWithLabel
-                                    name={"NIP lain"}
-                                    value={"NIP Lain"}
-                                    onChange={() => {}}
-                                />
-
-                                <div className="flex">
-                                    <RadioWithLabel />
-                                    <TextInput
-                                        id="nama"
-                                        type="text"
-                                        name="nama"
-                                        className="block w-full mt-1 h-11"
-                                        placeholder="Tambahkan Nama Baru"
-                                        isFocused={true}
-                                        // value={data.nama}
-                                        // autoComplete={data.nama}
-                                        // onChange={(e) =>
-                                        //     setData("nama", e.target.value)
-                                        // }
-                                    />
-                                </div>
-
-                                <InputError
-                                    // message={errors.nama}
-                                    className="mt-2"
-                                />
-
-                                <div className="flex justify-end w-full">
-                                    <SuccessButton
-                                        type="submit"
-                                        className="inline-flex justify-end my-5 "
-                                        // disabled={processing}
+                                {penandaTangan.value.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center justify-between"
                                     >
-                                        Simpan
-                                        <FaSave className="mx-1" />
-                                    </SuccessButton>
-                                </div>
+                                        <RadioWithLabel
+                                            name={"penanda_tangan"}
+                                            radioValue={item.id}
+                                            value={`${item.nama} - ${item.nip}`}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "selectedPTId",
+                                                    parseInt(e.target.value)
+                                                )
+                                            }
+                                            defaultChecked={
+                                                item.id ==
+                                                penandaTangan.default_config
+                                                    ? true
+                                                    : false
+                                            }
+                                            // checked={
+                                            //     data.selectedPTId == penandaTangan.default_config ? true : false
+                                            // }
+                                        />
+                                        <div className="inline-flex gap-3">
+                                            <button
+                                                onClick={() => {
+                                                    setPopUpData({
+                                                        title: "Penanda Tangan",
+                                                        fields: ["nama", "nip"],
+                                                        routeName: route(
+                                                            "divisi-sdm.aturan-pak.update",
+                                                            item.id
+                                                        ),
+                                                    });
+                                                    setIsPopUpOpen(true);
+                                                    setIsEdit(true);
+                                                    setDataEdit(item);
+                                                }}
+                                                className="relative inline-flex cursor-pointer action-btn group"
+                                            >
+                                                <FaEdit className="fill-secondary group-hover/item:fill-white" />
+                                                <TooltipHover
+                                                    message={"Edit Data"}
+                                                />
+                                            </button>
+
+                                            <button
+                                                className="relative inline-flex cursor-pointer action-btn group"
+                                                onClick={() =>
+                                                    handleDelete(
+                                                        item.id,
+                                                        "Penanda Tangan"
+                                                    )
+                                                }
+                                            >
+                                                <FaTrash className="fill-red-500 group-hover/item:fill-white" />
+                                                <TooltipHover
+                                                    message={"Hapus Data"}
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </fieldset>
+
+                            <div className="flex items-center justify-end w-full gap-2 mt-10">
+                                <button
+                                    className="text-white scale-90 btn glass bg-sky-600 hover:bg-primary/90"
+                                    onClick={() => {
+                                        setPopUpData({
+                                            title: "Penanda Tangan",
+                                            fields: ["nama", "nip"],
+                                            routeName: route(
+                                                "divisi-sdm.aturan-pak.store"
+                                            ),
+                                        });
+                                        setIsPopUpOpen(true);
+                                        setIsEdit(false);
+                                    }}
+                                >
+                                    Tambah Data
+                                    <IoMdAdd className="w-6 h-6" />
+                                </button>
+                                <SuccessButton
+                                    asLink
+                                    href={route(
+                                        "divisi-sdm.aturan-pak.set-default-config"
+                                    )}
+                                    data={{
+                                        updateName: "Penanda Tangan",
+                                        value: data.selectedPTId,
+                                    }}
+                                    method="post"
+                                    className="inline-flex justify-end py-3 normal-case "
+                                    // disabled={processing}
+                                >
+                                    Simpan
+                                    <FaSave className="mx-1" />
+                                </SuccessButton>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
                 {/* !SECTION : Penanda Tangan */}
@@ -359,15 +422,6 @@ export default function Index({ auth, title, flash }) {
                 </section>
                 {/* !SECTION : Rumus*/}
 
-                {/* POP UP For Add/Edit */}
-                {isPopUpOpen && (
-                    <PopUpForm
-                        onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                        isEdit={isEdit}
-                        popUpData={popUpData}
-                        dataEdit={dataEdit}
-                    />
-                )}
                 {/* SECTION : Koefisien Per Tahun */}
                 <section className="flex flex-col h-full p-12 border rounded-lg justify-self-stretch place-self-start border-gradient">
                     <DynamicTableSection
@@ -466,108 +520,102 @@ export default function Index({ auth, title, flash }) {
 
                 {/* SECTION : Angka Minimal Pangkat Dan Jabatan */}
                 <section className="w-full col-span-2 row-span-2 p-12 mx-auto border rounded-lg justify-self-stretch place-self-start border-gradient">
-                        <div className="flex justify-between ">
-                            <strong className="text-2xl">
-                                Angka Minimal Pangkat Dan Jabatan
-                            </strong>
-                            <div className="relative group">
-                                <GoQuestion className="w-10 h-10" />
-                                <TooltipHover
-                                    className="text-sm w-36"
-                                    message="Batas minimal angka kredit kumulatif untuk kenaikan pangkat dan jabatan."
-                                />
-                            </div>
+                    <div className="flex justify-between ">
+                        <strong className="text-2xl">
+                            Angka Minimal Pangkat Dan Jabatan
+                        </strong>
+                        <div className="relative group">
+                            <GoQuestion className="w-10 h-10" />
+                            <TooltipHover
+                                className="text-sm w-36"
+                                message="Batas minimal angka kredit kumulatif untuk kenaikan pangkat dan jabatan."
+                            />
                         </div>
+                    </div>
 
-                        <div className="flex items-center justify-between gap-10 pt-7">
+                    <div className="flex items-center justify-between gap-10 pt-7">
+                        <DynamicTableSection
+                            title="Angka Minimal Pangkat"
+                            showHeader={false}
+                            columns={[
+                                {
+                                    header: "Angka Pangkat",
+                                    field: "angka",
+                                    center: true,
+                                },
+                            ]}
+                            data={pangkat.value}
+                            defaultConfig ={pangkat.default_config}
+                            onAdd={() => {
+                                setPopUpData({
+                                    title: "Angka Minimal Pangkat",
+                                    fields: ["angka"],
+                                    routeName: route(
+                                        "divisi-sdm.aturan-pak.store"
+                                    ),
+                                });
+                                setIsPopUpOpen(true);
+                                setIsEdit(false);
+                            }}
+                            onEdit={(item) => {
+                                setPopUpData({
+                                    title: "Angka Minimal Pangkat",
+                                    fields: ["angka"],
+                                    routeName: route(
+                                        "divisi-sdm.aturan-pak.update",
+                                        item.id
+                                    ),
+                                });
+                                setIsPopUpOpen(true);
+                                setIsEdit(true);
+                                setDataEdit(item);
+                            }}
+                            onDelete={(id) =>
+                                handleDelete(id, "Angka Minimal Pangkat")
+                            }
+                        />
 
-                                <DynamicTableSection
-                                    title="Angka Minimal Pangkat"
-                                    showHeader={false}
-                                    columns={[
-                                        {
-                                            header: "Angka Pangkat",
-                                            field: "angka",
-                                            center: true,
-                                        },
-                                    ]}
-                                    data={pangkat}
-                                    onAdd={() => {
-                                        setPopUpData({
-                                            title: "Angka Minimal Pangkat",
-                                            fields: ["angka"],
-                                            routeName: route(
-                                                "divisi-sdm.aturan-pak.store"
-                                            ),
-                                        });
-                                        setIsPopUpOpen(true);
-                                        setIsEdit(false);
-                                    }}
-                                    onEdit={(item) => {
-                                        setPopUpData({
-                                            title: "Angka Minimal Pangkat",
-                                            fields: ["angka"],
-                                            routeName: route(
-                                                "divisi-sdm.aturan-pak.update",
-                                                item.id
-                                            ),
-                                        });
-                                        setIsPopUpOpen(true);
-                                        setIsEdit(true);
-                                        setDataEdit(item);
-                                    }}
-                                    onDelete={(id) =>
-                                        handleDelete(
-                                            id,
-                                            "Angka Minimal Pangkat"
-                                        )
-                                    }
-                                />
-
-
-                                <DynamicTableSection
-                                    title="Angka Minimal Jabatan"
-                                    showHeader={false}
-                                    columns={[
-                                        {
-                                            header: "Angka Jabatan",
-                                            field: "angka",
-                                            center: true,
-                                        },
-                                    ]}
-                                    data={jabatan}
-                                    onAdd={() => {
-                                        setPopUpData({
-                                            title: "Angka Minimal Jabatan",
-                                            fields: ["angka"],
-                                            routeName: route(
-                                                "divisi-sdm.aturan-pak.store"
-                                            ),
-                                        });
-                                        setIsPopUpOpen(true);
-                                        setIsEdit(false);
-                                    }}
-                                    onEdit={(item) => {
-                                        setPopUpData({
-                                            title: "Angka Minimal Jabatan",
-                                            fields: ["angka"],
-                                            routeName: route(
-                                                "divisi-sdm.aturan-pak.update",
-                                                item.id
-                                            ),
-                                        });
-                                        setIsPopUpOpen(true);
-                                        setIsEdit(true);
-                                        setDataEdit(item);
-                                    }}
-                                    onDelete={(id) =>
-                                        handleDelete(
-                                            id,
-                                            "Angka Minimal Jabatan"
-                                        )
-                                    }
-                                />
-                        </div>
+                        <DynamicTableSection
+                            title="Angka Minimal Jabatan"
+                            showHeader={false}
+                            columns={[
+                                {
+                                    header: "Angka Jabatan",
+                                    field: "angka",
+                                    center: true,
+                                },
+                            ]}
+                            data={jabatan.value}
+                            defaultConfig ={jabatan.default_config}
+                            onAdd={() => {
+                                setPopUpData({
+                                    title: "Angka Minimal Jabatan",
+                                    fields: ["angka"],
+                                    routeName: route(
+                                        "divisi-sdm.aturan-pak.store"
+                                    ),
+                                });
+                                setIsPopUpOpen(true);
+                                setIsEdit(false);
+                            }}
+                            onEdit={(item) => {
+                                setPopUpData({
+                                    title: "Angka Minimal Jabatan",
+                                    fields: ["angka"],
+                                    routeName: route(
+                                        "divisi-sdm.aturan-pak.update",
+                                        item.id
+                                    ),
+                                });
+                                setIsPopUpOpen(true);
+                                setIsEdit(true);
+                                setDataEdit(item);
+                            }}
+                            onDelete={(id) =>
+                                handleDelete(id, "Angka Minimal Jabatan")
+                            }
+                        />
+                    </div>
                 </section>
                 {/* !SECTION : Angka Minimal Pangkat Dan Jabatan */}
 
@@ -734,7 +782,9 @@ export default function Index({ auth, title, flash }) {
                                 width: "50%",
                             },
                         ]}
-                        data={kesimpulan}
+                        data={kesimpulan.value}
+                        defaultConfig ={kesimpulan.default_config}
+
                         onAdd={() => {
                             setPopUpData({
                                 title: "Kesimpulan",

@@ -16,8 +16,8 @@ export default function PAKTable({
     },
 }) {
     // ANCHOR
-    console.log("angkaPangkat");
-    console.log(angkaPangkat);
+    // console.log("angkaPangkat");
+    // console.log(angkaPangkat);
     // const { angkaPangkat, angkaJabatan, tebusanPenetapan, kesimpulan } =
     //     aturanPAKTableProps;
 
@@ -509,75 +509,46 @@ export default function PAKTable({
 
                     {/* NOTE : Update 10 Maret 2025 : Pangkat dan jabatan ditambahkan angka 150 & 300 (ditambahkan jg 250 jaga-jaga) */}
 
-                    {!isEdit ? (
-                        <>
-                            <td className="text-center border" colSpan={2}>
-                                <select
-                                    name="pangkat"
-                                    id="pangkat"
-                                    className="w-20 text-center rounded-md border-gradient"
-                                    defaultValue={data.pangkat}
-                                    onChange={(e) => {
-                                        setData("pangkat", e.target.value);
-                                    }}
-                                >
-                                    {angkaPangkat.map((angka) => (
-                                        <option value={angka}>{angka}</option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td className="text-center border" colSpan={2}>
-                                <select
-                                    name="jabatan"
-                                    id="jabatan"
-                                    className="w-20 text-center rounded-md border-gradient"
-                                    defaultValue={data.jabatan}
-                                    onChange={(e) => {
-                                        setData("jabatan", e.target.value);
-                                    }}
-                                >
-                                    {angkaJabatan.map((angka) => (
-                                        <option value={angka}>{angka}</option>
-                                    ))}
-                                </select>
-                            </td>
-                        </>
-                    ) : !data.pangkat && !data.jabatan ? (
-                        <div>Loading...</div>
-                    ) : (
-                        <>
-                            <td className="text-center border" colSpan={2}>
-                                <select
-                                    name="pangkat"
-                                    id="pangkat"
-                                    className="w-20 text-center rounded-md border-gradient"
-                                    defaultValue={String(data.pangkat)}
-                                    onChange={(e) => {
-                                        setData("pangkat", e.target.value);
-                                    }}
-                                >
-                                    {angkaPangkat.map((angka) => (
-                                        <option value={angka}>{angka}</option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td className="text-center border" colSpan={2}>
-                                <select
-                                    name="jabatan"
-                                    id="jabatan"
-                                    className="w-20 text-center rounded-md border-gradient"
-                                    defaultValue={data.jabatan}
-                                    onChange={(e) => {
-                                        setData("jabatan", e.target.value);
-                                    }}
-                                >
-                                    {angkaJabatan.map((angka) => (
-                                        <option value={angka}>{angka}</option>
-                                    ))}
-                                </select>
-                            </td>
-                        </>
-                    )}
+                    <td className="text-center border" colSpan={2}>
+                        <select
+                            name="pangkat"
+                            id="pangkat"
+                            className="w-20 text-center rounded-md border-gradient"
+                            // TODO: ubah ini nanti sesuai default_config
+                            defaultValue={100}
+                            {...(isEdit &&
+                                data.pangkat && {
+                                    value: data.pangkat,
+                                })}
+                            onChange={(e) => {
+                                setData("pangkat", parseInt(e.target.value));
+                            }}
+                        >
+                            {angkaPangkat.map((angka) => (
+                                <option value={angka}>{angka}</option>
+                            ))}
+                        </select>
+                    </td>
+                    <td className="text-center border" colSpan={2}>
+                        <select
+                            name="jabatan"
+                            id="jabatan"
+                            className="w-20 text-center rounded-md border-gradient"
+                            // TODO: ubah ini nanti sesuai default_config
+                            defaultValue={150}
+                            {...(isEdit &&
+                                data.jabatan && {
+                                    value: data.jabatan,
+                                })}
+                            onChange={(e) => {
+                                setData("jabatan", parseInt(e.target.value));
+                            }}
+                        >
+                            {angkaJabatan.map((angka) => (
+                                <option value={angka}>{angka}</option>
+                            ))}
+                        </select>
+                    </td>
                 </tr>
                 {/* row 8 */}
                 <tr className="space-x-0 text-xs font-semibold text-left capitalize border-separate text-slate-600">
@@ -653,7 +624,7 @@ export default function PAKTable({
                             }}
                         >
                             {kesimpulan.value.map((kesimpulan) => (
-                                <option >{kesimpulan}</option>
+                                <option>{kesimpulan}</option>
                             ))}
                         </select>
                     </td>
@@ -661,6 +632,58 @@ export default function PAKTable({
             </tbody>
             {/* Tebusan */}
             <tfoot>
+                {data.tebusan3
+                    .reduce((rows, item, index) => {
+                        const groupIndex = Math.floor(index / 2);
+                        if (!rows[groupIndex]) rows[groupIndex] = [];
+                        rows[groupIndex].push({ ...item, index });
+                        return rows;
+                    }, [])
+                    .map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                            {rowIndex === 0 && (
+                                <td
+                                    rowSpan={3}
+                                    colSpan={2}
+                                    className="text-lg border text-slate-700"
+                                >
+                                    Tebusan
+                                </td>
+                            )}
+
+                            {row.map((item) => (
+                                <td
+                                    key={item.index}
+                                    colSpan={2}
+                                    className="border-y"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="w-5 h-5 rounded-sm"
+                                        value={true}
+                                        checked={item.checked}
+                                        onChange={() => {
+                                            const updated = [...data.tebusan3];
+                                            updated[item.index].checked =
+                                                !updated[item.index].checked;
+                                            setData({
+                                                ...data,
+                                                tebusan3: updated,
+                                            });
+                                        }}
+                                    />
+                                    <InputLabel
+                                        htmlFor={`tebusan-${item.index}`}
+                                        className="inline-block ml-2 text-sm"
+                                        value={item.pihak_tebusan}
+                                    />
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+            </tfoot>
+
+            {/* <tfoot>
                 <tr>
                     <td
                         rowSpan={3}
@@ -815,7 +838,7 @@ export default function PAKTable({
                         />
                     </td>
                 </tr>
-            </tfoot>
+            </tfoot> */}
         </table>
     );
 }

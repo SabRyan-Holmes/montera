@@ -17,15 +17,15 @@ class AturanPAKController extends Controller
     {
         // IMPORTANT! Don't Touch this code !
         $aturan_pak = [
-            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first()->value,
+            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(['value', 'default_config']),
             'koefisienPertahun' => AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value,
             'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first()->value,
-            'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first()->value,
-            'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first()->value,
-            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
-            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first(['value', 'default_config']),
+            'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first(['value', 'default_config']),
+            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Konversi')->first()->value,
+            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
             'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
-            'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first()->value,
+            'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first(['value', 'default_config']),
             'rumus' => AturanPAK::where('name', 'Rumus')->first()->value,
         ];
 
@@ -135,6 +135,21 @@ class AturanPAKController extends Controller
         }
 
         return redirect()->back()->with('message', 'Berhasil Mengupdate Data!');
+    }
+
+    public function set_default_config(Request $request)
+    {
+        // dd($request->all());
+        if ($request->updateName && $request->value) {
+            $aturan = AturanPAK::where('name', $request->updateName)->first();
+
+            // Update database
+            $aturan->update([
+                'default_config' => $request->value
+            ]);
+            return redirect()->back()->with('message', 'Berhasil Mengupdate Default ' . $request->updateName . '!');
+        } else return redirect()->back()->withErrors('Gagal ');
+
     }
 
     /**

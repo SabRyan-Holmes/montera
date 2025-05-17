@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
-import UseAturanPenetapan from "./Partials/UseAturanPenetapan.1";
+import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
 
 export default function Index({
     auth,
@@ -35,6 +35,7 @@ export default function Index({
 }) {
     // =============================================================Aturan Penetapan==============================================
     const {
+        initialized,
         data,
         setData,
         post,
@@ -73,20 +74,20 @@ export default function Index({
                 // );
             }
         }
-    }, []);
+    }, [initialized]);
 
     // Kalo dpt nilai pegawai stelah dipilih
-    // useEffect(() => {
-    //     if (!isEdit && pegawai) {
-    //         // setData("pegawai", pegawai);
-    //         // setPegawaiState(pegawai);
-    //     }
+    useEffect(() => {
+        if (!isEdit && pegawai) {
+            setData("pegawai", pegawai);
+            setPegawaiState(pegawai);
+        }
 
-    //     return () => {
-    //         console.log('isi pegawai setelah dipilih pegawai')
-    //         console.log(pegawaiState)
-    //       }
-    // }, [pegawai]);
+        return () => {
+            // console.log('isi pegawai setelah dipilih pegawai')
+            // console.log(pegawaiState)
+          }
+    }, [pegawai]);
 
     // =============================================================Pop Up, Dialog SWAL==============================================
     const Toast = Swal.mixin({
@@ -168,7 +169,7 @@ export default function Index({
 
         // EDIT MODE
         if (isEdit && action === "update") {
-            console.log("isi Edit :", isEdit);
+            // console.log("isi Edit :", isEdit);
             let idRiwayatPAK = data.id;
             router.patch(
                 route("divisi-sdm.riwayat-pak.update", idRiwayatPAK),

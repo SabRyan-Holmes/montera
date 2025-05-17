@@ -1,5 +1,6 @@
 import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useRef, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function InputDataTable({ data,  setData, isEdit, historyData }) {
     const handleKeyPress = (e) => {
@@ -76,7 +77,6 @@ export default function InputDataTable({ data,  setData, isEdit, historyData }) 
                             <input
                                 type="month"
                                 name="periode_mulai"
-                                // { isEdit && 'defaultValue = historyData '}
                                 id="periode_mulai"
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                 defaultValue={defaultPeriodeMulai}
@@ -92,17 +92,10 @@ export default function InputDataTable({ data,  setData, isEdit, historyData }) 
 
                                     // Set min periode untuk untuk periode berakhir
                                     setMinPeriode(value);
-                                    // Memasukkan nilai bulan ke dalam state atau data
-
-                                    // setData("periode_mulai", periodeMulai);
-
-                                    // setData("tahun_ini", year);
+                                    // Memasukkan nilai bulan dan tahun ke dalam state atau data
                                     setData((data) => ({
                                         ...data,
                                         periode_mulai: periodeMulai,
-                                    }));
-                                    setData((data) => ({
-                                        ...data,
                                         tahun_periode: year,
                                     }));
                                 }}
@@ -127,18 +120,24 @@ export default function InputDataTable({ data,  setData, isEdit, historyData }) 
                                     const periodeBerakhir = parseInt(month, 10);
 
                                     if (year !== data.tahun_periode) {
-                                        alert(
-                                            "Tahun periode berakhir harus sama dengan periode mulai!"
-                                        );
+                                        Swal.fire({
+                                            icon: "warning",
+                                            iconColor: "#fb7185",
+                                            title: "Peringatan!",
+                                            text: "Tahun periode berakhir harus sama dengan periode mulai",
+                                            color: "#fb7185",
+                                            confirmButtonText: "Oke",
+                                            confirmButtonColor: "#2D95C9",
+                                        });
+                                        // alert(
+                                        //     "Tahun periode berakhir harus sama dengan periode mulai!"
+                                        // );
                                         e.target.value = ""; // Reset input jika tidak sesuai
                                     } else {
                                         // Jika tahun sama, masukkan nilai bulan ke dalam state atau data
                                         setData((data) => ({
                                             ...data,
                                             periode_berakhir: periodeBerakhir,
-                                        }));
-                                        setData((data) => ({
-                                            ...data,
                                             tahun_periode: year,
                                         }));
                                     }

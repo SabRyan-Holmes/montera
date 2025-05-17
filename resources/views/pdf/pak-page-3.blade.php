@@ -377,7 +377,53 @@
         <div
             style="padding-top:0px;
             {{ isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? 'margin-top: 7rem;' : 'margin-top: 0rem;' }}">
-            @if (count(array_filter($data['tebusan3'])) > 0)
+
+
+
+            @if (!empty($data['tebusan3']))
+                <div style="tebusan-container">
+                    <strong style="font-weight: 400;  max-width: 40%; word-wrap: break-word;">
+                        ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
+                    </strong>
+                    <strong style="font-weight: 400; margin-top: 0.4rem; display: block">
+                        Tembusan Disampaikan kepada:
+                    </strong>                    @php
+                        $tebusan_list = [
+                            'kepala_reg' => 'Kepala Kantor Regional VII BKN',
+                            'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
+                            'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
+                            'kepala_biro' => 'Kepala Biro SDM BPS',
+                            'pns' => 'PNS Bersangkutan',
+                            'arsip' => 'Arsip',
+                        ];
+
+                        $i = 1;
+
+                        // Cek tipe data tebusan3
+                        if (is_array($data['tebusan3']) && isset($data['tebusan3'][0]['pihak_tebusan'])) {
+                            // Format baru (array of objects)
+                            foreach ($data['tebusan3'] as $item) {
+                                if ($item['checked']) {
+                                    echo "<span style='display: block'>$i. {$item['pihak_tebusan']}</span>";
+                                    $i++;
+                                }
+                            }
+                        } else {
+                            // Format lama (associative array)
+                            foreach ($data['tebusan3'] as $key => $value) {
+                                if ($value && isset($tebusan_list[$key])) {
+                                    echo "<span style='display: block'>$i. {$tebusan_list[$key]}</span>";
+                                    $i++;
+                                }
+                            }
+                        }
+                    @endphp
+                </div>
+            @endif
+
+
+
+            {{-- @if (count(array_filter($data['tebusan3'])) > 0)
                 <div class="tebusan-container">
                     <strong style="font-weight: 400;  max-width: 40%; word-wrap: break-word;">
                         ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
@@ -403,7 +449,7 @@
                         @endif
                     @endforeach
                 </div>
-            @endif
+            @endif --}}
             <div class="signature-container" style="margin-top: 0.5rem;">
                 <strong>Ditetapkan di Jambi </strong>
                 <strong style="display:block;">

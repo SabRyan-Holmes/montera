@@ -131,8 +131,8 @@ export default function KonversiTable({
         setJabatanChanged(false); // Kembalikan status ke false
     };
 
-    console.log("data.ak_normatif");
-    console.log(data.ak_normatif);
+    console.log("Isi tebusan konversi");
+    console.log(tebusanKonversi);
 
     return (
         <table className="table text-base table-bordered">
@@ -146,7 +146,7 @@ export default function KonversiTable({
                 {/* row 1 */}
 
                 <tr>
-                    <td className="text-center uppercase border">
+                    <td className="text-center uppercase border" width="18.5%">
                         <strong>NOMOR SURAT</strong>
                     </td>
                     <td>
@@ -255,194 +255,74 @@ export default function KonversiTable({
 
                         {data.angka_kredit && !isNaN(data.angka_kredit)
                             ? data.angka_kredit
-                            : "0"}
+                            : "0.000"}
                     </td>
                 </tr>
 
-                <tr>
-                    <td rowSpan={3} className="text-lg font-semibold ">
-                        Tebusan
-                    </td>
+                {[...Array(Math.ceil(data.tebusan1.length / 2))].map(
+                    (_, rowIndex) => {
+                        const start = rowIndex * 2;
+                        const items = tebusanKonversi.slice(start, start + 2);
 
-                    {/* {tebusanKonversi.map((data, index) => (
-                        <td key={index} className="border">
-                            <input
-                                type="checkbox"
-                                value={true}
-                                className="w-5 h-5 rounded-sm"
-                                defaultChecked={
-                                    isEdit && historyData.tebusan1.checked
-                                }
-                                onChange={() => {
-                                    // Salin array-nya dulu biar tidak langsung mutate state
-                                    const updatedTebusan = [...data.tebusan1];
-                                    updatedTebusan[index] = {
-                                        ...item,
-                                        checked: !item.checked,
-                                    };
+                        return (
+                            <tr key={rowIndex}>
+                                {/* Kolom "Tebusan" hanya ditampilkan di baris pertama dengan rowSpan dinamis */}
+                                {rowIndex === 0 && (
+                                    <td
+                                        rowSpan={Math.ceil(
+                                            tebusanKonversi.length / 2
+                                        )}
+                                        className="text-lg font-semibold"
+                                    >
+                                        Tebusan
+                                    </td>
+                                )}
+                                {/* ANCHOR */}
+                                {items.map((item, colIndex) => {
+                                    const globalIndex = start + colIndex;
+                                    // console.log(item)
+                                    return (
+                                        <td
+                                            key={globalIndex}
+                                            className="border"
+                                            colSpan={colIndex === 1 ? 2 : 1}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                id={`tebusan-${globalIndex}`} // Tambahkan ID                                                className="w-5 h-5 rounded-sm"
+                                                checked={item.checked}
+                                                onChange={() => {
+                                                    const updated = [
+                                                        ...data.tebusan1,
+                                                    ];
+                                                    updated[
+                                                        globalIndex
+                                                    ].checked =
+                                                        !updated[globalIndex]
+                                                            .checked;
+                                                    setData(
+                                                        "tebusan1",
+                                                        updated
+                                                    );
+                                                }}
+                                            />
+                                            <InputLabel
+                                                htmlFor={`tebusan-${globalIndex}`} // Tambahkan ID
+                                                className="inline-block ml-2 text-sm"
+                                                value={item}
+                                            />
+                                        </td>
+                                    );
+                                })}
 
-                                    setData({
-                                        ...data,
-                                        tebusan1: updatedTebusan,
-                                    });
-                                }}
-                            />
-                            <InputLabel
-                                forName={data.pihak_tebusan}
-                                className="inline-block ml-2 text-sm"
-                                value={data.pihak_tebusan}
-                            />
-                        </td>
-                    ))} */}
-
-                    <td className="border">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan1["kepala_reg"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan1;
-                                newData["kepala_reg"] = !newData["kepala_reg"];
-                                setData({
-                                    ...data,
-                                    tebusan1: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="kepala_reg"
-                            className="inline-block ml-2 text-sm"
-                            value="Kepala Kantor Regional VII BKN"
-                        />
-                    </td>
-
-                    <td colSpan={2} className="border ">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan1["sekretaris"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan1;
-                                newData["sekretaris"] = !newData["sekretaris"];
-                                setData({
-                                    ...data,
-                                    tebusan1: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="sekretaris"
-                            className="inline-block ml-2 text-sm"
-                            value="Sekretaris Tim Penilai Yang Bersangkutan"
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td className="border">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan1["kepala_bps"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan1;
-                                newData["kepala_bps"] = !newData["kepala_bps"];
-                                setData({
-                                    ...data,
-                                    tebusan1: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="kepala_bps"
-                            className="inline-block ml-2 text-sm"
-                            value="Kepala BPS Kabupaten/Kota"
-                        />
-                    </td>
-                    <td className="border" colSpan={2}>
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan1["pns"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan1;
-                                newData["pns"] = !newData["pns"];
-                                setData({
-                                    ...data,
-                                    tebusan1: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="pns"
-                            className="inline-block ml-2 text-sm"
-                            value="PNS Bersangkutan"
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td className="border">
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan1["kepala_biro"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan1;
-                                newData["kepala_biro"] =
-                                    !newData["kepala_biro"];
-                                setData({
-                                    ...data,
-                                    tebusan1: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="kepala_biro"
-                            className="inline-block ml-2 text-sm"
-                            value="Kepala Biro SDM BPS"
-                        />
-                    </td>
-                    <td className="border" colSpan={2}>
-                        <input
-                            type="checkbox"
-                            value={true}
-                            className="w-5 h-5 rounded-sm"
-                            defaultChecked={
-                                isEdit && historyData.tebusan1["arsip"]
-                            }
-                            onChange={() => {
-                                const newData = data.tebusan1;
-                                newData["arsip"] = !newData["arsip"];
-                                setData({
-                                    ...data,
-                                    tebusan1: newData,
-                                });
-                            }}
-                        />
-                        <InputLabel
-                            htmlFor="arsip"
-                            className="inline-block ml-2 text-sm"
-                            value="Arsip"
-                        />
-                    </td>
-                </tr>
-
-                {/* ------------- */}
+                                {/* Jika jumlahnya ganjil, isi 1 kolom kosong biar tetap rapi */}
+                                {items.length === 1 && (
+                                    <td className="border" colSpan={2}></td>
+                                )}
+                            </tr>
+                        );
+                    }
+                )}
             </tbody>
         </table>
     );

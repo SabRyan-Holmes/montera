@@ -1,9 +1,8 @@
 import { useForm } from "@inertiajs/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
-
-
+    const [initialized, setInitialized] = useState(false);
     const { data, setData, post, processing, errors, reset, setDefaults } =
         useForm({
             // Kalo Edit Ini langsungg terisi dengan useEffect
@@ -26,59 +25,15 @@ export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
             angka_kredit: 0,
             ak_normatif_ops: 0,
 
-            // tebusan1: {
-            //     kepala_reg: false,
-            //     sekretaris: false,
-            //     kepala_bps: false,
-            //     pns: false,
-            //     kepala_biro: false,
-            //     arsip: false,
-            // },
-
             tebusan1: [{}],
-            // Next PAK LEBIH DINAMIS
-            // Versi lebih dinamis Pihak Tebusan & Checked
-            // tebusan1:[
-            //     {
-            //         "pihak_tebusan" :'Kepala Kantor Regional VII BKN',
-            //         'checked' : false
-            //     },
-            //     {
-            //         "pihak_tebusan" :'Sekretaris Tim Penilai Yang Bersangkutan',
-            //         'checked' : false
-            //     },
-            //     {
-            //         "pihak_tebusan" :'Kepala BPS Kabupaten/Kota',
-            //         'checked' : false
-            //     },
-            //     {
-            //         "pihak_tebusan" :'PNS Bersangkutan',
-            //         'checked' : false
-            //     },
-            //     {
-            //         "pihak_tebusan" :'Kepala Biro SDM BPS',
-            //         'checked' : false
-            //     },
-            //     {
-            //         "pihak_tebusan" :'Kepala Biro SDM BPS',
-            //         'checked' : false
-            //     },
-            // ],
 
             no_surat2: "",
             ak_terakhir: 0,
             jumlah_ak_kredit: 0,
-            tahun_terakhir: "",
-            tahun_ini: "",
+            tahun_terakhir: 2024,
+            tahun_ini: 2025,
 
-            tebusan2: {
-                kepala_reg: false,
-                sekretaris: false,
-                kepala_bps: false,
-                pns: false,
-                kepala_biro: false,
-                arsip: false,
-            },
+            tebusan2: [{}],
 
             no_surat3: "",
             ak_dasar: {
@@ -120,19 +75,12 @@ export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
             ak_tipe_tambahan: {},
             jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
 
-            pangkat: "",
-            jabatan: "",
+            pangkat: Int32Array,
+            jabatan: Int32Array,
             pangkat_keker: "",
             jabatan_keker: "",
 
-            tebusan3: {
-                kepala_reg: false,
-                sekretaris: false,
-                kepala_bps: false,
-                pns: false,
-                kepala_biro: false,
-                arsip: false,
-            },
+            tebusan3: [{}],
             kesimpulan:
                 "Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi",
         });
@@ -143,19 +91,37 @@ export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
         let defaultPenandaTangan =
             aturanPAK.penandaTangan.value[defaultConfigPT - 1]; //tambah 1 karna indeks array dimulai dari 0
 
-        const tebusanKonversiDefault = aturanPAK.tebusanKonversi.map(item => ({
-            pihak_tebusan: item.pihak_tebusan,
-            checked: false
-        }));
+        const makeDefaultTebusan = (list) =>
+            list.map((item) => ({
+                pihak_tebusan: item.pihak_tebusan,
+                checked: false,
+            }));
+
+        const tebusanKonversiDefault = makeDefaultTebusan(
+            aturanPAK.tebusanKonversi
+        );
+        const tebusanAkumulasiDefault = makeDefaultTebusan(
+            aturanPAK.tebusanAkumulasi
+        );
+        const tebusanPenetapanDefault = makeDefaultTebusan(
+            aturanPAK.tebusanPenetapan
+        );
 
         setData({
             ...data,
             nama: defaultPenandaTangan.nama,
             nip: defaultPenandaTangan.nip,
-            tebusan1: tebusanKonversiDefault
+            tebusan1: tebusanKonversiDefault,
+            tebusan2: tebusanAkumulasiDefault,
+            tebusan3: tebusanPenetapanDefault,
         });
 
+        // Set flag bahwa inisialisasi selesai
+        setInitialized(true);
     }, []);
+
+    console.log("isi Data");
+    console.log(data);
 
     // PREDIKAT
     const predikatPresentase = aturanPAK.predikatPresentase.reduce(
@@ -234,10 +200,11 @@ export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
         tebusanPenetapan,
         kesimpulan,
     };
-    console.log("isi aturanPAK");
-    console.log(aturanPAK);
-    console.log("isi aturanPAKTableProps");
-    console.log(aturanPAKTableProps);
+
+    // console.log("isi aturanPAK");
+    // console.log(aturanPAK);
+    // console.log("isi aturanPAKTableProps");
+    // console.log(aturanPAKTableProps);
 
     // console.log("isi keofisienPertahun");
     // console.log("isi predikat");
@@ -245,6 +212,7 @@ export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
     // console.log("isi keofisienPertahun");
     // console.log(koefisienPertahun);
     return {
+        initialized,
         data,
         setData,
         post,

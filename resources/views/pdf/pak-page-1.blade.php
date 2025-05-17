@@ -315,9 +315,10 @@
                             }
                         }
                     @endphp
-
-                    {{-- KODE LAMA --}}
-                    {{-- @if (count(array_filter($data['tebusan1'])) > 0)
+                </div>
+            @endif
+            {{-- KODE LAMA --}}
+            {{-- @if (count(array_filter($data['tebusan1'])) > 0)
                 <div style="margin-top:12rem; font-size: 15px">
                     <strong style="font-weight: 400;">Tembusan Disampaikan kepada :</strong>
                     @php
@@ -339,8 +340,7 @@
                     @endforeach
                 </div>
             @endif --}}
-                </div>
-            @endif
+
 
 
         </div>

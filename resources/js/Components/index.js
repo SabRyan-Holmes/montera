@@ -28,6 +28,7 @@ import useFilterSearch from "./UseFilterSearch";
 import InputLabelCustom from "./InputLabelCustom.jsx";
 import RadioWithLabel from "./Forms/RadioWithLabel";
 import FileInput from "./Forms/FileInput";
+import RadioWithEditableLabel from "./Forms/RadioEditableLabel";
 
 export {
     ApplicationLogo,
@@ -59,5 +60,6 @@ export {
     useFilterSearch,
     InputLabelCustom,
     RadioWithLabel,
-    FileInput
+    FileInput,
+    RadioWithEditableLabel,
 };
