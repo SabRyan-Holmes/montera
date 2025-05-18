@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('catatans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->string('nip', 18)->nullable(); // Catatn oleh pegawai
+            $table->foreign('nip')->references('NIP')->on('pegawais')->onDelete('cascade');
+
             $table->enum('tipe', [
                 'PengusulanPAK',
                 'ProsesPAK',
@@ -25,7 +29,6 @@ return new class extends Migration
             $table->longText('isi');
             // Metadata tambahan
             $table->string('judul', 150)->nullable();
-            $table->foreignId('user_id')->constrained('users');
             // Untuk tracking penting/tidak
             // Status baca
             $table->boolean('sudah_dibaca')->default(false);

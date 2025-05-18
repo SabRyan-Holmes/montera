@@ -15,10 +15,9 @@ return new class extends Migration
     {
         Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('riwayat_pak_id');
-            $table->foreign('riwayat_pak_id')->references('id')->on('riwayat_pak')->onDelete('cascade');
-            $table->unsignedBigInteger('pegawai_id');
-            $table->foreign('pegawai_id')->references('id')->on('pegawais')->onDelete('cascade');
+            $table->foreignId('riwayat_pak_id')->constrained('riwayat_pak')->onDelete('cascade');
+            $table->foreignId('pegawai_id')->constrained('pegawais')->onDelete('cascade');
+
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             // mungkin sebaiknya field "diajukan oleh(foreignId User(divisiSDM)) sebaikny juga ditambahkan
             $table->unsignedBigInteger('pengaju_id');

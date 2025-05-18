@@ -19,12 +19,12 @@ class AturanPAKController extends Controller
         $aturan_pak = [
             'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(['value', 'default_config']),
             'koefisienPertahun' => AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value,
-            'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first()->value,
+            'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first(['value', 'default_config']),
             'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first(['value', 'default_config']),
             'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first(['value', 'default_config']),
-            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Konversi')->first()->value,
-            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
-            'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
+            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Konversi')->first(['value', 'default_config']),
+            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first(['value', 'default_config']),
+            'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first(['value', 'default_config']),
             'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first(['value', 'default_config']),
             'rumus' => AturanPAK::where('name', 'Rumus')->first()->value,
         ];
@@ -140,16 +140,130 @@ class AturanPAKController extends Controller
     public function set_default_config(Request $request)
     {
         // dd($request->all());
-        if ($request->updateName && $request->value) {
-            $aturan = AturanPAK::where('name', $request->updateName)->first();
+        $request->validate([
+            'updateName' => 'required|string',
+            'value' => 'required'
+        ]);
 
+        // TODO buaat pengecekan dan logika lain jika updateName mengandung kata 'Tebusan'
+        // Handle khusus tebusan
+        $aturan = AturanPAK::where('name', $request->updateName)->firstOrFail();
+        if (str_contains($request->updateName, 'Tebusan')) {
+            $input = json_decode($request->value, true);
+            $currentConfig = $aturan->default_config ?: [];
+
+            // Konversi ke array jika berupa JSON string
+            $currentConfig = is_array($currentConfig) ? $currentConfig : json_decode($currentConfig, true);
+
+            // Toggle status
+            $updatedConfig = array_map(function($item) use ($input) {
+                if ($item['id'] == $input['id']) {
+                    $item['checked'] = !$item['checked'];
+                }
+                return $item;
+            }, $currentConfig);
+
+            $aturan->update(['default_config' => $updatedConfig]);
+            redirect()->back();
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Status tebusan berhasil diupdate',
+            //     'data' => $updatedConfig
+            // ]);
+        } else
             // Update database
             $aturan->update([
                 'default_config' => $request->value
             ]);
             return redirect()->back()->with('message', 'Berhasil Mengupdate Default ' . $request->updateName . '!');
-        } else return redirect()->back()->withErrors('Gagal ');
+        // } else return redirect()->back()->withErrors('Gagal ');
+    }
 
+    // public function set_default_config(Request $request)
+    // {
+    //     $request->validate([
+    //         'updateName' => 'required|string',
+    //         'value' => 'required'
+    //     ]);
+
+    //     $aturan = AturanPAK::where('name', $request->updateName)->firstOrFail();
+
+    //     // Handle khusus tebusan
+    //     if (str_contains($request->updateName, 'Tebusan')) {
+    //         $input = json_decode($request->value, true);
+    //         $currentConfig = $aturan->default_config ?: [];
+
+    //         // Konversi ke array jika berupa JSON string
+    //         $currentConfig = is_array($currentConfig) ? $currentConfig : json_decode($currentConfig, true);
+
+    //         // Toggle status
+    //         $updatedConfig = array_map(function($item) use ($input) {
+    //             if ($item['id'] == $input['id']) {
+    //                 $item['checked'] = !$item['checked'];
+    //             }
+    //             return $item;
+    //         }, $currentConfig);
+
+    //         $aturan->update(['default_config' => $updatedConfig]);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Status tebusan berhasil diupdate',
+    //             'data' => $updatedConfig
+    //         ]);
+    //     }
+
+    //     // Handle normal (integer)
+    //     $aturan->update([
+    //         'default_config' => $request->value
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Default config berhasil diupdate'
+    //     ]);
+    // }
+
+    protected function handleTebusanConfig($currentConfig, $selectedId, $aturanPAK)
+    {
+        // Convert to array jika berupa JSON string
+        $config = is_array($currentConfig) ? $currentConfig : json_decode($currentConfig, true);
+
+        // Dapatkan semua id yang valid dari value AturanPAK
+        $validIds = collect($aturanPAK->value)->pluck('id')->toArray();
+
+        // Inisialisasi config jika kosong atau tidak sesuai
+        if (empty($config) || count($config) !== count($validIds)) {
+            $config = array_map(function ($id) {
+                return ['id' => $id, 'checked' => false];
+            }, $validIds);
+        }
+        // Toggle status checked untuk id yang dipilih
+
+        // Toggle status checked untuk id yang dipilih
+        foreach ($config as &$item) {
+            if ($item['id'] == $selectedId) {
+                $item['checked'] = !$item['checked'];
+                break;
+            }
+        }
+        // $updated = false;
+        // foreach ($config as &$item) {
+        //     if ($item['id'] == $selectedId) {
+        //         $item['checked'] = !$item['checked']; // Toggle true/false
+        //         $updated = true;
+        //     }
+        // }
+
+        // // Jika ID baru, tambahkan entry
+        // if (!$updated) {
+        //     $config[] = [
+        //         'id' => $selectedId,
+        //         'checked' => true
+        //     ];
+        // }
+
+        return $config;
     }
 
     /**

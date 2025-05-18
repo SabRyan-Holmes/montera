@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('riwayat_karirs', function (Blueprint $table) {
             $table->id();
-            $table->string('pegawai_nip'); // Referensi pegawai
+            $table->string('nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
+            $table->foreign('nip')->references('NIP')->on('pegawais')->onDelete('cascade');
+
             $table->date('tanggal_perubahan');
             $table->string('jenis_perubahan'); // jabatan, pangkat, unit, gelar, dll
             $table->string('nilai_lama')->nullable();
             $table->string('nilai_baru');
-            $table->string('updated_by')->nullable(); // Nama user yang ubah
+
+            $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
+
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

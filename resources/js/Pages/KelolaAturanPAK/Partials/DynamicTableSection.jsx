@@ -27,6 +27,69 @@ export default function DynamicTableSection({
         value: defaultConfig || "", // Langsung isi dengan defaultConfig
     });
 
+    // Cek apakah item aktif (untuk tebusan)
+    const isTebusanActive = (itemId) => {
+
+
+        // Saya ga ngerti kode diabwah, tapi kayny pengecekanny salah
+        // if (!title.includes("Tebusan")) return false;
+
+        // const tebusanConfig = data.find(
+        //     (d) => d.name === title
+        // )?.default_config;
+        // if (!tebusanConfig) return false;
+
+        // return tebusanConfig.some(
+        //     (config) => config.id === itemId && config.checked
+        // );
+    };
+
+    // Cek default config (untuk non-tebusan)
+    const isDefault = (itemId) => {
+        return itemId == defaultConfig;
+    };
+
+    const handleSetDefaultTebusan = async (id) => {
+        if (!id) return;
+
+        try {
+            const isTebusan = title.includes('Tebusan');
+            const payload = {
+                updateName: title,
+                value: isTebusan ? JSON.stringify({ id: id, toggle: true }) : id,
+                _token: document.querySelector('meta[name="csrf-token"]').content
+            };
+
+            // Membuat headers secara dinamis berdasarkan isTebusan
+            const headers = {
+                'Accept': 'application/json'
+            };
+
+            // Hanya tambahkan Content-Type jika isTebusan true
+            if (isTebusan) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const response = await router.post(
+                route("divisi-sdm.aturan-pak.set-default-config"),
+                payload,
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    headers: headers // Gunakan headers yang sudah dibuat
+                }
+            );
+
+            if (response?.data?.success) {
+                await refreshData();
+                Swal.fire('Berhasil!', response.data.message, 'success');
+            }
+        } catch (err) {
+            Swal.fire('Gagal!', err.response?.data?.message || 'Terjadi kesalahan', 'error');
+        }
+    };
+
+
     const handleSetDefault = async (id) => {
         if (!id) {
             console.error("ID tidak valid:", id);
@@ -125,7 +188,8 @@ export default function DynamicTableSection({
                                     {columns.map((col, idx) => (
                                         <td
                                             onClick={() =>
-                                                item.id &&
+                                                item.id && title.includes("Tebusan") ?
+                                                handleSetDefaultTebusan(item.id) :
                                                 handleSetDefault(item.id)
                                             }
                                             key={idx}
@@ -135,17 +199,42 @@ export default function DynamicTableSection({
                                                     ? "font-semibold text-center "
                                                     : "font-semibold ") +
                                                 (defaultConfig &&
-                                                    "hover:text-secondary hover:bg-secondary/15")
+                                                    "hover:text-secondary hover:bg-secondary/15 ") +
+                                                (title.includes("Tebusan")
+                                                    ? isTebusanActive(item.id)
+                                                        ? "bg-blue-50"
+                                                        : "bg-slate-600"
+                                                    : isDefault(item.id)
+                                                    ? "bg-green-50"
+                                                    : "")
                                             }
                                         >
-                                            {col.percent
-                                                ? `${item[col.field]}%`
-                                                : item[col.field]}
-                                            {item.id == defaultConfig && (
-                                                <>
-                                                    <span className="badge-optional">
-                                                        Default
+                                            {/* Conditional rendering yang benar */}
+                                            {/* ANCHOR */}
+                                            {title.includes("Tebusan") ? (
+                                                <div className="flex items-center gap-2">
+                                                    <span>
+                                                        {item.pihak_tebusan} {isTebusanActive(item.id)}
                                                     </span>
+                                                    {isTebusanActive(
+                                                        item.id
+                                                    ) && (
+                                                        <span className="text-white bg-green-500 badge">
+                                                            Aktif
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    {col.percent
+                                                        ? `${item[col.field]}%`
+                                                        : item[col.field]}
+                                                    {item.id ==
+                                                        defaultConfig && (
+                                                        <span className="badge-optional">
+                                                            Default
+                                                        </span>
+                                                    )}
                                                 </>
                                             )}
                                             <TooltipHover

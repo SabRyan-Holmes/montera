@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
 
             // Jika login via SSO (pegawai) maka gunakan NIP
-            $table->string('nip')->nullable()->index();
+            $table->string('nama_pegawai')->nullable()->index();
+            $table->string('nip_pegawai')->nullable()->index();
 
             $table->string('aktivitas'); // Misal: "Mengunduh File PAK"
             $table->string('model')->nullable(); // Misal: App\Models\Pak

@@ -40,22 +40,6 @@ export default function Index({ auth, title, flash, aturanPAK }) {
         kesimpulan,
         rumus,
     } = aturanPAK;
-
-    // const [shownMessages, setShownMessages] = useRemember([]);
-    // useEffect(() => {
-    //     if (flash.message && !shownMessages.includes(flash.message)) {
-    //         Swal.fire({
-    //             title: "Berhasil!",
-    //             text: `${flash.message}`,
-    //             icon: "success",
-    //             iconColor: "#50C878",
-    //             confirmButtonText: "Oke",
-    //             confirmButtonColor: "#2D95C9",
-    //         });
-    //         setShownMessages([...shownMessages, flash.message]);
-    //     }
-    // }, [flash.message]);
-    // 1. Gunakan useRef untuk tracking pesan yang sudah ditampilkan
     const shownMessages = useRef(new Set());
 
     useEffect(() => {
@@ -141,8 +125,8 @@ export default function Index({ auth, title, flash, aturanPAK }) {
     // ANCHOR : Logic & Function Here!
 
     // Handle Default Penanda Tangan(change config)
-    // const [namaPT, setNamaPT] = useState([]);
     const { data, setData, post, processing, errors, reset } = useForm({
+        updateName: '', // Tambahkan field untuk selected ID
         selectedPTId: null, // Tambahkan field untuk selected ID
     });
 
@@ -153,31 +137,9 @@ export default function Index({ auth, title, flash, aturanPAK }) {
         }
     }, [aturanPAK]);
 
-    const handleSelectPT = (id) => {
-        setData("selectedPTId", id);
-    };
-
-    // Pastikan form memiliki handler submit dan prevent default
-    const handleSubmit = (e, updateName) => {
-        console.log("updateName");
-        console.log(updateName);
-        // let field = `${updateName}-${data.value}`
-        setData({
-            ...data,
-            value: data.selectedPTId,
-            updateName: updateName,
-        });
-        e.preventDefault();
-        post(route("divisi-sdm.aturan-pak.set-default-config"), {
-            preserveState: true,
-            preserveScroll: true,
-        });
-        // Logika submit...
-    };
-
     // Console
-    console.log("data");
-    console.log(data);
+    // console.log("data");
+    // console.log(data);
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto content-normal justify-items-center text-slate-600 px-7">
@@ -488,7 +450,8 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                                 center: true,
                             },
                         ]}
-                        data={predikatPresentase}
+                        data={predikatPresentase.value}
+                        defaultConfig={predikatPresentase.default_config}
                         onAdd={() => {
                             setPopUpData({
                                 title: "Predikat & Presentase",
@@ -545,7 +508,7 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                                 },
                             ]}
                             data={pangkat.value}
-                            defaultConfig ={pangkat.default_config}
+                            defaultConfig={pangkat.default_config}
                             onAdd={() => {
                                 setPopUpData({
                                     title: "Angka Minimal Pangkat",
@@ -586,7 +549,7 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                                 },
                             ]}
                             data={jabatan.value}
-                            defaultConfig ={jabatan.default_config}
+                            defaultConfig={jabatan.default_config}
                             onAdd={() => {
                                 setPopUpData({
                                     title: "Angka Minimal Jabatan",
@@ -648,7 +611,8 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                                         width: "60%",
                                     },
                                 ]}
-                                data={tebusanKonversi}
+                                data={tebusanKonversi.value}
+                                defaultConfig={tebusanKonversi.default_config}
                                 onAdd={() => {
                                     setPopUpData({
                                         title: "Tebusan Konversi",
@@ -692,7 +656,8 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                                         width: "60%",
                                     },
                                 ]}
-                                data={tebusanAkumulasi}
+                                data={tebusanAkumulasi.value}
+                                defaultConfig={tebusanAkumulasi.default_config}
                                 onAdd={() => {
                                     setPopUpData({
                                         title: "Tebusan Akumulasi",
@@ -736,7 +701,8 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                                         width: "60%",
                                     },
                                 ]}
-                                data={tebusanPenetapan}
+                                data={tebusanPenetapan.value}
+                                defaultConfig={tebusanPenetapan.default_config}
                                 onAdd={() => {
                                     setPopUpData({
                                         title: "Tebusan Penetapan",
@@ -783,8 +749,7 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                             },
                         ]}
                         data={kesimpulan.value}
-                        defaultConfig ={kesimpulan.default_config}
-
+                        defaultConfig={kesimpulan.default_config}
                         onAdd={() => {
                             setPopUpData({
                                 title: "Kesimpulan",

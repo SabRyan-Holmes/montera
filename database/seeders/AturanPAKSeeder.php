@@ -110,6 +110,7 @@ class AturanPAKSeeder extends Seeder
                     "updated_at" => $timestamp,
                 ],
             ],
+            'default_config' => 4
         ]);
 
         AturanPAK::create([
@@ -141,7 +142,7 @@ class AturanPAKSeeder extends Seeder
                 ["id" => 7, "angka" => 300, "updated_at" => $timestamp],
                 ["id" => 8, "angka" => 450, "updated_at" => $timestamp],
                 ["id" => 9, "angka" => 600, "updated_at" => $timestamp],
-            ],
+        ],
             'default_config' => 4
 
         ]);
@@ -156,6 +157,32 @@ class AturanPAKSeeder extends Seeder
                 ["id" => 5, "pihak_tebusan" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
                 ["id" => 6, "pihak_tebusan" => 'Arsip', "updated_at" => $timestamp],
             ],
+            'default_config' => [
+                [
+                    'id' => 1,
+                    'checked' => false
+                ],
+                [
+                    'id' => 2,
+                    'checked' => false
+                ],
+                [
+                    'id' => 3,
+                    'checked' => false
+                ],
+                [
+                    'id' => 4,
+                    'checked' => false
+                ],
+                [
+                    'id' => 5,
+                    'checked' => false
+                ],
+                [
+                    'id' => 6,
+                    'checked' => false
+                ],
+            ]
         ]);
 
         AturanPAK::create([
@@ -168,6 +195,32 @@ class AturanPAKSeeder extends Seeder
                 ["id" => 5, "pihak_tebusan" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
                 ["id" => 6, "pihak_tebusan" => 'Arsip', "updated_at" => $timestamp],
             ],
+            'default_config' => [
+                [
+                    'id' => 1,
+                    'checked' => false
+                ],
+                [
+                    'id' => 2,
+                    'checked' => false
+                ],
+                [
+                    'id' => 3,
+                    'checked' => false
+                ],
+                [
+                    'id' => 4,
+                    'checked' => false
+                ],
+                [
+                    'id' => 5,
+                    'checked' => false
+                ],
+                [
+                    'id' => 6,
+                    'checked' => false
+                ],
+            ]
         ]);
 
         AturanPAK::create([
@@ -180,6 +233,32 @@ class AturanPAKSeeder extends Seeder
                 ["id" => 5, "pihak_tebusan" => 'Kepala Biro SDM BPS', "updated_at" => $timestamp],
                 ["id" => 6, "pihak_tebusan" => 'Arsip', "updated_at" => $timestamp],
             ],
+            'default_config' => [
+                [
+                    'id' => 1,
+                    'checked' => false
+                ],
+                [
+                    'id' => 2,
+                    'checked' => false
+                ],
+                [
+                    'id' => 3,
+                    'checked' => false
+                ],
+                [
+                    'id' => 4,
+                    'checked' => false
+                ],
+                [
+                    'id' => 5,
+                    'checked' => false
+                ],
+                [
+                    'id' => 6,
+                    'checked' => false
+                ],
+            ]
         ]);
 
         AturanPAK::create([
