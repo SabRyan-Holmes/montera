@@ -37,22 +37,7 @@ export default function Index({
     byJabatanReq: initialJabatan,
 }) {
     // ===========================================Pagination===========================================
-    // Invoke when user click to request another page.
-    const handlePageClick = (event) => {
-        const selectedPage = event.selected + 1;
-        const newOffset = (selectedPage - 1) * pegawais.per_page;
-        router.get(
-            `divisi-sdm/pengajuan`,
-            { page: selectedPage, byJabatan, byDaerah, search },
-            {
-                replace: true,
-                preserveState: true,
-                onSuccess: () => {
-                    setItemOffset(newOffset); // Update the offset after successful page load
-                },
-            }
-        );
-    };
+
 
     // ===========================================Handling Pop Up,Dialog & Message===========================================
     // SWAL POP UP
@@ -151,8 +136,8 @@ export default function Index({
             }
         });
     };
-    console.log("activeModalId");
-    console.log(activeModalId);
+    // console.log("activeModalId");
+    // console.log(activeModalId);
 
     // ===========================================Handling Search & Filter===========================================
     const {

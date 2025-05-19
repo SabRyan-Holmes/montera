@@ -7,8 +7,9 @@ import { RiLoader2Fill } from "react-icons/ri";
 import { TbEyeCheck } from "react-icons/tb";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
-import { Link, useRemember } from "@inertiajs/react";
+import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
+import ModalCekValidasi from "./Partials/ModalCekValidasi";
 
 export default function Index({
     auth,
@@ -35,11 +36,111 @@ export default function Index({
         }
     }, [flash.message]);
 
+    // SWAL POP UP
+    const [modalMessage, setModalMessage] = useState(null);
+    const [activeModalId, setActiveModalId] = useState(null);
+    // Cek message dan status modal
+    useEffect(() => {
+        if (flash.message) {
+            if (activeModalId !== null) {
+                Swal.fire({
+                    target: `#DialogCekValidasi-${activeModalId}`,
+                    title: "Berhasil!",
+                    text: `${flash.message}`,
+                    icon: "success",
+                    iconColor: "#50C878",
+                    confirmButtonText: "Oke",
+                    confirmButtonColor: "#2D95C9",
+                });
+                // Kirim pesan ke modal tertentu saja
+                setModalMessage(flash.message);
+            } else {
+                // Tampilkan Swal global
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: `${flash.message}`,
+                    icon: "success",
+                    iconColor: "#50C878",
+                    confirmButtonText: "Oke",
+                    confirmButtonColor: "#2D95C9",
+                });
+            }
+
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
+        }
+    }, [flash.message, activeModalId]);
+
+    // Cancel penagjaun dari divisi SDM
+    const handleCancel = (id) => {
+        Swal.fire({
+            icon: "warning",
+            text: "Anda yakin ingin membatalkan pengajuan PAK ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route("divisi-sdm.pengajuan.cancel", id), {
+                    onSuccess: () => {
+                        //
+                    },
+                    onError: () => {
+                        console.log("Gagal Menghapus Data");
+                    },
+                });
+            }
+        });
+    };
+
+    const handleReject = (id) => {
+        console.log("isi id di handleReject");
+        console.log(id);
+        Swal.fire({
+            icon: "warning",
+            text: "Anda yakin ingin menolak pengajuan ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post(route("pimpinan.pengajuan.reject", id), {
+                    onSuccess: () => {
+                        //
+                    },
+                    onError: () => {
+                        console.log("Gagal Menolak Pengajuan");
+                    },
+                });
+            }
+        });
+    };
+    console.log("activeModalId");
+    console.log(activeModalId);
+
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
                 <div className="flex items-center justify-between">
                     <FilterSearchPegawai />
+                    {!canValidate && (
                         <Link
                             as="button"
                             href={route("pegawai.pengusulan-pak.create")}
@@ -48,6 +149,7 @@ export default function Index({
                             Tambah
                             <IoMdAdd className="w-6 h-6" />
                         </Link>
+                    )}
                 </div>
 
                 <div className="pt-3 ">
@@ -124,9 +226,8 @@ export default function Index({
                                 </tr>
                             </thead>
                             <tbody>
-                                {
-                                    pengusulanPAK.data?.map((data, i) =>  (
-                                        <tr>
+                                {pengusulanPAK.data?.map((data, i) => (
+                                    <tr>
                                         <td>1</td>
                                         <td>
                                             <strong>{data.pegawai.Nama}</strong>
@@ -138,7 +239,11 @@ export default function Index({
                                         <td>{data.periode_penilaian}</td>
                                         <td>{data.jumlah_ak_terakhir}</td>
                                         <td>{data.jumlah_ak_diajukan}</td>
-                                        <td>{data.dokumen_pendukung_path ? 'Ada' : 'Tidak ADa'}</td>
+                                        <td>
+                                            {data.dokumen_pendukung_path
+                                                ? "Ada"
+                                                : "Tidak ADa"}
+                                        </td>
                                         <td className="p-0 m-0">
                                             <button
                                                 disabled
@@ -151,38 +256,36 @@ export default function Index({
                                         <td className="text-center whitespace-nowrap text-nowrap">
                                             {canValidate ? (
                                                 <>
-                                                    {/* <ModalCekValidasi
-                                                            pengajuan={
-                                                                pengajuan
-                                                            }
-                                                            setActiveModalId={setActiveModalId}
-                                                            message={
-                                                                modalMessage
-                                                            }
-                                                        /> */}
+                                                    <ModalCekValidasi
+                                                        pengusulanPAK={data}
+                                                        setActiveModalId={
+                                                            setActiveModalId
+                                                        }
+                                                        message={modalMessage}
+                                                    />
                                                     <button
                                                         className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
-                                                        // onClick={() => {
-                                                        //     setActiveModalId(
-                                                        //         pengajuan.id
-                                                        //     );
-                                                        //     document
-                                                        //         .getElementById(
-                                                        //             `DialogCekValidasi-${pengajuan.id}`
-                                                        //         )
-                                                        //         .showModal();
-                                                        // }}
+                                                        onClick={() => {
+                                                            setActiveModalId(
+                                                                pengusulanPAK.id
+                                                            );
+                                                            document
+                                                                .getElementById(
+                                                                    `DialogCekValidasi-${pengusulanPAK.id}`
+                                                                )
+                                                                .showModal();
+                                                        }}
                                                     >
                                                         Cek & Validasi
                                                         <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
                                                     </button>
                                                     <span className="inline-block mx-3"></span>
                                                     <button
-                                                        // onClick={() =>
-                                                        //     handleReject(
-                                                        //         pengajuan.id
-                                                        //     )
-                                                        // }
+                                                        onClick={() =>
+                                                            handleReject(
+                                                                pengusulanPAK.id
+                                                            )
+                                                        }
                                                         className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-warning/80 group-hover/item:text-white text-warning/80"
                                                     >
                                                         Tolak
@@ -193,16 +296,16 @@ export default function Index({
                                                 <td className="text-center text-nowrap">
                                                     <button
                                                         className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
-                                                        // onClick={() => {
-                                                        //     setActiveModalId(
-                                                        //         pengajuan.id
-                                                        //     );
-                                                        //     document
-                                                        //         .getElementById(
-                                                        //             `DialogCekValidasi-${pengajuan.id}`
-                                                        //         )
-                                                        //         .showModal();
-                                                        // }}
+                                                        onClick={() => {
+                                                            setActiveModalId(
+                                                                pengusulanPAK.id
+                                                            );
+                                                            document
+                                                                .getElementById(
+                                                                    `DialogCekValidasi-${pengusulanPAK.id}`
+                                                                )
+                                                                .showModal();
+                                                        }}
                                                     >
                                                         Lihat
                                                         <FaEye className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
@@ -211,10 +314,7 @@ export default function Index({
                                             )}
                                         </td>
                                     </tr>
-
-                                    ))
-                                }
-
+                                ))}
                             </tbody>
                         </table>
                     ) : (
