@@ -49,17 +49,17 @@ export default function DetailData({ data, collapse = true }) {
                 {!isCollapsed && (
                     <tbody>
                         <tr>
-                            <td width="40%">Jabatan</td>
-                            <td>{data["no_surat3"]}</td>
+                            <td width="40%">Jabatan </td>
+                            <td>{data["jabatan"]}</td>
                         </tr>
                         <tr>
                             <td>Periode Penilaian</td>
-                            <td>{data.tgl_ditetapkan}</td>
+                            <td>{data.periode_penilaian}</td>
                         </tr>
 
                         <tr>
                             <td>Jumlah Angka Kredit Terakhir</td>
-                            <td>{data["presentase"]}</td>
+                            <td>{data["jumlah_ak_terakhir"]}</td>
                         </tr>
                         <tr>
                             <td>Jumlah Angka Kredit Diajukan</td>
