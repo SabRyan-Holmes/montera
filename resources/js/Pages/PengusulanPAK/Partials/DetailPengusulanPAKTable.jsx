@@ -49,6 +49,10 @@ export default function DetailData({ data, collapse = true }) {
                 {!isCollapsed && (
                     <tbody>
                         <tr>
+                            <td width="40%">Tanggal Pengajuan </td>
+                            <td>{data["tanggal_pengajuan"]}</td>
+                        </tr>
+                        <tr>
                             <td width="40%">Jabatan </td>
                             <td>{data["jabatan"]}</td>
                         </tr>
@@ -63,22 +67,26 @@ export default function DetailData({ data, collapse = true }) {
                         </tr>
                         <tr>
                             <td>Jumlah Angka Kredit Diajukan</td>
-                            <td>{data["ak_normatif"]}</td>
+                            <td>{data["jumlah_ak_diajukan"]}</td>
                         </tr>
 
                         <tr>
-                            <td>Jumlah Angka Kredit</td>
-                            <td>{data["jumlah_ak_kredit"]}</td>
+                            <td>Uraian Tugas</td>
+                            <td>{data["uraian_tugas"]}</td>
                         </tr>
                         <tr>
                             <td>Jumlah Angka Kredit Kumulatif</td>
                             <td>
-                                {parseFloat(data["jakk"]["jumlah"]).toFixed(3)}
+                                {data["dokumen_pendukung_path"]}
                             </td>
                         </tr>
                         <tr>
-                            <td>Kesimpulan</td>
-                            <td className="text-wrap">{data["kesimpulan"]}</td>
+                            <td>Catatan Tambahan</td>
+                            <td className="text-wrap">{data["catatan_pegawai_id"]}</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td className="text-wrap">{data["status"]}</td>
                         </tr>
                     </tbody>
                 )}
