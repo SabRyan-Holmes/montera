@@ -201,7 +201,7 @@ export default function Index({
                                     No
                                 </th>
                                 <th scope="col" width="15%">
-                                    NIP/NRP
+                                    Nama & NIP/NRP
                                 </th>
                                 <th scope="col" width="25%">
                                     Nama
