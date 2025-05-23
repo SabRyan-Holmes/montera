@@ -38,7 +38,7 @@ export default function Index({
     byJabatanReq: initialJabatan,
     byKesimpulan: initialKesimpulan,
     jabatanList,
-    kesimpulanList
+    kesimpulanList,
 }) {
     // ===========================================Pagination===========================================
     moment.locale("id");
@@ -151,8 +151,6 @@ export default function Index({
     const [byJabatan, setByJabatan] = useState(initialJabatan);
     const [byKesimpulan, setByKesimpulan] = useState(initialKesimpulan);
 
-
-
     useEffect(() => {
         if (
             (byJabatan && byJabatan !== initialJabatan) ||
@@ -183,21 +181,62 @@ export default function Index({
             byStatus === "Semua Kategori" &&
             byKesimpulan === "Semua Kategori"
         ) {
-            router.get(routeName, { search }, { replace: true, preserveState: true });
-        } else if (byJabatan === "Semua Kategori" && byStatus === "Semua Kategori") {
-            router.get(routeName, { byKesimpulan, search }, { replace: true, preserveState: true });
-        } else if (byJabatan === "Semua Kategori" && byKesimpulan === "Semua Kategori") {
-            router.get(routeName, { byStatus, search }, { replace: true, preserveState: true });
-        } else if (byStatus === "Semua Kategori" && byKesimpulan === "Semua Kategori") {
-            router.get(routeName, { byJabatan, search }, { replace: true, preserveState: true });
+            router.get(
+                routeName,
+                { search },
+                { replace: true, preserveState: true }
+            );
+        } else if (
+            byJabatan === "Semua Kategori" &&
+            byStatus === "Semua Kategori"
+        ) {
+            router.get(
+                routeName,
+                { byKesimpulan, search },
+                { replace: true, preserveState: true }
+            );
+        } else if (
+            byJabatan === "Semua Kategori" &&
+            byKesimpulan === "Semua Kategori"
+        ) {
+            router.get(
+                routeName,
+                { byStatus, search },
+                { replace: true, preserveState: true }
+            );
+        } else if (
+            byStatus === "Semua Kategori" &&
+            byKesimpulan === "Semua Kategori"
+        ) {
+            router.get(
+                routeName,
+                { byJabatan, search },
+                { replace: true, preserveState: true }
+            );
         } else if (byJabatan === "Semua Kategori") {
-            router.get(routeName, { byStatus, byKesimpulan, search }, { replace: true, preserveState: true });
+            router.get(
+                routeName,
+                { byStatus, byKesimpulan, search },
+                { replace: true, preserveState: true }
+            );
         } else if (byStatus === "Semua Kategori") {
-            router.get(routeName, { byJabatan, byKesimpulan, search }, { replace: true, preserveState: true });
+            router.get(
+                routeName,
+                { byJabatan, byKesimpulan, search },
+                { replace: true, preserveState: true }
+            );
         } else if (byKesimpulan === "Semua Kategori") {
-            router.get(routeName, { byJabatan, byStatus, search }, { replace: true, preserveState: true });
+            router.get(
+                routeName,
+                { byJabatan, byStatus, search },
+                { replace: true, preserveState: true }
+            );
         } else if (search && search !== initialSearch) {
-            router.get(routeName, { search }, { replace: true, preserveState: true });
+            router.get(
+                routeName,
+                { search },
+                { replace: true, preserveState: true }
+            );
         }
     }, [search]);
 
@@ -284,7 +323,9 @@ export default function Index({
                                 name="byKesimpulan"
                                 id="byKesimpulan"
                                 value={byKesimpulan}
-                                onChange={(e) => setByKesimpulan(e.target.value)}
+                                onChange={(e) =>
+                                    setByKesimpulan(e.target.value)
+                                }
                             >
                                 <option value="">Semua Kategori</option>
                                 {kesimpulanList.map((item) => (
@@ -376,10 +417,7 @@ export default function Index({
                                     >
                                         Status
                                     </th>
-                                    <th
-                                        scope="col"
-                                        className="text-center"
-                                    >
+                                    <th scope="col" className="text-center">
                                         Waktu
                                         <br />
                                         Diajukan
@@ -490,18 +528,18 @@ export default function Index({
                                             )}
                                         </td>
                                         <td className="p-1 m-0 font-normal text-center">
-                                                {/* ANCHOR */}
-                                                <span className="block">
-                                                    {moment(
-                                                        pengajuan.created_at
-                                                    ).format("LL")}
-                                                </span>
-                                                <span className="block text-[12px]">
-                                                    {moment(
-                                                        pengajuan.created_at
-                                                    ).fromNow()}
-                                                </span>
-                                            </td>
+                                            {/* ANCHOR */}
+                                            <span className="block">
+                                                {moment(
+                                                    pengajuan.created_at
+                                                ).format("LL")}
+                                            </span>
+                                            <span className="block text-[12px]">
+                                                {moment(
+                                                    pengajuan.created_at
+                                                ).fromNow()}
+                                            </span>
+                                        </td>
                                         {canValidate ? (
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 {/* Actor Pimpinan */}

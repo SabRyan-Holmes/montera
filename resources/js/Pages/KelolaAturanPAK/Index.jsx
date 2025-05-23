@@ -142,7 +142,7 @@ export default function Index({ auth, title, flash, aturanPAK }) {
     // console.log(data);
     return (
         <Authenticated user={auth.user} title={title}>
-            <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto content-normal justify-items-center text-slate-600 px-7">
+            <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop content-normal justify-items-center text-slate-600 px-7">
                 {/* POP UP For Add/Edit */}
                 {isPopUpOpen && (
                     <PopUpForm

@@ -9,6 +9,7 @@ import {
 import { MdSpaceDashboard } from "react-icons/md";
 import {
     FaDatabase,
+    FaDownload,
     FaNotesMedical,
     FaPrint,
     FaUserTie,
@@ -129,10 +130,10 @@ const Sidebar = ({ role }) => {
                                             Arsip Dokumen
                                         </>
                                     ),
-                                    route: "divisi-sdm.koefisien.index",
+                                    route: "divisi-sdm.arsip-dokumen.index",
                                     actives: [
-                                        "divisi-sdm.koefisien.index",
-                                        "divisi-sdm.koefisien.edit",
+                                        "divisi-sdm.arsip-dokumen.index",
+                                        "divisi-sdm.arsip-dokumen.show",
                                     ],
                                 },
                             ]}
@@ -209,7 +210,9 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "divisi-sdm.log-aktivitas.index",
-                                    active: "divisi-sdm.log-aktivitas.index",
+                                    actives: [
+                                        "divisi-sdm.log-aktivitas.index",
+                                    ],
                                 },
                                 {
                                     label: (
@@ -226,7 +229,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <IoSettings  />
+                                            <FaDownload />
                                             Download Template
                                         </>
                                     ),

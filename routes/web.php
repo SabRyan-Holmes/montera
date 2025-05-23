@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Shared\ArsipDokumenController;
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\DivisiSDM\AturanPAKController;
 use App\Http\Controllers\DivisiSDM\KoefisienController;
@@ -67,7 +68,7 @@ Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-s
     Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel_pengajuan'])->name('pengajuan.cancel');
 
     // Arsip Dokumen(CRUD)
-    Route::resource('arsip-dokumen', PengajuanController::class);
+    Route::resource('arsip-dokumen', ArsipDokumenController::class);
 
 
     // =======Data Master========

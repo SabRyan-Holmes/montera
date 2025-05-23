@@ -97,7 +97,7 @@ export default function Index({
     // console.log(subTitle);
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="px-4 mx-auto phone:h-screen laptop:h-full max-w-screen-laptop">
+            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 {/* Preview PDF di iframe */}
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
@@ -145,7 +145,7 @@ export default function Index({
                                         <th
                                             scope="col"
                                             dir="rtl"
-                                            className="rounded-tl-xl "
+                                            className="text-center rounded-tl-xl "
                                         >
                                             No
                                         </th>
@@ -159,7 +159,6 @@ export default function Index({
                                         >
                                             Nama & NIP
                                         </th>
-                                        {/* <th scope="col">No Seri Karpeg</th> */}
                                         <th scope="col" width="20%">
                                             <span className="flex justify-center">
                                                 Jabatan Sekarang
@@ -202,9 +201,8 @@ export default function Index({
                                             <td> {pak["no_surat3"]}</td>
                                             <td>
                                                 <span className="block">
-                                                    {pak.pegawai["Nama"]}
-                                                </span>
-                                                <span className="block mt-1 font-medium">
+                                                    {pak.pegawai["Nama"]} {pak.pegawai["Gelar Tambahan"] ?? ""}                                                 </span>
+                                                <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
                                                     {pak.pegawai["NIP"]}
                                                 </span>
                                             </td>{" "}
@@ -302,30 +300,6 @@ export default function Index({
 
                                                 <span className="inline-block mx-1"></span>
 
-                                                {/* VIEW PAK */}
-                                                {/* <div className="relative inline-flex group">
-                                                    <Link
-                                                        as="button"
-                                                        href={route(
-                                                            "pak.process"
-                                                        )}
-                                                        onSuccess={() => {
-                                                            setShowIframe(true);
-                                                        }}
-                                                        data={pak}
-                                                        method="post"
-                                                        className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
-                                                    >
-                                                        <FaFilePdf className="scale-125 fill-primary/70 group-hover/item:fill-white" />
-                                                    </Link>{" "}
-                                                    <TooltipHover
-                                                        message={
-                                                            "Lihat Tampilan PDF"
-                                                        }
-                                                    />
-                                                </div>
-                                                <span className="inline-block mx-1"></span> */}
-
                                                 {/* Dialog Show Modal */}
                                                 <div className="relative inline-flex group">
                                                     <button
@@ -358,7 +332,7 @@ export default function Index({
                                                         )}
                                                         className="action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70"
                                                     >
-                                                        <FaEdit className=" fill-secondary group-hover/item:fill-white" />
+                                                        <FaEdit className="scale-125 fill-secondary group-hover/item:fill-white" />
                                                     </Link>
 
                                                     <TooltipHover

@@ -282,7 +282,7 @@ export default function Index({
                                             <td>1</td>
                                             <td className="text-left">
                                                 <strong className="">
-                                                    {data.pegawai.Nama}
+                                                    {data.pegawai.Nama} {data.pegawai["Gelar Tambahan"] ?? ""}
                                                 </strong>
                                                 <strong className="block mt-1">
                                                     {data.nip}

@@ -17,17 +17,20 @@ class LogAktivitasController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $pengajuan = LogAktivitas::latest();
+        $logAktivitas = LogAktivitas::latest();
 
         $subTitle = GetSubtitle::getSubtitle(
             request('byStatus'),
             request('byJabatan'),
             request('search')
         );
-        return Inertia::render('PengusulanPAK/Index', [
-            "title" => "Pengusulan PAK ",
+        return Inertia::render('LogAktivitas/Index', [
+            "title" => "Log Aktivitas ",
             "subTitle" => $subTitle,
             "logAktivitas" => LogAktivitas::latest()->paginate(10),
+            'byRoleReq' => request('byRole'),
+            'byJenisReq' => request('byJenis'),
+            'searchReq' => request('search'),
         ]);
     }
 

@@ -12,6 +12,7 @@ import {
     useFilterSearch,
 } from "@/Components";
 import { FaTrash } from "react-icons/fa6";
+import moment from "moment/min/moment-with-locales";
 
 export default function Index({
     auth,
@@ -23,6 +24,7 @@ export default function Index({
     byJabatanReq: initialJabatan,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
+    moment.locale("id");
 
     function handleDelete(id) {
         Swal.fire({
@@ -90,8 +92,7 @@ export default function Index({
 
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="mx-auto mb-16 phone:h-screen laptop:h-full max-w-screen-laptop px-7">
-
+            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <form className="flex items-center justify-between w-full">
                     <div className="flex items-center justify-start gap-3 my-3 w-fit">
                         <div className="w-fit">
@@ -196,21 +197,29 @@ export default function Index({
                                 <th
                                     scope="col"
                                     dir="rtl"
-                                    className="rounded-tl-xl"
+                                    width="5%"
+                                    className="text-center rounded-tl-xl"
                                 >
                                     No
                                 </th>
                                 <th scope="col" width="15%">
-                                    Nama & NIP/NRP
+                                    Nama & NIP
                                 </th>
-                                <th scope="col" width="25%">
-                                    Nama
-                                </th>
+
                                 <th scope="col" width="20%">
-                                    Jabatan
+                                    Jabatan/TMT
                                 </th>
                                 <th scope="col" width="15%">
-                                    Daerah
+                                    Daerah/Unit Kerja
+                                </th>
+                                <th scope="col" width="15%">
+                                    Pangkat/Golongan Ruangan/TMT
+                                    <span className="block text-center">
+                                        /Masa Kerja Golongan
+                                    </span>
+                                </th>
+                                <th scope="col" width="15%">
+                                    Terakhir Diperbarui
                                 </th>
                                 <th
                                     scope="col"
@@ -227,17 +236,55 @@ export default function Index({
                                     className="group/item hover:bg-secondary/35"
                                 >
                                     <td className="text-center">{i + 1}</td>
-                                    <td>{pegawai["NIP"]}</td>
-                                    <td>{pegawai.Nama} {pegawai['Gelar Tambahan'] ?? ''} </td>
-                                    {/* <td>{pegawai["Nomor Seri Karpeg"]}</td> */}
                                     <td>
-                                        {pegawai["Jabatan/TMT"]
-                                            .split("/")[0]
-                                            .trim()}
+                                        <span className="block">
+                                            {pegawai["Nama"]}{" "}
+                                            {pegawai["Gelar Tambahan"] ?? ""}
+                                        </span>
+                                        <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                            {pegawai["NIP"]}
+                                        </span>
                                     </td>
-                                    {/* <td>{pegawai["Unit Kerja"]}</td> */}
-                                    <td>{pegawai["Daerah"]}</td>
-                                    <td className="text-center whitespace-nowrap text-nowrap">
+                                    <td>
+                                        {pegawai["Jabatan/TMT"]}
+                                        {/* {pegawai["Jabatan/TMT"]
+                                            .split("/")[0]
+                                            .trim()} */}
+                                    </td>
+                                    <td>
+                                        {pegawai["Daerah"]} / <br />{" "}
+                                        <span className="block">
+                                            {" "}
+                                            {pegawai["Unit Kerja"]}
+                                        </span>{" "}
+                                    </td>
+                                    <td>
+                                        <span>
+                                            {
+                                                pegawai[
+                                                    "Pangkat/Golongan Ruangan/TMT"
+                                                ]
+                                            }
+                                        </span>
+                                        <span className="block mt-1 text-center">
+                                            /
+                                            {pegawai["Masa Kerja Golongan"] ??
+                                                "-"}
+                                        </span>
+                                    </td>
+                                    <td className="font-normal text-center">
+                                                {/* ANCHOR */}
+                                                <span className="block">
+                                                    {moment(
+                                                        pegawai['updated_at']
+                                                    ).format("LL")}
+                                                </span>
+                                                <span className="block text-[12px]">
+                                                    {moment(
+                                                        pegawai.updated_at
+                                                    ).fromNow()}
+                                                </span>
+                                            </td>                                    <td className="text-center whitespace-nowrap text-nowrap">
                                         <div className="relative inline-flex group">
                                             <Link
                                                 as="a"

@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shared;
 
+use App\Http\Controllers\Controller;
 use App\Models\ArsipDokumen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ArsipDokumenController extends Controller
 {
@@ -11,8 +14,14 @@ class ArsipDokumenController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
+    { {
+            $user = Auth::user();
+            // dd($user);
+            return Inertia::render('ArsipDokumen/Index', [
+                'title' => 'Arsip Dokumen',
+                'arsipDokumens' => "",
+            ]);
+        }
     }
 
     /**
