@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Shared;
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pegawai\PengusulanPAKRequest;
+use App\Models\AturanPAK;
 use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
 use DateTime;
@@ -29,14 +30,21 @@ class PengusulanPAKController extends Controller
             request('byJabatan'),
             request('search')
         );
+
+        $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+        $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
+        // dd($jabatan_list);
+
+
         return Inertia::render('PengusulanPAK/Index', [
             "title" => "Pengusulan PAK ",
             "subTitle" => $subTitle,
             "pengusulanPAK" => PengusulanPAK::latest()->paginate(10),
             'canValidate' => $user->role == 'divisi_sdm',
             "searchReq" => request('search'),
-            "byDaerahReq" => request('byDaerah'),
-            "byJabatanReq" => request('byJabatan')
+            "byStatusReq" => request('byStatus'),
+            "byJabatanReq" => request('byJabatan'),
+            "jabatanList" => $jabatan_list
         ]);
     }
 

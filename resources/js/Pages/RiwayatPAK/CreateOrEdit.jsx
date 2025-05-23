@@ -230,6 +230,9 @@ export default function Index({
             title={title}
             current={route().current()}
         >
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop max-w-screen-desktop">
+
+
             <section className="m-10 ">
                 {/* Preview PDF di iframe */}
                 {showIframe && (
@@ -460,6 +463,8 @@ export default function Index({
                     </div>
                 </form>
             </section>
+            </main>
+
         </Authenticated>
     );
 }

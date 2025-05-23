@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Models\AturanPAK;
 use App\Models\Pengajuan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -31,16 +32,22 @@ class PengajuanController extends Controller
         );
 
         // TODO: LOGIKA Filter by PAK field nanti
-        //
+        $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+        $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
+        $kesimpulan = AturanPAK::where('name', 'Kesimpulan')->first()->value;
+        $kesimpulan_list = collect($kesimpulan)->pluck('jabatan')->toArray();
 
         return Inertia::render('Pengajuan/Index', [
             "title" => "Status Pengajuan Terbaru",
             "subTitle" => $subTitle,
-            "pengajuans" => $pengajuan->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
+            "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
             'canValidate' => $user->role == 'pimpinan',
             "searchReq" => request('search'),
-            "byDaerahReq" => request('byDaerah'),
-            "byJabatanReq" => request('byJabatan')
+            "byStatusReq" => request('byStatus'),
+            "byJabatanReq" => request('byJabatan'),
+            "byKesimpulan" => request('byKesimpulan'),
+            'jabatanList' => $jabatan_list,
+            'kesimpulanList' => $kesimpulan_list,
         ]);
     }
 

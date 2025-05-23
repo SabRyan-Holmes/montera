@@ -24,6 +24,7 @@ import { RiLoader2Fill } from "react-icons/ri";
 import { FaCheck, FaEye } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
+import moment from "moment/min/moment-with-locales";
 
 export default function Index({
     auth,
@@ -33,11 +34,14 @@ export default function Index({
     subTitle,
     canValidate,
     searchReq: initialSearch,
-    byDaerahReq: initialDaerah,
+    byStatusReq: initialStatus,
     byJabatanReq: initialJabatan,
+    byKesimpulan: initialKesimpulan,
+    jabatanList,
+    kesimpulanList
 }) {
     // ===========================================Pagination===========================================
-
+    moment.locale("id");
 
     // ===========================================Handling Pop Up,Dialog & Message===========================================
     // SWAL POP UP
@@ -140,21 +144,62 @@ export default function Index({
     // console.log(activeModalId);
 
     // ===========================================Handling Search & Filter===========================================
-    const {
-        search,
-        setSearch,
-        byDaerah,
-        setByDaerah,
-        byJabatan,
-        setByJabatan,
-    } = useFilterSearch({
-        initialSearch,
-        initialDaerah,
-        initialJabatan,
-        routeName: canValidate
-            ? "/pimpinan/pengajuan"
-            : "/divisi-sdm/pengajuan", // bisa diganti tergantung endpoint-nya
-    });
+
+    // ANCHOR
+    const [search, setSearch] = useState(initialSearch);
+    const [byStatus, setByStatus] = useState(initialStatus);
+    const [byJabatan, setByJabatan] = useState(initialJabatan);
+    const [byKesimpulan, setByKesimpulan] = useState(initialKesimpulan);
+
+
+
+    useEffect(() => {
+        if (
+            (byJabatan && byJabatan !== initialJabatan) ||
+            (byStatus && byStatus !== initialStatus) ||
+            (byKesimpulan && byKesimpulan !== initialKesimpulan)
+        ) {
+            router.get(
+                routeName,
+                { byJabatan, byStatus, byKesimpulan },
+                { replace: true, preserveState: true }
+            );
+        } else if (
+            (byJabatan !== initialJabatan && search !== initialSearch) ||
+            (byStatus !== initialStatus && search !== initialSearch) ||
+            (byKesimpulan !== initialKesimpulan && search !== initialSearch)
+        ) {
+            router.get(
+                routeName,
+                { byJabatan, byStatus, byKesimpulan, search },
+                { replace: true, preserveState: true }
+            );
+        }
+    }, [byJabatan, byStatus, byKesimpulan]); // Tambahkan byKesimpulan di sini
+
+    useEffect(() => {
+        if (
+            byJabatan === "Semua Kategori" &&
+            byStatus === "Semua Kategori" &&
+            byKesimpulan === "Semua Kategori"
+        ) {
+            router.get(routeName, { search }, { replace: true, preserveState: true });
+        } else if (byJabatan === "Semua Kategori" && byStatus === "Semua Kategori") {
+            router.get(routeName, { byKesimpulan, search }, { replace: true, preserveState: true });
+        } else if (byJabatan === "Semua Kategori" && byKesimpulan === "Semua Kategori") {
+            router.get(routeName, { byStatus, search }, { replace: true, preserveState: true });
+        } else if (byStatus === "Semua Kategori" && byKesimpulan === "Semua Kategori") {
+            router.get(routeName, { byJabatan, search }, { replace: true, preserveState: true });
+        } else if (byJabatan === "Semua Kategori") {
+            router.get(routeName, { byStatus, byKesimpulan, search }, { replace: true, preserveState: true });
+        } else if (byStatus === "Semua Kategori") {
+            router.get(routeName, { byJabatan, byKesimpulan, search }, { replace: true, preserveState: true });
+        } else if (byKesimpulan === "Semua Kategori") {
+            router.get(routeName, { byJabatan, byStatus, search }, { replace: true, preserveState: true });
+        } else if (search && search !== initialSearch) {
+            router.get(routeName, { search }, { replace: true, preserveState: true });
+        }
+    }, [search]);
 
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
     const [showIframe, setShowIframe] = useState(false);
@@ -163,7 +208,7 @@ export default function Index({
 
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
+            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 {/* Preview PDF di iframe */}
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
@@ -185,15 +230,106 @@ export default function Index({
                 )}
                 {/* Preview PDF di iframe */}
 
-                {/* FilterSearchPegawai */}
-                <FilterSearchPegawai
-                    byJabatan={byJabatan}
-                    setByJabatan={setByJabatan}
-                    byDaerah={byDaerah}
-                    setByDaerah={setByDaerah}
-                    search={search}
-                    setSearch={setSearch}
-                />
+                <form className="flex items-center justify-between w-full gap-3 my-3">
+                    <div className="flex items-center justify-start gap-3">
+                        <div className="flex-none laptop:w-fit">
+                            <InputLabel
+                                value="Jabatan"
+                                Htmlfor="byJabatan"
+                                className="max-w-sm ml-1 text-lg"
+                            />
+                            <select
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
+                                name="byJabatan"
+                                value={byJabatan}
+                                onChange={(e) => setByJabatan(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                {jabatanList.map((item) => (
+                                    <option className="capitalize">
+                                        {item}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex-none laptop:w-fit">
+                            <InputLabel
+                                value="Status"
+                                Htmlfor="byStatus"
+                                className="max-w-sm ml-1 text-lg"
+                            />
+
+                            <select
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
+                                name="byStatus"
+                                id="byStatus"
+                                value={byStatus}
+                                onChange={(e) => setByStatus(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                <option>diproses</option>
+                                <option>ditolak</option>
+                                <option>disetujui</option>
+                            </select>
+                        </div>
+                        <div className="flex-none laptop:w-fit">
+                            <InputLabel
+                                value="Kesimpulan"
+                                Htmlfor="byKesimpulan"
+                                className="max-w-sm ml-1 text-lg"
+                            />
+
+                            <select
+                                className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
+                                name="byKesimpulan"
+                                id="byKesimpulan"
+                                value={byKesimpulan}
+                                onChange={(e) => setByKesimpulan(e.target.value)}
+                            >
+                                <option value="">Semua Kategori</option>
+                                {kesimpulanList.map((item) => (
+                                    <option className="capitalize">
+                                        {item}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="w-80">
+                        <InputLabel
+                            value="Nama/NIP"
+                            Htmlfor="search"
+                            className="max-w-sm ml-1 text-lg"
+                        />
+
+                        <label
+                            htmlFor="search"
+                            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                        >
+                            Search
+                        </label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
+                                <MdPersonSearch className="w-6 h-6 fill-primary" />
+                            </div>
+                            <input
+                                type="search"
+                                id="search"
+                                defaultValue={search}
+                                onSubmit={(e) => setSearch(e.target.value)}
+                                name="search"
+                                className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
+                                placeholder="Cari Nama Pegawai/NIP.."
+                            />
+                            <PrimaryButton
+                                type="submit"
+                                className=" absolute end-2 bottom-[6px] "
+                            >
+                                Search
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                </form>
 
                 <div className="pt-3 ">
                     {pengajuans.data.length ? (
@@ -210,13 +346,12 @@ export default function Index({
                                     <th scope="col" width="10%">
                                         No PAK
                                     </th>
-                                    <th scope="col" width="25%">
-                                        Nama Pegawai
+                                    <th scope="col" width="20%" className="">
+                                        Nama & NIP
                                     </th>
-                                    {/* <th scope="col">No Seri Karpeg</th> */}
-                                    <th scope="col" width="20%">
+                                    <th scope="col" width="15%">
                                         <span className="flex justify-center">
-                                            Jabatan Sekarang
+                                            Jabatan
                                         </span>
                                     </th>
                                     <th
@@ -243,6 +378,14 @@ export default function Index({
                                     </th>
                                     <th
                                         scope="col"
+                                        className="text-center"
+                                    >
+                                        Waktu
+                                        <br />
+                                        Diajukan
+                                    </th>
+                                    <th
+                                        scope="col"
                                         className="text-center rounded-tr-xl"
                                     >
                                         Aksi
@@ -258,10 +401,16 @@ export default function Index({
                                     >
                                         <td className="text-center">{i + 1}</td>
                                         <td>
-                                            {" "}
                                             {pengajuan.riwayat_pak["no_surat3"]}
                                         </td>
-                                        <td>{pengajuan.pegawai["Nama"]}</td>
+                                        <td>
+                                            <span className="block">
+                                                {pengajuan.pegawai["Nama"]}
+                                            </span>
+                                            <span className="block ">
+                                                {pengajuan.pegawai["NIP"]}
+                                            </span>
+                                        </td>
                                         {/* <td>{pengajuan.pegawai["Nomor Seri Karpeg"]}</td> */}
                                         <td>
                                             {pengajuan.pegawai["Jabatan/TMT"]
@@ -340,6 +489,19 @@ export default function Index({
                                                 </a>
                                             )}
                                         </td>
+                                        <td className="p-1 m-0 font-normal text-center">
+                                                {/* ANCHOR */}
+                                                <span className="block">
+                                                    {moment(
+                                                        pengajuan.created_at
+                                                    ).format("LL")}
+                                                </span>
+                                                <span className="block text-[12px]">
+                                                    {moment(
+                                                        pengajuan.created_at
+                                                    ).fromNow()}
+                                                </span>
+                                            </td>
                                         {canValidate ? (
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 {/* Actor Pimpinan */}
@@ -353,7 +515,9 @@ export default function Index({
                                                             pengajuan={
                                                                 pengajuan
                                                             }
-                                                            setActiveModalId={setActiveModalId}
+                                                            setActiveModalId={
+                                                                setActiveModalId
+                                                            }
                                                             message={
                                                                 modalMessage
                                                             }
@@ -513,7 +677,7 @@ export default function Index({
                         "/pengajuan"
                     }
                     filters={{
-                        filter1: byDaerah,
+                        filter1: byStatus,
                         filter2: byJabatan,
                         filterSearch: search,
                     }}

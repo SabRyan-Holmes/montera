@@ -45,13 +45,19 @@ class Pengajuan extends Model
             })
         );
 
-        // Berdasarkan Daerah
-        $query->when(
-            $filters['byDaerah'] ?? false,
-            fn($query, $byDaerah) =>
-            $query->whereHas('pegawai', function ($q) use ($byDaerah) {
-                $q->where('Daerah', $byDaerah);
-            })
+         // Berdasarkan Status
+         $query->when(
+            $filters['byStatus'] ?? false,
+            fn($query, $byStatus) =>
+            $query->where('status', 'like', '%' . $byStatus . '%')
         );
+
+         // Berdasarkan Kesimpulan
+         $query->when(
+            $filters['byKesimpulan'] ?? false,
+            fn($query, $byKesimpulan) =>
+            $query->where('kesimpulan', 'like', '%' . $byKesimpulan . '%')
+        );
+
     }
 }

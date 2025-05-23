@@ -93,11 +93,11 @@ export default function Index({
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on riwayatPAK.kesimpulan
     const [showIframe, setShowIframe] = useState(false);
 
-    console.log("subtitle");
-    console.log(subTitle);
+    // console.log("subtitle");
+    // console.log(subTitle);
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="mx-auto phone:h-screen laptop:h-full max-w-screen-laptop px-7">
+            <section className="px-4 mx-auto phone:h-screen laptop:h-full max-w-screen-laptop">
                 {/* Preview PDF di iframe */}
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
@@ -130,16 +130,15 @@ export default function Index({
                 />
 
                 <div className="pt-3 ">
+                    {subTitle && (
+                        <div className="my-4">
+                            <strong className="text-2xl font-bold text-gray-600">
+                                {subTitle}
+                            </strong>
+                        </div>
+                    )}
                     {riwayatPAK.data.length ? (
                         <>
-                            {subTitle && (
-                                <div className="my-4">
-                                    <strong className="text-2xl font-bold text-gray-600">
-                                        {subTitle}
-                                    </strong>
-                                </div>
-                            )}
-
                             <table className="table text-xs table-bordered">
                                 <thead className="text-sm font-medium text-white bg-primary ">
                                     <tr>
@@ -153,8 +152,12 @@ export default function Index({
                                         <th scope="col" width="10%">
                                             No PAK
                                         </th>
-                                        <th scope="col" width="25%">
-                                            Nama Pegawai
+                                        <th
+                                            scope="col"
+                                            width="20%"
+                                            className=""
+                                        >
+                                            Nama & NIP
                                         </th>
                                         {/* <th scope="col">No Seri Karpeg</th> */}
                                         <th scope="col" width="20%">
@@ -197,7 +200,14 @@ export default function Index({
                                                 {i + 1}
                                             </td>
                                             <td> {pak["no_surat3"]}</td>
-                                            <td>{pak.pegawai["Nama"]}</td>
+                                            <td>
+                                                <span className="block">
+                                                    {pak.pegawai["Nama"]}
+                                                </span>
+                                                <span className="block mt-1 font-medium">
+                                                    {pak.pegawai["NIP"]}
+                                                </span>
+                                            </td>{" "}
                                             <td>
                                                 {pak.pegawai["Jabatan/TMT"]
                                                     .split("/")[0]
@@ -272,7 +282,9 @@ export default function Index({
                                                                     pak.id,
                                                                 pegawai_id:
                                                                     pak.pegawai_id,
-                                                                pengaju_id: auth.user.id
+                                                                pengaju_id:
+                                                                    auth.user
+                                                                        .id,
                                                             }}
                                                             method="post"
                                                             className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
@@ -378,8 +390,9 @@ export default function Index({
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
-                                Belum Ada Riwayat Penetapan Angka Kredit Untuk
-                                Saat Ini
+                                {!subTitle
+                                    ? "Belum Ada Riwayat PAK Terbaru Untuk Saat Ini"
+                                    : "Riwayat PAK Tidak Ditemukan"}
                             </h2>
                         </div>
                     )}
