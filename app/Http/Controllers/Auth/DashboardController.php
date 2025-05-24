@@ -28,31 +28,12 @@ class DashboardController extends Controller
         $dataByRole = null;
         $dataGraph = null;
 
-        if ($user->role == "divisi_sdm" || $user->role == "pimpinan") {
-
-            // TODO : Bikin lebih dinamis dari Aturan PAK
+        if ($user->role == "Divisi SDM" || $user->role == "Pimpinan") {
             $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
-            //
-            // isi value :
-            // [
-            // {"id": 1, "nilai": 5, "jabatan": "Terampil", "updated_at": "2025-05-11 23:24:54"},
-            // {"id": 2, "nilai": 12.5, "jabatan": "Mahir", "updated_at": "2025-05-11 23:24:54"},
-            // {"id": 3, "nilai": 25, "jabatan": "Penyelia", "updated_at": "2025-05-11 23:24:54"},
-            // {"id": 4, "nilai": 12.5, "jabatan": "Pertama", "updated_at": "2025-05-11 23:24:54"},
-            // {"id": 5, "nilai": 25, "jabatan": "Madya", "updated_at": "2025-05-11 23:24:54"},
-            // {"id": 6, "nilai": 37.5, "jabatan": "Muda", "updated_at": "2025-05-11 23:24:54"}]
-            // ambil dari jabatan lalu ditaruh  dan modif kode dibawah
-            // Ambil data koefisien dari AturanPAK
-
-            // Inisialisasi array untuk menyimpan hasil
             $dataGraph = [];
-
             foreach ($koefisien_per_tahun as $koefisien) {
                 $jabatan = $koefisien['jabatan'];
                 $count = Pegawai::where('Jabatan/TMT', 'LIKE', "%{$jabatan}%")->count();
-
-                // Gunakan nama jabatan sebagai key (dalam lowercase)
-                // $key = strtolower($jabatan);
                 $dataGraph[$jabatan] = $count;
             }
 
@@ -78,7 +59,7 @@ class DashboardController extends Controller
         }
 
         //  TODO: Kalo role nya Pegawai data untuk dashboard beda lagi. JAngan lupa tambahin nanti logikany, kalo lah bisa SSO
-        if ($user->role == "pegawai") {
+        if ($user->role == "Pegawai") {
             $pak_count = RiwayatPAK::where('pegawai_id', $user->id)->count();
             $pengusulan_count = PengusulanPAK::all()->count();
             $pengajuan_count = Pengajuan::where('pegawai_id', $user->id)->count();

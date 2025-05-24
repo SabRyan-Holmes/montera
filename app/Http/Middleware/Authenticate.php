@@ -24,8 +24,8 @@ class Authenticate
 
             $user = Auth::user();
 
-            // Role divisi_sdm
-            if ($user->role === 'divisi_sdm') {
+            // Role Divisi SDM
+            if ($user->role === 'Divisi SDM') {
                 if ($request->is('/') || $request->is('login')) {
                     return redirect()->route('dashboard');
                 }
@@ -95,8 +95,8 @@ class Authenticate
 
     //     $user = Auth::user();
 
-    //     // Role divisi_sdm
-    //     if ($user->role === 'divisi_sdm') {
+    //     // Role Divisi SDM
+    //     if ($user->role === 'Divisi SDM') {
     //         if ($request->is('/') || $request->is('login')) {
     //             return redirect()->route('dashboard');
     //         }
@@ -142,7 +142,7 @@ class Authenticate
     //     // Jika mengakses root atau login
     //     if ($request->is('/') || $request->is('login')) {
     //         switch ($user->role) {
-    //             case 'divisi_sdm':
+    //             case 'Divisi SDM':
     //                 return redirect()->route('divisi-sdm.dashboard');
     //             case 'pimpinan':
     //                 return redirect()->route('pimpinan.dashboard');

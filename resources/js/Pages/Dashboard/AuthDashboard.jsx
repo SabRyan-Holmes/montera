@@ -13,7 +13,7 @@ export default function AuthDashboard({ title, auth, dataByRole, dataGraph }) {
         <AuthenticatedLayout user={auth.user} title={title}>
             {/* content */}
 
-            {auth.user.role == "divisi_sdm" || auth.user.role == "pimpinan" ? (
+            {auth.user.role == "Divisi SDM" || auth.user.role == "pimpinan" ? (
                 <SdmPimpinanContent
                     dataGraph={dataGraph}
                     dataByRole={dataByRole}

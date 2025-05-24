@@ -13,26 +13,18 @@ return new class extends Migration
     {
         Schema::create('arsip_dokumens', function (Blueprint $table) {
             $table->id();
+            // Identifikasi siapa pemilik dokumen (user/pimpinan/pegawai)
 
-            // Kategori/folder
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('pegawai_nip_owner')->nullable(); // Jika pemiliknya adalah pegawai dari SSO
+            $table->string('nip_pak')->comment('NIP Pegawai pada dokumen PAK');
+
+            // Folder & Filepath
             $table->string('folder_name'); // Misal: "PAK 2024"
             $table->string('title'); // Nama file dokumen, misal: "Penetapan AK"
-
-            // File path
             $table->string('file_path'); // Lokasi file PDF di storage
 
-            // Metadata pegawai
-            $table->string('pegawai_nama');
-            $table->string('pegawai_nip');
-
-            // Optional: tanggal penetapan
-            $table->date('tanggal_penetapan')->nullable();
-            $table->text('keterangan')->nullable();
-
-            // Identifikasi siapa pemilik dokumen (user/pimpinan/pegawai)
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('pegawai_nip_owner')->nullable(); // Jika pemiliknya adalah pegawai dari SSO
-
+            $table->datetime("tanggal_divalidasi")->nullable();
             $table->timestamps();
 
             // Unique folder per user

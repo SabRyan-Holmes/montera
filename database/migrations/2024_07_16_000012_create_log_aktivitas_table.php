@@ -15,22 +15,14 @@ return new class extends Migration
             $table->id();
 
             // Jika user login via User model
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-
-            // Jika login via SSO (pegawai) maka gunakan NIP
-            $table->string('nama_pegawai')->nullable()->index();
-            $table->string('nip_pegawai')->nullable()->index();
-
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('pegawai_nip', 18)->nullable(); // Sesuaikan panjang NIP sesuai kebutuhan
+            $table->foreign('pegawai_nip')->references('NIP')->on('pegawais')->onDelete('cascade');
             $table->string('aktivitas'); // Misal: "Mengunduh File PAK"
-            $table->string('model')->nullable(); // Misal: App\Models\Pak
-            $table->unsignedBigInteger('model_id')->nullable(); // ID dari objek yg terlibat
-
             $table->text('keterangan')->nullable(); // Catatan tambahan jika ada
+            $table->string('entity_type')->nullable();
+            $table->unsignedBigInteger('entity_id')->nullable();
             $table->ipAddress('ip_address')->nullable();
-
-            //
-            // $table->string('nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
-            // $table->foreign('nip')->references('NIP')->on('pegawais')->onDelete('cascade');
             $table->timestamps();
         });
     }

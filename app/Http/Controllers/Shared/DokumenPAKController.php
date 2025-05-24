@@ -73,7 +73,6 @@ class DokumenPAKController extends Controller
             'title' => 'Penetapan Angka Kredit',
             'pegawai' => $pegawai,
             'pegawaiList' => Pegawai::select('NIP', 'Nama')->latest()->get(),
-            'koefisien' => Koefisien::select('jabatan', 'nilai')->get(),
             'aturanPAK' => $aturan_pak
         ]);
     }

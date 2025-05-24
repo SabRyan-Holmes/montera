@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('pengusulan_pak', function (Blueprint $table) {
             $table->id();
             // Relasi dengan data pegawai (menggunakan NIP)
-            $table->string('nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
-            $table->foreign('nip')->references('NIP')->on('pegawais')->onDelete('cascade');
+            $table->string('pegawai_nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
+            $table->foreign('pegawai_nip')->references('NIP')->on('pegawais')->onDelete('cascade');
 
             // Data utama pengajuan
             $table->string('jabatan');
@@ -26,8 +26,7 @@ return new class extends Migration
             // Data pendukung (opsional)
             $table->text('uraian_tugas')->nullable();
             $table->string('dokumen_pendukung_path')->nullable();
-            $table->bigInteger('catatan_pegawai_id')->nullable();
-            $table->foreign('catatan_pegawai_id')->references('id')->on('catatans')->onDelete('cascade');;
+            $table->foreignId('catatan_pegawai_id')->nullable()->constrained('catatans')->onDelete('cascade');
 
             // Status pengajuan
             $table->enum('status', [
@@ -37,11 +36,11 @@ return new class extends Migration
             ])->default('diproses');
 
             // Tracking proses
-            $table->bigInteger('catatan_sdm_id')->nullable();
-            $table->foreign('catatan_sdm_id')->references('id')->on('catatans')->onDelete('cascade');;
-            $table->timestamp('tanggal_pengajuan')->nullable();
-            $table->timestamp('tanggal_disetujui')->nullable();
-            $table->string('disetujui_oleh')->nullable();
+            $table->foreignId('catatan_sdm_id')->nullable()->constrained('catatans')->onDelete('cascade');
+            $table->datetime('tanggal_ditolak')->nullable();
+            $table->datetime('tanggal_diperbaiki')->nullable();
+            $table->datetime('tanggal_disetujui')->nullable();
+            $table->foreignId('approved_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

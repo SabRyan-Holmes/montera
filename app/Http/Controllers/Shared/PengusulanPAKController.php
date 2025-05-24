@@ -40,7 +40,7 @@ class PengusulanPAKController extends Controller
             "title" => "Pengusulan PAK ",
             "subTitle" => $subTitle,
             "pengusulanPAK" => PengusulanPAK::latest()->paginate(10),
-            'canValidate' => $user->role == 'divisi_sdm',
+            'canValidate' => $user->role == 'Divisi SDM',
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),

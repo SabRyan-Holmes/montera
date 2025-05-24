@@ -72,7 +72,7 @@ const Sidebar = ({ role }) => {
                 </div>
 
                 {/* SECTION - DIVISI SDM */}
-                {role === "divisi_sdm" && (
+                {role === "Divisi SDM" && (
                     <section className="scale-105 menu">
                         {/* Link Dashboard */}
                         <SidebarLink

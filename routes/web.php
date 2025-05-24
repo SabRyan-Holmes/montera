@@ -44,7 +44,7 @@ Route::prefix('/pak')->name('pak.')->group(function () {
 
 // <============================================================ Divisi SDM ============================================================>
 
-Route::middleware(['auth', 'divisi_sdm'])->prefix('/divisi-sdm')->name('divisi-sdm.')->group(function () {
+Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-sdm.')->group(function () {
     // Dashboard(=> Export Data Pegawai Ke csv)
     Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');

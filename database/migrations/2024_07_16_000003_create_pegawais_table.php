@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('pegawais', function (Blueprint $table) {
             $table->id();
-            // $table->string('Nomor');
-            $table->string('Nama');
-            // $table->string('NIP')->unique();
+            $table->string('Nama')->comment('Jika ada Gelar tambahan maka ditambahkan setelah nama');
             $table->string('NIP')->unique();
             $table->string('Nomor Seri Karpeg')->nullable();
             $table->string('Pangkat/Golongan Ruangan/TMT');
@@ -23,13 +21,10 @@ return new class extends Migration
             $table->enum('Jenis Kelamin', ['PRIA', 'WANITA']);
             $table->string('Pendidikan');
             $table->string('Jabatan/TMT');
-            // TODO: Masa kerja golongan harusny nullable aj kalo diulang migrasiny
-            $table->string('Masa Kerja Golongan')->nullable();
+            $table->string('Masa Kerja Golongan')->nullable(); // Masa kerja golongan harusny nullable aj kalo diulang migrasiny
             $table->string('Unit Kerja');
             $table->string('Daerah');
-
-            // Jika Seandainya direset dan migrasi ulang, ini di uncomment
-            // $table->string('Gelar Tambahan')->nullable();
+            $table->string('Gelar Tambahan')->nullable();
 
             $table->timestamps();
         });

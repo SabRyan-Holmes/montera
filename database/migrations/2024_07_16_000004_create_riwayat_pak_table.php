@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('riwayat_pak', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('pegawai_id') // Kolom foreign key
-            ->constrained('pegawais') // Mengacu ke tabel 'pegawais'
-            ->onDelete('cascade'); // Opsional: hapus riwayat_pak jika pegawai dihapus
+            $table->foreignId('created_by')->constrained('users'); //updated 24 Mei 2025
+            $table->foreignId('pegawai_id')->constrained('pegawais')->onDelete('cascade');
             $table->string('nama');
             $table->string('nip');
             $table->string('tgl_ditetapkan');
@@ -55,8 +54,6 @@ return new class extends Migration
             $table->string('jabatan_keker');
             $table->json('tebusan3');
             $table->string('kesimpulan');
-
-
         });
     }
 

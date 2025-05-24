@@ -1,7 +1,7 @@
 import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function UseAturanPenetapan(aturanPAK, koefisien = []) {
+export default function UseAturanPenetapan(aturanPAK) {
     const [initialized, setInitialized] = useState(false);
     const { data, setData, post, processing, errors, reset, setDefaults } =
         useForm({

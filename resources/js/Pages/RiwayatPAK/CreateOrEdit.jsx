@@ -23,7 +23,6 @@ import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
 
 export default function Index({
     auth,
-    koefisien,
     title,
     flash,
     pegawai,
@@ -45,7 +44,7 @@ export default function Index({
         aturanKonvTableProps,
         aturanAkmTableProps,
         aturanPAKTableProps,
-    } = UseAturanPenetapan((aturanPAK = aturanPAK), koefisien);
+    } = UseAturanPenetapan((aturanPAK = aturanPAK));
     // ANCHOR
 
 
@@ -191,7 +190,6 @@ export default function Index({
     };
 
     const [search, setSearch] = useState("");
-
     const filtered = pegawaiList?.filter((p) =>
         `${p["Nama"]} ${p.NIP}`.toLowerCase().includes(search.toLowerCase())
     );
@@ -215,14 +213,11 @@ export default function Index({
     };
 
     // CONSOLE
-    // console.log("Isi pegawaiState");
-    // console.log(pegawaiState);
-    // // console.log("Isi Error");
+    // console.log("Isi Error");
     // console.log(errors);
     // console.log("Isi Data");
     // console.log(data);
-    const dataNow = data;
-    console.log("data now", dataNow);
+    // console.log("data now", dataNow);
 
     return (
         <Authenticated

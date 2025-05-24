@@ -16,7 +16,7 @@ class DivisiSDM
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role == "divisi_sdm") {
+        if (Auth::user()->role == "Divisi SDM") {
             return $next($request);
         }
         abort(401);
