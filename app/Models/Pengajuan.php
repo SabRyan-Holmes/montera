@@ -9,14 +9,10 @@ use Illuminate\Database\Eloquent\Builder;
 class Pengajuan extends Model
 {
     protected $guarded = ['id'];
-    protected $with = ['pegawai', 'riwayat_pak'];
+    protected $with = ['riwayat_pak'];
     use HasFactory;
 
-    public function pegawai()
-    {
-        return $this->belongsTo(Pegawai::class, 'pegawai_id');
 
-    }
 
     public function riwayat_pak()
     {

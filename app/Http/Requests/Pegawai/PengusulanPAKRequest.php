@@ -22,13 +22,38 @@ class PengusulanPAKRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'jabatan' => 'nullable|string|max:40',
+            'jabatan' => 'string|max:40',
+            'tujuan' => 'string|max:150',
             'periode_mulai' => 'required',
             'periode_berakhir' => 'required|string|max:50',
-            'jumlah_ak_terakhir' => 'required|doubleval',
-            'jumlah_ak_diajukan' => 'required|doubleval',
+            'jumlah_ak_terakhir' => 'required|decimal:0,5000',
+            'jumlah_ak_diajukan' => 'required|decimal:0,5000',
             'uraian_tugas' => 'nullable|string|max:1000',
-            'dokumen_pendukung_path' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'dokumen_pendukung_path' => 'nullable|sometimes|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => ':attribute wajib diisi.',
+            'string' => ':attribute harus berupa teks.',
+            'max' => ':attribute maksimal :max karakter.',
+            'min' => ':attribute minimal :min karakter.',
+            'in' => ':attribute harus salah satu dari :values.',
+            'unique' => ':attribute sudah ada, silakan gunakan NIP yang lain.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'periode_mulai' => 'periode mulai',
+            'periode_berakhir' => 'periode berakhir',
+            'jumlah_ak_terakhir' => 'jumlah angka kredit terakhir',
+            'jumlah_ak_diajukan' => 'jumlah angka kredit diajukan',
+            'uraian_tugas' => 'uraian tugas',
+            'dokumen_pendukung_path' => 'dokumen pendukung',
         ];
     }
 }

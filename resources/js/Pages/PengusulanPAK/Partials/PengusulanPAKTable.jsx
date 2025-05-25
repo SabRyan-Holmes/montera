@@ -89,7 +89,7 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                         <tr>
                             <td>Uraian Tugas</td>
                             <td className="text-base font-normal">
-                                {data["uraian_tugas"]}
+                                {data["uraian_tugas"] ?? '-' }
                             </td>
                         </tr>
                         <tr>
@@ -105,7 +105,7 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                         <tr>
                             <td>Catatan Tambahan</td>
                             <td className="text-wrap">
-                                {data["catatan_pegawai_id"]}
+                                {data["catatan"] ? data["catatan"]['isi'] : '-' }
                             </td>
                         </tr>
                         <tr>

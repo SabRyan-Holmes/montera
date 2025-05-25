@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CetakPAKRequest;
 use App\Models\AturanPAK;
 use App\Models\Koefisien;
 use Inertia\Inertia;
@@ -17,7 +16,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
 
 
 
@@ -103,7 +101,6 @@ class DokumenPAKController extends Controller
             'title' => 'Edit Penetapan Angka Kredit',
             'isEdit' => true,
             'riwayat' => $riwayat,
-            'koefisien' => Koefisien::select('jabatan', 'nilai')->get(),
             'aturanPAK' => $aturan_pak
         ]);
     }

@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Shared;
 
+use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Models\AturanPAK;
+use App\Models\Pegawai;
 use App\Models\RiwayatKarir;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class RiwayatKarirController extends Controller
 {
@@ -13,7 +18,32 @@ class RiwayatKarirController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $pegawai = Pegawai::where('NIP', $user->nip)->first();
+        $riwayatKarirDiri = RiwayatKarir::where('pegawai_nip', $pegawai->NIP )->latest();
+
+
+        $subTitle = GetSubtitle::getSubtitle(
+            request('byStatus'),
+            request('byJabatan'),
+            request('search')
+        );
+
+
+        $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+        $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
+
+        return Inertia::render('RiwayatKarir/Index', [
+            "title" => "Riwayat Karir & Perubahan Data",
+            "subTitle" => $subTitle,
+            "riwayatKarirDiri" => $riwayatKarirDiri,
+            'riwayatKarirSemua' => 'Semua', //TODO
+            'canValidate' => $user->role == 'Divisi SDM',
+            "searchReq" => request('search'),
+            "byStatusReq" => request('byStatus'),
+            "byJabatanReq" => request('byJabatan'),
+            "jabatanList" => $jabatan_list
+        ]);
     }
 
     /**

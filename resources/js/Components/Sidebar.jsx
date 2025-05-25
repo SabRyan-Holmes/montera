@@ -1,4 +1,3 @@
-
 import {
     MdAdminPanelSettings,
     MdAssignment,
@@ -8,6 +7,7 @@ import {
 } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import {
+    FaChartLine,
     FaDatabase,
     FaDownload,
     FaNotesMedical,
@@ -94,7 +94,9 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "divisi-sdm.pengusulan-pak.index",
-                                    actives: ["divisi-sdm.pengusulan-pak.index"],
+                                    actives: [
+                                        "divisi-sdm.pengusulan-pak.index",
+                                    ],
                                 },
                                 {
                                     label: (
@@ -107,9 +109,7 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "divisi-sdm.pak.create",
-                                    actives: [
-                                        "divisi-sdm.pak.create",
-                                    ],
+                                    actives: ["divisi-sdm.pak.create"],
                                 },
                                 {
                                     label: (
@@ -126,7 +126,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Arsip Dokumen */}
-                                            <RiArchive2Fill/>
+                                            <RiArchive2Fill />
                                             Arsip Dokumen
                                         </>
                                     ),
@@ -210,20 +210,18 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "divisi-sdm.log-aktivitas.index",
-                                    actives: [
-                                        "divisi-sdm.log-aktivitas.index",
-                                    ],
+                                    actives: ["divisi-sdm.log-aktivitas.index"],
                                 },
                                 {
                                     label: (
                                         <>
                                             {/* Kelola Pegawai */}
-                                            <GrHelpBook  />
+                                            <GrHelpBook />
                                             Panduan/Bantuan
                                         </>
                                     ),
                                     route: "divisi-sdm.help-and-guide",
-                                    active: "divisi-sdm.help-and-guide",
+                                    actives: ["divisi-sdm.help-and-guide"],
                                 },
                                 {
                                     label: (
@@ -233,8 +231,8 @@ const Sidebar = ({ role }) => {
                                             Download Template
                                         </>
                                     ),
-                                    route: "divisi-sdm.pengusulan-pak.index",
-                                    active: "divisi-sdm.pengusulan-pak.index",
+                                    route: "divisi-sdm.download-template",
+                                    actives: ["divisi-sdm.download-template"],
                                 },
                             ]}
                         >
@@ -249,7 +247,7 @@ const Sidebar = ({ role }) => {
                 {/* !SECTION - DIVISI SDM */}
 
                 {/* SECTION - PIMPINAN */}
-                {role === "pimpinan" && (
+                {role === "Pimpinan" && (
                     <section className="scale-105 menu">
                         {/* Link Dashboard */}
                         <SidebarLink
@@ -353,18 +351,18 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "pimpinan.help-and-guide",
-                                    active: "pimpinan.help-and-guide",
+                                    actives: ["pimpinan.help-and-guide"],
                                 },
                                 {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <IoSettings className="mr-2" />
+                                            <FaDownload className="mr-2" />
                                             Download Template
                                         </>
                                     ),
-                                    route: "pimpinan.help-and-guide",
-                                    active: "pimpinan.help-and-guide",
+                                    route: "pimpinan.download-template",
+                                    actives: ["divisi-sdm.download-template"],
                                 },
                             ]}
                         >
@@ -379,7 +377,7 @@ const Sidebar = ({ role }) => {
 
                 {/* SECTION - PEGAWAI */}
                 {!role ||
-                    (role == "pegawai" && (
+                    (role === "Pegawai" && (
                         <section className="scale-105 menu">
                             {/* Link Dashboard */}
                             <SidebarLink
@@ -397,7 +395,7 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Pengusulan Pegawai */}
-                                                <MdOutlineAssignmentInd className="mr-2" />
+                                                <MdOutlineAssignmentInd />
                                                 Pengusulan PAK
                                             </>
                                         ),
@@ -412,7 +410,7 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Pengajuan PAK */}
-                                                <BsFillSendArrowUpFill className="mr-2" />
+                                                <BsFillSendArrowUpFill />
                                                 Status Proses PAK
                                             </>
                                         ),
@@ -420,34 +418,23 @@ const Sidebar = ({ role }) => {
                                         actives: ["pegawai.proses-pak.index"],
                                     },
 
-                                    // Tanyoin Nanti boleh dk pegawai melihat aturan PAK
                                     {
                                         label: (
                                             <>
                                                 {/* Kelola Aturan PAK */}
-                                                <IoSettings className="mr-2" />
-                                                Aturan PAK
+                                                <FaChartLine />
+                                                Riwayat Karir & Data
                                             </>
                                         ),
-                                        route: "pegawai.aturan-pak.index",
-                                        actives: ["pegawai.aturan-pak.index"],
+                                        route: "pegawai.riwayat-karir.index",
+                                        actives: ["pegawai.riwayat-karir.index"],
                                     },
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Kelola Aturan PAK */}
-                                                <IoSettings className="mr-2" />
-                                                Riwayat Karir & Data Pegawai
-                                            </>
-                                        ),
-                                        route: "pimpinan.pegawai.index",
-                                        actives: ["pimpinan.pegawai.index"],
-                                    },
+
                                     {
                                         label: (
                                             <>
                                                 {/* Arsip Dokumen */}
-                                                <RiArchive2Fill className="mr-2" />
+                                                <RiArchive2Fill />
                                                 Arsip Dokumen
                                             </>
                                         ),
@@ -456,6 +443,18 @@ const Sidebar = ({ role }) => {
                                             "pimpinan.arsip-dokumen.index",
                                             "pimpinan.arsip-dokumen.edit",
                                         ],
+                                    },
+                                    // TODO: Tanyoin Nanti boleh dk pegawai melihat aturan PAK
+                                    {
+                                        label: (
+                                            <>
+                                                {/* Kelola Aturan PAK */}
+                                                <IoSettings />
+                                                Aturan PAK
+                                            </>
+                                        ),
+                                        route: "pegawai.aturan-pak.index",
+                                        actives: ["pegawai.aturan-pak.index"],
                                     },
                                 ]}
                             >
@@ -471,34 +470,36 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 {/* Log Aktivitas */}
-                                                <AiFillNotification className="mr-2" />
+                                                <AiFillNotification />
                                                 Log Aktivitas
                                             </>
                                         ),
                                         route: "pegawai.log-aktivitas.index",
-                                        active: "pegawai.log-aktivitas.index",
+                                        actives: [
+                                            "pegawai.log-aktivitas.index",
+                                        ],
                                     },
                                     {
                                         label: (
                                             <>
                                                 {/* Kelola Pegawai */}
-                                                <GrHelpBook className="mr-2" />
+                                                <GrHelpBook />
                                                 Panduan/Bantuan
                                             </>
                                         ),
                                         route: "pegawai.help-and-guide",
-                                        active: "pegawai.help-and-guide",
+                                        actives: ["pegawai.help-and-guide"],
                                     },
                                     {
                                         label: (
                                             <>
                                                 {/* Kelola Aturan PAK */}
-                                                <IoSettings className="mr-2" />
+                                                <FaDownload />
                                                 Download Template
                                             </>
                                         ),
-                                        route: "pegawai.help-and-guide",
-                                        active: "pegawai.help-and-guide",
+                                        route: "pegawai.download-template",
+                                        actives: ["pegawai.download-template"],
                                     },
                                 ]}
                             >

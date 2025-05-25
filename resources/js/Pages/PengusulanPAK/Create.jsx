@@ -15,14 +15,18 @@ import { PiSealWarning } from "react-icons/pi";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
 import { MdOutlineAssignmentInd } from "react-icons/md";
+import Swal from "sweetalert2";
+import { BsFillSendFill } from "react-icons/bs";
 
-export default function Create({ auth, pegawai, title, flash }) {
+export default function Create({ auth, pegawai, title, flash, isEdit }) {
+    const jabatanDefault = pegawai["Jabatan/TMT"].split("/")[0].trim();
     const { data, setData, post, processing, errors, reset } = useForm({
         // ANCHOR
         // REVIEW : Ini kalo data ny dr SSO tolong dirubah
-        nama: auth.user.name,
-        nip: auth.user.nip,
-        jabatan: "",
+        // nama: auth.user.name,
+        pegawai_nip: pegawai['NIP'],
+        jabatan: jabatanDefault,
+        tujuan: "Evaluasi Kinerja Tahunan",
         periode_mulai: "",
         periode_berakhir: "",
         jumlah_ak_terakhir: 0.0,
@@ -30,10 +34,51 @@ export default function Create({ auth, pegawai, title, flash }) {
 
         // data pendukung(opsional)
         uraian_tugas: "",
-        dokumen_pendukung_path: [],
-        catatan_pegawai: ''
-
+        dokumen_pendukung_path: null,
+        catatan_pegawai: "",
     });
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    // useEffect(() => {
+    //     if (flash.message) {
+    //         Toast.fire({
+    //             icon: "success",
+    //             title: "Data Pegawai Berhasil Diupdate!!",
+    //         });
+    //         setTimeout(() => {
+    //             flash.message = null;
+    //         }, 3000);
+    //     }
+    // }, [flash.message]);
+
+    useEffect(() => {
+        if (errors && Object.values(errors).length > 0) {
+            // Ambil nilai pertama dari object errors
+            const firstErrorMessage = Object.values(errors)[0];
+            // console.log("firstErrorMessage :");
+            // console.log(firstErrorMessage);
+            Toast.fire({
+                icon: "warning",
+                iconColor: "#fb7185",
+                title: firstErrorMessage,
+                color: "#fb7185",
+            });
+            setTimeout(() => {
+                clearErrors();
+            }, 3000);
+        }
+    }, [errors]);
     const [alert, setAlert] = useState(false);
 
     useEffect(() => {
@@ -44,8 +89,8 @@ export default function Create({ auth, pegawai, title, flash }) {
         e.preventDefault();
         post(route("pegawai.pengusulan-pak.store"), {
             onSuccess: () => {
-                console.log('berhasil')
-            }
+                console.log("berhasil");
+            },
         });
     };
 
@@ -116,15 +161,11 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             id="nama"
                                             type="text"
                                             name="nama"
-                                            defaultValue={data.nama}
+                                            defaultValue={`${pegawai["Nama"]} ${
+                                                pegawai["Gelar Tambahan"] ?? ""
+                                            } `}
                                             disabled
-                                            placeholder="Masukkan Nama Pegawai"
-                                            maxLength={100}
-                                            isFocused={true}
                                             className="w-full px-2 h-9 "
-                                            onChange={(e) =>
-                                                setData("nama", e.target.value)
-                                            }
                                         />
                                     </td>
                                 </tr>
@@ -141,7 +182,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                         <TextInput
                                             type="text"
                                             name="nip"
-                                            defaultValue={data.nip}
+                                            defaultValue={pegawai["NIP"]}
                                             disabled
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
@@ -165,7 +206,8 @@ export default function Create({ auth, pegawai, title, flash }) {
                                         <TextInput
                                             type="text"
                                             name="jabatan"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
+                                            className="w-full px-2 h-9 placeholder:text-accent"
+                                            defaultValue={data.jabatan}
                                             isFocused={true}
                                             placeholder="Masukkan jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
                                             maxLength={100}
@@ -178,7 +220,57 @@ export default function Create({ auth, pegawai, title, flash }) {
                                         />
                                     </td>
                                 </tr>
-                                {/* row 3 */}
+
+                                <tr className="border">
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="tujuan"
+                                            value="Tujuan Pengusulan"
+                                        />
+                                    </td>
+                                    <td className="border-x">
+                                        <select
+                                            className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
+                                            name="tujuan"
+                                            id="tujuan"
+                                            value={isEdit && data.tujuan}
+                                            defaultValue={data.tujuan}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "tujuan",
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            <option>
+                                                Evaluasi Kinerja Tahunan
+                                            </option>
+                                            <option>
+                                                Kenaikan Pangkat & Jabatan
+                                            </option>
+                                            <option>
+                                                Mutasi/Rotasi Jabatan
+                                            </option>
+                                            <option>
+                                                Kenaikan Gaji Berkala
+                                            </option>
+                                            <option>
+                                                Pengangkatan Pertama Kali dalam
+                                                Jabatan Fungsional
+                                            </option>
+                                            <option>
+                                                Dokumentasi Kinerja Sebagai
+                                                Rekam Jejak Karir
+                                            </option>
+                                            <option>
+                                                Kebutuhan Evaluasi atau Inspeksi
+                                                Internal
+                                            </option>
+                                            <option>Lainnya</option>
+                                        </select>
+                                    </td>
+                                </tr>
 
                                 <tr className="border-x">
                                     <td>
@@ -195,7 +287,6 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                             isFocused={true}
                                             onChange={(e) => {
-                                                // Set min periode untuk untuk periode berakhir
                                                 setMinPeriode(e.target.value);
                                                 setData(
                                                     "periode_mulai",
@@ -212,7 +303,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                             onChange={(e) =>
                                                 setData(
-                                                    "periode_mulai",
+                                                    "periode_berakhir",
                                                     e.target.value
                                                 )
                                             }
@@ -236,7 +327,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             step={0.01}
                                             max={5000}
                                             className="px-2 laptop:w-full h-9 placeholder:text-accent "
-                                            placeholder="Masukkan Jumlah AK Terakhir. contoh: 240.256"
+                                            placeholder="Input Angka Kredit. contoh: 240.256"
                                             maxLength={100}
                                             onChange={(e) => {
                                                 const value = parseFloat(
@@ -250,7 +341,6 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                 );
                                             }}
                                             onInput={(e) => {
-                                                // Untuk memastikan 1 digit desimal
                                                 e.target.value = parseFloat(
                                                     e.target.value
                                                 ).toFixed(3);
@@ -274,7 +364,7 @@ export default function Create({ auth, pegawai, title, flash }) {
                                             step={0.01}
                                             max={5000}
                                             className="px-2 laptop:w-full h-9 placeholder:text-accent "
-                                            placeholder="Masukkan Jumlah AK Diajukan. contoh: 272.234"
+                                            placeholder="Input Angka Kredit. contoh: 272.234"
                                             onChange={(e) => {
                                                 const value = parseFloat(
                                                     e.target.value
@@ -287,7 +377,6 @@ export default function Create({ auth, pegawai, title, flash }) {
                                                 );
                                             }}
                                             onInput={(e) => {
-                                                // Untuk memastikan 1 digit desimal
                                                 e.target.value = parseFloat(
                                                     e.target.value
                                                 ).toFixed(3);
@@ -422,8 +511,8 @@ export default function Create({ auth, pegawai, title, flash }) {
                                 type="submit"
                                 className="gap-1 text-base border"
                             >
-                                <span>Tambah Data</span>
-                                <FaPlus className="w-4 h-4 fill-white" />
+                                <span>Ajukan Usulan</span>
+                                <BsFillSendFill className="w-4 h-4 fill-white" />
                             </SuccessButton>
                         </div>
                     </form>

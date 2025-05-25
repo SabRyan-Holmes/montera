@@ -9,10 +9,16 @@ import { IoClose, IoCloseOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
-import { Pagination, TooltipHover, useFilterSearch,FilterSearchCustom  } from "@/Components";
+import {
+    Pagination,
+    TooltipHover,
+    useFilterSearch,
+    FilterSearchCustom,
+} from "@/Components";
 import ModalCekPengusulan from "./Partials/ModalCekPengusulan";
 import moment from "moment/min/moment-with-locales";
-
+import { FaEdit } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 
 // ANCHOR
 
@@ -179,7 +185,7 @@ export default function Index({
                         <Link
                             as="button"
                             href={route("pegawai.pengusulan-pak.create")}
-                            className="flex justify-end mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                            className="flex justify-end mx-2 mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
                         >
                             Tambah
                             <IoMdAdd className="w-6 h-6" />
@@ -220,8 +226,8 @@ export default function Index({
                                         </th>
                                         <th
                                             scope="col"
-                                            width="15%"
-                                            className="p-1 text-xs text-center"
+                                            width="12%"
+                                            className="text-xs text-center"
                                         >
                                             <span>Periode </span>
                                             <span className="block">
@@ -282,7 +288,10 @@ export default function Index({
                                             <td>1</td>
                                             <td className="text-left">
                                                 <strong className="">
-                                                    {data.pegawai.Nama} {data.pegawai["Gelar Tambahan"] ?? ""}
+                                                    {data.pegawai.Nama}{" "}
+                                                    {data.pegawai[
+                                                        "Gelar Tambahan"
+                                                    ] ?? ""}
                                                 </strong>
                                                 <strong className="block mt-1">
                                                     {data.nip}
@@ -327,17 +336,16 @@ export default function Index({
                                                 </span>
                                             </td>
                                             <td className="text-center whitespace-nowrap text-nowrap">
+                                                <ModalCekPengusulan
+                                                    pengusulanPAK={data}
+                                                    setActiveModalId={
+                                                        setActiveModalId
+                                                    }
+                                                    canValidate={canValidate}
+                                                    message={modalMessage}
+                                                />
                                                 {canValidate ? (
                                                     <>
-                                                        <ModalCekPengusulan
-                                                            pengusulanPAK={data}
-                                                            setActiveModalId={
-                                                                setActiveModalId
-                                                            }
-                                                            message={
-                                                                modalMessage
-                                                            }
-                                                        />
                                                         <div className="relative inline-flex group">
                                                             <button
                                                                 className="transition-all scale-110 group/button action-btn border-primary/20 hover:bg-primary"
@@ -366,11 +374,11 @@ export default function Index({
                                                                 className="transition-all scale-110 group/button action-btn border-hijau/20 hover:bg-hijau"
                                                                 onClick={() => {
                                                                     setActiveModalId(
-                                                                        pengusulanPAK.id
+                                                                        data.id
                                                                     );
                                                                     document
                                                                         .getElementById(
-                                                                            `DialogCekPengusulan-${pengusulanPAK.id}`
+                                                                            `DialogCekPengusulan-${data.id}`
                                                                         )
                                                                         .showModal();
                                                                 }}
@@ -388,7 +396,7 @@ export default function Index({
                                                             <button
                                                                 onClick={() =>
                                                                     handleReject(
-                                                                        pengusulanPAK.id
+                                                                        data.id
                                                                     )
                                                                 }
                                                                 className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning"
@@ -403,23 +411,83 @@ export default function Index({
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <td className="text-center text-nowrap">
-                                                        <button
-                                                            className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
-                                                            onClick={() => {
-                                                                setActiveModalId(
-                                                                    pengusulanPAK.id
-                                                                );
-                                                                document
-                                                                    .getElementById(
-                                                                        `DialogCekPengusulan-${pengusulanPAK.id}`
-                                                                    )
-                                                                    .showModal();
-                                                            }}
-                                                        >
-                                                            Lihat
-                                                            <FaEye className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
-                                                        </button>
+                                                    <td className="space-x-2 text-center text-nowrap">
+                                                        <div className="relative inline-flex group">
+                                                            <button
+                                                                className="transition-all scale-110 group/button action-btn border-primary/20 hover:bg-primary"
+                                                                onClick={() => {
+                                                                    setActiveModalId(
+                                                                        data.id
+                                                                    );
+                                                                    document
+                                                                        .getElementById(
+                                                                            `DialogCekPengusulan-${data.id}`
+                                                                        )
+                                                                        .showModal();
+                                                                }}
+                                                            >
+                                                                <FaEye className="scale-125 fill-primary stroke-primary group-hover/button:fill-white" />
+                                                            </button>
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Lihat Detail"
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <div className="relative inline-flex group">
+                                                            <Link
+                                                                as="a"
+                                                                href={route(
+                                                                    "pegawai.pengusulan-pak.edit",
+                                                                    data.id
+                                                                )}
+                                                                disabled= {data.status === "diproses"}
+                                                                className={"action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " + (data.status=== "diproses" ? 'cursor-not-allowed': 'cursor-default' )}
+                                                            >
+                                                                <FaEdit
+                                                                    className={
+                                                                        "scale-125" +
+                                                                            data.status ===
+                                                                        "ditolak"
+                                                                            ? "fill-secondary group-hover/item:fill-white"
+                                                                            : "fill-accent"
+                                                                    }
+                                                                />
+                                                            </Link>
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Edit Usulan PAK "
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <div className="relative inline-flex group">
+                                                            <Link
+                                                                as="a"
+                                                                href={route(
+                                                                    "pegawai.pengusulan-pak.edit",
+                                                                    data.id
+                                                                )}
+                                                                disabled= {data.status === "diproses"}
+                                                                className={"action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " + (data.status=== "diproses" ? 'cursor-not-allowed': 'cursor-default' )}
+                                                            >
+                                                                <MdCancel
+                                                                    className={
+                                                                        "scale-125" +
+                                                                            data.status ===
+                                                                        "ditolak"
+                                                                            ? "fill-secondary group-hover/item:fill-white"
+                                                                            : "fill-accent"
+                                                                    }
+                                                                />
+                                                            </Link>
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Batalkan Usulan PAK "
+                                                                }
+                                                            />
+                                                        </div>
                                                     </td>
                                                 )}
                                             </td>
@@ -447,7 +515,9 @@ export default function Index({
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
-                                {!subTitle ? 'Belum Ada Pengusulan PAK Terbaru Untuk Saat Ini' : 'Tidak Ditemukan'}
+                                {!subTitle
+                                    ? "Belum Ada Pengusulan PAK Terbaru Untuk Saat Ini"
+                                    : "Tidak Ditemukan"}
                             </h2>
                         </div>
                     )}

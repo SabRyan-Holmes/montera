@@ -11,8 +11,10 @@ import {
     TooltipHover,
     useFilterSearch,
 } from "@/Components";
-import { FaTrash } from "react-icons/fa6";
+import { FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
+import FilterSearchPegawai from "./Partials/FilterSearchPegawai";
+import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 
 export default function Index({
     auth,
@@ -24,7 +26,6 @@ export default function Index({
     byJabatanReq: initialJabatan,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
-    moment.locale("id");
 
     function handleDelete(id) {
         Swal.fire({
@@ -90,107 +91,25 @@ export default function Index({
         routeName: "/divisi-sdm/pegawai", // bisa diganti tergantung endpoint-nya
     });
 
+    // ===========================================Other Logics===========================================
+    moment.locale("id");
+    const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
+
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                <form className="flex items-center justify-between w-full">
-                    <div className="flex items-center justify-start gap-3 my-3 w-fit">
-                        <div className="w-fit">
-                            <InputLabel
-                                value="Jabatan"
-                                Htmlfor="Jabatan"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
-                                name="byJabatan"
-                                value={byJabatan}
-                                onChange={(e) => setByJabatan(e.target.value)}
-                            >
-                                <option>Semua Kategori</option>
-                                <option value="Terampil">Ahli Terampil</option>
-                                <option value="Mahir">Mahir</option>
-                                <option value="Pertama">Ahli Pertama</option>
-                                <option value="Penyelia">Ahli Penyelia</option>
-                                <option value="Muda">Ahli Muda</option>
-                                <option value="Madya">Ahli Madya</option>
-                            </select>
-                        </div>
-                        <div className="w-fit">
-                            <InputLabel
-                                value="Daerah"
-                                Htmlfor="Daerah"
-                                className="max-w-sm ml-1 text-lg"
-                            />
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+                <section>
+                    <FilterSearchPegawai
+                        byJabatan={byJabatan}
+                        setByJabatan={setByJabatan}
+                        byDaerah={byDaerah}
+                        setByDaerah={setByDaerah}
+                        search={search}
+                        setSearch={setSearch}
+                    />
+                </section>
 
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
-                                name="byDaerah"
-                                id="byDaerah"
-                                value={byDaerah}
-                                onChange={(e) => setByDaerah(e.target.value)}
-                            >
-                                <option>Semua Kategori</option>
-                                <option>PROVINSI JAMBI</option>
-                                <option>KOTA JAMBI</option>
-                                <option>KERINCI</option>
-                                <option>MUARO JAMBI</option>
-                                <option>BATANG HARI</option>
-                                <option>SAROLANGUN</option>
-                                <option>TANJUNG JABUNG BARAT</option>
-                                <option>TANJUNG JABUNG TIMUR</option>
-                                <option>MERANGIN</option>
-                                <option>KOTA SUNGAI PENUH</option>
-                                <option>BUNGO</option>
-                                <option>TEBO</option>
-                            </select>
-                        </div>
-                        <div className="w-80">
-                            <InputLabel
-                                value="Nama/NIP"
-                                Htmlfor="search"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-
-                            <label
-                                htmlFor="search"
-                                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                            >
-                                Search
-                            </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                    <MdPersonSearch className="w-6 h-6 fill-primary" />
-                                </div>
-                                <input
-                                    type="search"
-                                    id="search"
-                                    name="search"
-                                    onSubmit={(e) => setSearch(e.target.value)}
-                                    defaultValue={search}
-                                    className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
-                                    placeholder="Cari Nama Pegawai/NIP.."
-                                />
-                                <button className="text-white  bg-sky-600/85 absolute end-2 bottom-[6px] hover:bg-primary/85 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Search
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="">
-                        <Link
-                            as="button"
-                            href={route("divisi-sdm.pegawai.create")}
-                            className="flex justify-end w-full mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
-                        >
-                            Tambah Pegawai
-                            <IoMdAdd className="w-6 h-6" />
-                        </Link>
-                    </div>
-                </form>
-
-                <div className="pt-3">
+                <section className="pt-3 overflow-auto">
                     <table className="table text-xs table-bordered">
                         <thead className="text-sm font-medium text-white bg-primary ">
                             <tr>
@@ -218,15 +137,55 @@ export default function Index({
                                         /Masa Kerja Golongan
                                     </span>
                                 </th>
-                                <th scope="col" width="15%">
-                                    Terakhir Diperbarui
-                                </th>
+
                                 <th
+                                    scope="col"
+                                    width="15%"
+                                    className="cursor-pointer"
+
+                                >
+                                    <div className="flex items-center justify-center gap-2">
+                                        {showLastUpdated ? (
+                                            <>
+                                                <button
+                                                className="action-btn hover:scale-[1.15] hover:bg-primary-dark/30"
+                                                    onClick={() =>
+                                                        setShowLastUpdated(
+                                                            !showLastUpdated
+                                                        )
+                                                    }
+                                                >
+                                                <FaEyeSlash className="mr-1 text-white " />
+                                                    Terakhir Diperbarui
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                            <button
+                                                className="action-btn hover:scale-125 hover:bg-primary-dark/30"
+                                                    onClick={() =>
+                                                        setShowLastUpdated(
+                                                            !showLastUpdated
+                                                        )
+                                                    }
+                                                >
+                                            <TbLayoutSidebarLeftCollapse  className="mr-1 text-white" />
+                                            Aksi
+                                            </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </th>
+                                {
+                                    showLastUpdated &&
+                                    <th
                                     scope="col"
                                     className="text-center rounded-tr-xl"
                                 >
                                     Aksi
                                 </th>
+                                }
+
                             </tr>
                         </thead>
                         <tbody>
@@ -259,7 +218,7 @@ export default function Index({
                                         </span>{" "}
                                     </td>
                                     <td>
-                                        <span>
+                                        <span className="block text-center">
                                             {
                                                 pegawai[
                                                     "Pangkat/Golongan Ruangan/TMT"
@@ -272,19 +231,23 @@ export default function Index({
                                                 "-"}
                                         </span>
                                     </td>
-                                    <td className="font-normal text-center">
-                                                {/* ANCHOR */}
-                                                <span className="block">
-                                                    {moment(
-                                                        pegawai['updated_at']
-                                                    ).format("LL")}
-                                                </span>
-                                                <span className="block text-[12px]">
-                                                    {moment(
-                                                        pegawai.updated_at
-                                                    ).fromNow()}
-                                                </span>
-                                            </td>                                    <td className="text-center whitespace-nowrap text-nowrap">
+                                    <td
+                                        className={`font-normal text-center ${
+                                            !showLastUpdated && "hidden"
+                                        }`}
+                                    >
+                                        <span className="block">
+                                            {moment(
+                                                pegawai["updated_at"]
+                                            ).format("LL")}
+                                        </span>
+                                        <span className="block text-[12px]">
+                                            {moment(
+                                                pegawai.updated_at
+                                            ).fromNow()}
+                                        </span>
+                                    </td>
+                                    <td className="text-center whitespace-nowrap text-nowrap">
                                         <div className="relative inline-flex group">
                                             <Link
                                                 as="a"
@@ -300,7 +263,7 @@ export default function Index({
                                                 message={"Lihat Data"}
                                             />
                                         </div>
-                                        <span className="inline-block mx-2"></span>
+                                        <span className="inline-block mx-1"></span>
 
                                         {/* EDIT */}
 
@@ -320,7 +283,7 @@ export default function Index({
                                             />
                                         </div>
 
-                                        <span className="inline-block mx-2"></span>
+                                        <span className="inline-block mx-1"></span>
                                         {/* DELETE */}
                                         <div className="relative inline-flex group">
                                             <button
@@ -340,7 +303,7 @@ export default function Index({
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </section>
 
                 {/* Pagination */}
                 <Pagination
@@ -352,7 +315,7 @@ export default function Index({
                         filterSearch: search,
                     }}
                 />
-            </section>
+            </main>
         </Authenticated>
     );
 }

@@ -6,8 +6,11 @@ use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pegawai\PengusulanPAKRequest;
 use App\Models\AturanPAK;
+use App\Models\Catatan;
+use App\Models\Pegawai;
 use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,32 +56,49 @@ class PengusulanPAKController extends Controller
      */
     public function create()
     {
+        $user = Auth::user();
+        $pegawai = Pegawai::where('NIP', $user->nip)->first();
         return Inertia::render('PengusulanPAK/Create', [
             'title' => "Tambah Pengusulan PAK",
+            'pegawai' => $pegawai
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PengusulanPAKRequest $request)
     {
-        //   dd($request);
         //   $validated = $request->validated();
-        $validated = $request->except(['nama', 'dokumen_pendukung_path', 'periode_mulai', 'periode_berakhir']);
 
-        $periodeMulai = new DateTime($request->periode_mulai);
-        $periodeBerakhir = new DateTime($request->periode_berakhir);
+        $validated = $request->except(['periode_mulai', 'periode_berakhir', 'catatan_pegawai']);
 
-        // Format hasil ke dalam bentuk "Maret - Juni 2025"
-        $periodePenilaian = $periodeMulai->format('F') . ' - ' . $periodeBerakhir->format('F Y');
+        $periodeMulai = Carbon::parse($request->periode_mulai)->locale('id')->isoFormat('MMMM YYYY');
+        $periodeBerakhir = Carbon::parse($request->periode_berakhir)->locale('id')->isoFormat('MMMM YYYY');
+        $validated['periode_penilaian'] = $periodeMulai . ' - ' . $periodeBerakhir;
+
+        if($request->catatan_pegawai) {
+            $new_catatan= Catatan::create([
+                'pegawai_nip' => $request->nip,
+                // 'tipe' => 'PengusulanPAK',
+                'isi' => $request->catatan_pegawai,
+            ]);
+            $validated['catatan_id'] = $new_catatan->id;
+        }
+
+        if($request->hasFile('dokumen_pendukung_path')) {
+            // TODO: Bikin logic store dokumen pendukung
+            $fileName = '';
+            $path = '';
+        }
+
+        // dd($validated);
 
         // Masukkan ke dalam array validasi
-        $validated['periode_penilaian'] = $periodePenilaian;
 
         PengusulanPAK::create($validated);
 
-        return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Data Pengusulan Berhasil Ditambahkan!');
+        return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan Berhasil Diajukan!');
     }
 
     /**
@@ -109,6 +129,16 @@ class PengusulanPAKController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(PengusulanPAK $pengusulan_pak)
+    {
+        //
+    }
+
+    public function accept(PengusulanPAK $pengusulan_pak)
+    {
+        //
+    }
+
+    public function reject(PengusulanPAK $pengusulan_pak)
     {
         //
     }

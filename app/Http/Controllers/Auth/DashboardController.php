@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\Response;
 use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
 use App\Models\ArsipDokumen;
@@ -58,12 +57,16 @@ class DashboardController extends Controller
             ];
         }
 
-        //  TODO: Kalo role nya Pegawai data untuk dashboard beda lagi. JAngan lupa tambahin nanti logikany, kalo lah bisa SSO
+        //  TODO: data for Pegawai Role is Different! Jangan lupa tambahin nanti logikany, kalo lah bisa SSO
         if ($user->role == "Pegawai") {
-            $pak_count = RiwayatPAK::where('pegawai_id', $user->id)->count();
-            $pengusulan_count = PengusulanPAK::all()->count();
-            $pengajuan_count = Pengajuan::where('pegawai_id', $user->id)->count();
-            $arsip_dokumen_count = ArsipDokumen::where('pegawai_nip', $user->nip)->count();
+            // NOTE: Degan asumsi lgoin dari SSO, Tambah logika jika tidak ditemukan nip sama dengan databse, gagal login
+            $pegawai= Pegawai::where('NIP', $user->nip)->first(); //find or Fail
+            $pak_count = RiwayatPAK::where('pegawai_id', $pegawai->id)->count();
+            $pengusulan_count = PengusulanPAK::where('pegawai_nip', $pegawai->NIP)->count();
+            $pengajuan_count = Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
+                $query->where('pegawai_id', $pegawai->id);
+            })->count();
+            $arsip_dokumen_count = ArsipDokumen::where('pegawai_nip_owner', $pegawai->nip)->count();
 
             $dataByRole = [
                 'PAKCount' => $pak_count,
@@ -72,9 +75,15 @@ class DashboardController extends Controller
                 'arsipDokumenCount' => $arsip_dokumen_count,
             ];
 
-            $diajukan = Pengajuan::where('pegawai_id', $user->id)->where('status', 'diajukan')->count();
-            $ditolak = Pengajuan::where('pegawai_id', $user->id)->where('status', 'ditolak')->count();
-            $divalidasi = Pengajuan::where('pegawai_id', $user->id)->where('status', 'divalidasi')->count();
+            $diajukan =  Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
+                $query->where('pegawai_id', $pegawai->id)->where('status', 'diajukan');
+            })->count();
+            $ditolak =  Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
+                $query->where('pegawai_id', $pegawai->id)->where('status', 'ditolak');
+            })->count();
+            $divalidasi =  Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
+                $query->where('pegawai_id', $pegawai->id)->where('status', 'divalidasi');
+            })->count();
 
             $dataGraph = [
                 'diajukan' => $diajukan,
@@ -90,142 +99,9 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function sdm_dashboard()
-    {
-
-        // $accepted = Process::where('status', 'selesai')->count();
-        $terampil = Pegawai::where('Jabatan/TMT', 'LIKE', '%Terampil%')
-            ->count();
-
-        $mahir = Pegawai::where('Jabatan/TMT', 'LIKE', '%Mahir%')
-            ->count();
-
-        $penyelia = Pegawai::where('Jabatan/TMT', 'LIKE', '%Penyelia%')
-            ->count();
-
-        $pertama = Pegawai::where('Jabatan/TMT', 'LIKE', '%Pertama%')
-            ->count();
-
-        $muda = Pegawai::where('Jabatan/TMT', 'LIKE', '%Muda%')
-            ->count();
-
-        $madya = Pegawai::where('Jabatan/TMT', 'LIKE', '%Madya%')
-            ->count();
-
-        $data = [
-            'terampil' => $terampil,
-            'mahir' => $mahir,
-            'penyelia' => $penyelia,
-            'pertama' => $pertama,
-            'muda' => $muda,
-            'madya' => $madya,
-        ];
-
-        $pegawaiFungsional = $terampil + $mahir + $penyelia + $pertama + $muda + $madya;
-        $pakCount = Auth::user()->jumlah_dicetak;
-
-        return Inertia::render('Dashboard', [
-            'title' => 'Dashboard',
-            'userCount' => User::all()->count(),
-            'pegawaiCount' => Pegawai::all()->count(),
-            'data' => $data,
-            'pegawaiFungsional' => $pegawaiFungsional,
-            'pakCount' => $pakCount
-        ]);
-    }
-
-    public function pimpinan_dashboard()
-    {
-
-        // $accepted = Process::where('status', 'selesai')->count();
-        $terampil = Pegawai::where('Jabatan/TMT', 'LIKE', '%Terampil%')
-            ->count();
-
-        $mahir = Pegawai::where('Jabatan/TMT', 'LIKE', '%Mahir%')
-            ->count();
-
-        $penyelia = Pegawai::where('Jabatan/TMT', 'LIKE', '%Penyelia%')
-            ->count();
-
-        $pertama = Pegawai::where('Jabatan/TMT', 'LIKE', '%Pertama%')
-            ->count();
-
-        $muda = Pegawai::where('Jabatan/TMT', 'LIKE', '%Muda%')
-            ->count();
-
-        $madya = Pegawai::where('Jabatan/TMT', 'LIKE', '%Madya%')
-            ->count();
-
-        $data = [
-            'terampil' => $terampil,
-            'mahir' => $mahir,
-            'penyelia' => $penyelia,
-            'pertama' => $pertama,
-            'muda' => $muda,
-            'madya' => $madya,
-        ];
-
-        $pegawaiFungsional = $terampil + $mahir + $penyelia + $pertama + $muda + $madya;
-        $pakCount = Auth::user()->jumlah_dicetak;
-
-        return Inertia::render('Dashboard', [
-            'title' => 'Dashboard',
-            'userCount' => User::all()->count(),
-            'pegawaiCount' => Pegawai::all()->count(),
-            'data' => $data,
-            'pegawaiFungsional' => $pegawaiFungsional,
-            'pakCount' => $pakCount
-        ]);
-    }
-
-    public function pegawai_dashboard()
-    {
-
-        // $accepted = Process::where('status', 'selesai')->count();
-        $terampil = Pegawai::where('Jabatan/TMT', 'LIKE', '%Terampil%')
-            ->count();
-
-        $mahir = Pegawai::where('Jabatan/TMT', 'LIKE', '%Mahir%')
-            ->count();
-
-        $penyelia = Pegawai::where('Jabatan/TMT', 'LIKE', '%Penyelia%')
-            ->count();
-
-        $pertama = Pegawai::where('Jabatan/TMT', 'LIKE', '%Pertama%')
-            ->count();
-
-        $muda = Pegawai::where('Jabatan/TMT', 'LIKE', '%Muda%')
-            ->count();
-
-        $madya = Pegawai::where('Jabatan/TMT', 'LIKE', '%Madya%')
-            ->count();
-
-        $data = [
-            'terampil' => $terampil,
-            'mahir' => $mahir,
-            'penyelia' => $penyelia,
-            'pertama' => $pertama,
-            'muda' => $muda,
-            'madya' => $madya,
-        ];
-
-        $pegawaiFungsional = $terampil + $mahir + $penyelia + $pertama + $muda + $madya;
-        $pakCount = Auth::user()->jumlah_dicetak;
-
-        return Inertia::render('Dashboard/PegawaiDashboard', [
-            'title' => 'Dashboard',
-            'userCount' => User::all()->count(),
-            'pegawaiCount' => Pegawai::all()->count(),
-            'data' => $data,
-            'pegawaiFungsional' => $pegawaiFungsional,
-            'pakCount' => $pakCount
-        ]);
-    }
-
     public function exportCsv(): StreamedResponse
     {
         $filename = 'Data_Pegawai.csv';
-
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"$filename\"",
@@ -255,7 +131,13 @@ class DashboardController extends Controller
 
     public function exportExcel()
     {
-
         return Excel::download(new PegawaiExport, 'Data_Pegawai.xlsx');
+    }
+
+    public function help_and_guide()
+    {
+        return Inertia::render('Help&Guide/Index', [
+            'title' => 'Panduan & Bantuan',
+        ]);
     }
 }

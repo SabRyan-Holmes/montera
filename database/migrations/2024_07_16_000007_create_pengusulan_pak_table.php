@@ -19,9 +19,11 @@ return new class extends Migration
 
             // Data utama pengajuan
             $table->string('jabatan');
+            $table->string('tujuan');
+
             $table->string('periode_penilaian'); // Format: 'YYYY-YYYY'
-            $table->decimal('jumlah_ak_terakhir', 8, 2);
-            $table->decimal('jumlah_ak_diajukan', 8, 2);
+            $table->decimal('jumlah_ak_terakhir', 8, 3);
+            $table->decimal('jumlah_ak_diajukan', 8, 3);
 
             // Data pendukung (opsional)
             $table->text('uraian_tugas')->nullable();
@@ -40,7 +42,7 @@ return new class extends Migration
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_diperbaiki')->nullable();
             $table->datetime('tanggal_disetujui')->nullable();
-            $table->foreignId('approved_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

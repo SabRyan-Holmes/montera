@@ -21,8 +21,8 @@ import PopUpCatatan from "./PopUpCatatan";
 export default function ModalCekPengusulan({
     pengusulanPAK,
     setActiveModalId,
+    canValidate
 }) {
-
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState({
         id: "",
@@ -210,128 +210,136 @@ export default function ModalCekPengusulan({
                     <DetailPegawai pegawai={pengusulanPAK.pegawai} />
                 </div>
 
-                {pengusulanPAK.status === "disetujui" && (
+                {canValidate ? (
                     <>
-                        <div role="alert" className="mb-20 alert bg-hijau">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-6 h-6 stroke-current shrink-0"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                            <span className="text-base font-medium text-black">
-                                Pengusulan PAK ini sudah disetujui!
-                            </span>
-                        </div>
-                    </>
-                )}
+                        {pengusulanPAK.status === "disetujui" && (
+                            <>
+                                <div
+                                    role="alert"
+                                    className="mb-20 alert bg-hijau"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-6 h-6 stroke-current shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    <span className="text-base font-medium text-black">
+                                        Pengusulan PAK ini sudah disetujui!
+                                    </span>
+                                </div>
 
-                {pengusulanPAK.status === "ditolak" && (
-                    <>
-                        <div role="alert" className="mb-20 alert bg-warning">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-6 h-6 stroke-current shrink-0"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                            <span className="text-base font-medium text-black">
-                                Pengusulan PAK ini sudah disetujui!
-                            </span>
-                        </div>
+                                {/* Floating Action Button */}
+                                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                                    <button
+                                        onClick={() => {
+                                            const url = `/storage/${pengusulanPAK.approved_pak_path}`;
+                                            setLinkIframe(url);
+                                            setShowIframe(true);
+                                        }}
+                                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                                    >
+                                        <IoDocument className="w-4 h-4 fill-secondary" />
+                                        Lihat Dokumen
+                                    </button>
+
+                                    <SecondaryButton
+                                        onClick={() => handleCancel()}
+                                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                                    >
+                                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                        Batalkan Validasi
+                                    </SecondaryButton>
+                                </div>
+                            </>
+                        )}
+
+                        {pengusulanPAK.status === "ditolak" && (
+                            <>
+                                <div
+                                    role="alert"
+                                    className="mb-20 alert bg-warning"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-6 h-6 stroke-current shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    <span className="text-base font-medium text-black">
+                                        Pengusulan PAK ini sudah disetujui!
+                                    </span>
+                                </div>
+
+                                {/* Floating Action Button */}
+                                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                                    <button
+                                        onClick={() => {
+                                            const url = `/storage/${pengusulanPAK.approved_pak_path}`;
+                                            setLinkIframe(url);
+                                            setShowIframe(true);
+                                        }}
+                                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                                    >
+                                        <IoDocument className="w-4 h-4 fill-secondary" />
+                                        Lihat Dokumen
+                                    </button>
+
+                                    <SecondaryButton
+                                        onClick={() => handleCancel()}
+                                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                                    >
+                                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                        Batalkan Penolakan
+                                    </SecondaryButton>
+                                </div>
+                            </>
+                        )}
+
+                        {/* Floating Action Button */}
+                        {pengusulanPAK.status === "diproses" && (
+                            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                                <SecondaryButton
+                                    onClick={() => {
+                                        setPopUpData({
+                                            id: pengusulanPAK.id,
+                                        });
+                                        setIsPopUpOpen(true);
+                                    }}
+                                    className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                                >
+                                    <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                    Tolak Pengusulan
+                                </SecondaryButton>
+
+                                <SuccessButton
+                                    onClick={handleApprove}
+                                    className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
+                                >
+                                    <FaFileSignature className="w-4 h-4 fill-white " />
+                                    Setujui Pengusulan
+                                </SuccessButton>
+                            </div>
+                        )}
                     </>
+                ) : (
+                    <></>
                 )}
             </div>
-
-            {/* Floating Action Button */}
-            {pengusulanPAK.status === "diproses" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <SecondaryButton
-                        onClick={() => {
-                            setPopUpData({
-                                id: pengusulanPAK.id,
-                            });
-                            setIsPopUpOpen(true);
-                        }}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                        Tolak Pengusulan
-                    </SecondaryButton>
-
-                    <SuccessButton
-                        onClick={handleApprove}
-                        className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
-                    >
-                        <FaFileSignature className="w-4 h-4 fill-white " />
-                        Setujui Pengusulan
-                    </SuccessButton>
-                </div>
-            )}
-
-            {pengusulanPAK.status === "divalidasi" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <button
-                        onClick={() => {
-                            const url = `/storage/${pengusulanPAK.approved_pak_path}`;
-                            setLinkIframe(url);
-                            setShowIframe(true);
-                        }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </button>
-
-                    <SecondaryButton
-                        onClick={() => handleCancel()}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                        Batalkan Validasi
-                    </SecondaryButton>
-                </div>
-            )}
-
-            {pengusulanPAK.status === "ditolak" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <button
-                        onClick={() => {
-                            const url = `/storage/${pengusulanPAK.approved_pak_path}`;
-                            setLinkIframe(url);
-                            setShowIframe(true);
-                        }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </button>
-
-                    <SecondaryButton
-                        onClick={() => handleCancel()}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                        Batalkan Penolakan
-                    </SecondaryButton>
-                </div>
-            )}
-
-            {/* Floating Action Button */}
         </dialog>
     );
 }

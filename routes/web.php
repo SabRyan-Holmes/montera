@@ -3,7 +3,6 @@
 use App\Http\Controllers\Shared\ArsipDokumenController;
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\DivisiSDM\AturanPAKController;
-use App\Http\Controllers\DivisiSDM\KoefisienController;
 use App\Http\Controllers\Pegawai\SSOController;
 use App\Http\Controllers\Shared\PengusulanPAKController;
 use App\Http\Controllers\Shared\DokumenPAKController;
@@ -49,16 +48,18 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
     Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
 
-    // TODO : Pengusulan PAK(R, Accept, Reject)
-    Route::get('pengusulan-pak/', [PengusulanPAKController::class, 'index'])->name('pengusulan-pak.index');
-    // Accept
-    // Reject
+    // ==============Proses PAK================
 
-    // Penetapan Angka Kredit => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf (CRUD, Submit)
+    // Pengusulan PAK(R, Accept, Reject)
+    Route::get('pengusulan-pak/', [PengusulanPAKController::class, 'index'])->name('pengusulan-pak.index');
+    Route::post('pengusulan-pak/', [PengusulanPAKController::class, 'approve'])->name('pengusulan-pak.approve');
+    Route::post('pengusulan-pak/', [PengusulanPAKController::class, 'reject'])->name('pengusulan-pak.reject');
+
+    // Penetapan Angka Kredit(CRUD, Submit) => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
     Route::prefix('/pak')->name('pak.')->group(function () {
         Route::get('/create-for/pegawai', [DokumenPAKController::class, 'create'])->name('create');
-        Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
         Route::post('/create-for-pegawai/{pegawai:NIP}', [DokumenPAKController::class, 'create_for_pegawai'])->name('create-for-pegawai');
+        Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
         Route::post('/save', [DokumenPAKController::class, 'save'])->name('save');
         Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
     });
@@ -71,7 +72,7 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
     Route::resource('arsip-dokumen', ArsipDokumenController::class);
 
 
-    // =======Data Master========
+    // ===============Data Master================
 
     // Kelola Riwayat PAK(CRUD)
     Route::resource('riwayat-pak', RiwayatPAKController::class)
@@ -87,19 +88,13 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
     Route::resource('aturan-pak', AturanPAKController::class);
     Route::post('/aturan-pak/set-default-config', [AturanPAKController::class, 'set_default_config'])->name('aturan-pak.set-default-config');
 
-
-    // Kelola Koefisien(CRUD)
-    Route::resource('koefisien', KoefisienController::class);
-
-
-    // =========INFO=========
+    // =================INFO=================
 
     // Log Aktivitas(R)
     Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
 
-    // Panduan/Bantuan
+    // Panduan/Bantuan(R)
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
-
 
     // Download Template
     Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
@@ -116,29 +111,23 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
     Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
         Route::get('', [PengajuanController::class, 'index'])->name('index');
         Route::post('/approve', [PengajuanController::class, 'approve'])->name('approve');
-        // Test Preview
         Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel'])->name('cancel');
         Route::post('/reject/{pengajuan}', [PengajuanController::class, 'reject'])->name('reject');
     });
 
-    // Daftar Pegawai(Read)
+    // Daftar Pegawai(R)
     Route::get('/pegawai', [PengajuanController::class, 'index'])->name('pegawai.index');
-
+    // Aturan PAK(R)
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
 
-    // Kelola Koefisien(Mungkin Pimpinan bisa kelola koefisien juga?)
-    //
-
-    //Arsip Dokumen
-    Route::resource('arsip-dokumen', PengajuanController::class);
-
+    // Arsip Dokumen
+    Route::resource('arsip-dokumen', ArsipDokumenController::class);
 
     // Log Aktivitas(R)
     Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas');
 
     // Panduan/Bantuan
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
-
 
     // Download Template
     Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
@@ -149,14 +138,13 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
 
 // <============================================================ Pegawai ============================================================>
 Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
-
-    // Pengusulan
+    // Pengusulan(CR)
     Route::resource('pengusulan-pak', PengusulanPAKController::class);
 
-    //Status Proses PAK/Pengajuan
+    //Status Proses PAK/Pengajuan(R)
     Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('proses-pak.index');
 
-    // Aturan PAK (R)
+    // Aturan PAK (R), //NOTE! Ini mungkin dak usah?
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
 
     // Riwayat Karir (R)
@@ -168,10 +156,12 @@ Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->gro
     // Panduan/Bantuan
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
 
-
     // Download Template
     Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
 });
+
+
+require __DIR__ . '/auth.php';
 
 
 
@@ -181,21 +171,6 @@ Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->gro
 // Route::get('/tes', function () {
 //     return Inertia::render('Test');
 // });
-require __DIR__ . '/auth.php';
-
-
-
-// Route::prefix('/riwayat-pak')->name('riwayat-pak.')->group(function () {
-//     // Route::get('/pegawai', [RiwayatPAKController::class, 'pegawai'])->name('pegawai'); //Pilih dulu pegawai mana yang mau dilihat dokumen PAK nya
-//     // Route::get('/show/{pegawai:NIP}', [RiwayatPAKController::class, 'show'])->name('show');
-//     // CRUD PAK
-//     Route::get('', [RiwayatPAKController::class, 'index'])->name('index'); //Show All RiwayatPAK by Pegawai
-//     Route::get('/show', [RiwayatPAKController::class, 'show'])->name('show');
-//     Route::get('/edit/{riwayat:id}', [RiwayatPAKController::class, 'edit'])->name('edit');
-//     Route::post('/update/{riwayat:id}', [RiwayatPAKController::class, 'update'])->name('update');
-//     Route::delete('/delete/{riwayat:id}', [RiwayatPAKController::class, 'destroy'])->name('destroy');
-// });
-
 
 // Route::resource('riwayat-pak', RiwayatPAKController::class)
 // ->except(['index', 'preview']) //Resource kecuali index karna beda parameter

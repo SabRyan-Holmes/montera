@@ -11,7 +11,7 @@ class PengusulanPAK extends Model
     use HasFactory;
     protected $table = 'pengusulan_pak';
     protected $guarded = ['id'];
-    protected $with = ['pegawai'];
+    protected $with = ['pegawai', 'catatan'];
     protected $casts = [
         'value' => 'array',
         'default_config' => 'array',
@@ -19,7 +19,12 @@ class PengusulanPAK extends Model
 
     public function pegawai()
     {
-        return $this->belongsTo(Pegawai::class, 'nip', 'NIP'); // Tambahkan parameter ketiga
+        return $this->belongsTo(Pegawai::class, 'pegawai_nip', 'NIP'); // Tambahkan parameter ketiga
+    }
+
+    public function catatan()
+    {
+        return $this->belongsTo(Catatan::class, 'catatan_id',); // Tambahkan parameter ketiga
     }
 
     public function scopeFilter(Builder $query, array $filters): void
@@ -49,6 +54,5 @@ class PengusulanPAK extends Model
             fn($query, $byStatus) =>
             $query->where('status', 'like', '%' . $byStatus . '%')
         );
-
     }
 }
