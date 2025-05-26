@@ -8,8 +8,10 @@ use App\Models\Koefisien;
 use Inertia\Inertia;
 use App\Models\Pegawai;
 use App\Models\Pengajuan;
+use App\Models\PengusulanPAK;
 use App\Models\RiwayatPAK;
 use App\Models\User;
+use App\Services\AturanPAKService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,6 +81,19 @@ class DokumenPAKController extends Controller
     {
         Session::put('data', $pegawai);
         return redirect()->back();
+    }
+
+    public function create_by_pengusulan(PengusulanPAK $pengusulan)
+    {
+        // dd($pengusulan);
+        $pegawai = $pengusulan->pegawai_nip ? Pegawai::where('NIP', $pengusulan->pegawai_nip)->first() : null;
+        return Inertia::render('RiwayatPAK/CreateOrEdit', [
+            'title' => 'Penetapan Angka Kredit',
+            'pengusulan' => $pengusulan,
+            'pegawai' => $pegawai,
+            'aturanPAK' => AturanPAKService::get(),
+            'isByPengusulan' => (bool)$pengusulan
+        ]);
     }
 
     public function edit(Request $request)

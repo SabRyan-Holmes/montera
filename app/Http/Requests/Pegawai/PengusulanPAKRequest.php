@@ -14,6 +14,22 @@ class PengusulanPAKRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('periode_mulai')) {
+            $this->merge([
+                'periode_mulai' => $this->periode_mulai . '-01',
+            ]);
+        }
+
+        if ($this->has('periode_berakhir')) {
+            $this->merge([
+                'periode_berakhir' => $this->periode_berakhir . '-01',
+            ]);
+        }
+    }
+
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,8 +40,8 @@ class PengusulanPAKRequest extends FormRequest
         return [
             'jabatan' => 'string|max:40',
             'tujuan' => 'string|max:150',
-            'periode_mulai' => 'required',
-            'periode_berakhir' => 'required|string|max:50',
+            'periode_mulai' => 'required|date_format:Y-m-d',
+            'periode_berakhir' => 'required|date_format:Y-m-d|after_or_equal:periode_mulai',
             'jumlah_ak_terakhir' => 'required|decimal:0,5000',
             'jumlah_ak_diajukan' => 'required|decimal:0,5000',
             'uraian_tugas' => 'nullable|string|max:1000',

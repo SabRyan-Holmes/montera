@@ -2,33 +2,22 @@ import { DateInput, InputLabel, TextInput } from "@/Components";
 import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
-export default function InputDataTable({ data,  setData, isEdit, historyData }) {
+export default function InputDataTable({
+    data,
+    setData,
+    isEdit,
+    historyData,
+    pengusulanData,
+}) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {
             e.preventDefault();
         }
     };
-    // console.log('data dari input da table')
-    // console.log(data)
 
     const [defaultPeriodeMulai, setdefaultPeriodeMulai] = useState();
     const [defaultPeriodeBerakhir, setdefaultPeriodeBerakhir] = useState();
-
-    const bulan = {
-        1: "Januari",
-        2: "Februari",
-        3: "Maret",
-        4: "April",
-        5: "Mei",
-        6: "Juni",
-        7: "Juli",
-        8: "Agustus",
-        9: "September",
-        10: "Oktober",
-        11: "November",
-        12: "Desember",
-    };
 
     useEffect(() => {
         if (isEdit) {
@@ -42,6 +31,16 @@ export default function InputDataTable({ data,  setData, isEdit, historyData }) 
                     historyData["periode_berakhir"]
                 ).padStart(2, "0")}`
             );
+        } else if (pengusulanData) {
+            // TODO tambahkan logic untuk default input type month dr format yg ada tanggal ny jg(hilangkan tanggal nya)
+            setdefaultPeriodeMulai(
+                pengusulanData.periode_mulai?.slice(0, 7) || ""
+            );
+            setdefaultPeriodeMulai(
+                pengusulanData.periode_berakhir?.slice(0, 7) || ""
+            );
+            // Set tahun_periode secara otomatis
+            setData((prev) => ({ ...prev, tahun_periode: tahun }));
         }
     }, []);
 
@@ -57,6 +56,10 @@ export default function InputDataTable({ data,  setData, isEdit, historyData }) 
 
     // console.log("data dari input Data Table", data)
     const [minPeriode, setMinPeriode] = useState("");
+    console.log('pengusulanData');
+    console.log(pengusulanData);
+    console.log("defaultPeriodeMulai");
+    console.log(defaultPeriodeMulai);
 
     return (
         <table className="table text-base table-bordered ">

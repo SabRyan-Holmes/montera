@@ -69,16 +69,10 @@ class PengusulanPAKController extends Controller
      */
     public function store(PengusulanPAKRequest $request)
     {
-        //   $validated = $request->validated();
+        $validated = $request->except(['catatan_pegawai']);
 
-        $validated = $request->except(['periode_mulai', 'periode_berakhir', 'catatan_pegawai']);
-
-        $periodeMulai = Carbon::parse($request->periode_mulai)->locale('id')->isoFormat('MMMM YYYY');
-        $periodeBerakhir = Carbon::parse($request->periode_berakhir)->locale('id')->isoFormat('MMMM YYYY');
-        $validated['periode_penilaian'] = $periodeMulai . ' - ' . $periodeBerakhir;
-
-        if($request->catatan_pegawai) {
-            $new_catatan= Catatan::create([
+        if ($request->catatan_pegawai) {
+            $new_catatan = Catatan::create([
                 'pegawai_nip' => $request->nip,
                 // 'tipe' => 'PengusulanPAK',
                 'isi' => $request->catatan_pegawai,
@@ -86,18 +80,13 @@ class PengusulanPAKController extends Controller
             $validated['catatan_id'] = $new_catatan->id;
         }
 
-        if($request->hasFile('dokumen_pendukung_path')) {
+        if ($request->hasFile('dokumen_pendukung_path')) {
             // TODO: Bikin logic store dokumen pendukung
             $fileName = '';
             $path = '';
         }
 
-        // dd($validated);
-
-        // Masukkan ke dalam array validasi
-
         PengusulanPAK::create($validated);
-
         return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan Berhasil Diajukan!');
     }
 
@@ -133,13 +122,41 @@ class PengusulanPAKController extends Controller
         //
     }
 
-    public function accept(PengusulanPAK $pengusulan_pak)
+    public function approve(Request $request)
     {
-        //
+        PengusulanPAK::find($request->id)->update([
+            "status" => 'diproses',
+        ]);
     }
 
-    public function reject(PengusulanPAK $pengusulan_pak)
+    public function reject(Request $request)
     {
-        //
+        $rules = [
+            'id' => 'required|integer',
+            'catatan' => 'required|string|min:5|max:200',
+        ];
+        $request->validate($rules);
+
+        // Store Catatan & The Relationship with Pengusulan & User
+        $new_catatan = Catatan::create([
+            'user_id' => Auth::user()->id,
+            'isi' => $request->catatan,
+        ]);
+        PengusulanPAK::find($request->id)->update([
+            'status' => 'ditolak',
+            'catatan_sdm_id' => $new_catatan->user_id
+        ]);
+
+        return redirect()->back()->with('message', 'Pengusulan PAK berhasil ditolak');
+    }
+
+    public function undo_reject(Request $request)
+    {
+        // dd($request->all());
+        PengusulanPAK::find($request->id)->update([
+            "status" => 'diproses',
+        ]);
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('message', 'Penolakan pengusulan berhasil dibatalkan');
     }
 }

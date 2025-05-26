@@ -11,20 +11,26 @@ class PengusulanPAK extends Model
     use HasFactory;
     protected $table = 'pengusulan_pak';
     protected $guarded = ['id'];
-    protected $with = ['pegawai', 'catatan'];
+    protected $with = ['pegawai', 'catatan_pegawai', 'catatan_sdm'];
     protected $casts = [
-        'value' => 'array',
-        'default_config' => 'array',
+        'periode_mulai' => 'date:Y-m',
+        'periode_berakhir' => 'date:Y-m',
     ];
+
 
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_nip', 'NIP'); // Tambahkan parameter ketiga
     }
 
-    public function catatan()
+    public function catatan_pegawai()
     {
-        return $this->belongsTo(Catatan::class, 'catatan_id',); // Tambahkan parameter ketiga
+        return $this->belongsTo(Catatan::class, 'catatan_pegawai_id',); // Tambahkan parameter ketiga
+    }
+
+    public function catatan_sdm()
+    {
+        return $this->belongsTo(Catatan::class, 'catatan_sdm_id',); // Tambahkan parameter ketiga
     }
 
     public function scopeFilter(Builder $query, array $filters): void

@@ -211,3 +211,7 @@ table.table-bordered > tfoot  > tr > td  {
 .badge-optional {
     @apply absolute right-3 top-0.5 bottom-0.5 badge badge-secondary bg-opacity-90 badge-sm text-slate-600;
 }
+
+.badge-base {
+    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-secondary bg-opacity-90 badge-xs text-slate-600;
+}

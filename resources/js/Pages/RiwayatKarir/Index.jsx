@@ -51,15 +51,24 @@ export default function Index({
                                     No
                                 </th>
                                 <th scope="col" width="10%">
-                                    Waktu Aktivitas
+                                    Tanggal & Waktu
                                 </th>
                                 <th scope="col" width="20%" className="">
-                                    Nama, NIP & Role
+                                    Diperbarui Oleh
                                 </th>
-                                <th scope="col" width="15%">
-                                    <span className="flex justify-center">
-                                        Jenis Aktivitas
+                                <th scope="col" width="10%" className="text-center">
+                                    <span>
+                                        Jenis
                                     </span>
+                                    <span className="block">
+                                        Perubahan
+                                    </span>
+                                </th>
+                                <th scope="col" width="10%" className="">
+                                    Data Lama
+                                </th>
+                                <th scope="col" width="10%" className="">
+                                    Data Baru
                                 </th>
 
                                 <th scope="col" width="60%">
@@ -76,50 +85,39 @@ export default function Index({
                                 // key={i}
                                 className="group/item hover:bg-secondary/35"
                             >
-                                <td className="text-center">{"i + 1"}</td>
-                                <td>{"data.created_at"}</td>
+                                <td className="text-center">1</td>
                                 <td>
+                                    25 Mei 2025
+                                    <span className="block text-xs">1 Hari yang Lalu</span>
+                                    </td>
+                                <td className="relative group">
                                     <span className="block">
-                                        {"data.pegawai.Nama"}
+                                        {"Dwi Utaminingsih"}
                                     </span>
                                     <span className="block ">
-                                        {"data.pegawai.NIP"}
+                                        {"198807032011012019"}
+                                    </span>
+                                    <span className="badge-base">
+                                        {"Divisi SDM"}
                                     </span>
                                 </td>
-                                <td
-                                    className="relative group cursor-pointer max-w-[300px] text-xs"
-                                    // onClick={() =>
-                                    //     setExpandedRows((prev) => ({
-                                    //         ...prev,
-                                    //         [data.id]:
-                                    //             !prev[data.id],
-                                    //     }))
-                                    // }
-                                >
-                                    {/* Konten teks */}
-                                    <span>
-                                        {/* {expandedRows[data.id]
-                                                    ? data["keterangan"]
-                                                    : data["keterangan"]
-                                                          .length > 50
-                                                    ? data[
-                                                          "keterangan"
-                                                      ].slice(0, 50) + "..."
-                                                    : data[
-                                                          "keterangan"
-                                                      ]} */}
-                                    </span>
-
-                                    {/* Tooltip bubble */}
-                                    {/* {!expandedRows[data.id] && (
-                                                <div
-                                                    className="absolute z-[999] w-20 px-3 py-1 mt-2 text-xs text-white transition-opacity duration-200
-                                                -translate-x-1/2 bg-accent rounded shadow-lg opacity-0 pointer-events-none left-1/2 top-full group-hover:opacity-100"
-                                                >
-                                                    Klik untuk tampilkan lengkap
-                                                    <div className="absolute w-2 h-2 rotate-45 -translate-x-1/2 bg-accent -top-1 left-1/2"></div>
-                                                </div>
-                                            )} */}
+                                <td>
+                                    {"Jabatan"}
+                                </td>
+                                <td>
+                                    {"Muda"}
+                                </td>
+                                <td>
+                                    {"Madya"}
+                                </td>
+                                <td>
+                                    <p>
+                                    Divisi SDM memperbarui <span>'{'Jabatan'}'</span> pegawai dengan
+                                    <br />
+                                    NIP : <span>200002122022012003</span> &
+                                    <br />
+                                    Nama :  <span>DIAS KHUSNUL KHOTIMAH S.Tr.Stat </span>
+                                    </p>
                                 </td>
                             </tr>
                             {/* ))} */}

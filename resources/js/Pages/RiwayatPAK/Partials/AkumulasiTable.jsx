@@ -7,6 +7,7 @@ export default function AkumulasiTable({
     isEdit,
     historyData,
     aturanAkmTableProps: { predikatPresentase, tebusanAkumulasi },
+    pengusulanData = null,
 }) {
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
@@ -48,6 +49,18 @@ export default function AkumulasiTable({
         setData("jumlah_ak_kredit", jumlahAkKredit.toFixed(3));
     }, [data.ak_terakhir, data.angka_kredit]);
 
+    useEffect(() => {
+        console.log("isi pNegusulan dari akumulasi");
+        console.log(pengusulanData);
+        if (pengusulanData !== null) {
+            var ak_terakhir = parseFloat(pengusulanData.jumlah_ak_terakhir).toFixed(3);
+            setData("ak_terakhir", ak_terakhir);
+            data.ak_terakhir = ak_terakhir;
+        }
+    }, []);
+
+    console.log("Isi Data");
+    console.log(data);
     return (
         <table className="table text-base table-bordered">
             <thead>
@@ -141,14 +154,17 @@ export default function AkumulasiTable({
                             className="text-center placeholder:text-accent"
                             placeholder="0,0"
                             defaultValue={data.ak_terakhir}
-                            value={isEdit && data.ak_terakhir}
+                            value={
+                                (isEdit && data.ak_terakhir) ||
+                                (pengusulanData && data.ak_terakhir)
+                            }
                             onChange={(e) => {
                                 let value = e.target.value;
 
                                 // Kalau kosong, set ke 0
                                 if (value === "" || value === null) {
-                                  setData("ak_terakhir", 0);
-                                  return;
+                                    setData("ak_terakhir", 0);
+                                    return;
                                 }
 
                                 // Paksa jadi float maksimal 3 digit desimal
@@ -157,10 +173,10 @@ export default function AkumulasiTable({
 
                                 // Update input dan data hanya jika user ngetik valid number
                                 if (!isNaN(floatValue)) {
-                                  setData("ak_terakhir", formatted);
-                                  e.target.value = formatted;
+                                    setData("ak_terakhir", formatted);
+                                    e.target.value = formatted;
                                 }
-                              }}
+                            }}
                         />
                     </td>
                 </tr>

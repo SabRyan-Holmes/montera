@@ -52,13 +52,15 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
 
     // Pengusulan PAK(R, Accept, Reject)
     Route::get('pengusulan-pak/', [PengusulanPAKController::class, 'index'])->name('pengusulan-pak.index');
-    Route::post('pengusulan-pak/', [PengusulanPAKController::class, 'approve'])->name('pengusulan-pak.approve');
-    Route::post('pengusulan-pak/', [PengusulanPAKController::class, 'reject'])->name('pengusulan-pak.reject');
+    Route::post('pengusulan-pak/approve', [PengusulanPAKController::class, 'approve'])->name('pengusulan-pak.approve');
+    Route::post('pengusulan-pak/reject', [PengusulanPAKController::class, 'reject'])->name('pengusulan-pak.reject');
+    Route::post('pengusulan-pak/undo-reject', [PengusulanPAKController::class, 'undo_reject'])->name('pengusulan-pak.undo-reject');
 
     // Penetapan Angka Kredit(CRUD, Submit) => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
     Route::prefix('/pak')->name('pak.')->group(function () {
         Route::get('/create-for/pegawai', [DokumenPAKController::class, 'create'])->name('create');
-        Route::post('/create-for-pegawai/{pegawai:NIP}', [DokumenPAKController::class, 'create_for_pegawai'])->name('create-for-pegawai');
+        // Route::post('/create-for-pegawai/{pegawai:NIP}', [DokumenPAKController::class, 'create_for_pegawai'])->name('create-for-pegawai');
+        Route::get('/create-by/pengusulan/{pengusulan}', [DokumenPAKController::class, 'create_by_pengusulan'])->name('create-by-pengusulan');
         Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
         Route::post('/save', [DokumenPAKController::class, 'save'])->name('save');
         Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
@@ -150,8 +152,9 @@ Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->gro
     // Riwayat Karir (R)
     Route::get('/riwayat-karir', [RiwayatKarirController::class, 'index'])->name('riwayat-karir.index');
 
-    // Log Aktivitas(R)
-    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
+    // Arsip Dokumen
+    Route::resource('arsip-dokumen', ArsipDokumenController::class);
+
 
     // Panduan/Bantuan
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv

@@ -20,8 +20,8 @@ return new class extends Migration
             // Data utama pengajuan
             $table->string('jabatan');
             $table->string('tujuan');
-
-            $table->string('periode_penilaian'); // Format: 'YYYY-YYYY'
+            $table->date('periode_mulai');
+            $table->date('periode_berakhir');
             $table->decimal('jumlah_ak_terakhir', 8, 3);
             $table->decimal('jumlah_ak_diajukan', 8, 3);
 

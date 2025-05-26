@@ -438,10 +438,10 @@ const Sidebar = ({ role }) => {
                                                 Arsip Dokumen
                                             </>
                                         ),
-                                        route: "pimpinan.arsip-dokumen.index",
+                                        route: "pegawai.arsip-dokumen.index",
                                         actives: [
-                                            "pimpinan.arsip-dokumen.index",
-                                            "pimpinan.arsip-dokumen.edit",
+                                            "pegawai.arsip-dokumen.index",
+                                            "pegawai.arsip-dokumen.edit",
                                         ],
                                     },
                                     // TODO: Tanyoin Nanti boleh dk pegawai melihat aturan PAK
@@ -466,19 +466,6 @@ const Sidebar = ({ role }) => {
 
                             <SidebarLinkCollapse
                                 submenu={[
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Log Aktivitas */}
-                                                <AiFillNotification />
-                                                Log Aktivitas
-                                            </>
-                                        ),
-                                        route: "pegawai.log-aktivitas.index",
-                                        actives: [
-                                            "pegawai.log-aktivitas.index",
-                                        ],
-                                    },
                                     {
                                         label: (
                                             <>

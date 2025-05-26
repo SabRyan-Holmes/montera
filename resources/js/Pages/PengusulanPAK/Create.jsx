@@ -24,7 +24,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
         // ANCHOR
         // REVIEW : Ini kalo data ny dr SSO tolong dirubah
         // nama: auth.user.name,
-        pegawai_nip: pegawai['NIP'],
+        pegawai_nip: pegawai["NIP"],
         jabatan: jabatanDefault,
         tujuan: "Evaluasi Kinerja Tahunan",
         periode_mulai: "",
@@ -301,12 +301,38 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                             id="periode_berakhir"
                                             min={minPeriode}
                                             className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "periode_berakhir",
-                                                    e.target.value
-                                                )
-                                            }
+                                            onChange={(e) => {
+                                                const [year, month] =
+                                                    e.target.value.split("-");
+
+                                                // Mengonversi bulan menjadi integer
+                                                const periodeBerakhir =
+                                                    parseInt(month, 10);
+                                                const [
+                                                    yearMinPeriode,
+                                                    monthMinPeriode,
+                                                ] = minPeriode.split("-");
+
+                                                if (year !== yearMinPeriode) {
+                                                    Swal.fire({
+                                                        icon: "warning",
+                                                        iconColor: "#fb7185",
+                                                        title: "Peringatan!",
+                                                        text: "Tahun periode berakhir harus sama dengan periode mulai",
+                                                        color: "#fb7185",
+                                                        confirmButtonText:
+                                                            "Oke",
+                                                        confirmButtonColor:
+                                                            "#2D95C9",
+                                                    });
+                                                    e.target.value = ""; //reset
+                                                } else {
+                                                    setData(
+                                                        "periode_berakhir",
+                                                        e.target.value
+                                                    );
+                                                }
+                                            }}
                                         />
                                     </td>
                                 </tr>

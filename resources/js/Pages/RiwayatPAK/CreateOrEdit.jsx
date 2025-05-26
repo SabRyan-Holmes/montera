@@ -31,6 +31,10 @@ export default function Index({
     // IF Edit
     isEdit,
     riwayat,
+
+    // IF By Pengusulan
+    isByPengusulan,
+    pengusulan
 }) {
     // =============================================================Aturan Penetapan==============================================
     const {
@@ -62,7 +66,7 @@ export default function Index({
             setPegawaiState(riwayat.pegawai);
         } else {
             // Kalo Create dan ad datany
-            console.log("ini dirender pertama kali tanpa pemicu apapun ");
+            // console.log("ini dirender pertama kali tanpa pemicu apapun ");
             if (pegawai) {
                 // console.log("ini dirender pertama kali ketika ada pegawai yang dipilih ");
                 setData("pegawai", pegawai);
@@ -218,6 +222,7 @@ export default function Index({
     // console.log("Isi Data");
     // console.log(data);
     // console.log("data now", dataNow);
+    // console.log('Is Pengusulan Data', isByPengusulan)
 
     return (
         <Authenticated
@@ -364,8 +369,8 @@ export default function Index({
                             setData={setData}
                             // EDIT
                             isEdit={true}
-
                             historyData={isEdit ? riwayat : {}}
+                            pengusulanData={isByPengusulan && pengusulan}
                         />
                         {/* INPUT DATA | END*/}
 
@@ -387,6 +392,7 @@ export default function Index({
                             aturanAkmTableProps={aturanAkmTableProps}
                             isEdit={isEdit}
                             historyData={isEdit ? riwayat : {}}
+                            pengusulanData={isByPengusulan && pengusulan}
                         />
                         {/* AKUMULASI ANGKA KREDIT | END */}
                         {/* ANCHOR */}

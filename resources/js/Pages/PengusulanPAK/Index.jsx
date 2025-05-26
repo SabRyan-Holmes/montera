@@ -298,7 +298,7 @@ export default function Index({
                                                 </strong>
                                             </td>
                                             <td>{data.jabatan}</td>
-                                            <td>{data.periode_penilaian}</td>
+                                            <td>{moment(data.periode_mulai).format('MMMM')} - {moment(data.periode_berakhir).format('MMMM YYYY')} </td>
                                             <td>
                                                 <span className="block">
                                                     {data.jumlah_ak_terakhir}
@@ -313,13 +313,25 @@ export default function Index({
                                                     : "Tidak Ada"}
                                             </td>
                                             <td className="p-0 m-0">
-                                                <button
-                                                    disabled
-                                                    className=" label-base bg-accent/50 text-slate-500"
-                                                >
-                                                    {data.status}
-                                                    <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                                </button>
+                                                {data.status === "diproses" && (
+                                                    <button
+                                                        disabled
+                                                        className="transition-all duration-150 group/item label-base bg-accent/50 text-slate-500 hover:text-slate-100"
+                                                    >
+                                                        {data.status}
+                                                        <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
+                                                    </button>
+                                                )}
+
+                                                {data.status === "ditolak" && (
+                                                    <button
+                                                        disabled
+                                                        className=" label-base bg-warning text-slate-500"
+                                                    >
+                                                        {data.status}
+                                                        <RiLoader2Fill className="ml-1 scale-125 fill-warning stroke-warning group-hover/item:fill-white" />
+                                                    </button>
+                                                )}
                                             </td>
 
                                             <td className="p-0 m-0 font-normal">
@@ -442,8 +454,17 @@ export default function Index({
                                                                     "pegawai.pengusulan-pak.edit",
                                                                     data.id
                                                                 )}
-                                                                disabled= {data.status === "diproses"}
-                                                                className={"action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " + (data.status=== "diproses" ? 'cursor-not-allowed': 'cursor-default' )}
+                                                                disabled={
+                                                                    data.status ===
+                                                                    "diproses"
+                                                                }
+                                                                className={
+                                                                    "action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " +
+                                                                    (data.status ===
+                                                                    "diproses"
+                                                                        ? "cursor-not-allowed"
+                                                                        : "cursor-default")
+                                                                }
                                                             >
                                                                 <FaEdit
                                                                     className={
@@ -469,8 +490,17 @@ export default function Index({
                                                                     "pegawai.pengusulan-pak.edit",
                                                                     data.id
                                                                 )}
-                                                                disabled= {data.status === "diproses"}
-                                                                className={"action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " + (data.status=== "diproses" ? 'cursor-not-allowed': 'cursor-default' )}
+                                                                disabled={
+                                                                    data.status ===
+                                                                    "diproses"
+                                                                }
+                                                                className={
+                                                                    "action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " +
+                                                                    (data.status ===
+                                                                    "diproses"
+                                                                        ? "cursor-not-allowed"
+                                                                        : "cursor-default")
+                                                                }
                                                             >
                                                                 <MdCancel
                                                                     className={

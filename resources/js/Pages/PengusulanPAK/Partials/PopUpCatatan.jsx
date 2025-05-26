@@ -3,37 +3,17 @@ import { useForm } from "@inertiajs/react";
 import React, { useState, useEffect } from "react";
 
 export default function PopUpCatatan({ onClose, popUpData: {id} }) {
-    console.log('isi Id Pop Up Data ')
-    console.log(id)
+
     const { data, setData, post, patch, processing, errors, reset } = useForm({
         id: id ?? '',
         catatan: ''
     });
 
-    // Handler untuk update field dinamis
-    const handleSetData = (fieldName, value) => {
-        setData("datas", {
-            ...data.datas,
-            [fieldName]: value,
-        });
-    };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (isEdit) {
-            patch(routeName, {
-                preserveState: true,
-                preserveScroll: true,
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                },
-                onSuccess: () => {},
-            });
-            // console.log('Form Data:', formData);
-            onClose(); // Tutup pop-up setelah submit
-        } else {
-            post(routeName, {
+            post(route('divisi-sdm.pengusulan-pak.reject'), {
                 preserveState: true,
                 preserveScroll: true,
                 onError: (errors) => {
@@ -44,19 +24,20 @@ export default function PopUpCatatan({ onClose, popUpData: {id} }) {
             // console.log('Form Data:', formData);
             onClose(); // Tutup pop-up setelah submit
         }
-    };
 
     // ANCHOR
-    console.log("data");
-    console.log(data);
+    // console.log("data");
+    // console.log(data);
     // console.log("FormState");
     // console.log(formState);
+    // console.log('isi Id Pop Up Data ')
+    // console.log(id)
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
             <div className="w-full max-w-md p-6 mx-4 bg-white rounded-lg shadow-lg">
                 <h2 className="mb-4 text-xl font-bold text-gray-800">
-                    Alasan Penolakan & Catatan Perbaikan
+                    Alasan penolakan/catatan perbaikan
                 </h2>
                 <form onSubmit={handleSubmit}>
                     <fieldset>

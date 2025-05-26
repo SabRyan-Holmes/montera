@@ -67,10 +67,15 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                             </td>
                         </tr>
                         <tr>
+                            <td width="40%">Tujuan Pengusulan </td>
+                            <td className="text-base font-normal">
+                                {data["tujuan"]}
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Periode Penilaian</td>
                             <td className="text-base font-normal">
-                                {data.periode_penilaian}
-                            </td>
+                            {moment(data.periode_mulai).format('MMMM')} - {moment(data.periode_berakhir).format('MMMM YYYY')}                            </td>
                         </tr>
 
                         <tr>
@@ -98,21 +103,21 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                                 {!data["dokumen_pendukung_path"] ? 'Tidak Ada' :
 
                                 <div>
-                                        {/* TODO: Bikin Preview Dokumen disini  */}
+                                {/* TODO: Bikin Preview Dokumen disini  */}
                                 </div> }
                             </td>
                         </tr>
                         <tr>
                             <td>Catatan Tambahan</td>
                             <td className="text-wrap">
-                                {data["catatan"] ? data["catatan"]['isi'] : '-' }
+                                {data["catatan_pegawai"] ? <p>{data["catatan_pegawai"]['isi']}</p> : '-' }
                             </td>
                         </tr>
                         <tr>
                             <td>Status</td>
                             <td className="p-0 m-0 text-wrap">
                                 {
-                                    data.status == "diproses" &&
+                                    data.status === "diproses" &&
                                     <button
                                     disabled
                                     className="label-base bg-accent/50 text-slate-500"
@@ -122,7 +127,7 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                                 </button>
                                 }
                                 {
-                                    data.status == "ditolak" &&
+                                    data.status === "ditolak" &&
                                     <button
                                     disabled
                                     className="inline-flex items-center label-base bg-warning/10 text-warning/80"
@@ -132,7 +137,7 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                                 </button>
                                 }
                                 {
-                                    data.status == "disetujui" &&
+                                    data.status === "disetujui" &&
                                     <button
                                     disabled
                                     className="inline-flex items-center label-base bg-hijau/10 text-hijau/80"
@@ -144,6 +149,19 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
 
                             </td>
                         </tr>
+
+                        {data.status === "ditolak" &&
+                            <tr>
+                            <td className="text-warning/80">Catatan Perbaikan :</td>
+                            <td className="text-wrap">
+                                {data["catatan_sdm"] ?
+                                <p className="block text-red-800">
+                                {data["catatan_sdm"]['isi']}
+                                </p>
+                                : '-' }
+                            </td>
+                        </tr>
+                        }
                     </tbody>
                 )}
             </table>

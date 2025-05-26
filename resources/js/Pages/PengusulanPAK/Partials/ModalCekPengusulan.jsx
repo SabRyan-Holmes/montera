@@ -7,7 +7,13 @@ import {
 } from "@/Components";
 import { router, useForm } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
-import { FaCheck, FaEraser, FaFileSignature, FaTrash } from "react-icons/fa6";
+import {
+    FaCheck,
+    FaEraser,
+    FaFileSignature,
+    FaRegCircleCheck,
+    FaTrash,
+} from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SignatureCanvas from "react-signature-canvas";
@@ -17,11 +23,11 @@ import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 import PengusulanPAKTable from "./PengusulanPAKTable";
 import PopUpCatatan from "./PopUpCatatan";
-
+import { CgCloseO } from "react-icons/cg";
 export default function ModalCekPengusulan({
     pengusulanPAK,
     setActiveModalId,
-    canValidate
+    canValidate,
 }) {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState({
@@ -31,8 +37,7 @@ export default function ModalCekPengusulan({
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengusulanPAK.id,
-            signature: "", // nanti diisi base64 image
-            signatureType: "",
+            other: "",
         });
 
     // =========================================================================SWAL POP UP=========================================================================
@@ -59,31 +64,19 @@ export default function ModalCekPengusulan({
         Swal.fire({
             target: `#DialogCekPengusulan-${pengusulanPAK.id}`,
             icon: "warning",
-            text: "Anda yakin ingin membatalkan validasi PAK ini?",
+            text: "Anda yakin ingin membatalkan penolakan?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
             confirmButtonColor: "#2D95C9",
             cancelButtonColor: "#9ca3af",
-            customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
-                confirmButton: "order-2",
-                denyButton: "order-3",
-            },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(
-                    route("pimpinan.pengusulan-pak.cancel", pengusulanPAK.id),
-                    {
-                        onSuccess: () => {
-                            //
-                        },
-                        onError: () => {
-                            console.log("Gagal Menghapus Data");
-                        },
-                    }
-                );
+                post(route("divisi-sdm.pengusulan-pak.undo-reject", data), {
+                    preserveState: false,
+                    onSuccess: () => {},
+                    onError: () => {},
+                }) ;
             }
         });
     };
@@ -95,7 +88,7 @@ export default function ModalCekPengusulan({
     const [linkIframe, setLinkIframe] = useState("");
 
     const handleApprove = () => {
-        post(route("pimpinan.pengusulan-pak.approve", data), {
+        post(route("divisi-sdm.pengusulan-pak.approve", data), {
             preserveScroll: true,
             preserveState: true,
             onError: (errors) => {
@@ -106,11 +99,11 @@ export default function ModalCekPengusulan({
                 Swal.fire({
                     target: `#DialogCekPengusulan-${pengusulanPAK.id}`,
                     title: "Berhasil!",
-                    text: "Dokumen berhasil divalidasi.",
+                    text: "Pengusulan PAK telah disetujui.",
                     icon: "success",
                     showCancelButton: true,
-                    confirmButtonText: "Lihat Dokumen",
-                    cancelButtonText: "Oke",
+                    confirmButtonText: "Proses PAK Sekarang",
+                    cancelButtonText: "Nanti Saja",
                     confirmButtonColor: "#2D95C9",
                     cancelButtonColor: "#9ca3af",
                     customClass: {
@@ -121,17 +114,12 @@ export default function ModalCekPengusulan({
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const url = `/storage/${pengusulanPAK.approved_pak_path}`; // Sesuaikan dengan path yang ada di pengajuan
-                        // const iframeHTML = `<iframe src="${url}" width="100%" height="600px"></iframe>`;
-                        // // Menambahkan iframe ke dalam elemen HTML untuk menampilkan PDF
-                        // document.getElementById("approved_pak_view").innerHTML =
-                        //     iframeHTML;
-                        setLinkIframe(url);
-                        setShowIframe(true);
+                        router.get(route("divisi-sdm.pak.create-by-pengusulan", pengusulanPAK.id))
+                        setShowIframe(false)
                     }
                 });
 
-                console.log("Sukses Menvalidasi");
+                console.log("Sukses Menyetujui");
             },
         });
     };
@@ -212,134 +200,111 @@ export default function ModalCekPengusulan({
 
                 {canValidate ? (
                     <>
+                        {/* IF Approved */}
                         {pengusulanPAK.status === "disetujui" && (
                             <>
                                 <div
                                     role="alert"
                                     className="mb-20 alert bg-hijau"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-6 h-6 stroke-current shrink-0"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
+                                    <FaRegCircleCheck className="w-5 h-5" />
                                     <span className="text-base font-medium text-black">
                                         Pengusulan PAK ini sudah disetujui!
                                     </span>
                                 </div>
-
-                                {/* Floating Action Button */}
-                                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                                    <button
-                                        onClick={() => {
-                                            const url = `/storage/${pengusulanPAK.approved_pak_path}`;
-                                            setLinkIframe(url);
-                                            setShowIframe(true);
-                                        }}
-                                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
-                                    >
-                                        <IoDocument className="w-4 h-4 fill-secondary" />
-                                        Lihat Dokumen
-                                    </button>
-
-                                    <SecondaryButton
-                                        onClick={() => handleCancel()}
-                                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                                    >
-                                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                        Batalkan Validasi
-                                    </SecondaryButton>
-                                </div>
                             </>
                         )}
-
+                        {/* IF Rejected */}
                         {pengusulanPAK.status === "ditolak" && (
                             <>
                                 <div
                                     role="alert"
                                     className="mb-20 alert bg-warning"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-6 h-6 stroke-current shrink-0"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
+                                    <CgCloseO className="w-6 h-6" />
                                     <span className="text-base font-medium text-black">
-                                        Pengusulan PAK ini sudah disetujui!
+                                        Pengusulan PAK ini sudah telah ditolak!
                                     </span>
                                 </div>
-
-                                {/* Floating Action Button */}
-                                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                                    <button
-                                        onClick={() => {
-                                            const url = `/storage/${pengusulanPAK.approved_pak_path}`;
-                                            setLinkIframe(url);
-                                            setShowIframe(true);
-                                        }}
-                                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
-                                    >
-                                        <IoDocument className="w-4 h-4 fill-secondary" />
-                                        Lihat Dokumen
-                                    </button>
-
-                                    <SecondaryButton
-                                        onClick={() => handleCancel()}
-                                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                                    >
-                                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                        Batalkan Penolakan
-                                    </SecondaryButton>
-                                </div>
                             </>
-                        )}
-
-                        {/* Floating Action Button */}
-                        {pengusulanPAK.status === "diproses" && (
-                            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                                <SecondaryButton
-                                    onClick={() => {
-                                        setPopUpData({
-                                            id: pengusulanPAK.id,
-                                        });
-                                        setIsPopUpOpen(true);
-                                    }}
-                                    className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                                >
-                                    <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                    Tolak Pengusulan
-                                </SecondaryButton>
-
-                                <SuccessButton
-                                    onClick={handleApprove}
-                                    className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
-                                >
-                                    <FaFileSignature className="w-4 h-4 fill-white " />
-                                    Setujui Pengusulan
-                                </SuccessButton>
-                            </div>
                         )}
                     </>
                 ) : (
                     <></>
                 )}
             </div>
+
+            {canValidate && (
+                <>
+                    {/* SECTION Floating Action Button DIPROSES */}
+                    {pengusulanPAK.status === "diproses" && (
+                        <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                            <SecondaryButton
+                                onClick={() => {
+                                    setPopUpData({
+                                        id: pengusulanPAK.id,
+                                    });
+                                    setIsPopUpOpen(true);
+                                }}
+                                className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                            >
+                                <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                Tolak Pengusulan
+                            </SecondaryButton>
+
+                            <SuccessButton
+                                onClick={handleApprove}
+                                disabled={processing}
+                                className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
+                            >
+                                <FaFileSignature className="w-4 h-4 fill-white " />
+                                Setujui Pengusulan
+                            </SuccessButton>
+                        </section>
+                    )}
+                    {/* !SECTION Floating Action Button DIPROSES */}
+
+                    {/* SECTION Floating Action Button DITOLAK */}
+                    {pengusulanPAK.status === "ditolak" && (
+                        <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                            <SecondaryButton
+                                onClick={() => handleCancel()}
+                                className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                            >
+                                <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                Batalkan Penolakan
+                            </SecondaryButton>
+                        </section>
+                    )}
+                    {/* !SECTION Floating Action Button DITOLAK */}
+
+                    {/* SECTION Floating Action Button DISETUJUI */}
+                    {pengusulanPAK.status === "disetujui" && (
+                        <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                            <button
+                                onClick={() => {
+                                    const url = `/storage/${pengusulanPAK.approved_pak_path}`;
+                                    setLinkIframe(url);
+                                    setShowIframe(true);
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                            >
+                                <IoDocument className="w-4 h-4 fill-secondary" />
+                                Lihat Dokumen
+                            </button>
+
+                            <SecondaryButton
+                                onClick={() => handleCancel()}
+                                className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                            >
+                                <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                Batalkan Validasi
+                            </SecondaryButton>
+                        </section>
+                    )}
+                    {/* !SECTION Floating Action Button DISETUJUI */}
+                </>
+            )}
         </dialog>
     );
 }
