@@ -40,20 +40,16 @@
 
     <div style="margin-top: 0.1rem ">
         {{-- Table --}}
-        {{-- Bagian 1 --}}
         <table aria-colcount="7" class="table-pak-3">
-            {{--  head  --}}
             <thead>
                 <tr style="text-align: center;  text-transform: uppercase; font-weight: 400;">
-                    <th colspan="1" style="width: 30px; font-weight: 450;">I</th>
+                    <th colspan="1" style="width: 25px; font-weight: 450;">I</th>
                     <th colspan="6" style=" padding: 0.4rem; text-align: left; font-weight: 450;">
                         KETERANGAN PERORANGAN
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {{-- Bagian 1 --}}
-                {{--  Nama  --}}
                 <tr>
                     <th></th>
                     <th style=" width: 30px">1</th>
@@ -65,7 +61,6 @@
                         : {{ $data['pegawai']['Nama'] }}
                     </td>
                 </tr>
-                {{-- {/* NIP */} --}}
                 <tr>
                     <th></th>
                     <th>2</th>
@@ -77,7 +72,6 @@
                         : {{ $data['pegawai']['NIP'] }}
                     </td>
                 </tr>
-                {{-- {/* No Seri Karpeg */} --}}
                 <tr>
                     <th></th>
                     <th style="">3</th>
@@ -89,7 +83,6 @@
                         : {{ $data['pegawai']['Nomor Seri Karpeg'] ?: '-' }}
                     </td>
                 </tr>
-                {{-- {/* Tempat/Tgl Lahir */} --}}
                 <tr>
                     <th></th>
 
@@ -103,7 +96,6 @@
                         : {{ $data['pegawai']['Tempat/Tanggal Lahir'] }}
                     </td>
                 </tr>
-                {{-- {/* Jenis Kelamin */} --}}
                 <tr>
                     <th></th>
                     <th style="">
@@ -116,8 +108,6 @@
                         : {{ $data['pegawai']['Jenis Kelamin'] }}
                     </td>
                 </tr>
-
-                {{-- {/* Pangkat/Golongan Ruang/TMT */} --}}
                 <tr>
                     <th></th>
                     <th style="">
@@ -129,8 +119,6 @@
                         : {{ $data['pegawai']['Pangkat/Golongan Ruangan/TMT'] }}
                     </td>
                 </tr>
-
-                {{-- {/* Jabatan/TMT */} --}}
                 <tr>
                     <th></th>
                     <th style="">
@@ -142,8 +130,6 @@
                         : {{ $data['pegawai']['Jabatan/TMT'] }}
                     </td>
                 </tr>
-
-                {{-- {/* Unit Kerja */} --}}
                 <tr>
                     <th></th>
                     <th style="">
@@ -155,8 +141,6 @@
                         : {{ $data['pegawai']['Unit Kerja'] }}
                     </td>
                 </tr>
-
-                {{-- {/* Instansi */} --}}
                 <tr>
                     <th></th>
                     <th style="">9</th>
@@ -168,22 +152,21 @@
                         : {{ 'Badan Pusat Statistik ' }}
                     </td>
                 </tr>
-                {{-- -------------------------------------- --}}
             </tbody>
         </table>
 
 
-        {{-- Bagian 2 Start --}}
+        {{-- Bagian 2  --}}
         <table aria-colcount="7" class="table-pak-3" style="margin-bottom: 0rem padding-bottom:0rem">
             <thead>
                 <tr>
-                    <th colspan="7" style="text-align: center; font-weight: 500;">
+                    <th colspan="7" style="text-align: center; font-weight: 460;">
                         HASIL PENILAIAN ANGKA KREDIT
                     </th>
                 </tr>
-                <tr style="text-align: center; text-transform: uppercase; ">
-                    <th style="width: 30px; font-weight: 450;">II</th>
-                    <th colspan="2" style="text-align: left; font-weight: 450;">
+                <tr style="text-align: center; text-transform: uppercase; font-size: 12.7px;">
+                    <th style="width: 30px; font-weight: 450; font-size: 14px;">II</th>
+                    <th colspan="2" style="text-align: left; font-weight: 450; font-size: 14px;">
                         PENETAPAN ANGKA KREDIT
                     </th>
                     <th>LAMA</th>
@@ -308,7 +291,7 @@
                 @endif
 
             </tbody>
-            <tfoot style="font-size: 14.5px; font-weight: 400;">
+            <tfoot style="font-weight: 400; font-size: 13px;">
                 <tr>
                     <th colspan="3" style="text-align: center; text-transform: uppercase;">Jumlah Angka kredit
                         kumulatif</th>
@@ -319,20 +302,20 @@
                     <th>{{ number_format($data['jakk']['jumlah'] ?? 0, 3) }}</th>
                     <th>{{ $data['jakk']['keterangan'] }}</th>
                 </tr>
-                <tr style="border: 1px solid #334454;">
+                <tr style="border: 1px solid #334454; ">
                     <th colspan="3">Keterangan</th>
                     <th colspan="2">Pangkat</th>
                     <th colspan="2" style="border: 1px solid #334454;">Jenjang Jabatan</th>
                 </tr>
                 <tr>
-                    <th colspan="3" style="text-align: left; font-size: 14px;">Angka Kredit Minimal yang harus
+                    <th colspan="3" style="text-align: left;">Angka Kredit Minimal yang harus
                         dipenuhi untuk
                         kenaikan pangkat/jenjang</th>
                     <th colspan="2">{{ number_format($data['pangkat'] ?? 0, 3) }}</th>
                     <th colspan="2">{{ number_format($data['jabatan'] ?? 0, 3) }}</th>
                 </tr>
                 <tr>
-                    <th colspan="3" style="text-align: left; font-size: 14px;">
+                    <th colspan="3" style="text-align: left;">
                         @if ($data['pangkat_keker'] >= 0)
                             <span>
                                 Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
@@ -350,7 +333,7 @@
                         {{ abs($data['jabatan_keker']) }}</th>
                 </tr>
                 <tr>
-                    <th colspan="3" style="text-align: left; font-size: 14px;">
+                    <th colspan="3" style="text-align: left;">
                         @if ($data['jabatan_keker'] >= 0)
                             <span>
                                 Kelebihan/<del>Kekurangan</del><span>{{ '*)' }}</span>
@@ -366,28 +349,24 @@
                     </th>
                 </tr>
                 <tr>
-                    <th colspan="7" style="text-align: left;">{{ $data['kesimpulan'] }}</th>
+                    <th colspan="7" style="text-align: left; font-size: 13.7px;">{{ $data['kesimpulan'] }}</th>
                 </tr>
             </tfoot>
         </table>
         {{-- Bagian 2 End --}}
 
-
-
         <div
-            style="padding-top:0px;
-            {{ isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? 'margin-top: 7rem;' : 'margin-top: 0rem;' }}">
-
-
-
+            style="{{ isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 3 ? 'margin-top: 7rem;' : 'margin-top: 0rem;' }}">
             @if (!empty($data['tebusan3']))
-                <div style="tebusan-container">
-                    <strong style="font-weight: 400;  max-width: 40%; word-wrap: break-word;">
-                        ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
+                <div class="tebusan-container">
+                    <strong style="font-weight: 400;  width: 40%; word-wrap: break-word;">
+                        ASLI Penetapan Angka Kredit untuk Jabatan
+                        Fungsional yang bersangkutan
                     </strong>
                     <strong style="font-weight: 400; margin-top: 0.4rem; display: block">
                         Tembusan Disampaikan kepada:
-                    </strong>                    @php
+                    </strong>
+                    @php
                         $tebusan_list = [
                             'kepala_reg' => 'Kepala Kantor Regional VII BKN',
                             'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
@@ -421,41 +400,12 @@
                 </div>
             @endif
 
-
-
-            {{-- @if (count(array_filter($data['tebusan3'])) > 0)
-                <div class="tebusan-container">
-                    <strong style="font-weight: 400;  max-width: 40%; word-wrap: break-word;">
-                        ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
-                    </strong>
-                    <strong style="font-weight: 400; margin-top: 0.4rem; display: block">
-                        Tembusan Disampaikan kepada:
-                    </strong>
-                    @php
-                        $tebusan_list = [
-                            'kepala_reg' => 'Kepala Kantor Regional VII BKN',
-                            'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
-                            'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
-                            'pns' => 'PNS Bersangkutan',
-                            'kepala_biro' => 'Kepala Biro SDM BPS',
-                            'arsip' => 'Arsip',
-                        ];
-                        $i = 1;
-                    @endphp
-                    @foreach ($data['tebusan3'] as $key => $value)
-                        @if ($value)
-                            <span style="display: block">{{ $i }}. {{ $tebusan_list[$key] }}</span>
-                            @php $i++; @endphp
-                        @endif
-                    @endforeach
-                </div>
-            @endif --}}
-            <div class="signature-container" style="margin-top: 0.5rem;">
+            <div class="signature-container">
                 <strong>Ditetapkan di Jambi </strong>
                 <strong style="display:block;">
                     Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
                 </strong>
-                <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
+                <strong>Kepala BPS Provinsi Jambi </strong>
 
                 @if (!empty($signature))
                     <div style="margin-top: 0px; margin-bottom: 0px;">
@@ -471,71 +421,6 @@
                 </div>
 
             </div>
-
-            {{-- <div class="clearfix">
-                @if (count(array_filter($data['tebusan3'])) > 0)
-                    <table
-                        style="{{ isset($data['ak_tipe_tambahan']) && count($data['ak_tipe_tambahan']) > 2 ? ' margin-top: 7rem; ' : ' margin-top: 0rem; padding-top:0px; ' }} width: 100%; height: 5%; border-width: 1px; border-color: #334454;
-     font-size: 15px; page-break-inside: avoid;">
-                        <tr valign="top">
-                            <td style="width: 50%; padding-right: 1rem; font-size: 15px;">
-                                <strong style="font-weight: 400;">
-                                    ASLI Penetapan Angka Kredit untuk Jabatan Fungsional yang bersangkutan
-                                </strong>
-                                <div style="margin-top: 1rem;">
-                                    <strong style="font-weight: 400;">
-                                        Tembusan Disampaikan kepada:
-                                    </strong>
-                                    <div style="margin-top: 0.5rem;">
-                                        @php
-                                            $tebusan_list = [
-                                                'kepala_reg' => 'Kepala Kantor Regional VII BKN',
-                                                'sekretaris' => 'Sekretaris Tim Penilai Yang Bersangkutan',
-                                                'kepala_bps' => 'Kepala BPS Kabupaten/Kota',
-                                                'pns' => 'PNS Bersangkutan',
-                                                'kepala_biro' => 'Kepala Biro SDM BPS',
-                                                'arsip' => 'Arsip',
-                                            ];
-                                            $i = 1;
-                                        @endphp
-                                        @foreach ($data['tebusan3'] as $key => $value)
-                                            @if ($value)
-                                                <div style="margin-bottom: 2px;">{{ $i }}.
-                                                    {{ $tebusan_list[$key] }}</div>
-                                                @php $i++; @endphp
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td style="width: 50%; padding-left: 1rem; font-size: 15px; text-align: left;">
-                                <strong style="font-weight: 400;">Ditetapkan di Jambi</strong><br>
-                                <strong style="font-weight: 400; display: block;">
-                                    Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
-                                </strong>
-                                <strong style="font-weight: 400; display: block; margin-top: 0.7rem;">
-                                    Kepala BPS Provinsi Jambi
-                                </strong>
-
-                                @if (!empty($signature))
-                                    <div style="margin-top: 1.2rem; margin-bottom: 1.5rem;">
-                                        <img src="{{ $signature }}" style="width: 60px; height: 60px;"
-                                            alt="Tanda Tangan">
-                                    </div>
-                                @else
-                                    <div style="height: 0px;"></div>
-                                @endif
-
-                                <div style="margin-top: 0px;">
-                                    <strong style="display: block; font-weight: 400;">{{ $data['nama'] }}</strong>
-                                    <strong style="display: block; font-weight: 400;">NIP. {{ $data['nip'] }}</strong>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                @endif
-            </div> --}}
         </div>
 
 

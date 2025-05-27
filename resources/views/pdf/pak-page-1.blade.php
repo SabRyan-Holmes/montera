@@ -48,8 +48,8 @@
                         line-height: 1rem ;">
                 {{--  head  --}}
                 <thead>
-                    <tr style="text-align: center;  text-transform: uppercase; font-weight: 700;">
-                        <th colspan="5" style="border: 1px solid #000;  padding: 0.4rem /* 8px */; font-size: 15px;">
+                    <tr style="text-align: center; text-transform: uppercase; font-weight: 700;">
+                        <th colspan="5" style="padding: 0.4rem;">
                             Pejabat Fungsional Yang Dinilai
                         </th>
                     </tr>
@@ -57,123 +57,118 @@
                 <tbody>
                     {{--  Nama  --}}
                     <tr>
-                        <th style="border: 1px solid #000;  width: 3.5rem /* 64px */;">
-                            1</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <th style=" width: 3.5rem /* 64px */;">
+                            1
+                        </th>
+                        <td colspan="2" style="border-right-color: transparent;">
                             Nama
                         </td>
-                        <td colspan="2"
-                            style="border: 1px solid #000;
-                        padding: 0.4rem /* 8px */; text-wrap: nowrap;">
-                            {{-- FIXME: nama pgeawai harusny ad di dari data useForm --}}
+                        <td colspan="2" style="text-wrap: nowrap;">
                             :
-                            {{-- {{ 'Kiky Amci Ilzania, S.Tr.Stat' }} --}}
                             {{ $data['pegawai']['Nama'] }} {{ optional($data['pegawai'])['Gelar Tambahan'] ?? '' }}
                         </td>
                     </tr>
                     {{-- {/* NIP */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             2</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             NIP
                         </td>
-                        <td colspan="2"
-                            style="border: 1px solid #000;
-                        padding: 0.4rem /* 8px */;">
+                        <td colspan="2" style="
+                        ">
                             : {{ $data['pegawai']['NIP'] }}
                         </td>
                     </tr>
                     {{-- {/* No Seri Karpeg */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             3</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Nomor Seri Karpeg
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000;
-                            padding: 0.4rem /* 8px */;">
+                            >
                             : {{ optional($data['pegawai'])['Nomor Seri Karpeg'] ?? '-' }}
                         </td>
                     </tr>
                     {{-- {/* Tempat/Tgl Lahir */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             4</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Tempat/Tgl Lahir
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000;
-                        padding: 0.4rem /* 8px */;">
+                            style=";
+                        ">
                             : {{ $data['pegawai']['Tempat/Tanggal Lahir'] }}
                         </td>
                     </tr>
                     {{-- {/* Jenis Kelamin */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             5</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Jenis Kelamin
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000;
-                        padding: 0.4rem /* 8px */;">
+                            style=";
+                        ">
                             : {{ $data['pegawai']['Jenis Kelamin'] }}
                         </td>
                     </tr>
 
                     {{-- {/* Pangkat/Golongan Ruang/TMT */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             6</th>
                         <td colspan="2"
-                            style="border-right-color: transparent; padding: 0.3rem; padding-right: 0px; margin-right: 0px;  text-wrap: nowrap; font-size: 13.7px">
+                            style="border-right-color: transparent; white-space: nowrap;">
                             Pangkat/Golongan Ruang/TMT
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
+                            style="text-wrap: nowrap;">
                             : {{ $data['pegawai']['Pangkat/Golongan Ruangan/TMT'] }}
                         </td>
                     </tr>
 
                     {{-- {/* Jabatan/TMT */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             7</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Jabatan/TMT
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
+                            style=";   text-wrap: nowrap;">
                             : {{ $data['pegawai']['Jabatan/TMT'] }}
                         </td>
                     </tr>
 
                     {{-- {/* Unit Kerja */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             8</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Unit Kerja
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000; padding: 0.4rem /* 8px */;  text-wrap: nowrap;">
+                            style=";   text-wrap: nowrap;">
                             : {{ $data['pegawai']['Unit Kerja'] }}
                         </td>
                     </tr>
 
                     {{-- {/* Instansi */} --}}
                     <tr>
-                        <th style="border: 1px solid #000;">
+                        <th>
                             9</th>
-                        <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Intansi
                         </td>
                         <td colspan="2"
-                            style="border: 1px solid #000;
-                                padding: 0.4rem /* 8px */;">
+                            style=";
+                                ">
                             : {{ 'Badan Pusat Statistik' }}
                         </td>
                     </tr>
@@ -182,70 +177,67 @@
 
                 </tbody>
 
-                <tfoot style="font-size: 15px;">
-                    <tr style="text-align: center;  text-transform: uppercase; ">
+                <tfoot>
+                    <tr style="text-transform: uppercase; ">
                         <th colspan="5"
-                            style="border: 1px solid #000;  padding: 0.4rem /* 8px */; font-weight: 700; font-size:15px">
+                            style="font-weight: 700;">
                             konversi predikat kinerja ke angka kredit
                         </th>
                     </tr>
                     {{-- ---------------------------------------- --}}
 
-                    <tr style="text-align: center; font-weight: 400;">
+                    <tr style="font-weight:400;">
                         <th colspan="3"
-                            style="border: 1px solid #000; padding: 0.4rem;  font-weight: 400; text-transform: capitalize;">
+                            style="text-transform: capitalize;">
                             Hasil Penilaian Kinerja
                         </th>
-                        <th rowSpan="2" style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
+                        <th rowSpan="2" style=" ">
                             Koefisien per Tahun
                         </th>
-                        <th style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
+                        <th style=" ">
                             Angka Kredit yang didapat
                         </th>
                     </tr>
 
-                    <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">
-                        <th colspan="2" style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
+                    <tr style="text-transform: uppercase;">
+                        <th colspan="2" style=" ">
                             predikat
                         </th>
-                        <th style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
+                        <th>
                             persentase
                         </th>
-                        <th style="border: 1px solid #000; text-transform: none; font-size: 14px; text-wrap: nowrap; font-weight: 400;"
-                            class="border border-black normal-case text-xs text-nowrap;">
+                        <th style="text-transform: none; white-space: nowrap;">
                             (kolom 2 x kolom 3)
                         </th>
                     </tr>
 
-                    <tr style="text-transform: uppercase; width: 100%; font-weight: 400; background-color: #e8f3f3;">
-                        <th colspan="2" style="border: 1px solid #000; padding: 0.4rem; font-weight: 400;">
+                    <tr style="text-transform: uppercase; background-color: #e8f3f3;">
+                        <th colspan="2">
                             {{ '1' }}
                         </th>
-                        <th style="border: 1px solid #000; font-weight: 400;">
+                        <th>
                             {{ '2' }}
                         </th>
-                        <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
+                        <th>
                             {{ '3' }}
                         </th>
-                        <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
+                        <th>
                             {{ '4' }}
                         </th>
                     </tr>
 
-                    <tr style="text-transform: uppercase; width: 100%; font-weight: 400;">
-                        <th colspan="2"
-                            style="border: 1px solid #000; text-wrap: nowrap; padding: 0.4rem; font-weight: 400;">
+                    <tr style="text-transform: uppercase;">
+                        <th colspan="2">
                             {{ $data['predikat'] }}
                         </th>
-                        <th style="border: 1px solid #000; font-weight: 400;">
-                            {{-- {{ ($data['periode_berakhir'] - $data['periode_mulai']) + 1 }} --}}
+                        <th >
                             {{ $data['angka_periode'] }}
                             /12
                         </th>
-                        <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
+                        <th>
                             {{ number_format($data['ak_normatif'] ?? 0, 3) }}
                         </th>
-                        <th style="border: 1px solid #000; text-transform: none; font-weight: 400;">
+                        <th>
                             {{ $data['angka_kredit'] }}
                         </th>
                     </tr>
@@ -257,9 +249,9 @@
                 <strong style="display:block">
                     Pada tanggal @formatTanggal($data['tgl_ditetapkan'])
                 </strong>
-                <strong style="padding-top: 0.7rem;">Kepala BPS Provinsi Jambi </strong>
+                <strong>Kepala BPS Provinsi Jambi </strong>
+
                 {{-- TTD Validasi --}}
-                {{-- TODO : Mungkin sebaikny rapiin lagi nanti kalo ad ttd --}}
                 @if (!empty($signature))
                     <div style="margin-top: 0px; margin-bottom: 0px;">
                         <img src="{{ $signature }}" style="width: 60px; height: 34px;" alt="Tanda Tangan">
@@ -268,7 +260,6 @@
                     <div style="height: 80px;"></div> {{-- Spacer jika tidak ada tanda tangan --}}
                 @endif
                 {{-- TTD Validasi --}}
-
 
                 <div>
                     <strong style="display: block">

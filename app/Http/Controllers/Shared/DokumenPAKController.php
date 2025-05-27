@@ -110,21 +110,9 @@ class DokumenPAKController extends Controller
     public function preview()
     {
         $data = Session::get('data');
-
-        // Perbarui nilai total_dicetak dengan menambahkannya 1
-        $userId = Auth::user()->id;
-        // User::where('id', $userId)
-        // ->update([
-        //     'jumlah' => [
-        //         "dicetak"
-        //     ]
-        //     DB::raw('jumlah_dicetak + 1')
-        // ]);
-
-        // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
-        $this->cleanAllData($data);
         // dd($data);
-
+        $userId = Auth::user()->id;
+        $this->cleanAllData($data);
 
         // Buat PDF SIZE F4
         $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';

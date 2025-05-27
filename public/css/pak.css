@@ -133,12 +133,6 @@ div.sub-title > h2 > span > span {
     text-transform: none;
 }
 
-.tebusan-container {
-    float: left;
-    width: 50%;
-    font-size: 15px;
-    margin-top: 1rem;
-}
 
 
 .signature-container {
@@ -148,7 +142,8 @@ div.sub-title > h2 > span > span {
     margin-top: 0.5rem;
     margin-right: 0.5rem;
     text-align: left;
-    font-size: 15px;
+    font-size: 14.5px;
+
 }
 
 .clearfix {
@@ -158,15 +153,26 @@ div.sub-title > h2 > span > span {
     display: table;
   }
 
-.signature-container strong {
-    font-weight: 400; /* Menetapkan ketebalan font untuk tag <strong> di dalam signature-container */
+.signature-container > strong {
+    font-weight: 400;
 }
+
+.signature-container > div > strong {
+    font-weight: 400;
+}
+
 
 .signature-container img {
     margin-top: 1.2rem;
     margin-bottom: 1.5rem;
 }
 
+.tebusan-container {
+    float: left;
+    width: 50%;
+    font-size: 14px;
+    margin-top: 1rem;
+}
 
 
 .content-container {
@@ -181,15 +187,6 @@ thead {
     display: table-row-group;
 }
 
-/* Table PAK Page 1 */
-table.table-pak-1 {
-    /* table-layout: auto; */
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    border-width: 1px;
-    border-color: rgb(51 65 85);
-}
 
 table.table-pak {
     /* table-layout: auto; */
@@ -211,6 +208,7 @@ table.table-pak > tbody > tr > th {
 
 table.table-pak > tbody > tr > td {
     border: 1px solid #334454;
+    padding: 0.4rem;
 }
 
 table.table-pak > tfoot > tr {
@@ -218,7 +216,8 @@ table.table-pak > tfoot > tr {
 }
 table.table-pak > tfoot > tr > th {
     border: 1px solid #334454;
-    padding: 0.25rem;
+    /* border: 1px solid #000 */
+    padding: 0.4rem;
     font-weight: 400;
     vertical-align: middle;
 }
@@ -239,7 +238,7 @@ table.table-pak > tfoot > tr > th {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
-    font-size: 14.5px; /* Perkecil ukuran font */
+    font-size: 14px;
 }
 
 .table-pak-3 th, .table-pak-3 td {
