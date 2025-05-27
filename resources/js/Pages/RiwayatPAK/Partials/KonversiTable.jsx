@@ -9,8 +9,8 @@ export default function KonversiTable({
         predikatPresentase,
         tebusanKonversi,
     },
-    isEdit,
-    historyData,
+    isEdit = false,
+    isByPengusulan = false
 }) {
     const handleKeyPress = (e) => {
         // Mengizinkan angka dan tanda koma atau titik
@@ -131,8 +131,7 @@ export default function KonversiTable({
         setJabatanChanged(false); // Kembalikan status ke false
     };
 
-    console.log("Isi tebusan konversi");
-    console.log(tebusanKonversi);
+
 
     return (
         <table className="table text-base table-bordered">
@@ -191,6 +190,7 @@ export default function KonversiTable({
                             id="presentase"
                             className="w-24 px-1 text-center rounded-md border-gradient"
                             defaultValue={data.presentase}
+                            value={data.presentase}
                             onChange={(e) => {
                                 setData("presentase", e.target.value);
                             }}
@@ -203,7 +203,6 @@ export default function KonversiTable({
                         </select>
                     </td>
                     <td className="border">
-                        {/* TODO: Tambahkan logika apakah ak_normatif dr database apakah masih cocok dgn data pegawai terbaru yang bisa saja berubah */}
 
                         {!isEdit && data.ak_normatif && (
                             <span>{data.ak_normatif}</span>
@@ -272,7 +271,7 @@ export default function KonversiTable({
                                         rowSpan={Math.ceil(
                                             tebusanKonversi.length / 2
                                         )}
-                                        className="text-lg font-semibold"
+                                        className="text-lg font-semibold text-center"
                                     >
                                         Tebusan
                                     </td>

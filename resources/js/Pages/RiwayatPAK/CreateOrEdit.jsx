@@ -34,7 +34,7 @@ export default function Index({
 
     // IF By Pengusulan
     isByPengusulan,
-    pengusulan
+    pengusulan,
 }) {
     // =============================================================Aturan Penetapan==============================================
     const {
@@ -45,12 +45,12 @@ export default function Index({
         processing,
         errors,
         reset,
+        rumusPenghitungan,
         aturanKonvTableProps,
         aturanAkmTableProps,
         aturanPAKTableProps,
     } = UseAturanPenetapan((aturanPAK = aturanPAK));
     // ANCHOR
-
 
     const [pegawaiState, setPegawaiState] = useState(null);
     // IF EDIT
@@ -64,18 +64,44 @@ export default function Index({
             });
             // console.log("riwayat", riwayat);
             setPegawaiState(riwayat.pegawai);
-        } else {
-            // Kalo Create dan ad datany
-            // console.log("ini dirender pertama kali tanpa pemicu apapun ");
-            if (pegawai) {
-                // console.log("ini dirender pertama kali ketika ada pegawai yang dipilih ");
-                setData("pegawai", pegawai);
-                setPegawaiState(pegawai);
-            } else {
-                // console.log(
-                //     "ini dirender pertama kali ketika pegawai belum dipilih/belum ada "
-                // );
-            }
+        } else if (isByPengusulan && pegawai) {
+            const { koefisienPertahun } = aturanKonvTableProps;
+            const findkoefisienPertahunValue = (jabatan) => {
+                const key = Object.keys(koefisienPertahun).find((k) =>
+                    jabatan.includes(k)
+                );
+                return key ? koefisienPertahun[key] : null;
+            };
+            let koefisienPertahunValue = findkoefisienPertahunValue(
+                pegawai["Jabatan/TMT"]
+            );
+
+            // Take the month
+            const [yearStart, monthStart, day] = pengusulan.periode_mulai?.split("-");
+            const [yearEnd, monthEnd, dayEnd] = pengusulan.periode_berakhir?.split("-");
+
+            const angkaPeriodeMulai = parseInt(monthStart, 10);
+            const angkaPeriodeBerakhir = parseInt(monthEnd, 10);
+            const { useRumusAngkaKredit, useRumusAngkaPeriode } = rumusPenghitungan;
+            const angkaPeriodeValue = useRumusAngkaPeriode(angkaPeriodeBerakhir, angkaPeriodeMulai);
+            const angkaKreditValue = useRumusAngkaKredit(
+                angkaPeriodeValue,
+                koefisienPertahunValue,
+                data.presentase
+            );
+            // alert(angkaPeriodeMulai)
+            setData((prev) => ({
+                ...prev,
+                ak_normatif: koefisienPertahunValue,
+                periode_mulai: angkaPeriodeMulai,
+                periode_berakhir: angkaPeriodeBerakhir,
+                angka_periode: angkaPeriodeValue,
+                angka_kredit: angkaKreditValue,
+                tahun_periode: yearStart,
+            }));
+            // console.log("first Mounted");
+            // alert(data.angka_periode);
+            // alert(data.ak_normatif)
         }
     }, [initialized]);
 
@@ -89,7 +115,7 @@ export default function Index({
         return () => {
             // console.log('isi pegawai setelah dipilih pegawai')
             // console.log(pegawaiState)
-          }
+        };
     }, [pegawai]);
 
     // =============================================================Pop Up, Dialog SWAL==============================================
@@ -219,253 +245,270 @@ export default function Index({
     // CONSOLE
     // console.log("Isi Error");
     // console.log(errors);
-    // console.log("Isi Data");
-    // console.log(data);
+    console.log("Isi Data");
+    console.log(data);
     // console.log("data now", dataNow);
     // console.log('Is Pengusulan Data', isByPengusulan)
 
     return (
         <Authenticated
             user={auth.user}
-            title={title}
+            title={title + (isByPengusulan ? ' - Berdasarkan Pengusulan' : '')}
             current={route().current()}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop max-w-screen-desktop">
-
-
-            <section className="m-10 ">
-                {/* Preview PDF di iframe */}
-                {showIframe && (
-                    <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
-                        <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
-                            {/* Tombol Close */}
-                            <button
-                                className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
-                                onClick={() => setShowIframe(false)}
-                            >
-                                <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
-                            </button>
-
-                            {/* Loading Spinner (DaisyUI) */}
-                            {isLoading && (
-                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70">
-                                    <span className="loading loading-spinner loading-lg text-primary"></span>
-                                </div>
-                            )}
-
-                            {/* Iframe */}
-                            <iframe
-                                src={route("pak.preview")}
-                                width="100%"
-                                height="100%"
-                                className="border-0"
-                                onLoad={() => setIsLoading(false)} // stop loading setelah iframe ready
-                            ></iframe>
-                        </div>
-                    </div>
-                )}
-
-                {/* Preview PDF di iframe */}
-
-                <div className="flex justify-between">
-                    <div className="mt-2 text-sm breadcrumbs">
-                        <ul>
-                            <li>
-                                <a
-                                    href={route("divisi-sdm.pegawai.index")}
-                                    className="gap-2"
+                <section className="m-10 ">
+                    {/* Preview PDF di iframe */}
+                    {showIframe && (
+                        <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                            <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                                {/* Tombol Close */}
+                                <button
+                                    className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
+                                    onClick={() => setShowIframe(false)}
                                 >
-                                    <FaPrint className="w-4 h-4 stroke-current" />
-                                    <span>Penetapan Angka Kredit</span>
-                                </a>
-                            </li>
-                            {isEdit && (
-                                <li>
-                                    <span className="inline-flex items-center gap-2">
-                                        {riwayat.pegawai.Nama}
-                                    </span>
-                                </li>
-                            )}
+                                    <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
+                                </button>
 
-                            {!isEdit && pegawaiState && (
-                                <li>
-                                    <span className="inline-flex items-center gap-2">
-                                        {pegawaiState.Nama}
-                                    </span>
-                                </li>
-                            )}
-                        </ul>
-                    </div>
-                    <SecondaryButton
-                        onClick={() => window.history.back()}
-                        className="capitalize bg-secondary/5 "
-                    >
-                        <span>Kembali</span>
-                        <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
-                    </SecondaryButton>
-                </div>
-
-                <div className="px-2 mx-auto overflow-x-auto">
-                    {!isEdit && (
-                        <>
-                            {/* Konten untuk memilih Pegawai Start */}
-
-                            <h1 className="text-2xl font-medium my-7">
-                                Pilih Pegawai
-                            </h1>
-                            <div className="mb-6">
-                                <label className="block mb-2 font-medium">
-                                    Cari Pegawai (Nama / NIP)
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Ketik nama atau NIP"
-                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                                    value={search}
-                                    defaultValue={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                />
-                                {search && (
-                                    <ul className="mt-2 overflow-y-auto border rounded-md max-h-48">
-                                        {filtered.length > 0 || pegawaiState ? (
-                                            filtered.map((p, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="p-2 cursor-pointer hover:bg-blue-100"
-                                                    onClick={() => onSelect(p)}
-                                                >
-                                                    <a>
-                                                        {p.Nama} (NIP : {p.NIP})
-                                                    </a>
-                                                </li>
-                                            ))
-                                        ) : (
-                                            <li className="p-2 italic text-gray-500">
-                                                Tidak ditemukan
-                                            </li>
-                                        )}
-                                    </ul>
+                                {/* Loading Spinner (DaisyUI) */}
+                                {isLoading && (
+                                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70">
+                                        <span className="loading loading-spinner loading-lg text-primary"></span>
+                                    </div>
                                 )}
+
+                                {/* Iframe */}
+                                <iframe
+                                    src={route("pak.preview")}
+                                    width="100%"
+                                    height="100%"
+                                    className="border-0"
+                                    onLoad={() => setIsLoading(false)} // stop loading setelah iframe ready
+                                ></iframe>
                             </div>
-                        </>
+                        </div>
                     )}
 
-                    {/* Konten untuk memilih Pegawai End */}
-                    <section className={isEdit ? "mt-20" : "mt-10"}>
-                        <DetailPegawai
-                            pegawai={!isEdit ? pegawaiState : riwayat.pegawai}
-                            collapse={pegawaiState ? true : false}
-                        />
-                    </section>
-                </div>
-            </section>
+                    {/* Preview PDF di iframe */}
 
-            <section className="h-full m-12 mt-4">
-                <form onSubmit={submit} method="post">
-                    <div className="overflow-x-auto">
-                        {/* INPUT DATA | START*/}
-                        <InputDataTable
-                            data={data}
-                            setData={setData}
-                            // EDIT
-                            isEdit={true}
-                            historyData={isEdit ? riwayat : {}}
-                            pengusulanData={isByPengusulan && pengusulan}
-                        />
-                        {/* INPUT DATA | END*/}
+                    <div className="flex justify-between">
+                        <div className="mt-2 text-sm breadcrumbs">
+                            <ul>
+                                <li>
+                                    <a
+                                        href={route("divisi-sdm.pegawai.index")}
+                                        className="gap-2"
+                                    >
+                                        <FaPrint className="w-4 h-4 stroke-current" />
+                                        <span>Penetapan Angka Kredit</span>
+                                    </a>
+                                </li>
 
-                        {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | START*/}
-                        <KonversiTable
-                            data={data}
-                            setData={setData}
-                            isEdit={isEdit}
-                            aturanKonvTableProps={aturanKonvTableProps}
-                            historyData={riwayat}
-                        />
-                        {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | END*/}
+                                {isByPengusulan && (
+                                    <li>
+                                        <span className="inline-flex items-center gap-2">
+                                            Berdasarkan Pengusulan
+                                        </span>
+                                    </li>
+                                )}
 
-                        {/* AKUMULASI ANGKA KREDIT | START */}
-                        <AkumulasiTable
-                            pegawai={pegawaiState}
-                            data={data}
-                            setData={setData}
-                            aturanAkmTableProps={aturanAkmTableProps}
-                            isEdit={isEdit}
-                            historyData={isEdit ? riwayat : {}}
-                            pengusulanData={isByPengusulan && pengusulan}
-                        />
-                        {/* AKUMULASI ANGKA KREDIT | END */}
-                        {/* ANCHOR */}
-                        {/* PENETAPAN ANGKA KREDIT | START*/}
-                        <PAKTable
-                            pegawai={pegawaiState}
-                            data={data}
-                            setData={setData}
-                            isEdit={isEdit}
-                            historyData={isEdit ? riwayat : {}}
-                            aturanPAKTableProps={aturanPAKTableProps}
-                        />
-                        {/* PENETAPAN ANGKA KREDIT | END*/}
+                                {isEdit && (
+                                    <li>
+                                        <span className="inline-flex items-center gap-2">
+                                            {riwayat.pegawai.Nama}
+                                        </span>
+                                    </li>
+                                )}
+
+                                {!isEdit && pegawaiState && (
+                                    <li>
+                                        <span className="inline-flex items-center gap-2">
+                                            {pegawaiState.Nama}
+                                        </span>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                        <SecondaryButton
+                            onClick={() => window.history.back()}
+                            className="capitalize bg-secondary/5 "
+                        >
+                            <span>Kembali</span>
+                            <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
+                        </SecondaryButton>
                     </div>
 
-                    <div className="flex justify-center w-full pb-12 mt-10 gap-7 ">
-                        <SecondaryButton
-                            type="submit"
-                            name="action"
-                            value="preview"
-                            className="scale-110 hover:scale-[1.15] hover:bg-secondary/80 group hover:text-white "
-                        >
-                            Preview Dokumen
-                            <FaFilePdf className="mx-1" />
-                        </SecondaryButton>
-
-                        {isEdit ? (
+                    <div className="px-2 mx-auto overflow-x-auto">
+                        {!isEdit && (
                             <>
-                                <SuccessButton
-                                    type="submit"
-                                    name="action"
-                                    value="update"
-                                    className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
-                                >
-                                    Update
-                                    <FaSave className="mx-1" />
-                                </SuccessButton>
+                                {/* Konten untuk memilih Pegawai Start */}
+
+                                <h1 className="text-2xl font-medium my-7">
+                                    Pilih Pegawai
+                                </h1>
+                                <div className="mb-6">
+                                    <label className="block mb-2 font-medium">
+                                        Cari Pegawai (Nama / NIP)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Ketik nama atau NIP"
+                                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                                        value={search}
+                                        defaultValue={search}
+                                        onChange={(e) =>
+                                            setSearch(e.target.value)
+                                        }
+                                    />
+                                    {search && (
+                                        <ul className="mt-2 overflow-y-auto border rounded-md max-h-48">
+                                            {filtered.length > 0 ||
+                                            pegawaiState ? (
+                                                filtered.map((p, i) => (
+                                                    <li
+                                                        key={i}
+                                                        className="p-2 cursor-pointer hover:bg-blue-100"
+                                                        onClick={() =>
+                                                            onSelect(p)
+                                                        }
+                                                    >
+                                                        <a>
+                                                            {p.Nama} (NIP :{" "}
+                                                            {p.NIP})
+                                                        </a>
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li className="p-2 italic text-gray-500">
+                                                    Tidak ditemukan
+                                                </li>
+                                            )}
+                                        </ul>
+                                    )}
+                                </div>
+                            </>
+                        )}
+
+                        {/* Konten untuk memilih Pegawai End */}
+                        <section className={isEdit ? "mt-20" : "mt-10"}>
+                            <DetailPegawai
+                                pegawai={
+                                    !isEdit ? pegawaiState : riwayat.pegawai
+                                }
+                                collapse={pegawaiState ? true : false}
+                            />
+                        </section>
+                    </div>
+                </section>
+
+                <section className="h-full m-12 mt-4">
+                    <form onSubmit={submit} method="post">
+                        <div className="overflow-x-auto">
+                            {/* INPUT DATA | START*/}
+                            <InputDataTable
+                                data={data}
+                                setData={setData}
+                                // EDIT
+                                isEdit={true}
+                                historyData={isEdit ? riwayat : {}}
+                                pengusulanData={isByPengusulan && pengusulan}
+                            />
+                            {/* INPUT DATA | END*/}
+
+                            {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | START*/}
+                            <KonversiTable
+                                data={data}
+                                setData={setData}
+                                isEdit={isEdit}
+                                isByPengusulan={isByPengusulan}
+                                aturanKonvTableProps={aturanKonvTableProps}
+                                historyData={riwayat}
+                            />
+                            {/* KONVERSI PREDIKAT KINERJA ANGKA KREDIT | END*/}
+
+                            {/* AKUMULASI ANGKA KREDIT | START */}
+                            <AkumulasiTable
+                                pegawai={pegawaiState}
+                                data={data}
+                                setData={setData}
+                                aturanAkmTableProps={aturanAkmTableProps}
+                                isEdit={isEdit}
+                                historyData={isEdit ? riwayat : {}}
+                                pengusulanData={isByPengusulan && pengusulan}
+                            />
+                            {/* AKUMULASI ANGKA KREDIT | END */}
+                            {/* ANCHOR */}
+                            {/* PENETAPAN ANGKA KREDIT | START*/}
+                            <PAKTable
+                                pegawai={pegawaiState}
+                                data={data}
+                                setData={setData}
+                                isEdit={isEdit}
+                                historyData={isEdit ? riwayat : {}}
+                                aturanPAKTableProps={aturanPAKTableProps}
+                                isByPengusulan={isByPengusulan}
+
+                            />
+                            {/* PENETAPAN ANGKA KREDIT | END*/}
+                        </div>
+
+                        <div className="flex justify-center w-full pb-12 mt-10 gap-7 ">
+                            <SecondaryButton
+                                type="submit"
+                                name="action"
+                                value="preview"
+                                className="scale-110 hover:scale-[1.15] hover:bg-secondary/80 group hover:text-white "
+                            >
+                                Preview Dokumen
+                                <FaFilePdf className="mx-1" />
+                            </SecondaryButton>
+
+                            {isEdit ? (
+                                <>
+                                    <SuccessButton
+                                        type="submit"
+                                        name="action"
+                                        value="update"
+                                        className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                    >
+                                        Update
+                                        <FaSave className="mx-1" />
+                                    </SuccessButton>
+                                    <SuccessButton
+                                        type="submit"
+                                        name="action"
+                                        value="save"
+                                        className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                    >
+                                        Simpan Sebagai Salinan
+                                        <FaSave className="mx-1" />
+                                    </SuccessButton>
+                                </>
+                            ) : (
                                 <SuccessButton
                                     type="submit"
                                     name="action"
                                     value="save"
                                     className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
                                 >
-                                    Simpan Sebagai Salinan
+                                    Tambah
                                     <FaSave className="mx-1" />
                                 </SuccessButton>
-                            </>
-                        ) : (
-                            <SuccessButton
+                            )}
+
+                            <PrimaryButton
                                 type="submit"
                                 name="action"
-                                value="save"
-                                className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                value="save_submit"
+                                className="scale-110 hover:scale-[1.15] hover:bg-primary/80 "
                             >
-                                Tambah
-                                <FaSave className="mx-1" />
-                            </SuccessButton>
-                        )}
-
-                        <PrimaryButton
-                            type="submit"
-                            name="action"
-                            value="save_submit"
-                            className="scale-110 hover:scale-[1.15] hover:bg-primary/80 "
-                        >
-                            Simpan dan Ajukan
-                            <BsFillSendFill className="mx-1" />
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </section>
+                                Simpan dan Ajukan
+                                <BsFillSendFill className="mx-1" />
+                            </PrimaryButton>
+                        </div>
+                    </form>
+                </section>
             </main>
-
         </Authenticated>
     );
 }

@@ -44,7 +44,7 @@
         <div style="margin-top: 0.1rem ">
             {{-- Table --}}
             <table aria-colcount="5" class="table-pak"
-                style="border-collapse: collapse; border-spacing: 0; font-size: 15px;
+                style="border-collapse: collapse; border-spacing: 0;
                         line-height: 1rem ;">
                 {{--  head  --}}
                 <thead>
@@ -54,10 +54,10 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody style="font-size: 15px">
+                <tbody>
                     {{--  Nama  --}}
                     <tr>
-                        <th style="border: 1px solid #000;  width: 3.8rem /* 64px */;">
+                        <th style="border: 1px solid #000;  width: 3.5rem /* 64px */;">
                             1</th>
                         <td colspan="2" style="border-right-color: transparent; padding: 0.3rem;">
                             Nama
@@ -68,7 +68,7 @@
                             {{-- FIXME: nama pgeawai harusny ad di dari data useForm --}}
                             :
                             {{-- {{ 'Kiky Amci Ilzania, S.Tr.Stat' }} --}}
-                            {{ $data['pegawai']['Nama'] }}
+                            {{ $data['pegawai']['Nama'] }} {{ optional($data['pegawai'])['Gelar Tambahan'] ?? '' }}
                         </td>
                     </tr>
                     {{-- {/* NIP */} --}}

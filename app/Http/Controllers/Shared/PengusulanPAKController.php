@@ -125,7 +125,7 @@ class PengusulanPAKController extends Controller
     public function approve(Request $request)
     {
         PengusulanPAK::find($request->id)->update([
-            "status" => 'diproses',
+            "status" => 'disetujui',
         ]);
     }
 
@@ -136,7 +136,7 @@ class PengusulanPAKController extends Controller
             'catatan' => 'required|string|min:5|max:200',
         ];
         $request->validate($rules);
-
+        // dd($request->all());
         // Store Catatan & The Relationship with Pengusulan & User
         $new_catatan = Catatan::create([
             'user_id' => Auth::user()->id,

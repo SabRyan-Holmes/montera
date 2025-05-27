@@ -284,6 +284,8 @@ export default function Index({ auth, title, flash, aturanPAK }) {
                     </div>
                 </section>
                 {/* !SECTION : Penanda Tangan */}
+
+                {/* TODO?  : Mungkin sebaikny tambahin no PAK terakhir? dan ini bisa diupdate setap kali dilakukan penetapan?*/}
                 {/* SECTION : Rumus*/}
                 {/* TODO : Ini belum terintegrasi database || mungkin fiturny read saja karna kayakny ribet kalo CRUD  */}
 

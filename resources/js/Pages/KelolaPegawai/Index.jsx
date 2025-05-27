@@ -247,7 +247,7 @@ export default function Index({
                                             ).fromNow()}
                                         </span>
                                     </td>
-                                    <td className="text-center whitespace-nowrap text-nowrap">
+                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                         <div className="relative inline-flex group">
                                             <Link
                                                 as="a"
@@ -263,7 +263,6 @@ export default function Index({
                                                 message={"Lihat Data"}
                                             />
                                         </div>
-                                        <span className="inline-block mx-1"></span>
 
                                         {/* EDIT */}
 
@@ -283,7 +282,6 @@ export default function Index({
                                             />
                                         </div>
 
-                                        <span className="inline-block mx-1"></span>
                                         {/* DELETE */}
                                         <div className="relative inline-flex group">
                                             <button

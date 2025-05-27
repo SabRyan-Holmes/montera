@@ -28,12 +28,9 @@ export default function ModalCekPengusulan({
     pengusulanPAK,
     setActiveModalId,
     canValidate,
+    setPopUpData,
+    setIsPopUpOpen,
 }) {
-    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-    const [popUpData, setPopUpData] = useState({
-        id: "",
-    });
-
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengusulanPAK.id,
@@ -76,7 +73,7 @@ export default function ModalCekPengusulan({
                     preserveState: false,
                     onSuccess: () => {},
                     onError: () => {},
-                }) ;
+                });
             }
         });
     };
@@ -93,7 +90,7 @@ export default function ModalCekPengusulan({
             preserveState: true,
             onError: (errors) => {
                 setLoading(false);
-                console.error("Error:", errors);
+                console.log("Error:", errors);
             },
             onSuccess: () => {
                 Swal.fire({
@@ -102,7 +99,7 @@ export default function ModalCekPengusulan({
                     text: "Pengusulan PAK telah disetujui.",
                     icon: "success",
                     showCancelButton: true,
-                    confirmButtonText: "Proses PAK Sekarang",
+                    confirmButtonText: "Proses PAK Sekarang?",
                     cancelButtonText: "Nanti Saja",
                     confirmButtonColor: "#2D95C9",
                     cancelButtonColor: "#9ca3af",
@@ -114,21 +111,21 @@ export default function ModalCekPengusulan({
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        router.get(route("divisi-sdm.pak.create-by-pengusulan", pengusulanPAK.id))
-                        setShowIframe(false)
+                        router.get(
+                            route(
+                                "divisi-sdm.pak.create-by-pengusulan",
+                                pengusulanPAK.id
+                            )
+                        );
+                        setShowIframe(false);
                     }
                 });
-
-                console.log("Sukses Menyetujui");
+                // console.log("Sukses Menyetujui");
             },
         });
     };
 
     const { props } = usePage();
-
-    console.log("isi data Sekarang dari modal ");
-
-    console.log(pengusulanPAK);
     return (
         <dialog
             id={`DialogCekPengusulan-${pengusulanPAK.id}`}
@@ -164,13 +161,6 @@ export default function ModalCekPengusulan({
                         )}
                     </div>
                 </div>
-            )}
-
-            {isPopUpOpen && (
-                <PopUpCatatan
-                    onClose={() => setIsPopUpOpen(!isPopUpOpen)}
-                    popUpData={popUpData}
-                />
             )}
 
             <div className="relative w-full max-w-3xl modal-box">
@@ -239,18 +229,22 @@ export default function ModalCekPengusulan({
                     {/* SECTION Floating Action Button DIPROSES */}
                     {pengusulanPAK.status === "diproses" && (
                         <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                            <SecondaryButton
-                                onClick={() => {
-                                    setPopUpData({
-                                        id: pengusulanPAK.id,
-                                    });
-                                    setIsPopUpOpen(true);
-                                }}
-                                className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                            >
-                                <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                Tolak Pengusulan
-                            </SecondaryButton>
+                            {/* TODO: Harusny dialog catatan bisa muncul tanpa harus menutup dialogCek Pengusulan terlebih dahulu  */}
+                            <form method="dialog">
+                                <SecondaryButton
+                                    type="submit"
+                                    onClick={() => {
+                                        setPopUpData({
+                                            id: pengusulanPAK.id,
+                                        });
+                                        setIsPopUpOpen(true); //saya ingin ini dijalankan  setelah modal penguisulan tersebut ditututup
+                                    }}
+                                    className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                                >
+                                    <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                    Tolak Pengusulan
+                                </SecondaryButton>
+                            </form>
 
                             <SuccessButton
                                 onClick={handleApprove}
@@ -281,24 +275,21 @@ export default function ModalCekPengusulan({
                     {/* SECTION Floating Action Button DISETUJUI */}
                     {pengusulanPAK.status === "disetujui" && (
                         <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                            <button
-                                onClick={() => {
-                                    const url = `/storage/${pengusulanPAK.approved_pak_path}`;
-                                    setLinkIframe(url);
-                                    setShowIframe(true);
-                                }}
-                                className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                               <SuccessButton
+                                asLink
+                                href={route('divisi-sdm.pak.create-by-pengusulan',data.id)}
+                                disabled={processing}
+                                className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
                             >
-                                <IoDocument className="w-4 h-4 fill-secondary" />
-                                Lihat Dokumen
-                            </button>
-
+                                <FaFileSignature className="w-4 h-4 fill-white " />
+                                Proses PAK
+                            </SuccessButton>
                             <SecondaryButton
                                 onClick={() => handleCancel()}
                                 className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
                             >
                                 <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                Batalkan Validasi
+                                Batalkan Persetujuan
                             </SecondaryButton>
                         </section>
                     )}

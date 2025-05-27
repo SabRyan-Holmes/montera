@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 export default function InputDataTable({
     data,
     setData,
-    isEdit,
+    isEdit = false,
     historyData,
     pengusulanData,
 }) {
@@ -17,7 +17,16 @@ export default function InputDataTable({
     };
 
     const [defaultPeriodeMulai, setdefaultPeriodeMulai] = useState();
+    const [minPeriode, setMinPeriode] = useState("");
     const [defaultPeriodeBerakhir, setdefaultPeriodeBerakhir] = useState();
+
+    // Convert jadi angka periode(untuk rumus perhitungan)
+    useEffect(() => {
+        setData(
+            "angka_periode",
+            Math.abs(data.periode_berakhir - data.periode_mulai + 1)
+        );
+    }, [data.periode_mulai, data.periode_berakhir]);
 
     useEffect(() => {
         if (isEdit) {
@@ -31,35 +40,26 @@ export default function InputDataTable({
                     historyData["periode_berakhir"]
                 ).padStart(2, "0")}`
             );
-        } else if (pengusulanData) {
-            // TODO tambahkan logic untuk default input type month dr format yg ada tanggal ny jg(hilangkan tanggal nya)
+        } if (pengusulanData) {
+            const [year, monthStart, day] = pengusulanData.periode_mulai?.split("-");
+            const [yearEnd, monthEnd, dayEnd] = pengusulanData.periode_mulai?.split("-");
+
             setdefaultPeriodeMulai(
                 pengusulanData.periode_mulai?.slice(0, 7) || ""
             );
-            setdefaultPeriodeMulai(
+            setdefaultPeriodeBerakhir(
                 pengusulanData.periode_berakhir?.slice(0, 7) || ""
             );
-            // Set tahun_periode secara otomatis
-            setData((prev) => ({ ...prev, tahun_periode: tahun }));
         }
     }, []);
-
-    useEffect(() => {
-        setData(
-            "angka_periode",
-            Math.abs(data.periode_berakhir - data.periode_mulai + 1)
-        );
-    }, [data.periode_mulai, data.periode_berakhir]);
 
     const today = new Date().toISOString().split("T")[0];
     const namaInput = useRef();
 
-    // console.log("data dari input Data Table", data)
-    const [minPeriode, setMinPeriode] = useState("");
-    console.log('pengusulanData');
-    console.log(pengusulanData);
-    console.log("defaultPeriodeMulai");
-    console.log(defaultPeriodeMulai);
+    // console.log("pengusulanData");
+    // console.log(pengusulanData);
+    // console.log("defaultPeriodeMulai");
+    // console.log(defaultPeriodeMulai);
 
     return (
         <table className="table text-base table-bordered ">
@@ -90,7 +90,7 @@ export default function InputDataTable({
                                     // Memisahkan nilai menjadi tahun dan bulan
                                     const [year, month] = value.split("-");
 
-                                    // Mengonversi bulan menjadi     integer
+                                    // Mengonversi bulan menjadi integer
                                     const periodeMulai = parseInt(month, 10);
 
                                     // Set min periode untuk untuk periode berakhir

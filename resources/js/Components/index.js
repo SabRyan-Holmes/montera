@@ -31,6 +31,7 @@ import FileInput from "./Forms/FileInput";
 import RadioWithEditableLabel from "./Forms/RadioEditableLabel";
 import UseFilterSearchCustom from "./UseFilterSearchCustom";
 import FilterSearchCustom from "./FilterSearchCustom";
+import StatusLabel from "./StatusLabel";
 
 export {
     ApplicationLogo,
@@ -65,5 +66,7 @@ export {
     FileInput,
     RadioWithEditableLabel,
     UseFilterSearchCustom,
-    FilterSearchCustom
+    FilterSearchCustom,
+    StatusLabel,
+
 };

@@ -3,6 +3,8 @@ import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 import moment from "moment/min/moment-with-locales";
 import { RiLoader2Fill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa6";
+import { StatusLabel } from "@/Components";
 
 export default function PengusulanPAKTable({ data, collapse = true }) {
     moment.locale("id");
@@ -116,37 +118,7 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                         <tr>
                             <td>Status</td>
                             <td className="p-0 m-0 text-wrap">
-                                {
-                                    data.status === "diproses" &&
-                                    <button
-                                    disabled
-                                    className="label-base bg-accent/50 text-slate-500"
-                                >
-                                    diproses
-                                    <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                </button>
-                                }
-                                {
-                                    data.status === "ditolak" &&
-                                    <button
-                                    disabled
-                                    className="inline-flex items-center label-base bg-warning/10 text-warning/80"
-                                >
-                                    ditolak
-                                    <IoClose className="ml-1 scale-150 fill-warning/80 stroke-warning/80 group-hover/item:fill-white" />
-                                </button>
-                                }
-                                {
-                                    data.status === "disetujui" &&
-                                    <button
-                                    disabled
-                                    className="inline-flex items-center label-base bg-hijau/10 text-hijau/80"
-                                >
-                                    disetujui
-                                    <IoClose className="ml-1 scale-150 fill-hijau/80 stroke-hijau/80 group-hover/item:fill-white" />
-                                </button>
-                                }
-
+                               <StatusLabel status={data.status} />
                             </td>
                         </tr>
 

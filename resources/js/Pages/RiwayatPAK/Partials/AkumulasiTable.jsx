@@ -93,7 +93,7 @@ export default function AkumulasiTable({
                         </datalist>
                     </td>
                 </tr>
-                <tr className="border">
+                <tr className="text-center border">
                     <td
                         colSpan={4}
                         className="font-semibold text-center border"
@@ -239,7 +239,7 @@ export default function AkumulasiTable({
                                     rowSpan={Math.ceil(
                                         data.tebusan2.length / 2
                                     )}
-                                    className="text-lg border text-slate-700"
+                                    className="text-lg text-center border text-slate-700"
                                 >
                                     Tebusan
                                 </td>

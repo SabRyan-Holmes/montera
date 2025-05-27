@@ -14,11 +14,13 @@ import {
     TooltipHover,
     useFilterSearch,
     FilterSearchCustom,
+    StatusLabel,
 } from "@/Components";
 import ModalCekPengusulan from "./Partials/ModalCekPengusulan";
 import moment from "moment/min/moment-with-locales";
 import { FaEdit } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
+import PopUpCatatan from "./Partials/PopUpCatatan";
 
 // ANCHOR
 
@@ -67,8 +69,12 @@ export default function Index({
     }, [flash.message]);
 
     // SWAL POP UP
-    const [modalMessage, setModalMessage] = useState(null);
     const [activeModalId, setActiveModalId] = useState(null);
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [popUpData, setPopUpData] = useState({
+        id: "",
+    });
+
     // Cek message dan status modal
     useEffect(() => {
         if (flash.message) {
@@ -83,7 +89,6 @@ export default function Index({
                     confirmButtonColor: "#2D95C9",
                 });
                 // Kirim pesan ke modal tertentu saja
-                setModalMessage(flash.message);
             } else {
                 // Tampilkan Swal global
                 Swal.fire({
@@ -133,11 +138,11 @@ export default function Index({
     };
 
     const handleReject = (id) => {
-        console.log("isi id di handleReject");
-        console.log(id);
+        // console.log("isi id di handleReject");
+        // console.log(id);
         Swal.fire({
             icon: "warning",
-            text: "Anda yakin ingin menolak pengajuan ini?",
+            text: "Anda yakin ingin menolak pengusulan ini?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
@@ -151,19 +156,20 @@ export default function Index({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route("pimpinan.pengajuan.reject", id), {
+                router.post(route("divisi-sdm.pengusulan-pak.reject", id), {
                     onSuccess: () => {
                         //
                     },
-                    onError: () => {
+                    onError: (err) => {
                         console.log("Gagal Menolak Pengajuan");
+                        console.log(err);
                     },
                 });
             }
         });
     };
-    console.log("activeModalId");
-    console.log(activeModalId);
+    // console.log("activeModalId");
+    // console.log(activeModalId);
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -298,7 +304,15 @@ export default function Index({
                                                 </strong>
                                             </td>
                                             <td>{data.jabatan}</td>
-                                            <td>{moment(data.periode_mulai).format('MMMM')} - {moment(data.periode_berakhir).format('MMMM YYYY')} </td>
+                                            <td>
+                                                {moment(
+                                                    data.periode_mulai
+                                                ).format("MMMM")}{" "}
+                                                -{" "}
+                                                {moment(
+                                                    data.periode_berakhir
+                                                ).format("MMMM YYYY")}{" "}
+                                            </td>
                                             <td>
                                                 <span className="block">
                                                     {data.jumlah_ak_terakhir}
@@ -313,25 +327,9 @@ export default function Index({
                                                     : "Tidak Ada"}
                                             </td>
                                             <td className="p-0 m-0">
-                                                {data.status === "diproses" && (
-                                                    <button
-                                                        disabled
-                                                        className="transition-all duration-150 group/item label-base bg-accent/50 text-slate-500 hover:text-slate-100"
-                                                    >
-                                                        {data.status}
-                                                        <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                                    </button>
-                                                )}
-
-                                                {data.status === "ditolak" && (
-                                                    <button
-                                                        disabled
-                                                        className=" label-base bg-warning text-slate-500"
-                                                    >
-                                                        {data.status}
-                                                        <RiLoader2Fill className="ml-1 scale-125 fill-warning stroke-warning group-hover/item:fill-white" />
-                                                    </button>
-                                                )}
+                                                <StatusLabel
+                                                    status={data.status}
+                                                />
                                             </td>
 
                                             <td className="p-0 m-0 font-normal">
@@ -353,11 +351,31 @@ export default function Index({
                                                     setActiveModalId={
                                                         setActiveModalId
                                                     }
+                                                    handleReject={handleReject}
                                                     canValidate={canValidate}
-                                                    message={modalMessage}
+                                                    setPopUpData={setPopUpData}
+                                                    setIsPopUpOpen={
+                                                        setIsPopUpOpen
+                                                    }
                                                 />
+
+                                                <div className="z-[999]">
+                                                    {isPopUpOpen && (
+                                                        <PopUpCatatan
+                                                            onClose={() =>
+                                                                setIsPopUpOpen(
+                                                                    !isPopUpOpen
+                                                                )
+                                                            }
+                                                            popUpData={
+                                                                popUpData
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
+
                                                 {canValidate ? (
-                                                    <>
+                                                    <section className="space-x-2">
                                                         <div className="relative inline-flex group">
                                                             <button
                                                                 className="transition-all scale-110 group/button action-btn border-primary/20 hover:bg-primary"
@@ -380,40 +398,115 @@ export default function Index({
                                                                 }
                                                             />
                                                         </div>
-                                                        <span className="inline-block mx-1"></span>
                                                         <div className="relative inline-flex group">
-                                                            <button
-                                                                className="transition-all scale-110 group/button action-btn border-hijau/20 hover:bg-hijau"
-                                                                onClick={() => {
-                                                                    setActiveModalId(
-                                                                        data.id
-                                                                    );
-                                                                    document
-                                                                        .getElementById(
-                                                                            `DialogCekPengusulan-${data.id}`
-                                                                        )
-                                                                        .showModal();
+                                                            <Link
+                                                                as="button"
+                                                                href={route(
+                                                                    "divisi-sdm.pengusulan-pak.approve"
+                                                                )}
+                                                                className="transition-all scale-110 group/button action-btn border-hijau/20 hover:bg-hijau disabled:bg-accent/25 disabled:cursor-not-allowed "
+                                                                disabled={
+                                                                    data.status !==
+                                                                    "diproses"
+                                                                }
+                                                                method="post"
+                                                                data={{
+                                                                    id: data.id,
                                                                 }}
+                                                                onSuccess={() => {
+                                                                    Swal.fire({
+                                                                        title: "Berhasil!",
+                                                                        text: "Pengusulan PAK telah disetujui. Proses PAK Sekarang?",
+                                                                        icon: "success",
+                                                                        showCancelButton: true,
+                                                                        confirmButtonText:
+                                                                            "Proses Sekarang",
+                                                                        cancelButtonText:
+                                                                            "Nanti Saja",
+                                                                        confirmButtonColor:
+                                                                            "#2D95C9",
+                                                                        cancelButtonColor:
+                                                                            "#9ca3af",
+                                                                        customClass:
+                                                                            {
+                                                                                actions:
+                                                                                    "my-actions",
+                                                                                cancelButton:
+                                                                                    "order-1 right-gap",
+                                                                                confirmButton:
+                                                                                    "order-2",
+                                                                                denyButton:
+                                                                                    "order-3",
+                                                                            },
+                                                                    }).then(
+                                                                        (
+                                                                            result
+                                                                        ) => {
+                                                                            if (
+                                                                                result.isConfirmed
+                                                                            ) {
+                                                                                router.get(
+                                                                                    route(
+                                                                                        "divisi-sdm.pak.create-by-pengusulan",
+                                                                                        data.id
+                                                                                    )
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    );
+                                                                }}
+                                                                preserveScroll={
+                                                                    true
+                                                                }
+                                                                onError={() =>
+                                                                    console.log(
+                                                                        "Error:",
+                                                                        errors
+                                                                    )
+                                                                }
                                                             >
-                                                                <FaCheck className="scale-125 fill-hijau group-hover/button:fill-white" />
-                                                            </button>
+                                                                <FaCheck
+                                                                    className={
+                                                                        "scale-125 group-hover/button:fill-white " +
+                                                                        (data.status !==
+                                                                        "diproses"
+                                                                            ? "fill-accent"
+                                                                            : "fill-hijau")
+                                                                    }
+                                                                />
+                                                            </Link>
                                                             <TooltipHover
                                                                 message={
                                                                     "Setujui Pengusulan"
                                                                 }
                                                             />
                                                         </div>
-                                                        <span className="inline-block mx-1"></span>
                                                         <div className="relative inline-flex group">
                                                             <button
-                                                                onClick={() =>
-                                                                    handleReject(
-                                                                        data.id
-                                                                    )
+                                                                disabled={
+                                                                    data.status !==
+                                                                    "diproses"
                                                                 }
-                                                                className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning"
+                                                                onClick={() => {
+                                                                    setPopUpData(
+                                                                        {
+                                                                            id: data.id,
+                                                                        }
+                                                                    );
+                                                                    setIsPopUpOpen(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                                className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning disabled:bg-accent/25 disabled:cursor-not-allowed"
                                                             >
-                                                                <IoClose className="scale-150 fill-warning group-hover/button:fill-white" />
+                                                                <IoClose
+                                                                    className={"scale-125 group-hover/button:fill-white " + (
+                                                                        data.status !==
+                                                                            "diproses"
+                                                                            ? "fill-accent"
+                                                                            : "fill-warning"
+                                                                    )}
+                                                                />
                                                             </button>
                                                             <TooltipHover
                                                                 message={
@@ -421,7 +514,7 @@ export default function Index({
                                                                 }
                                                             />
                                                         </div>
-                                                    </>
+                                                    </section>
                                                 ) : (
                                                     <td className="space-x-2 text-center text-nowrap">
                                                         <div className="relative inline-flex group">
