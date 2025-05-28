@@ -24,7 +24,7 @@ export default {
                 secondary: "#fb923c",
                 oren: "#fb923c",
                 hijau: "#22c55e",
-                bermuda: "#78dcca",
+                bermuda: "#16BDCA",
             },
             fontFamily: {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],

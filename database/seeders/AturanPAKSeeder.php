@@ -32,6 +32,45 @@ class AturanPAKSeeder extends Seeder
             "default_config" => 1
         ]);
 
+
+        // NOTE : Belum tau ini bisa dijadiin ke database nanti dan bisa diedit
+        AturanPAK::create([
+            'name' => 'Rumus',
+            'value' => [
+                [
+                    "id" => 1,
+                    "nama" => 'Angka Kredit',
+                    "rumus" => '(periode / 12) * ak_normatif * (presentase / 100)',
+                    "updated_at" => $timestamp,
+                ],
+                [
+                    "id" => 2,
+                    "nama" => 'Angka Periode',
+                    "rumus" => 'periode_berakhir + periode_mulai',
+                    "updated_at" => $timestamp,
+                ],
+                [
+                    "id" => 3,
+                    "nama" => 'Jumlah Angka Kredit Kumulatif',
+                    "rumus" => 'ak_terakhir + ak_terbaru',
+                    "updated_at" => $timestamp,
+                ],
+                [
+                    "id" => 4,
+                    "nama" => 'AK Minimal untuk Kenaikan Pangkat',
+                    "rumus" => 'jakk - pangkat_minimal',
+                    "updated_at" => $timestamp,
+                ],
+                [
+                    "id" => 5,
+                    "nama" => 'AK Minimal untuk Kenaikan Jabatan',
+                    "rumus" => 'jakk - jabatan_minimal',
+                    "updated_at" => $timestamp,
+                ],
+            ],
+            'default_config' => 1,
+        ]);
+
         AturanPAK::create([
             'name' => 'Koefisien Per Tahun',
             'value' => [
@@ -274,42 +313,12 @@ class AturanPAKSeeder extends Seeder
             'default_config' => 1
         ]);
 
-        // NOTE : Belum tau ini bisa dijadiin ke database nanti dan bisa diedit
         AturanPAK::create([
-            'name' => 'Rumus',
+            'name' => 'No Surat Terakhir',
             'value' => [
-                [
-                    "id" => 1,
-                    "nama" => 'Angka Kredit',
-                    "rumus" => '(periode / 12) * ak_normatif * (presentase / 100)',
-                    "updated_at" => $timestamp,
-                ],
-                [
-                    "id" => 2,
-                    "nama" => 'Angka Periode',
-                    "rumus" => 'periode_berakhir + periode_mulai',
-                    "updated_at" => $timestamp,
-                ],
-                [
-                    "id" => 3,
-                    "nama" => 'Jumlah Angka Kredit Kumulatif',
-                    "rumus" => 'ak_terakhir + ak_terbaru',
-                    "updated_at" => $timestamp,
-                ],
-                [
-                    "id" => 4,
-                    "nama" => 'AK Minimal untuk Kenaikan Pangkat',
-                    "rumus" => 'jakk - pangkat_minimal',
-                    "updated_at" => $timestamp,
-                ],
-                [
-                    "id" => 5,
-                    "nama" => 'AK Minimal untuk Kenaikan Jabatan',
-                    "rumus" => 'jakk - jabatan_minimal',
-                    "updated_at" => $timestamp,
-                ],
+                ["id" => 1, "no_surat" => '1500.564', "updated_at" => $timestamp],
             ],
-            'default_config' => 1,
+            'default_config' => 1
         ]);
     }
 }

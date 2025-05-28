@@ -100,8 +100,6 @@ export default function Index({
                 tahun_periode: yearStart,
             }));
             // console.log("first Mounted");
-            // alert(data.angka_periode);
-            // alert(data.ak_normatif)
         }
     }, [initialized]);
 
@@ -339,7 +337,7 @@ export default function Index({
                     </div>
 
                     <div className="px-2 mx-auto overflow-x-auto">
-                        {!isEdit && (
+                        {!isEdit && !isByPengusulan &&  (
                             <>
                                 {/* Konten untuk memilih Pegawai Start */}
 

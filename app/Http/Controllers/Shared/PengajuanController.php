@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Shared;
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Models\AturanPAK;
+use App\Models\Catatan;
 use App\Models\Pengajuan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -66,13 +67,22 @@ class PengajuanController extends Controller
     // Simpan Pengajuan setelah diajukan
     public function store(Request $request)
     {
-
         $rules = [
+            'user_id' => 'required|integer',
             'riwayat_pak_id' => 'required|integer',
-            'pegawai_id' => 'required|integer',
-            'pengaju_id' => 'required|integer',
+            'catatan' => 'nullable|string',
         ];
         $validated = $request->validate($rules);
+
+        if($request->catatan) {
+            $new_catatan = Catatan::create([
+                'user_id' => $request->user_id,
+                // 'tipe' => 'PengusulanPAK',
+                'isi' => $request->catatan,
+            ]);
+            $validated['catatan_id'] = $new_catatan->id;
+        }
+
         Pengajuan::create($validated);
         return redirect()->back()->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
     }

@@ -292,26 +292,26 @@ export default function Index({
                                     {pengusulanPAK.data?.map((data, i) => (
                                         <tr className="font-semibold text-center">
                                             <td>1</td>
-                                            <td className="text-left">
-                                                <strong className="">
-                                                    {data.pegawai.Nama}{" "}
+                                            <td>
+                                                <span className="block">
+                                                    {data.pegawai["Nama"]}
                                                     {data.pegawai[
                                                         "Gelar Tambahan"
                                                     ] ?? ""}
-                                                </strong>
-                                                <strong className="block mt-1">
-                                                    {data.nip}
-                                                </strong>
+                                                </span>
+                                                <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                                    {data.pegawai["NIP"]}
+                                                </span>
                                             </td>
                                             <td>{data.jabatan}</td>
                                             <td>
                                                 {moment(
                                                     data.periode_mulai
-                                                ).format("MMMM")}{" "}
-                                                -{" "}
+                                                ).format("MMMM")}
+                                                -
                                                 {moment(
                                                     data.periode_berakhir
-                                                ).format("MMMM YYYY")}{" "}
+                                                ).format("MMMM YYYY")}
                                             </td>
                                             <td>
                                                 <span className="block">

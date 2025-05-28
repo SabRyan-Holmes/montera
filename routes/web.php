@@ -59,7 +59,6 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
     // Penetapan Angka Kredit(CRUD, Submit) => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
     Route::prefix('/pak')->name('pak.')->group(function () {
         Route::get('/create-for/pegawai', [DokumenPAKController::class, 'create'])->name('create');
-        // Route::post('/create-for-pegawai/{pegawai:NIP}', [DokumenPAKController::class, 'create_for_pegawai'])->name('create-for-pegawai');
         Route::get('/create-by/pengusulan/{pengusulan}', [DokumenPAKController::class, 'create_by_pengusulan'])->name('create-by-pengusulan');
         Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
         Route::post('/save', [DokumenPAKController::class, 'save'])->name('save');

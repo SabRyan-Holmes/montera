@@ -14,4 +14,24 @@ class AturanPAK extends Model
         'value' => 'array',
         'default_config' => 'array',
     ];
+
+    public static function updateNoSuratTerakhir(string $noSurat): void
+    {
+        $record = self::where('name', 'No Surat Terakhir')->firstOrFail();
+        $record->update([
+            'value' => [
+                [
+                    "id" => 1,
+                    "no_surat" => $noSurat,
+                    "updated_at" => now()
+                ]
+            ],
+            'default_config' => 1
+        ]);
+    }
+
+    public static function extractNoSurat(string $fullNoSurat): string
+    {
+        return strstr($fullNoSurat, '/', true) ?: $fullNoSurat;
+    }
 }

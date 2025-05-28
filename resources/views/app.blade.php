@@ -13,7 +13,8 @@
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
 
     @routes
     @viteReactRefresh

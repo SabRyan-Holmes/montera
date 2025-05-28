@@ -15,6 +15,7 @@ import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import Show from "./Show";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import { BsFillSendFill } from "react-icons/bs";
+import PopUpCatatan from "./Partials/PopUpCatatan";
 
 export default function Index({
     auth,
@@ -93,6 +94,16 @@ export default function Index({
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on riwayatPAK.kesimpulan
     const [showIframe, setShowIframe] = useState(false);
 
+    // SWAL POP UP
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [popUpData, setPopUpData] = useState({
+        type: "",
+        id: "",
+        type: "",
+        // Kalo Dari SDM
+        riwayat_pak_id: "",
+        user_id: auth.user.id,
+    });
     // console.log("subtitle");
     // console.log(subTitle);
     return (
@@ -201,16 +212,20 @@ export default function Index({
                                             <td> {pak["no_surat3"]}</td>
                                             <td>
                                                 <span className="block">
-                                                    {pak.pegawai["Nama"]} {pak.pegawai["Gelar Tambahan"] ?? ""}                                                 </span>
+                                                    {pak.pegawai["Nama"]}{" "}
+                                                    {pak.pegawai[
+                                                        "Gelar Tambahan"
+                                                    ] ?? ""}{" "}
+                                                </span>
                                                 <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
                                                     {pak.pegawai["NIP"]}
                                                 </span>
-                                            </td>{" "}
+                                            </td>
                                             <td>
                                                 {pak.pegawai["Jabatan/TMT"]
                                                     .split("/")[0]
                                                     .trim()}
-                                            </td>{" "}
+                                            </td>
                                             <td className="text-center">
                                                 {parseFloat(
                                                     pak["jakk"]["jumlah"]
@@ -230,10 +245,10 @@ export default function Index({
                                                     {expandedRows[pak.id]
                                                         ? pak["kesimpulan"]
                                                         : pak["kesimpulan"]
-                                                              .length > 50
+                                                              .length > 70
                                                         ? pak[
                                                               "kesimpulan"
-                                                          ].slice(0, 50) + "..."
+                                                          ].slice(0, 70) + "..."
                                                         : pak["kesimpulan"]}
                                                 </span>
 
@@ -254,14 +269,13 @@ export default function Index({
                                                 {/* CEK SUDAH DIAJUKAN ATAU BELUM */}
                                                 {pengajuans.includes(pak.id) ? (
                                                     <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="button"
+                                                        <button
                                                             disabled
                                                             className="cursor-not-allowed hover:scale-105 action-btn group/button group-hover/item:bg-accent/80 text-accent/80"
                                                         >
                                                             <BsFillSendFill className="scale-125 fill-accent/70 group-hover/item:fill-white" />
-                                                        </Link>{" "}
-                                                        {/* Tooltip Hover  */}
+                                                        </button>
+
                                                         <TooltipHover
                                                             message={
                                                                 "Sudah Diajukan ke Pimpinan"
@@ -270,7 +284,39 @@ export default function Index({
                                                     </div>
                                                 ) : (
                                                     <div className="relative inline-flex group">
-                                                        <Link
+                                                        {isPopUpOpen && (
+                                                            <PopUpCatatan
+                                                                onClose={() =>
+                                                                    setIsPopUpOpen(
+                                                                        !isPopUpOpen
+                                                                    )
+                                                                }
+                                                                popUpData={
+                                                                    popUpData
+                                                                }
+                                                            />
+                                                        )}
+                                                        <button
+                                                            as="button"
+                                                            onClick={() => {
+                                                                setPopUpData({
+                                                                    type: "Catatan Pengajuan Divisi SDM",
+                                                                    riwayat_pak_id:
+                                                                        pak.id,
+                                                                    user_id:
+                                                                        auth
+                                                                            .user
+                                                                            .id,
+                                                                });
+                                                                setIsPopUpOpen(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
+                                                        >
+                                                            <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
+                                                        </button>
+                                                        {/* <Link
                                                             as="button"
                                                             href={route(
                                                                 "divisi-sdm.pengajuan.store"
@@ -278,9 +324,7 @@ export default function Index({
                                                             data={{
                                                                 riwayat_pak_id:
                                                                     pak.id,
-                                                                pegawai_id:
-                                                                    pak.pegawai_id,
-                                                                pengaju_id:
+                                                                user_id:
                                                                     auth.user
                                                                         .id,
                                                             }}
@@ -288,8 +332,8 @@ export default function Index({
                                                             className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
                                                         >
                                                             <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
-                                                        </Link>{" "}
-                                                        {/* Tooltip Hover  */}
+                                                        </Link> */}
+
                                                         <TooltipHover
                                                             message={
                                                                 "Ajukan ke Pimpinan"

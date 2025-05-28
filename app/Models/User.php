@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function riwayat_pak()
+    {
+        return $this->hasMany(RiwayatPAK::class);
+    }
 }

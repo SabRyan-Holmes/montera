@@ -65,12 +65,6 @@ class DokumenPAKController extends Controller
         ]);
     }
 
-    public function create_for_pegawai(Pegawai $pegawai)
-    {
-        Session::put('data', $pegawai);
-        return redirect()->back();
-    }
-
     public function create_by_pengusulan(PengusulanPAK $pengusulan)
     {
         // dd($pengusulan);
@@ -97,7 +91,6 @@ class DokumenPAKController extends Controller
     public function process(Request $request)
     {
         // dd($request->all());
-        // Simpan Ke local data;
         Session::put('data', $request->all());
         // Kalo dibuka dr history(tanpa restore ke database)
         if (!isset($request->id)) {
@@ -110,7 +103,6 @@ class DokumenPAKController extends Controller
     public function preview()
     {
         $data = Session::get('data');
-        // dd($data);
         $userId = Auth::user()->id;
         $this->cleanAllData($data);
 
@@ -133,12 +125,16 @@ class DokumenPAKController extends Controller
 
     public function save(Request $request)
     {
-        dd($request->all());
-        // Session::put('data', $request->all());
+        Session::put('data', $request->all());
         $dataForStore = $request->except(['id', 'pegawai']);
         $pegawai_id = $request->input('pegawai.id');
+        $dataForStore['created_by'] = Auth::user()->id;
         $dataForStore['pegawai_id'] = $pegawai_id;
         RiwayatPAK::create($dataForStore);
+        // Ekstrak nomor surat
+        $noSuratTerakhir = AturanPAK::extractNoSurat($dataForStore['no_surat1']) ?? '';
+        // Update ke database
+        AturanPAK::updateNoSuratTerakhir($noSuratTerakhir);
         return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan ke dalam Database');
     }
 
@@ -159,6 +155,8 @@ class DokumenPAKController extends Controller
                 "path" => "TES"
             ];
             Pengajuan::create($validated);
+            // TODO: Taruh NO Surat PAK nanti di aturan PAK dan dijadiin default, dan di update setiap kali dilakukan penetapan
+
         }
         return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'PAK berhasil Diajukan!');
     }
@@ -185,26 +183,6 @@ class DokumenPAKController extends Controller
                 $this->cleanData($value); // Jika value adalah nilai tunggal, cek dan bersihkan
             }
         }
-    }
-
-
-    // Maybe Unused
-    public function cetak(Request $request)
-    {
-        // dd($request->all());
-        Session::put('data', $request->all());
-
-        // Kalo dibuka dr history(tanpa restore ke database)
-        if (!isset($request->id)) {
-            $dataForStore = $request->except('pegawai');
-            $pegawai_id = $request->input('pegawai.id');
-            $dataForStore['pegawai_id'] = $pegawai_id;
-            // $dataForStore = array_merge($dataForStore['data'], ['pegawai_id' => $pegawai_id]);
-            // dd($dataForStore);
-            RiwayatPAK::create($dataForStore);
-        }
-
-        return Inertia::location(route('pak.preview'));
     }
 
 

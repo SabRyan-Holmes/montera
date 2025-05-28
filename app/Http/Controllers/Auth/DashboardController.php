@@ -38,23 +38,41 @@ class DashboardController extends Controller
 
             $pegawai_fungsional = array_sum($dataGraph);
             $pak_count = RiwayatPAK::all()->count();
-            $no_pak_terakhir = RiwayatPAK::latest('created_at')->first()?->no_surat3;;
+            $no_pak_terakhir = AturanPAK::where('name', 'No Surat Terakhir')->first()->value;
             $user_count =  User::all()->count();
             $pegawai_count =  Pegawai::all()->count();
             $pengusulan_count = PengusulanPAK::all()->count();
             $pengajuan_count = Pengajuan::all()->count();
             $arsip_dokumen_count = ArsipDokumen::where('user_id', $user->id)->count();
 
+            $dataPengusulanGraph = [
+                'Diproses' => PengusulanPAK::where('status', 'diproses' )->count(),
+                'Disetujui' => PengusulanPAK::where('status', 'disetujui' )->count(),
+                'Ditolak' => PengusulanPAK::where('status', 'ditolak' )->count(),
+            ];
+
+            $dataPengajuanPAKGraph = [
+                'Diajukan' => Pengajuan::where('status', 'diajukan' )->count(),
+                'Divalidasi' => Pengajuan::where('status', 'divalidasi' )->count(),
+                'Ditolak' => Pengajuan::where('status', 'ditolak' )->count(),
+            ];
+
             $dataByRole = [
                 'pegawaiFungsional' => $pegawai_fungsional,
                 'PAKCount' => $pak_count,
-                'noPAKTerakhir' => $no_pak_terakhir,
+                'noPAKTerakhir' => $no_pak_terakhir[0]['no_surat'],
                 'userCount' => $user_count,
                 'pegawaiCount' => $pegawai_count,
                 'pengusulanCount' => $pengusulan_count,
                 'pengajuanCount' => $pengajuan_count,
-                'arsipDokumenCount' => $arsip_dokumen_count
+                'arsipDokumenCount' => $arsip_dokumen_count,
+                'pengusulanPAKGraph' => $dataPengusulanGraph,
+                'pengajuanPAKGraph' => $dataPengajuanPAKGraph,
             ];
+
+
+
+
         }
 
         //  TODO: data for Pegawai Role is Different! Jangan lupa tambahin nanti logikany, kalo lah bisa SSO
