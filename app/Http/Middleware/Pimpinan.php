@@ -16,7 +16,7 @@ class Pimpinan
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role == "pimpinan") {
+        if (Auth::user()->role == "Pimpinan") {
             return $next($request);
         }
         abort(401);

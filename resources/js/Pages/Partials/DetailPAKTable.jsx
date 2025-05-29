@@ -58,11 +58,11 @@ export default function DetailData({ data, collapse = true }) {
                         </tr>
                         <tr>
                             <td>Periode Mulai</td>
-                            <td>{getBulan(data["periode_mulai"])}</td>
+                            <td>{getBulan(data["periode_mulai"])} {data['tahun_periode']}</td>
                         </tr>
                         <tr>
                             <td>Periode Berakhir</td>
-                            <td>{getBulan(data["periode_berakhir"])}</td>
+                            <td>{getBulan(data["periode_berakhir"])} {data['tahun_periode']}</td>
                         </tr>
                         <tr>
                             <td>Presentase</td>

@@ -13,6 +13,7 @@ export default function FilterSearchCustom({
     setSearch,
     filter1Label,
     filter2Label,
+    showSearch = false,
 }) {
     return (
         <form className="flex items-center justify-between w-full gap-3 my-3">
@@ -62,9 +63,10 @@ export default function FilterSearchCustom({
                         ))}
                     </select>
                 </div>
-
             </div>
-            <div className="w-80">
+
+            {showSearch && (
+                <div className="w-80">
                     <InputLabel
                         value="Nama/NIP"
                         Htmlfor="search"
@@ -98,6 +100,7 @@ export default function FilterSearchCustom({
                         </PrimaryButton>
                     </div>
                 </div>
+            )}
         </form>
     );
 }

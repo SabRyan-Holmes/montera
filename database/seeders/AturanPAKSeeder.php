@@ -316,7 +316,7 @@ class AturanPAKSeeder extends Seeder
         AturanPAK::create([
             'name' => 'No Surat Terakhir',
             'value' => [
-                ["id" => 1, "no_surat" => '1500.564', "updated_at" => $timestamp],
+                ["id" => 1, "no_surat" => '1500.564', "tahun" => "2025", "updated_at" => $timestamp],
             ],
             'default_config' => 1
         ]);

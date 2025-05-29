@@ -51,7 +51,7 @@ export default function PopUpCatatan({ onClose, popUpData }) {
                         <div className="relative laptop:w-full">
                             <textarea
                                 name="catatan"
-                                className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
+                                className="relative h-24 px-2 border max-h-64 laptop:w-full textarea border-gradient placeholder:text-accent"
                                 placeholder="Masukkan catatan tambahan(opsional).."
                                 maxLength={1000}
                                 onChange={(e) =>
@@ -79,7 +79,7 @@ export default function PopUpCatatan({ onClose, popUpData }) {
                             disabled={processing}
                             className="px-4 py-2 text-sm font-medium text-white transition duration-200 rounded-md bg-sky-600 hover:bg-sky-700"
                         >
-                            Submit
+                            Ajukan
                         </button>
                     </div>
                 </form>

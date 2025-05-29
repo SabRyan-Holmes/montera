@@ -33,7 +33,7 @@ class Authenticate
             }
 
             // Role pimpinan
-            if ($user->role === 'pimpinan') {
+            if ($user->role === 'Pimpinan') {
                 if ($request->is('/') || $request->is('login')) {
                     return redirect()->route('dashboard');
                 }

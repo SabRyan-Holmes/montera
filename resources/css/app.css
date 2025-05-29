@@ -128,7 +128,43 @@ input[type="number"] {
 }
 
 .action-btn {
-    @apply hover:scale-[1.3] scale-110 transition-all inline-flex items-center justify-center p-1 px-2 mx-auto border rounded-lg shadow-md;
+    @apply transition-all scale-110 inline-flex items-center justify-center p-1 px-2 mx-auto border rounded-lg shadow-md hover:scale-[1.3] disabled:cursor-not-allowed disabled:hover:bg-slate-300 disabled:hover:scale-110 disabled:bg-accent/25 disabled:text-accent disabled:hover:text-accent;
+  }
+
+
+/* Success /Hijau */
+.action-btn-success {
+    @apply text-hijau border-hijau/20 hover:bg-hijau ;
+  }
+
+  .action-btn-warning {
+    @apply text-warning border-warning/20 hover:bg-warning;
+  }
+
+  .action-btn-primary {
+    @apply text-primary border-primary/20 hover:bg-primary;
+  }
+
+  .action-btn-secondary {
+    @apply text-secondary border-secondary/20 hover:bg-secondary;
+  }
+
+@layer components {
+    .action-btn-variant {
+        @apply text-white border hover:bg;
+    }
+
+    .action-btn-teal {
+        @apply border-teal-500 hover:bg-teal-500;
+    }
+
+    .action-btn-red {
+        @apply border-red-500 hover:bg-red-500;
+    }
+
+    .action-btn-yellow {
+        @apply border-yellow-400 hover:bg-yellow-400;
+    }
 }
 
 .no-arrow {
@@ -137,24 +173,23 @@ input[type="number"] {
     appearance: none; /* Untuk IE, Edge */
 }
 
-
 table.table-bordered {
     /* table-layout: auto; */
     width: 100%;
     border-collapse: collapse;
     line-height: 1rem;
     /* overflow: hidden; */
-    @apply overflow-auto border-collapse ;
+    @apply overflow-auto border-collapse;
 }
 
 table.table-bordered > thead {
-    @apply overflow-hidden ;
+    @apply overflow-hidden;
 }
 table.table-bordered > thead > tr {
-    @apply overflow-hidden ;
+    @apply overflow-hidden;
 }
 table.table-bordered > thead > tr > th {
-    @apply  border-orange-300/30 border-s-2;
+    @apply border-orange-300/30 border-s-2;
 }
 
 table.table-bordered > tbody {
@@ -167,7 +202,7 @@ table.table-bordered > tbody > tr > th {
     @apply border-2 border-secondary/20;
 }
 
-table.table-bordered > tfoot  > tr > td  {
+table.table-bordered > tfoot > tr > td {
     @apply border-2 border-secondary/20;
 }
 

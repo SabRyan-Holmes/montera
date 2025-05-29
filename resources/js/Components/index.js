@@ -32,6 +32,8 @@ import RadioWithEditableLabel from "./Forms/RadioEditableLabel";
 import UseFilterSearchCustom from "./UseFilterSearchCustom";
 import FilterSearchCustom from "./FilterSearchCustom";
 import StatusLabel from "./StatusLabel";
+import Graph from "./Chart/Graph";
+import RadialChart from "./Chart/RadialChart";
 
 export {
     ApplicationLogo,
@@ -56,6 +58,8 @@ export {
     ProfileImage,
     SuccessButton,
     TextInputSecondary,
+    Graph,
+    RadialChart,
     DetailPegawai,
     DetailPAKTable,
     SdmPimpinanContent,

@@ -21,6 +21,7 @@ import moment from "moment/min/moment-with-locales";
 import { FaEdit } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import PopUpCatatan from "./Partials/PopUpCatatan";
+import { BsFillSendArrowUpFill, BsFillSendFill } from "react-icons/bs";
 
 // ANCHOR
 
@@ -184,6 +185,7 @@ export default function Index({
                         byFilter2={byFilter2}
                         setByFilter2={setByFilter2}
                         filter2List={jabatanList}
+                        showSearch={canValidate}
                         search={search}
                         setSearch={setSearch}
                     />
@@ -193,8 +195,8 @@ export default function Index({
                             href={route("pegawai.pengusulan-pak.create")}
                             className="flex justify-end mx-2 mt-6 text-white btn glass bg-sky-600 hover:bg-primary/90"
                         >
-                            Tambah
-                            <IoMdAdd className="w-6 h-6" />
+                            Ajukan Pengusulan Baru
+                            <BsFillSendFill className="w-5 h-5" />
                         </Link>
                     )}
                 </div>
@@ -263,21 +265,12 @@ export default function Index({
                                         </th>
                                         <th
                                             scope="col"
-                                            width="5%"
+                                            width="2rem"
                                             className="text-center "
                                         >
-                                            Status
+                                            Status & Waktu
                                         </th>
-                                        <th
-                                            scope="col"
-                                            width="2%"
-                                            className="text-center "
-                                        >
-                                            <span>Waktu</span>
-                                            <span className="block">
-                                                Pengusulan
-                                            </span>
-                                        </th>
+
                                         <th
                                             scope="col"
                                             width="10%"
@@ -330,20 +323,19 @@ export default function Index({
                                                 <StatusLabel
                                                     status={data.status}
                                                 />
-                                            </td>
-
-                                            <td className="p-0 m-0 font-normal">
-                                                {/* ANCHOR */}
-                                                <span className="block">
-                                                    {moment(
-                                                        data.created_at
-                                                    ).format("LL")}
-                                                </span>
-                                                <span className="block text-[12px]">
-                                                    {moment(
-                                                        data.created_at
-                                                    ).fromNow()}
-                                                </span>
+                                                 {/* ANCHOR */}
+                                                 <div className="mt-2 font-normal">
+                                                        <span className="block">
+                                                            {moment(
+                                                                data.updated_at
+                                                            ).format("LL")}
+                                                        </span>
+                                                        <span className="block text-[12px]">
+                                                            {moment(
+                                                                data.updated_at
+                                                            ).fromNow()}
+                                                        </span>
+                                                    </div>
                                             </td>
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 <ModalCekPengusulan
@@ -500,12 +492,13 @@ export default function Index({
                                                                 className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning disabled:bg-accent/25 disabled:cursor-not-allowed"
                                                             >
                                                                 <IoClose
-                                                                    className={"scale-125 group-hover/button:fill-white " + (
-                                                                        data.status !==
-                                                                            "diproses"
+                                                                    className={
+                                                                        "scale-125 group-hover/button:fill-white " +
+                                                                        (data.status !==
+                                                                        "diproses"
                                                                             ? "fill-accent"
-                                                                            : "fill-warning"
-                                                                    )}
+                                                                            : "fill-warning")
+                                                                    }
                                                                 />
                                                             </button>
                                                             <TooltipHover

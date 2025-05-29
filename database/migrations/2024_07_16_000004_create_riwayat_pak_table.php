@@ -14,16 +14,17 @@ return new class extends Migration
         Schema::create('riwayat_pak', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('created_by')->constrained('users'); //updated 24 Mei 2025
+            // NOTE: Uncomment ini jika di migrasi ulang riwayat_pak
+            // $table->foreignId('created_by')->constrained('users'); //updated 24 Mei 2025
+            // $table->foreignId('by_pengusulan_id')->nullable()->constrained('pengusulans'); //updated 29 Mei 2025
             $table->foreignId('pegawai_id')->constrained('pegawais')->onDelete('cascade');
-            $table->string('nama');
-            $table->string('nip');
+            $table->string('nama'); //Penanda Tangan
+            $table->string('nip'); //Penanda Tangan
             $table->string('tgl_ditetapkan');
             $table->integer('periode_mulai');
             $table->integer('periode_berakhir');
             $table->integer('tahun_periode');
             $table->string('angka_periode');
-            // $table->string('penanda_tangan'); //NAMA
             $table->string('no_surat1');
             $table->string('predikat');
             $table->integer('presentase');

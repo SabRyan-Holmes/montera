@@ -109,7 +109,11 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "divisi-sdm.pak.create",
-                                    actives: ["divisi-sdm.pak.create","divisi-sdm.pak.edit",  'divisi-sdm.pak.create-by-pengusulan'],
+                                    actives: [
+                                        "divisi-sdm.pak.create",
+                                        "divisi-sdm.pak.edit",
+                                        "divisi-sdm.pak.create-by-pengusulan",
+                                    ],
                                 },
                                 {
                                     label: (
@@ -276,7 +280,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <IoSettings className="mr-2" />
+                                            <IoSettings />
                                             Aturan PAK
                                         </>
                                     ),
@@ -290,7 +294,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <FaUserTie className="mr-2" />
+                                            <FaUserTie />
                                             Daftar Pegawai
                                         </>
                                     ),
@@ -301,8 +305,8 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <IoSettings className="mr-2" />
-                                            Riwayat Karir & Data Pegawai
+                                            <IoSettings />
+                                            Riwayat Karir Pegawai
                                         </>
                                     ),
                                     route: "pimpinan.pegawai.index",
@@ -346,7 +350,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Pegawai */}
-                                            <GrHelpBook className="mr-2" />
+                                            <GrHelpBook />
                                             Panduan/Bantuan
                                         </>
                                     ),
@@ -357,7 +361,7 @@ const Sidebar = ({ role }) => {
                                     label: (
                                         <>
                                             {/* Kelola Aturan PAK */}
-                                            <FaDownload className="mr-2" />
+                                            <FaDownload />
                                             Download Template
                                         </>
                                     ),
@@ -366,7 +370,7 @@ const Sidebar = ({ role }) => {
                                 },
                             ]}
                         >
-                            <span className="flex items-center">
+                           <span className="flex items-center">
                                 <FaInfoCircle className="mr-2" />
                                 Info
                             </span>
@@ -427,7 +431,9 @@ const Sidebar = ({ role }) => {
                                             </>
                                         ),
                                         route: "pegawai.riwayat-karir.index",
-                                        actives: ["pegawai.riwayat-karir.index"],
+                                        actives: [
+                                            "pegawai.riwayat-karir.index",
+                                        ],
                                     },
 
                                     {

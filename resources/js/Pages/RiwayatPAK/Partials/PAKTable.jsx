@@ -532,11 +532,8 @@ export default function PAKTable({
                             id="jabatan"
                             className="w-20 text-center rounded-md border-gradient"
                             // TODO: ubah ini nanti sesuai default_config
-                            defaultValue={150}
-                            {...(isEdit &&
-                                data.jabatan && {
-                                    value: data.jabatan,
-                                })}
+                            defaultValue={data.jabatan}
+                            value={isEdit || isByPengusulan && data.pangkat}
                             onChange={(e) => {
                                 setData("jabatan", parseInt(e.target.value));
                             }}

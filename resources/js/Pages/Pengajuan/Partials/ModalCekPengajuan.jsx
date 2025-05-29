@@ -44,7 +44,7 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId }) {
         if (errors && Object.values(errors).length > 0) {
             const firstErrorMessage = Object.values(errors)[0];
             Swal.fire({
-                target: `#DialogCekValidasi-${pengajuan.id}`,
+                target: `#ModalCekPengajuan-${pengajuan.id}`,
                 title: "Ups!",
                 text: `${firstErrorMessage}`,
                 icon: "warning",
@@ -60,7 +60,7 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId }) {
 
     const handleCancel = () => {
         Swal.fire({
-            target: `#DialogCekValidasi-${pengajuan.id}`,
+            target: `#ModalCekPengajuan-${pengajuan.id}`,
             icon: "warning",
             text: "Anda yakin ingin membatalkan validasi PAK ini?",
             showCancelButton: true,
@@ -124,7 +124,7 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId }) {
             },
             onSuccess: () => {
                 Swal.fire({
-                    target: `#DialogCekValidasi-${pengajuan.id}`,
+                    target: `#ModalCekPengajuan-${pengajuan.id}`,
                     title: "Berhasil!",
                     text: "Dokumen berhasil divalidasi.",
                     icon: "success",
@@ -162,9 +162,10 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId }) {
     console.log("isi data Sekarang");
 
     console.log(pengajuan);
+    const pegawai = pengajuan.riwayat_pak.pegawai
     return (
         <dialog
-            id={`DialogCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModalId(null)}
+            id={`ModalCekPengajuan-${pengajuan.id}`} onClose={()=> setActiveModalId(null)}
             className="modal z-[100]"
         >
             {/* Saya ingin ditampilkan iframe pdf ini setelah ditekan tombol Lihat Dokumen, dan ditampilkan diatas dialog, gimana caranya? */}
@@ -223,7 +224,7 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId }) {
                     <h1 className="my-4 text-xl font-medium">
                         Data Pegawai dalam Penetapan Angka Kredit
                     </h1>
-                    <DetailPegawai pegawai={pengajuan.pegawai} />
+                    <DetailPegawai pegawai={pegawai} />
                 </div>
 
                 {pengajuan.status === "diproses" && (

@@ -28,7 +28,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
     // useEffect(() => {
     //     if (message) {
     //         Swal.fire({
-    //             target: `#DialogCekValidasi-${pengajuan.id}`,
+    //             target: `#ModalCekValidasi-${pengajuan.id}`,
     //             title: "Berhasil!",
     //             text: `${message}`,
     //             icon: "success",
@@ -46,7 +46,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
         if (errors && Object.values(errors).length > 0) {
             const firstErrorMessage = Object.values(errors)[0];
             Swal.fire({
-                target: `#DialogCekValidasi-${pengajuan.id}`,
+                target: `#ModalCekValidasi-${pengajuan.id}`,
                 title: "Ups!",
                 text: `${firstErrorMessage}`,
                 icon: "warning",
@@ -62,7 +62,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
 
     const handleCancel = () => {
         Swal.fire({
-            target: `#DialogCekValidasi-${pengajuan.id}`,
+            target: `#ModalCekValidasi-${pengajuan.id}`,
             icon: "warning",
             text: "Anda yakin ingin membatalkan validasi PAK ini?",
             showCancelButton: true,
@@ -133,7 +133,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
 
         if (canvas.isEmpty()) {
             Swal.fire({
-                target: `#DialogCekValidasi-${pengajuan.id}`,
+                target: `#ModalCekValidasi-${pengajuan.id}`,
                 title: "Ups!",
                 text: `Tanda tangan belum dibuat!`,
                 icon: "warning",
@@ -225,7 +225,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
             },
             onSuccess: () => {
                 Swal.fire({
-                    target: `#DialogCekValidasi-${pengajuan.id}`,
+                    target: `#ModalCekValidasi-${pengajuan.id}`,
                     title: "Berhasil!",
                     text: "Dokumen berhasil divalidasi.",
                     icon: "success",
@@ -261,11 +261,12 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
 
     // TODO ? Mungkin sebaiknya tamabhakna juga Catatan Evaluasi/Review Dari Pimpinan
     console.log("isi data Sekarang");
+    const pegawai = pengajuan.riwayat_pak.pegawai
 
     console.log(pengajuan);
     return (
         <dialog
-            id={`DialogCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModalId(null)}
+            id={`ModalCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModalId(null)}
             className="modal z-[100]"
         >
             {/* Saya ingin ditampilkan iframe pdf ini setelah ditekan tombol Lihat Dokumen, dan ditampilkan diatas dialog, gimana caranya? */}
@@ -324,7 +325,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
                     <h1 className="my-4 text-xl font-medium">
                         Data Pegawai dalam Penetapan Angka Kredit
                     </h1>
-                    <DetailPegawai pegawai={pengajuan.pegawai} />
+                    <DetailPegawai pegawai={pegawai} />
                 </div>
 
                 {/* SIGNATURE  */}

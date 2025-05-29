@@ -50,4 +50,25 @@ class User extends Authenticatable
     {
         return $this->hasMany(RiwayatPAK::class);
     }
+
+    public function hasRole(string|array $roles): bool
+    {
+        $userRole = $this->role;
+
+        if (is_array($roles)) {
+            return in_array($userRole, $roles);
+        }
+
+        return $userRole === $roles;
+    }
+
+    public function isPimpinan(): bool
+    {
+        return $this->role === 'Pimpinan';
+    }
+
+    public function canValidate(): bool
+    {
+        return in_array($this->role, ['Pimpinan', 'Divisi SDM']);
+    }
 }

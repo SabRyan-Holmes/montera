@@ -77,37 +77,39 @@ class DashboardController extends Controller
 
         //  TODO: data for Pegawai Role is Different! Jangan lupa tambahin nanti logikany, kalo lah bisa SSO
         if ($user->role == "Pegawai") {
-            // NOTE: Degan asumsi lgoin dari SSO, Tambah logika jika tidak ditemukan nip sama dengan databse, gagal login
+            // NOTE: Dengan asumsi login dari SSO, Tambah logika jika tidak ditemukan nip sama dengan databse, gagal login
             $pegawai= Pegawai::where('NIP', $user->nip)->first(); //find or Fail
-            $pak_count = RiwayatPAK::where('pegawai_id', $pegawai->id)->count();
-            $pengusulan_count = PengusulanPAK::where('pegawai_nip', $pegawai->NIP)->count();
-            $pengajuan_count = Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
+            $pengusulanPAK = PengusulanPAK::where('pegawai_nip', $pegawai->NIP);
+            $prosesPAK = Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
                 $query->where('pegawai_id', $pegawai->id);
-            })->count();
+            });
+
+            $pak_count = $prosesPAK->where('status', 'divalidasi')->count();
             $arsip_dokumen_count = ArsipDokumen::where('pegawai_nip_owner', $pegawai->nip)->count();
+
+            $dataPengusulanPAKGraph = [
+                'Diproses' => $pengusulanPAK->where('status', 'diproses')->count(),
+                'Disetujui' => $pengusulanPAK->where('status', 'disetujui')->count(),
+                'Ditolak' => $pengusulanPAK->where('status', 'ditolak')->count(),
+            ];
+
+            // Pengajuan/Proses PAK
+            $dataProsesPAKGraph = [
+                'Diproses' => $prosesPAK->where('status', 'diajukan' )->count(),
+                'Divalidasi' => $prosesPAK->where('status', 'divalidasi' )->count(),
+                'Ditolak' => $prosesPAK->where('status', 'ditolak' )->count(),
+            ];
 
             $dataByRole = [
                 'PAKCount' => $pak_count,
-                'pengusulanCount' => $pengusulan_count,
-                'pengajuanCount' => $pengajuan_count,
+                'pengusulanPAKCount' => $pengusulanPAK->count(),
+                'prosesPAKCount' => $prosesPAK->count(),
                 'arsipDokumenCount' => $arsip_dokumen_count,
+                'pengusulanPAKGraph' => $dataPengusulanPAKGraph,
+                'prosesPAKGraph' => $dataProsesPAKGraph,
             ];
 
-            $diajukan =  Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
-                $query->where('pegawai_id', $pegawai->id)->where('status', 'diajukan');
-            })->count();
-            $ditolak =  Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
-                $query->where('pegawai_id', $pegawai->id)->where('status', 'ditolak');
-            })->count();
-            $divalidasi =  Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
-                $query->where('pegawai_id', $pegawai->id)->where('status', 'divalidasi');
-            })->count();
 
-            $dataGraph = [
-                'diajukan' => $diajukan,
-                'ditolak' => $ditolak,
-                'divalidasi' => $divalidasi,
-            ];
         }
 
         return Inertia::render('Dashboard/AuthDashboard', [
