@@ -42,7 +42,7 @@ class PengajuanController extends Controller
             "title" => "Status Pengajuan Terbaru",
             "subTitle" => $subTitle,
             "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
-            'canValidate' => $user->role == 'pimpinan',
+            'canValidate' => $user->role === 'Pimpinan',
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),
@@ -74,7 +74,7 @@ class PengajuanController extends Controller
         ];
         $validated = $request->validate($rules);
 
-        if($request->catatan) {
+        if ($request->catatan) {
             $new_catatan = Catatan::create([
                 'user_id' => $request->user_id,
                 // 'tipe' => 'PengusulanPAK',
@@ -85,6 +85,7 @@ class PengajuanController extends Controller
 
         Pengajuan::create($validated);
         return redirect()->back()->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
+        // return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
     }
 
 
@@ -131,51 +132,67 @@ class PengajuanController extends Controller
     // ===========================================================================================================================================
     public function approve(Request $request)
     {
-        // 1. Validasi request dan ambil data signature
-        $request->validate([
-            'id' => 'required|integer',
-            'signature' => $request->signatureType == 'upload'
-                ? 'required|file|image|max:2000'
-                : 'required|string',
-        ]);
-
-        // 2. Ambil Pengajuan dan Pegawai
+        // 1. Ambil Pengajuan, Pegawai, dan siapkan signature default
         $pengajuan = Pengajuan::findOrFail($request->id);
-        $pegawai = $pengajuan->pegawai;
+        $pegawai = $pengajuan->riwayat_pak->pegawai;
 
-        // 3. Proses signature (Draw/Upload)
-        $base64Sig = $request->signatureType == 'upload'
-            ? 'data:' . $request->file('signature')->getMimeType() . ';base64,' . base64_encode(file_get_contents($request->file('signature')->getRealPath()))
-            : $request->signature;
+        // 2. Siapkan variabel signature
+        $base64Sig = null;
 
-        // 4. Ambil dan bersihkan data dokumen
-        $data = $pengajuan->riwayat_pak ? json_decode(json_encode($pengajuan->riwayat_pak), true) : [];
-        (new DokumenPAKController())->cleanAllData($data);  // Membersihkan data jika perlu
+        if ($request->fast_approve) {
+            // dd($request);
+            // Fast Approve: ambil gambar default dari public folder
+            $signaturePath = public_path('storage/validasi_pimpinan/default.png');
 
-        // 5. Siapkan PDF untuk tanda tangan
-        $nama_pak = 'APPROVED_PAK_' . $pegawai['Nama'] . '-' . $pegawai['NIP'] . '.pdf';
-        $customF4Paper = array(0, 0, 595.28, 935.43);
+            if (!file_exists($signaturePath)) {
+                return back()->withErrors(['signature' => 'File tanda tangan default tidak ditemukan.']);
+            }
 
-        $pdf = Pdf::loadView('pdf.approved-pak', [
+            $mime = mime_content_type($signaturePath);
+            $base64Sig = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($signaturePath));
+
+        } else {
+            // Manual approve: Validasi dan proses signature upload/draw
+            $request->validate([
+                'id' => 'required|integer',
+                'signature' => $request->signatureType === 'upload'
+                    ? 'required|image|max:2000'
+                    : 'required|string',
+            ]);
+
+            $base64Sig = $request->signatureType === 'upload'
+                ? 'data:' . $request->file('signature')->getMimeType() . ';base64,' . base64_encode(file_get_contents($request->file('signature')->getRealPath()))
+                : $request->signature;
+        }
+
+        // 3. Ambil dan bersihkan data
+        $data = optional($pengajuan->riwayat_pak)->toArray() ?? [];
+        (new DokumenPAKController())->cleanAllData($data);
+
+        // 4. Buat PDF
+        $nama_pak = 'APPROVED_PAK_' . $pegawai->Nama . '-' . $pegawai->NIP . '.pdf';
+        $pdfPath = storage_path("app/public/approved_pak/{$nama_pak}");
+        $customF4Paper = [0, 0, 595.28, 935.43];
+
+        Pdf::loadView('pdf.approved-pak', [
             'title' => $nama_pak,
             'data' => $data,
             'signature' => $base64Sig
         ])
             ->setPaper($customF4Paper, 'portrait')
-            ->setWarnings(false);
+            ->setWarnings(false)
+            ->save($pdfPath);
 
-        // 6. Simpan PDF ke folder
-        $pdfPath = storage_path('app/public/approved_pak/' . $nama_pak);
-        $pdf->save($pdfPath);
-
-        // 7. Update status pengajuan dan path PDF di database
+        // 5. Update status
         $pengajuan->update([
             'status' => 'divalidasi',
-            'approved_pak_path' => 'approved_pak/' . $nama_pak,
+            'approved_pak_path' => "approved_pak/{$nama_pak}",
         ]);
 
-        return redirect()->back(); // atau redirect ke halaman tertentu
+        // 6. Redirect dengan feedback
+        return redirect()->back()->with('message', 'Pengajuan berhasil divalidasi.');
     }
+
 
 
 

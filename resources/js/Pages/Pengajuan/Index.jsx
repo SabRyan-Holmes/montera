@@ -13,6 +13,7 @@ import {
     InputLabel,
     Pagination,
     PrimaryButton,
+    StatusLabel,
     TooltipHover,
     useFilterSearch,
 } from "@/Components";
@@ -20,11 +21,11 @@ import { TiArrowRight } from "react-icons/ti";
 import { TbEyeCheck } from "react-icons/tb";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import ModalCekValidasi from "./Partials/ModalCekValidasi";
-import { RiLoader2Fill } from "react-icons/ri";
 import { FaCheck, FaEye } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import moment from "moment/min/moment-with-locales";
+import ModalCekPengajuan from "./Partials/ModalCekPengajuan";
 
 export default function Index({
     auth,
@@ -52,7 +53,7 @@ export default function Index({
         if (flash.message) {
             if (activeModalId !== null) {
                 Swal.fire({
-                    target: `#DialogCekValidasi-${activeModalId}`,
+                    target: `#ModalCekValidasi-${activeModalId}`,
                     title: "Berhasil!",
                     text: `${flash.message}`,
                     icon: "success",
@@ -79,6 +80,30 @@ export default function Index({
             }, 3000);
         }
     }, [flash.message, activeModalId]);
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    useEffect(() => {
+        if (flash.message == "Berhasil Divalidasi") {
+            Toast.fire({
+                icon: "success",
+                title: flash.message,
+            });
+            setTimeout(() => {
+                flash.message = null;
+            }, 3000);
+        }
+    }, [flash.message]);
 
     // Cancel penagjaun dari divisi SDM
     const handleCancel = (id) => {
@@ -522,31 +547,11 @@ export default function Index({
                                                     )}
                                                 </td>
                                                 <td className="w-5 p-0 m-0 text-center ">
-                                                    {pengajuan.status ===
-                                                        "diajukan" && (
-                                                        <button
-                                                            disabled
-                                                            className="label-base bg-accent/50 text-slate-500"
-                                                        >
-                                                            DIPROSES
-                                                            <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                                                        </button>
-                                                    )}
-
-                                                    {pengajuan.status ===
-                                                        "divalidasi" && (
-                                                        <a className="label-base bg-success text-slate-500">
-                                                            DIVALIDASI
-                                                            <FaCheck className="w-4 h-4 stroke-slate-400 " />
-                                                        </a>
-                                                    )}
-                                                    {pengajuan.status ===
-                                                        "ditolak" && (
-                                                        <a className="bg-red-500/80 label-base text-slate-500">
-                                                            DITOLAK
-                                                            <FaCheck className="w-4 h-4 fill-slate-500 stroke-slate-500 " />
-                                                        </a>
-                                                    )}
+                                                    <StatusLabel
+                                                        status={
+                                                            pengajuan.status
+                                                        }
+                                                    />
                                                     {/* ANCHOR */}
                                                     <div className="mt-2">
                                                         <span className="block">
@@ -583,33 +588,69 @@ export default function Index({
                                                                     }
                                                                 />
                                                                 <button
-                                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-primary/70 group-hover/item:text-white text-primary/70"
+                                                                    className="action-btn-secondary action-btn group/button"
                                                                     onClick={() => {
                                                                         setActiveModalId(
                                                                             pengajuan.id
                                                                         );
                                                                         document
                                                                             .getElementById(
-                                                                                `DialogCekValidasi-${pengajuan.id}`
+                                                                                `ModalCekValidasi-${pengajuan.id}`
                                                                             )
                                                                             .showModal();
                                                                     }}
                                                                 >
-                                                                    Cek &
-                                                                    Validasi
-                                                                    <TbEyeCheck className="w-6 h-6 stroke-hijau/75 group-hover/item:stroke-white " />
+                                                                    <TbEyeCheck className="scale-150 group-hover/button:stroke-white " />
                                                                 </button>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleReject(
-                                                                            pengajuan.id
-                                                                        )
+                                                                <Link
+                                                                    as="button"
+                                                                    href={route(
+                                                                        "pimpinan.pengajuan.approve"
+                                                                    )}
+                                                                    className="action-btn-success action-btn group/button"
+                                                                    disabled={
+                                                                        pengajuan.status !==
+                                                                        "diajukan"
                                                                     }
-                                                                    className="action-btn hover:scale-[1.15] group/button group-hover/item:bg-warning/80 group-hover/item:text-white text-warning/80"
+                                                                    method="post"
+                                                                    data={{
+                                                                        fast_approve: true,
+                                                                        id: pengajuan.id,
+                                                                    }}
+                                                                    preserveScroll={
+                                                                        true
+                                                                    }
+                                                                    onError={(err) =>
+                                                                        alert(err.signature)
+                                                                    }
                                                                 >
-                                                                    Tolak
-                                                                    <IoCloseOutline className="w-6 h-6 fill-secondary stroke-warning/80 group-hover/item:stroke-white" />
-                                                                </button>
+                                                                    <FaCheck
+                                                                        className={
+                                                                            "scale-125 group-hover/button:stroke-white group-hover/button:fill-white"
+                                                                        }
+                                                                    />
+                                                                </Link>
+                                                                <div className="relative inline-flex group">
+                                                                    <button
+                                                                        disabled={
+                                                                            pengajuan.status !==
+                                                                            "diajukan"
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleReject(
+                                                                                pengajuan.id
+                                                                            )
+                                                                        }
+                                                                        className="action-btn-warning action-btn group/button"
+                                                                    >
+                                                                        <IoCloseOutline className="scale-150 fill-warning stroke-warning/80 group-hover/button:stroke-white" />
+                                                                    </button>
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            "Tolak Pengajuan"
+                                                                        }
+                                                                    />
+                                                                </div>
                                                             </>
                                                         ) : (
                                                             <>
@@ -623,7 +664,7 @@ export default function Index({
                                                                     onClick={() =>
                                                                         document
                                                                             .getElementById(
-                                                                                `DialogCekValidasi-${pengajuan.id}`
+                                                                                `ModalCekValidasi-${pengajuan.id}`
                                                                             )
                                                                             .showModal()
                                                                     }
@@ -638,17 +679,17 @@ export default function Index({
                                                     <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                         {/* Actor Divisi SDM */}
                                                         {/* Tombol Lihat Detail Riwayat PAK */}
-                                                        <ModalCekValidasi
-                                                                    pengajuan={
-                                                                        pengajuan
-                                                                    }
-                                                                />
+                                                        <ModalCekPengajuan
+                                                            pengajuan={
+                                                                pengajuan
+                                                            }
+                                                        />
                                                         <div className="relative inline-flex group">
                                                             <button
                                                                 onClick={() =>
                                                                     document
                                                                         .getElementById(
-                                                                            `DialogCekValidasi-${pengajuan.id}`
+                                                                            `ModalCekPengajuan-${pengajuan.id}`
                                                                         )
                                                                         .showModal()
                                                                 }
@@ -715,7 +756,7 @@ export default function Index({
                                                                     )
                                                                 }
                                                                 className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning"
-                                                                >
+                                                            >
                                                                 <MdCancel className="scale-125 fill-warning/80 group-hover/button:fill-white" />
                                                             </button>
                                                             <TooltipHover
