@@ -11,7 +11,7 @@ class RiwayatPAK extends Model
     use HasFactory;
     protected $table = 'riwayat_pak';
     protected $guarded = ['id'];
-    protected $with = ['pegawai'];
+    protected $with = ['pegawai', 'pengusulanPAK'];
     protected $casts = [
         'tebusan1' => 'array',
         'tebusan2' => 'array',
@@ -30,6 +30,10 @@ class RiwayatPAK extends Model
         return $this->belongsTo(Pegawai::class);
     }
 
+    public function pengusulanPAK()
+    {
+        return $this->belongsTo(PengusulanPAK::class, 'by_pengusulan_id');
+    }
 
     public function scopeFilter(Builder $query, array $filters): void
     {

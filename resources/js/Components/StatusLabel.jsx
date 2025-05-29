@@ -16,7 +16,7 @@ export default function StatusLabel({ status }) {
                 </button>
             )}
 
-            {status === "disetujui" && (
+            {status === "disetujui" ||  status === "divalidasi" && (
                 <button
                     disabled
                     className="inline-flex items-center transition-all duration-150 label-base bg-hijau/10 text-hijau/80 group-hover/item:text-hijau/60"

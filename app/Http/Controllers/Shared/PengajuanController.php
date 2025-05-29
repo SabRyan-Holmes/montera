@@ -43,6 +43,8 @@ class PengajuanController extends Controller
             "subTitle" => $subTitle,
             "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
             'canValidate' => $user->role === 'Pimpinan',
+            'isDivisiSDM' => $user->role === 'Divisi SDM',
+            'isPegawai' => $user->role === 'Pegawai',
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),

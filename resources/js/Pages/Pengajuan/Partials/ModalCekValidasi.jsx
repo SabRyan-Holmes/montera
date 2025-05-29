@@ -478,14 +478,14 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
             {/* Floating Action Button */}
             {pengajuan.status === "diajukan" && (
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <button
+                    <SecondaryButton
                         onClick={() => handleViewPdf(pengajuan)}
                         type="submit"
-                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                        className="mr-2 scale-125 fill-secondary"
                     >
                         <IoDocument className="w-4 h-4 fill-secondary" />
                         Lihat Dokumen
-                    </button>
+                    </SecondaryButton>
 
                     <SuccessButton
                         onClick={handleApprove}
@@ -499,23 +499,23 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
 
             {pengajuan.status === "divalidasi" && (
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <button
+                    <SecondaryButton
                         onClick={() => {
                             const url = `/storage/${pengajuan.approved_pak_path}`;
                             setLinkIframe(url);
                             setShowIframe(true);
                         }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                        className="rounded shadow hover:scale-105"
                     >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
+                        <IoDocument className="mr-2 scale-125 fill-secondary" />
                         Lihat Dokumen
-                    </button>
+                    </SecondaryButton>
 
                     <SecondaryButton
                         onClick={() => handleCancel()}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                        className="border rounded shadow bg-warning/15 text-warning/80 border-warning/20 hover:scale-105"
                     >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                        <MdCancel className="mr-2 scale-125 fill-warning " />
                         Batalkan Validasi
                     </SecondaryButton>
                 </div>
@@ -523,17 +523,14 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
 
             {pengajuan.status === "ditolak" && (
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <button
-                        onClick={() => {
-                            const url = `/storage/${pengajuan.approved_pak_path}`;
-                            setLinkIframe(url);
-                            setShowIframe(true);
-                        }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-gray-700 scale-110 bg-white border border-gray-300 rounded shadow hover:scale-105"
+                  <SecondaryButton
+                        onClick={() => handleViewPdf(pengajuan)}
+                        type="submit"
+                        className="mr-2 scale-125 fill-secondary"
                     >
                         <IoDocument className="w-4 h-4 fill-secondary" />
                         Lihat Dokumen
-                    </button>
+                    </SecondaryButton>
 
                     <SecondaryButton
                         onClick={() => handleCancel()}

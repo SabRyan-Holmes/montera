@@ -53,6 +53,10 @@ export default function DetailData({ data, collapse = true }) {
                             <td>{data["no_surat3"]}</td>
                         </tr>
                         <tr>
+                            <td>Tujuan Penetapan</td>
+                            <td>{data["pengusulanPAK"] ? data["pengusulanPAK"]['tujuan'] : '-'  }</td>
+                        </tr>
+                        <tr>
                             <td>Tanggal Ditetapkan</td>
                             <td>{data.tgl_ditetapkan}</td>
                         </tr>

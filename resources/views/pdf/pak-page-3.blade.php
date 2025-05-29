@@ -165,7 +165,7 @@
                     </th>
                 </tr>
                 <tr style="text-align: center; text-transform: uppercase; font-size: 12.7px;">
-                    <th style="width: 30px; font-weight: 450; font-size: 14px;">II</th>
+                    <th style="width: 25px; font-weight: 450; font-size: 14px;">II</th>
                     <th colspan="2" style="text-align: left; font-weight: 450; font-size: 14px;">
                         PENETAPAN ANGKA KREDIT
                     </th>
