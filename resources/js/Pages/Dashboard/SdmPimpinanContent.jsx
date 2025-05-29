@@ -1,10 +1,10 @@
-import RadialChart from "@/Components/Chart/RadialChart";
-import Graph from "@/Components/Graph";
+import { Graph, RadialChart } from "@/Components";
 import React from "react";
 import { IconContext } from "react-icons";
 import { FaFileAlt } from "react-icons/fa";
 import { FaUserLarge, FaUsers, FaUserTie } from "react-icons/fa6";
 import { HiDocumentDuplicate } from "react-icons/hi2";
+
 
 export default function SdmDashboardContent({ dataGraph, dataByRole }) {
     const nonFungsional =
@@ -87,6 +87,7 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                             <p className="text-3xl">{dataByRole["PAKCount"]}</p>
                         </div>
                     </div>
+                    {/* TODO tambahin riwayat PAK belum diajukan jg nanti */}
 
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                         <div className="p-4 bg-hijau">

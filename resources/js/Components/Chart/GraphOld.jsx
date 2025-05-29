@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { Checkbox, InputLabel } from "@/Components";
-import { initFlowbite } from "flowbite";
-import { Link } from "@inertiajs/react";
 
 
 export default function Graph({ data }) {

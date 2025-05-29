@@ -84,7 +84,7 @@ export default function RadialChart({ title, data, chartId }) {
     };
 
     return (
-        <div className="w-full max-w-sm p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 md:p-6">
+        <section className="w-full max-w-sm p-4 mx-auto bg-white rounded-lg shadow-sm dark:bg-gray-800 md:p-6">
             <div className="flex justify-between mb-3">
                 <div className="flex items-center">
                     <div className="flex items-center justify-center">
@@ -356,6 +356,6 @@ export default function RadialChart({ title, data, chartId }) {
                     </a>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
