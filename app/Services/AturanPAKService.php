@@ -23,6 +23,7 @@ class AturanPAKService // Boleh pakai nama Helper
                 'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first()->value,
                 'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first()->value,
                 'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first(['value', 'default_config']),
+                'noSuratTerakhir' => AturanPAK::where('name', 'No Surat Terakhir')->first(['value', 'default_config']),
             ];
         }
 

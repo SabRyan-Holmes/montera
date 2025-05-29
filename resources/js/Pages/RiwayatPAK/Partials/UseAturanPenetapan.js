@@ -147,6 +147,12 @@ export default function UseAturanPenetapan(aturanPAK) {
             aturanPAK.jabatan.default_config,
             aturanPAK.jabatan.value
         );
+
+        // 5. no Surat
+        const defaultConfigNoSuratTerakhir = findDefaultConfigById(
+            aturanPAK.noSuratTerakhir.default_config,
+            aturanPAK.noSuratTerakhir.value
+        );
         // alert(defaultConfigPP.presentase) //Ini ditemukan
         // alert(defaultConfigPangkat.angka) //Ini ditemukan
         // Set All Default Based on Default Config
@@ -164,6 +170,9 @@ export default function UseAturanPenetapan(aturanPAK) {
             tebusan3: tebusanPenetapanDefault,
             pangkat: defaultConfigPangkat.angka,
             jabatan: defaultConfigJabatan.angka,
+            no_surat1: `${defaultConfigNoSuratTerakhir.no_surat}/Konv/${defaultConfigNoSuratTerakhir.tahun}`,
+            no_surat2: `${defaultConfigNoSuratTerakhir.no_surat}/Akm/${defaultConfigNoSuratTerakhir.tahun}`,
+            no_surat3: `${defaultConfigNoSuratTerakhir.no_surat}/PAK/${defaultConfigNoSuratTerakhir.tahun}`,
         });
 
         // Set flag bahwa inisialisasi selesai

@@ -132,9 +132,9 @@ class DokumenPAKController extends Controller
         $dataForStore['pegawai_id'] = $pegawai_id;
         RiwayatPAK::create($dataForStore);
         // Ekstrak nomor surat
-        $noSuratTerakhir = AturanPAK::extractNoSurat($dataForStore['no_surat1']) ?? '';
+        // $noSuratTerakhir = AturanPAK::extractNoSurat($dataForStore['no_surat1']) ?? '';
         // Update ke database
-        AturanPAK::updateNoSuratTerakhir($noSuratTerakhir);
+        AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
         return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan ke dalam Database');
     }
 
