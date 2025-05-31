@@ -1,7 +1,13 @@
+import { TooltipHover } from "@/Components";
 import React, { useState } from "react";
+import { FaArrowDown } from "react-icons/fa6";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
-export default function DetailData({ data, collapse = true }) {
+export default function DetailData({
+    data,
+    collapse = true,
+    onScrollToPengusulanPAK,
+}) {
     const [isCollapsed, setIsCollapsed] = useState(collapse);
     const bulan = {
         1: "Januari",
@@ -19,8 +25,11 @@ export default function DetailData({ data, collapse = true }) {
     };
 
     function getBulan(angka) {
-        return bulan[angka]
+        return bulan[angka];
     }
+
+    console.log("data detail PAK");
+    console.log(data);
 
     return (
         <section className="mb-4">
@@ -35,13 +44,13 @@ export default function DetailData({ data, collapse = true }) {
                             {isCollapsed ? (
                                 <span className="float-right text-sm font-normal">
                                     [Tampilkan]
-
                                     <HiBarsArrowDown className="inline mx-2 scale-150" />
                                 </span>
                             ) : (
                                 <span className="float-right text-sm font-normal ">
-                                [Sembunyikan] <HiBarsArrowUp className="inline mx-2 scale-150" />
-                            </span>
+                                    [Sembunyikan]{" "}
+                                    <HiBarsArrowUp className="inline mx-2 scale-150" />
+                                </span>
                             )}
                         </th>
                     </tr>
@@ -53,8 +62,44 @@ export default function DetailData({ data, collapse = true }) {
                             <td>{data["no_surat3"]}</td>
                         </tr>
                         <tr>
+                            <td>Sumber Penetapan</td>
+                            {data["pengusulan_pak"] ? (
+                                <td>
+                                    {/* Todo */}
+                                    {/* Saya ingin ketika ini ditekan maka scroll mengarah ke penguslan PAK Table gimana caranya*/}
+                                    <a
+                                        onClick={onScrollToPengusulanPAK}
+                                        className="relative inline-flex items-center transition-all duration-150 rounded-full group"
+                                    >
+                                        <span className="group-hover:underline group-hover:text-primary text-primary/90 ">Usulan Pegawai</span>
+                                        <FaArrowDown className="w-4 h-4 fill-primary/60 group-hover:fill-primary/80 group-hover:scale-125" />
+                                        <TooltipHover
+                                            message={
+                                                "Diusulkan melalui sistem oleh pegawai yang bersangkutan"
+                                            }
+                                        />
+                                    </a>
+                                </td>
+                            ) : (
+                                <td>
+                                    <span className="relative cursor-pointer group">
+                                        Inisiatif SDM
+                                        <TooltipHover
+                                            message={
+                                                "Penetapan dilakukan langsung oleh pihak SDM tanpa pengusulan pegawai"
+                                            }
+                                        />
+                                    </span>
+                                </td>
+                            )}
+                        </tr>
+                        <tr>
                             <td>Tujuan Penetapan</td>
-                            <td>{data["pengusulanPAK"] ? data["pengusulanPAK"]['tujuan'] : '-'  }</td>
+                            <td>
+                                {data["pengusulan_pak"]
+                                    ? data["pengusulan_pak"]["tujuan"]
+                                    : "-"}
+                            </td>
                         </tr>
                         <tr>
                             <td>Tanggal Ditetapkan</td>
@@ -62,15 +107,25 @@ export default function DetailData({ data, collapse = true }) {
                         </tr>
                         <tr>
                             <td>Periode Mulai</td>
-                            <td>{getBulan(data["periode_mulai"])} {data['tahun_periode']}</td>
+                            <td>
+                                {getBulan(data["periode_mulai"])}{" "}
+                                {data["tahun_periode"]}
+                            </td>
                         </tr>
                         <tr>
                             <td>Periode Berakhir</td>
-                            <td>{getBulan(data["periode_berakhir"])} {data['tahun_periode']}</td>
+                            <td>
+                                {getBulan(data["periode_berakhir"])}{" "}
+                                {data["tahun_periode"]}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Predikat</td>
+                            <td>{data["predikat"]}</td>
                         </tr>
                         <tr>
                             <td>Presentase</td>
-                            <td>{data["presentase"]}</td>
+                            <td>{data["presentase"]} %</td>
                         </tr>
                         <tr>
                             <td>Angka Kredit Normatif</td>

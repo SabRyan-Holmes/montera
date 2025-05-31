@@ -15,30 +15,19 @@ import { usePage } from "@inertiajs/react";
 import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
+import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/PengusulanPAKTable";
 
-export default function ModalCekPengajuan({ pengajuan, setActiveModalId, isDivisiSDM }) {
+export default function ModalCekPengajuan({
+    pengajuan,
+    setActiveModal,
+    isDivisiSDM,
+}) {
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengajuan.id,
         });
 
     // =========================================================================SWAL POP UP=========================================================================
-    // useEffect(() => {
-    //     if (message) {
-    //         Swal.fire({
-    //             target: `#DialogCekValidasi-${pengajuan.id}`,
-    //             title: "Berhasil!",
-    //             text: `${message}`,
-    //             icon: "success",
-    //             iconColor: "#50C878",
-    //             confirmButtonText: "Oke",
-    //             confirmButtonColor: "#2D95C9",
-    //         });
-    //         // setTimeout(() => {
-    //         //     message = null;
-    //         // }, 3000);
-    //     }
-    // }, [message]);
 
     useEffect(() => {
         if (errors && Object.values(errors).length > 0) {
@@ -162,10 +151,22 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId, isDivis
 
     console.log(pengajuan);
     const pegawai = pengajuan.riwayat_pak.pegawai;
+    const pengusulanPAK = pengajuan.riwayat_pak.pengusulan_pak;
+    const pengusulanPAKRef = useRef(null); // <-- buat ref
+    const scrollToPengusulanPAK = () => {
+        if (pengusulanPAKRef.current) {
+            pengusulanPAKRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest",
+            });
+        }
+    };
+
     return (
         <dialog
             id={`ModalCekPengajuan-${pengajuan.id}`}
-            onClose={() => setActiveModalId(null)}
+            onClose={() => setActiveModal(null)}
             className="modal z-[100]"
         >
             {/* Saya ingin ditampilkan iframe pdf ini setelah ditekan tombol Lihat Dokumen, dan ditampilkan diatas dialog, gimana caranya? */}
@@ -212,12 +213,23 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId, isDivis
 
                 <div className="px-2 overflow-x-auto">
                     <h1 className="my-4 text-xl font-medium">
-                        Data Ringkasan dalam Penetapan Angka Kredit
+                        Data Penetapan Angka Kredit dalam Pengajuan
                     </h1>
                     <DetailPAKTable
                         data={pengajuan.riwayat_pak}
                         collapse={false}
+                        onScrollToPengusulanPAK={scrollToPengusulanPAK}
                     />
+                </div>
+
+                <div
+                    className="px-2 my-10 mb-16 overflow-x-auto"
+                    ref={pengusulanPAKRef}
+                >
+                    <h1 className="my-4 text-xl font-medium">
+                        Data Pengusulan Sebagai Sumber Penetapan Angka Kredit
+                    </h1>
+                    <PengusulanPAKTable collapse={false} data={pengusulanPAK} />
                 </div>
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
@@ -253,101 +265,34 @@ export default function ModalCekPengajuan({ pengajuan, setActiveModalId, isDivis
             </div>
 
             {/* Floating Action Button */}
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <SecondaryButton
-                        onClick={pengajuan.status === "divalidasi" ?
-                            () => handleViewPdf(pengajuan)
-                            :
-                            () => {
-                                const url = `/storage/${pengajuan.approved_pak_path}`;
-                                setLinkIframe(url);
-                                setShowIframe(true);
-                            }
-                        }
-                        type="submit"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
+            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                <SecondaryButton
+                    onClick={
+                        pengajuan.status === "divalidasi"
+                            ? () => handleViewPdf(pengajuan)
+                            : () => {
+                                  const url = `/storage/${pengajuan.approved_pak_path}`;
+                                  setLinkIframe(url);
+                                  setShowIframe(true);
+                              }
+                    }
+                    type="submit"
+                >
+                    <IoDocument className="w-4 h-4 fill-secondary" />
+                    Lihat Dokumen
+                </SecondaryButton>
 
-                    {/* ANCHOR */}
-                    {
-                        isDivisiSDM && pengajuan.status ==="diajukan" &&
-                        <SecondaryButton
+                {/* ANCHOR */}
+                {isDivisiSDM && pengajuan.status === "diajukan" && (
+                    <SecondaryButton
                         onClick={() => handleCancel()}
-                        className="border rounded shadow bg-warning/15 text-warning/80 border-warning/20 hover:scale-105"
+                        className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
                     >
                         <MdCancel className="mr-2 scale-125 fill-warning " />
                         Batalkan Pengajuan
                     </SecondaryButton>
-                    }
-                </div>
-
-            {/* Floating Action Button */}
-            {/* {pengajuan.status === "diajukan" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <SecondaryButton
-                        onClick={() => handleViewPdf(pengajuan)}
-                        type="submit"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
-
-                    <SuccessButton
-                        onClick={handleApprove}
-                        className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
-                    >
-                        <FaFileSignature className="w-4 h-4 fill-white " />
-                        Validasi Dokumen
-                    </SuccessButton>
-                </div>
-            )} */}
-
-            {/* {pengajuan.status === "divalidasi" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <SecondaryButton
-                        onClick={() => {
-                            const url = `/storage/${pengajuan.approved_pak_path}`;
-                            setLinkIframe(url);
-                            setShowIframe(true);
-                        }}
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
-
-                    <SecondaryButton
-                        onClick={() => handleCancel()}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                        Batalkan Validasi
-                    </SecondaryButton>
-                </div>
-            )} */}
-{/*
-            {pengajuan.status === "ditolak" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                     <SecondaryButton
-                        onClick={() => handleViewPdf(pengajuan)}
-                        type="submit"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
-
-                    <SecondaryButton
-                        onClick={() => handleCancel()}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                        Batalkan Penolakan
-                    </SecondaryButton>
-                </div>
-            )} */}
-
-            {/* Floating Action Button */}
+                )}
+            </div>
         </dialog>
     );
 }

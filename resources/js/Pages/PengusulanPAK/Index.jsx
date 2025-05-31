@@ -323,19 +323,19 @@ export default function Index({
                                                 <StatusLabel
                                                     status={data.status}
                                                 />
-                                                 {/* ANCHOR */}
-                                                 <div className="mt-2 font-normal">
-                                                        <span className="block">
-                                                            {moment(
-                                                                data.updated_at
-                                                            ).format("LL")}
-                                                        </span>
-                                                        <span className="block text-[12px]">
-                                                            {moment(
-                                                                data.updated_at
-                                                            ).fromNow()}
-                                                        </span>
-                                                    </div>
+                                                {/* ANCHOR */}
+                                                <div className="mt-2 font-normal">
+                                                    <span className="block">
+                                                        {moment(
+                                                            data.updated_at
+                                                        ).format("LL")}
+                                                    </span>
+                                                    <span className="block text-[12px]">
+                                                        {moment(
+                                                            data.updated_at
+                                                        ).fromNow()}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 <ModalCekPengusulan
@@ -535,68 +535,41 @@ export default function Index({
 
                                                         <div className="relative inline-flex group">
                                                             <Link
-                                                                as="a"
+                                                                as="button"
                                                                 href={route(
                                                                     "pegawai.pengusulan-pak.edit",
                                                                     data.id
                                                                 )}
                                                                 disabled={
-                                                                    data.status ===
-                                                                    "diproses"
+                                                                    data.status !==
+                                                                    "ditolak"
                                                                 }
-                                                                className={
-                                                                    "action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " +
-                                                                    (data.status ===
-                                                                    "diproses"
-                                                                        ? "cursor-not-allowed"
-                                                                        : "cursor-default")
-                                                                }
+                                                                className="action-btn action-btn-secondary group/button"
                                                             >
-                                                                <FaEdit
-                                                                    className={
-                                                                        "scale-125" +
-                                                                            data.status ===
-                                                                        "ditolak"
-                                                                            ? "fill-secondary group-hover/item:fill-white"
-                                                                            : "fill-accent"
-                                                                    }
-                                                                />
+                                                                <FaEdit className="scale-125 group-hover/button:fill-white" />
                                                             </Link>
                                                             <TooltipHover
                                                                 message={
-                                                                    "Edit Usulan PAK "
+                                                                    "Perbaiki/Edit Usulan PAK" + (data.status !==
+                                                                        "ditolak" ? '(setelah ditolak)' : '')
                                                                 }
                                                             />
                                                         </div>
 
                                                         <div className="relative inline-flex group">
                                                             <Link
-                                                                as="a"
+                                                                as="button"
                                                                 href={route(
                                                                     "pegawai.pengusulan-pak.edit",
                                                                     data.id
                                                                 )}
                                                                 disabled={
-                                                                    data.status ===
+                                                                    data.status !==
                                                                     "diproses"
                                                                 }
-                                                                className={
-                                                                    "action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70 " +
-                                                                    (data.status ===
-                                                                    "diproses"
-                                                                        ? "cursor-not-allowed"
-                                                                        : "cursor-default")
-                                                                }
+                                                                className="action-btn group/button action-btn-warning "
                                                             >
-                                                                <MdCancel
-                                                                    className={
-                                                                        "scale-125" +
-                                                                            data.status ===
-                                                                        "ditolak"
-                                                                            ? "fill-secondary group-hover/item:fill-white"
-                                                                            : "fill-accent"
-                                                                    }
-                                                                />
+                                                                <MdCancel className="scale-125 group-hover/button:fill-white" />
                                                             </Link>
                                                             <TooltipHover
                                                                 message={

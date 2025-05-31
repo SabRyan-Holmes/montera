@@ -16,7 +16,7 @@ import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 
-export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
+export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengajuan.id,
@@ -266,7 +266,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModalId }) {
     console.log(pengajuan);
     return (
         <dialog
-            id={`ModalCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModalId(null)}
+            id={`ModalCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModal(null)}
             className="modal z-[100]"
         >
             {/* Saya ingin ditampilkan iframe pdf ini setelah ditekan tombol Lihat Dokumen, dan ditampilkan diatas dialog, gimana caranya? */}
