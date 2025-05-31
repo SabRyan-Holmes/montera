@@ -1,10 +1,13 @@
-import { useForm } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function UseAturanPenetapan(aturanPAK) {
+    const { auth, isByPengusulan, pengusulan } = usePage().props;
     const [initialized, setInitialized] = useState(false);
     const { data, setData, post, processing, errors, reset, setDefaults } =
         useForm({
+            created_by: auth.user.id,
+            pengusulan_pak_id: isByPengusulan ? pengusulan.id : null,
             // Kalo Edit Ini langsungg terisi dengan useEffect
             id: null,
             pegawai: null,

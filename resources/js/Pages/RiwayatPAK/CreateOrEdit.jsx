@@ -89,9 +89,11 @@ export default function Index({
                 koefisienPertahunValue,
                 data.presentase
             );
+            const today = new Date().toISOString().split('T')[0];
             // alert(angkaPeriodeMulai)
             setData((prev) => ({
                 ...prev,
+                tgl_ditetapkan: today,
                 ak_normatif: koefisienPertahunValue,
                 periode_mulai: angkaPeriodeMulai,
                 periode_berakhir: angkaPeriodeBerakhir,
