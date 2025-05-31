@@ -152,7 +152,7 @@ Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->gro
     Route::get('/riwayat-karir', [RiwayatKarirController::class, 'index'])->name('riwayat-karir.index');
 
     // Arsip Dokumen
-    Route::resource('arsip-dokumen', ArsipDokumenController::class);
+    Route::resource('arsip-dokumen', ArsipDokumenController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
 
 
     // Panduan/Bantuan

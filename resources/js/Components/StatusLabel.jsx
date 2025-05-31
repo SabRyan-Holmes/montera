@@ -21,7 +21,7 @@ export default function StatusLabel({ status }) {
                     disabled
                     className="inline-flex items-center transition-all duration-150 label-base bg-hijau/10 text-hijau/80 group-hover/item:text-hijau/60"
                 >
-                    disetujui
+                    {status}
                     <FaCheck className="ml-1 scale-125 fill-hijau/80 stroke-hijau/80 group-hover/item:fill-white" />
                 </button>
             )}
@@ -31,7 +31,7 @@ export default function StatusLabel({ status }) {
                     disabled
                     className="inline-flex items-center transition-all duration-150 label-base bg-warning/10 text-warning/80 group-hover/item:text-warning/60"
                 >
-                    ditolak
+                    {status}
                     <IoClose className="ml-1 scale-125 fill-warning/80 stroke-warning/80 group-hover/item:fill-white" />
                 </button>
             )}

@@ -10,7 +10,7 @@ export default function SecondaryButton({
 }) {
     const commonClassName = `
         ${className}
-        inline-flex items-center h-10 px-4 py-2 border border-secondary/30 rounded-md font-bold text-xs text-secondary
+        inline-flex items-center bg-white h-10 px-4 py-2 border border-secondary/30 rounded-md font-bold text-xs text-secondary
         uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:ring-offset-2
         disabled:opacity-25 transition ease-in-out duration-150 hover:border-secondary hover:scale-105
         ${disabled ? "opacity-50 cursor-not-allowed hover:scale-100" : ""}

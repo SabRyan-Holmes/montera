@@ -16,6 +16,7 @@ import Show from "./Show";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import { BsFillSendFill } from "react-icons/bs";
 import PopUpCatatan from "./Partials/PopUpCatatan";
+import moment from "moment/min/moment-with-locales";
 
 export default function Index({
     auth,
@@ -28,6 +29,8 @@ export default function Index({
     byDaerahReq: initialDaerah,
     byJabatanReq: initialJabatan,
 }) {
+    moment.locale("id");
+
     // ===========================================Handling Pop Up,Dialog & Message===========================================
     console.log(pengajuans);
     useEffect(() => {
@@ -170,11 +173,7 @@ export default function Index({
                                         >
                                             Nama & NIP
                                         </th>
-                                        <th scope="col" width="20%">
-                                            <span className="flex justify-center">
-                                                Jabatan Sekarang
-                                            </span>
-                                        </th>
+
                                         <th
                                             scope="col"
                                             width="7%"
@@ -190,7 +189,9 @@ export default function Index({
                                                 Kesimpulan
                                             </span>
                                         </th>
-
+                                        <th scope="col" >
+                                                Terakhir diperbarui
+                                        </th>
                                         <th
                                             scope="col"
                                             className="text-center rounded-tr-xl"
@@ -212,25 +213,22 @@ export default function Index({
                                             <td> {pak["no_surat3"]}</td>
                                             <td>
                                                 <span className="block">
-                                                    {pak.pegawai["Nama"]}{" "}
+                                                    {pak.pegawai["Nama"]}
                                                     {pak.pegawai[
                                                         "Gelar Tambahan"
-                                                    ] ?? ""}{" "}
+                                                    ] ?? ""}
                                                 </span>
                                                 <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
                                                     {pak.pegawai["NIP"]}
                                                 </span>
                                             </td>
-                                            <td>
-                                                {pak.pegawai["Jabatan/TMT"]
-                                                    .split("/")[0]
-                                                    .trim()}
-                                            </td>
+
                                             <td className="text-center">
                                                 {parseFloat(
                                                     pak["jakk"]["jumlah"]
                                                 ).toFixed(3)}
                                             </td>
+
                                             <td
                                                 className="relative group cursor-pointer max-w-[300px] text-xs"
                                                 onClick={() =>
@@ -264,6 +262,20 @@ export default function Index({
                                                         <div className="absolute w-2 h-2 rotate-45 -translate-x-1/2 bg-accent -top-1 left-1/2"></div>
                                                     </div>
                                                 )}
+                                            </td>
+                                            <td className="text-center">
+                                            <div className="mt-2">
+                                                        <span className="block">
+                                                            {moment(
+                                                                pak.updated_at
+                                                            ).format("LL")}
+                                                        </span>
+                                                        <span className="block text-[12px]">
+                                                            {moment(
+                                                                pak.updated_at
+                                                            ).fromNow()}
+                                                        </span>
+                                                    </div>
                                             </td>
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 {/* CEK SUDAH DIAJUKAN ATAU BELUM */}

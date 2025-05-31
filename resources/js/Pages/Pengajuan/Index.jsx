@@ -7,7 +7,7 @@ import {
     MdPersonSearch,
 } from "react-icons/md";
 import ReactPaginate from "react-paginate";
-import { Link, router } from "@inertiajs/react";
+import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import {
     InputLabel,
@@ -28,6 +28,7 @@ import moment from "moment/min/moment-with-locales";
 import ModalCekPengajuan from "./Partials/ModalCekPengajuan";
 import { RiInboxArchiveLine } from "react-icons/ri";
 import { BiSolidArchiveIn } from "react-icons/bi";
+import ModalArsipDokumen from "./Partials/ModalArsipDokumen";
 
 export default function Index({
     auth,
@@ -44,46 +45,32 @@ export default function Index({
     byKesimpulan: initialKesimpulan,
     jabatanList,
     kesimpulanList,
+    folderArsipList
 }) {
     // ===========================================Pagination===========================================
     moment.locale("id");
 
     // ===========================================Handling Pop Up,Dialog & Message===========================================
     // SWAL POP UP
+    const [shownMessages, setShownMessages] = useRemember([]);
     const [modalMessage, setModalMessage] = useState(null);
-    const [activeModalId, setActiveModalId] = useState(null);
+    const [activeModal, setActiveModal] = useState(null);
+
     // Cek message dan status modal
     useEffect(() => {
         if (flash.message) {
-            if (activeModalId !== null) {
-                Swal.fire({
-                    target: `#ModalCekValidasi-${activeModalId}`,
-                    title: "Berhasil!",
-                    text: `${flash.message}`,
-                    icon: "success",
-                    iconColor: "#50C878",
-                    confirmButtonText: "Oke",
-                    confirmButtonColor: "#2D95C9",
-                });
-                // Kirim pesan ke modal tertentu saja
-                setModalMessage(flash.message);
-            } else {
-                // Tampilkan Swal global
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: `${flash.message}`,
-                    icon: "success",
-                    iconColor: "#50C878",
-                    confirmButtonText: "Oke",
-                    confirmButtonColor: "#2D95C9",
-                });
-            }
-
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
+            Swal.fire({
+                ...(activeModal && { target: `#${activeModal}` }),
+                title: "Berhasil!",
+                text: `${flash.message}`,
+                icon: "success",
+                iconColor: "#50C878",
+                confirmButtonText: "Oke",
+                confirmButtonColor: "#2D95C9",
+            });
+            setShownMessages([...shownMessages, flash.message]);
         }
-    }, [flash.message, activeModalId]);
+    }, [flash.message, activeModal]);
 
     const Toast = Swal.mixin({
         toast: true,
@@ -97,17 +84,17 @@ export default function Index({
         },
     });
 
-    useEffect(() => {
-        if (flash.message == "Berhasil Divalidasi") {
-            Toast.fire({
-                icon: "success",
-                title: flash.message,
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
+    // useEffect(() => {
+    //     if (flash.message == "Berhasil Divalidasi") {
+    //         Toast.fire({
+    //             icon: "success",
+    //             title: flash.message,
+    //         });
+    //         setTimeout(() => {
+    //             flash.message = null;
+    //         }, 3000);
+    //     }
+    // }, [flash.message]);
 
     // Cancel penagjaun dari divisi SDM
     const handleCancel = (id) => {
@@ -132,7 +119,7 @@ export default function Index({
                         //
                     },
                     onError: () => {
-                        console.log("Gagal Menghapus Data");
+                        alert("Gagal Menghapus Data");
                     },
                 });
             }
@@ -140,8 +127,7 @@ export default function Index({
     };
 
     const handleReject = (id) => {
-        console.log("isi id di handleReject");
-        console.log(id);
+
         Swal.fire({
             icon: "warning",
             text: "Anda yakin ingin menolak pengajuan ini?",
@@ -163,7 +149,7 @@ export default function Index({
                         //
                     },
                     onError: () => {
-                        console.log("Gagal Menolak Pengajuan");
+                        alert("Gagal Menolak Pengajuan");
                     },
                 });
             }
@@ -270,7 +256,11 @@ export default function Index({
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
     const [showIframe, setShowIframe] = useState(false);
 
+    function formatRoleToRoute(label) {
+        return "/" + label.trim().toLowerCase().replace(/\s+/g, "-");
+    }
     // Console
+
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -400,6 +390,13 @@ export default function Index({
                 </form>
 
                 <div className="pt-3 ">
+                {subTitle && (
+                        <div className="my-4">
+                            <strong className="text-2xl font-bold text-gray-600">
+                                {subTitle}
+                            </strong>
+                        </div>
+                    )}
                     {pengajuans.data.length ? (
                         <>
                             <table className="table text-xs table-bordered">
@@ -585,8 +582,8 @@ export default function Index({
                                                                 pengajuan={
                                                                     pengajuan
                                                                 }
-                                                                setActiveModalId={
-                                                                    setActiveModalId
+                                                                setActiveModal={
+                                                                    setActiveModal
                                                                 }
                                                                 message={
                                                                     modalMessage
@@ -595,8 +592,8 @@ export default function Index({
                                                             <button
                                                                 className="action-btn-secondary action-btn group/button"
                                                                 onClick={() => {
-                                                                    setActiveModalId(
-                                                                        pengajuan.id
+                                                                    setActiveModal(
+                                                                        `ModalCekValidasi-${pengajuan.id}`
                                                                     );
                                                                     document
                                                                         .getElementById(
@@ -689,7 +686,9 @@ export default function Index({
                                                             pengajuan={
                                                                 pengajuan
                                                             }
-                                                            isDivisiSDM={isDivisiSDM}
+                                                            isDivisiSDM={
+                                                                isDivisiSDM
+                                                            }
                                                         />
                                                         <div className="relative inline-flex group">
                                                             <button
@@ -805,56 +804,82 @@ export default function Index({
                                                             />
                                                         </div>
 
-                                                            <div className="relative inline-flex group">
-                                                                <Link
-                                                                    as="button"
-                                                                    href={route(
-                                                                        "pak.process"
-                                                                    )}
-                                                                    onSuccess={() => {
-                                                                        setShowIframe(
-                                                                            true
-                                                                        );
-                                                                    }}
-                                                                    data={
-                                                                        pengajuan.riwayat_pak
-                                                                    }
-                                                                    method="post"
-                                                                    className="action-btn-secondary action-btn group/button"
-                                                                >
-                                                                    <IoDocument className="scale-125 group-hover/button:fill-white" />
-                                                                </Link>
-                                                                {/* Tooltip Hover  */}
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Lihat/Download Dokumen"
-                                                                    }
-                                                                />
-                                                            </div>
-
+                                                        <div className="relative inline-flex group">
+                                                            <Link
+                                                                as="button"
+                                                                href={route(
+                                                                    "pak.process"
+                                                                )}
+                                                                onSuccess={() => {
+                                                                    setShowIframe(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                                disabled={
+                                                                    pengajuan.status !==
+                                                                    "divalidasi"
+                                                                }
+                                                                data={
+                                                                    pengajuan.riwayat_pak
+                                                                }
+                                                                method="post"
+                                                                className="action-btn-secondary action-btn group/button"
+                                                            >
+                                                                <IoDocument className="scale-125 group-hover/button:fill-white" />
+                                                            </Link>
+                                                            {/* Tooltip Hover  */}
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Lihat/Download Dokumen" +
+                                                                    (pengajuan.status !==
+                                                                    "divalidasi"
+                                                                        ? "(PAK harus divalidasi terlebih dahulu)"
+                                                                        : "")
+                                                                }
+                                                            />
+                                                        </div>
+                                                                {/* ANCHOR */}
+                                                        <ModalArsipDokumen
+                                                            pengajuan={
+                                                                pengajuan
+                                                            }
+                                                            setActiveModal={
+                                                                setActiveModal
+                                                            }
+                                                        />
                                                         <div className="relative inline-flex group">
                                                             <button
-                                                                onClick={() =>
-                                                                    handleCancel(
-                                                                        pengajuan.id
-                                                                    )
+                                                                onClick={() => {
+                                                                    setActiveModal(
+                                                                        `ModalArsipDokumen-${pengajuan.id}`
+                                                                    );
+                                                                    // open modal
+                                                                    document
+                                                                        .getElementById(
+                                                                            `ModalArsipDokumen-${pengajuan.id}`
+                                                                        )
+                                                                        .showModal();
+                                                                }}
+                                                                disabled={
+                                                                    pengajuan.status !==
+                                                                    "divalidasi"
                                                                 }
-                                                                disabled={pengajuan.status !== "divalidasi"}
                                                                 className="action-btn-success action-btn group/button"
                                                             >
-                                                                <BiSolidArchiveIn  className="scale-150 group-hover/button:fill-white" />
+                                                                <BiSolidArchiveIn className="scale-150 group-hover/button:fill-white" />
                                                             </button>
                                                             <TooltipHover
                                                                 message={
-                                                                    "Arsipkan Dokumen"
+                                                                    "Arsipkan Dokumen" +
+                                                                    (pengajuan.status !==
+                                                                    "divalidasi"
+                                                                        ? "(PAK harus divalidasi terlebih dahulu)"
+                                                                        : "")
                                                                 }
                                                             />
                                                         </div>
                                                     </td>
                                                 )}
-
-
-
                                                 {/* !SECTION Action Button-Role Pegawai */}
                                             </tr>
                                         );
@@ -865,9 +890,9 @@ export default function Index({
                             <Pagination
                                 datas={pengajuans}
                                 urlRoute={
-                                    (canValidate
-                                        ? "/pimpinan"
-                                        : "/divisi-sdm") + "/pengajuan"
+                                    //TODO ubah kalo dah login lewat SSO untuk Actor Pegawai
+                                    formatRoleToRoute(auth.user.role) +
+                                    (isPegawai ? "/proses-pak" : "/pengajuan")
                                 }
                                 filters={{
                                     filter1: byStatus,
