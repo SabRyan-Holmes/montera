@@ -50,8 +50,6 @@ export default function AkumulasiTable({
     }, [data.ak_terakhir, data.angka_kredit]);
 
     useEffect(() => {
-        console.log("isi pNegusulan dari akumulasi");
-        console.log(pengusulanData);
         if (pengusulanData !== null) {
             var ak_terakhir = parseFloat(pengusulanData.jumlah_ak_terakhir).toFixed(3);
             setData("ak_terakhir", ak_terakhir);
@@ -59,8 +57,7 @@ export default function AkumulasiTable({
         }
     }, []);
 
-    console.log("Isi Data");
-    console.log(data);
+
     return (
         <table className="table text-base table-bordered">
             <thead>

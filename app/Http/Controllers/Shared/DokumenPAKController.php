@@ -67,7 +67,6 @@ class DokumenPAKController extends Controller
 
     public function create_by_pengusulan(PengusulanPAK $pengusulan)
     {
-        // dd($pengusulan);
         $pegawai = $pengusulan->pegawai_nip ? Pegawai::where('NIP', $pengusulan->pegawai_nip)->first() : null;
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Penetapan Angka Kredit',

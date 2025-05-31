@@ -15,32 +15,19 @@ import { usePage } from "@inertiajs/react";
 import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
+import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/PengusulanPAKTable";
 
 export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
+    const {auth } = usePage().props
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengajuan.id,
+            validated_by: auth.user.id,
             signature: "", // nanti diisi base64 image
             signatureType: "",
         });
 
     // =========================================================================SWAL POP UP=========================================================================
-    // useEffect(() => {
-    //     if (message) {
-    //         Swal.fire({
-    //             target: `#ModalCekValidasi-${pengajuan.id}`,
-    //             title: "Berhasil!",
-    //             text: `${message}`,
-    //             icon: "success",
-    //             iconColor: "#50C878",
-    //             confirmButtonText: "Oke",
-    //             confirmButtonColor: "#2D95C9",
-    //         });
-    //         // setTimeout(() => {
-    //         //     message = null;
-    //         // }, 3000);
-    //     }
-    // }, [message]);
 
     useEffect(() => {
         if (errors && Object.values(errors).length > 0) {
@@ -64,7 +51,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
         Swal.fire({
             target: `#ModalCekValidasi-${pengajuan.id}`,
             icon: "warning",
-            text: "Anda yakin ingin membatalkan validasi PAK ini?",
+            text: "Anda yakin ingin mereset validasi pengajuan ini?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
@@ -78,7 +65,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route("pimpinan.pengajuan.cancel", pengajuan.id), {
+                router.post(route("pimpinan.pengajuan.undo-validate", pengajuan.id), {
                     onSuccess: () => {
                         //
                     },
@@ -243,10 +230,6 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         const url = `/storage/${pengajuan.approved_pak_path}`; // Sesuaikan dengan path yang ada di pengajuan
-                        // const iframeHTML = `<iframe src="${url}" width="100%" height="600px"></iframe>`;
-                        // // Menambahkan iframe ke dalam elemen HTML untuk menampilkan PDF
-                        // document.getElementById("approved_pak_view").innerHTML =
-                        //     iframeHTML;
                         setLinkIframe(url);
                         setShowIframe(true);
                     }
@@ -260,10 +243,18 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
     const { props } = usePage();
 
     // TODO ? Mungkin sebaiknya tamabhakna juga Catatan Evaluasi/Review Dari Pimpinan
-    console.log("isi data Sekarang");
     const pegawai = pengajuan.riwayat_pak.pegawai
-
-    console.log(pengajuan);
+    const pengusulanPAK = pengajuan.riwayat_pak.pengusulan_pak;
+    const pengusulanPAKRef = useRef(null); // <-- buat ref
+    const scrollToPengusulanPAK = () => {
+        if (pengusulanPAKRef.current) {
+            pengusulanPAKRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest",
+            });
+        }
+    };
     return (
         <dialog
             id={`ModalCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModal(null)}
@@ -313,12 +304,23 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
 
                 <div className="px-2 overflow-x-auto">
                     <h1 className="my-4 text-xl font-medium">
-                        Data Ringkasan dalam Penetapan Angka Kredit
+                        Data Penetapan Angka Kredit dalam Pengajuan
                     </h1>
                     <DetailPAKTable
                         data={pengajuan.riwayat_pak}
                         collapse={false}
+                        onScrollToPengusulanPAK={scrollToPengusulanPAK}
                     />
+                </div>
+
+                <div
+                    className="px-2 my-10 mb-16 overflow-x-auto"
+                    ref={pengusulanPAKRef}
+                >
+                    <h1 className="my-4 text-xl font-medium">
+                        Data Pengusulan Sebagai Sumber Penetapan Angka Kredit
+                    </h1>
+                    <PengusulanPAKTable collapse={false} data={pengusulanPAK} />
                 </div>
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
@@ -384,7 +386,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                                             sigCanvas.current.clear();
                                             reset("signature");
                                         }}
-                                        className="mx-10 action-btn "
+                                        className="mx-10 action-btn"
                                     >
                                         Clear
                                         <FaEraser className="" />
@@ -401,7 +403,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                                     >
                                         Gunakan TTD Ini
                                         {data.signatureType == "draw" &&
-                                            data.signature && <FaCheck />}
+                                            data.signature && <FaCheck className="ml-1" />}
                                     </button>
                                 </div>
                             </div>
@@ -450,7 +452,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                     </div>
                 )}
 
-                {pengajuan.status === "diproses" && (
+                {pengajuan.status === "divalidasi" && (
                     <>
                         <div role="alert" className="mb-20 alert bg-hijau">
                             <svg
@@ -481,7 +483,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                     <SecondaryButton
                         onClick={() => handleViewPdf(pengajuan)}
                         type="submit"
-                        className="mr-2 scale-125 fill-secondary"
+                        className="rounded shadow hover:scale-105"
                     >
                         <IoDocument className="w-4 h-4 fill-secondary" />
                         Lihat Dokumen
@@ -513,7 +515,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
 
                     <SecondaryButton
                         onClick={() => handleCancel()}
-                        className="border rounded shadow bg-warning/15 text-warning/80 border-warning/20 hover:scale-105"
+                        className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
                     >
                         <MdCancel className="mr-2 scale-125 fill-warning " />
                         Batalkan Validasi
@@ -526,7 +528,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                   <SecondaryButton
                         onClick={() => handleViewPdf(pengajuan)}
                         type="submit"
-                        className="mr-2 scale-125 fill-secondary"
+                        className="rounded shadow hover:scale-105"
                     >
                         <IoDocument className="w-4 h-4 fill-secondary" />
                         Lihat Dokumen
@@ -534,10 +536,10 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
 
                     <SecondaryButton
                         onClick={() => handleCancel()}
-                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                        className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
                     >
-                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                        Batalkan Penolakan
+                        <MdCancel className="mr-2 scale-125 fill-warning " />
+                        Reset Validasi
                     </SecondaryButton>
                 </div>
             )}

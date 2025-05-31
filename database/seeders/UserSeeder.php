@@ -34,8 +34,8 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Pimpinan',
-            'nip' => '1000000000000000',
+            'name' => 'Agus Sudibyo, M.Stat',
+            'nip' => '197412311996121001',
             'role' => "Pimpinan",
             'email' => 'pimpinan.bps1500@gmail.com',
             'password' => Hash::make('password'),

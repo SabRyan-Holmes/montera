@@ -54,7 +54,8 @@ class PengajuanController extends Controller
             "byKesimpulan" => request('byKesimpulan'),
             'jabatanList' => $jabatan_list,
             'kesimpulanList' => $kesimpulan_list,
-            'folderArsipList' => $arsipDokumenByUser->pluck('folder_name')->toArray(),        ]);
+            'folderArsipList' => $arsipDokumenByUser->pluck('folder_name')->toArray(),
+        ]);
     }
 
     /**
@@ -147,6 +148,7 @@ class PengajuanController extends Controller
         if ($request->fast_approve) {
             // dd($request);
             // Fast Approve: ambil gambar default dari public folder
+            // TODO: Ubah nanti kalo dh dpt file resmi
             $signaturePath = public_path('storage/validasi_pimpinan/default.png');
 
             if (!file_exists($signaturePath)) {
@@ -190,11 +192,13 @@ class PengajuanController extends Controller
         // 5. Update status
         $pengajuan->update([
             'status' => 'divalidasi',
+            'tanggal_divalidasi' => now(),
             'approved_pak_path' => "approved_pak/{$nama_pak}",
         ]);
 
         // 6. Redirect dengan feedback
-        return redirect()->back()->with('message', 'Pengajuan berhasil divalidasi.');
+        return redirect()->back()->with('toast' , 'Pengajuan berhasil divalidasi.');
+        // return redirect()->back()->with(($request->boolean('fast_approve') ? 'toast' : 'message') , 'Pengajuan berhasil divalidasi.');
     }
 
 
@@ -202,7 +206,7 @@ class PengajuanController extends Controller
 
     public function reject(Pengajuan $pengajuan)
     {
-        $pengajuan->update(['status' => 'ditolak']);
+        $pengajuan->update(['status' => 'ditolak',   "tanggal_ditolak" => now()]);
         // dd($pengajuan); //ISI ny malah data model doang tanpa field dan id
         // TODO: Tambahin logic catatan dr pimpinan disni
         return redirect()->back()->with('message', 'Pengajuan Berhasil Ditolak!'); // atau redirect ke halaman tertentu
@@ -217,9 +221,8 @@ class PengajuanController extends Controller
         return redirect()->back()->with('message', 'Pengajuan PAK berhasil dibatalkan');
     }
 
-    public function cancel(Pengajuan $pengajuan)
+    public function undo_validate(Pengajuan $pengajuan)
     {
-        // dd($pengajuan);
         // Ambil path file yang akan dihapus
         $filePath = $pengajuan->approved_pak_path;
 
@@ -231,11 +234,13 @@ class PengajuanController extends Controller
         // Update kolom status dan kosongkan path file
         $pengajuan->update([
             "status" => 'diajukan',
+            "tanggal_ditolak" => null,
+            "tanggal_divalidasi" => null,
             "approved_pak_path" => null,
         ]);
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->back()->with('message', 'Validasi pengajuan berhasil dibatalkan');
+        return redirect()->back()->with('message', 'Validasi pengajuan berhasil direset');
     }
 
     public function approved_show()

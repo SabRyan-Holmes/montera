@@ -27,6 +27,7 @@ class ArsipDokumenStoreRequest extends FormRequest
             'nip_pak' => 'required|string',
             'folder_name' => 'required|string|max:70',
             'title' => 'required|string|max:150',
+            'approved_pak_path' => 'required|string|max:150'
         ];
     }
 }

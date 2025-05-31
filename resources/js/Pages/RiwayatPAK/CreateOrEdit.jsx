@@ -77,19 +77,25 @@ export default function Index({
             );
 
             // Take the month
-            const [yearStart, monthStart, day] = pengusulan.periode_mulai?.split("-");
-            const [yearEnd, monthEnd, dayEnd] = pengusulan.periode_berakhir?.split("-");
+            const [yearStart, monthStart, day] =
+                pengusulan.periode_mulai?.split("-");
+            const [yearEnd, monthEnd, dayEnd] =
+                pengusulan.periode_berakhir?.split("-");
 
             const angkaPeriodeMulai = parseInt(monthStart, 10);
             const angkaPeriodeBerakhir = parseInt(monthEnd, 10);
-            const { useRumusAngkaKredit, useRumusAngkaPeriode } = rumusPenghitungan;
-            const angkaPeriodeValue = useRumusAngkaPeriode(angkaPeriodeBerakhir, angkaPeriodeMulai);
+            const { useRumusAngkaKredit, useRumusAngkaPeriode } =
+                rumusPenghitungan;
+            const angkaPeriodeValue = useRumusAngkaPeriode(
+                angkaPeriodeBerakhir,
+                angkaPeriodeMulai
+            );
             const angkaKreditValue = useRumusAngkaKredit(
                 angkaPeriodeValue,
                 koefisienPertahunValue,
                 data.presentase
             );
-            const today = new Date().toISOString().split('T')[0];
+            const today = new Date().toISOString().split("T")[0];
             // alert(angkaPeriodeMulai)
             setData((prev) => ({
                 ...prev,
@@ -245,15 +251,15 @@ export default function Index({
     // CONSOLE
     // console.log("Isi Error");
     // console.log(errors);
-    console.log("Isi Data");
-    console.log(data);
+    // console.log("Isi Data");
+    // console.log(data);
     // console.log("data now", dataNow);
     // console.log('Is Pengusulan Data', isByPengusulan)
 
     return (
         <Authenticated
             user={auth.user}
-            title={title + (isByPengusulan ? ' - Berdasarkan Pengusulan' : '')}
+            title={title + (isByPengusulan ? " - Berdasarkan Pengusulan" : "")}
             current={route().current()}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop max-w-screen-desktop">
@@ -339,7 +345,7 @@ export default function Index({
                     </div>
 
                     <div className="px-2 mx-auto overflow-x-auto">
-                        {!isEdit && !isByPengusulan &&  (
+                        {!isEdit && !isByPengusulan && (
                             <>
                                 {/* Konten untuk memilih Pegawai Start */}
 
@@ -447,7 +453,6 @@ export default function Index({
                                 historyData={isEdit ? riwayat : {}}
                                 aturanPAKTableProps={aturanPAKTableProps}
                                 isByPengusulan={isByPengusulan}
-
                             />
                             {/* PENETAPAN ANGKA KREDIT | END*/}
                         </div>
@@ -474,15 +479,15 @@ export default function Index({
                                         Update
                                         <FaSave className="mx-1" />
                                     </SuccessButton>
-                                    <SuccessButton
+                                    <button
                                         type="submit"
                                         name="action"
                                         value="save"
-                                        className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                        className="inline-flex scale-110 hover:scale-[1.15] items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out border border-transparent rounded-md glass bg-bermuda hover:primary/80 focus:primary/80 active:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 "
                                     >
                                         Simpan Sebagai Salinan
                                         <FaSave className="mx-1" />
-                                    </SuccessButton>
+                                    </button>
                                 </>
                             ) : (
                                 <SuccessButton

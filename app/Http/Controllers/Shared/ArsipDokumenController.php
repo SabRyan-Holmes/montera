@@ -7,6 +7,7 @@ use App\Http\Requests\ArsipDokumenStoreRequest;
 use App\Models\ArsipDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ArsipDokumenController extends Controller
@@ -42,8 +43,19 @@ class ArsipDokumenController extends Controller
 
         // Logic Store File PDF Document
         $fileName = $request->title . '.pdf';
-        $filePath =  storage_path("app/public/arsip_dokumen/{$fileName}");
-        $validated['file_path'] = $filePath;
+        $sourcePath = $request->approved_pak_path;
+
+        // berikan logic untuk store pdf disini dengan, dengan mengakses pdf dari path diatas,
+        //mengambil pdf dan mencopyny kemudian sekaligus mengubah  naa file ny seusai $fileName dimana nanti bisa diakses public, diaturh di storage/arsip_dokumen
+        $destinationPath = "/arsip_dokumen/$fileName";
+        // Salin file ke tujuan
+        if (Storage::exists($sourcePath)) {
+            Storage::copy($sourcePath, $destinationPath);
+            $filePath = 'arsip_dokumen/' . $fileName;
+            $validated['file_path'] = $filePath;
+        } else {
+            abort(404, 'File sumber tidak ditemukan');
+        }
         ArsipDokumen::create($validated);
         return redirect()->back()->with('message', 'Berhasil Mengarsipkan Dokumen!');
     }

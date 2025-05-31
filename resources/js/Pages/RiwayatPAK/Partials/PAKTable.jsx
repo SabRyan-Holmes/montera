@@ -6,14 +6,10 @@ import { FaMinus } from "react-icons/fa";
 export default function PAKTable({
     data,
     setData,
-    isEdit=false,
+    isEdit = false,
     historyData,
-    aturanPAKTableProps: {
-        angkaPangkat,
-        angkaJabatan,
-        kesimpulan,
-    },
-    isByPengusulan=false
+    aturanPAKTableProps: { angkaPangkat, angkaJabatan, kesimpulan },
+    isByPengusulan = false,
 }) {
     // ANCHOR
     // console.log("angkaPangkat");
@@ -266,7 +262,7 @@ export default function PAKTable({
     // console.log("isi data.pangkat");
     // console.log(data.pangkat);
     // console.log("Current pangkat value:", data.pangkat, typeof data.pangkat);
-
+    // alert(data.pangkat)
     return (
         <table className="table text-base table-bordered">
             {/* head */}
@@ -515,8 +511,7 @@ export default function PAKTable({
                             id="pangkat"
                             className="w-20 text-center rounded-md border-gradient"
                             // TODO: ubah ini nanti sesuai default_config
-                            defaultValue={data.pangkat}
-                            value={isEdit || isByPengusulan && data.pangkat}
+                            value={data.pangkat}
                             onChange={(e) => {
                                 setData("pangkat", parseInt(e.target.value));
                             }}
@@ -532,8 +527,7 @@ export default function PAKTable({
                             id="jabatan"
                             className="w-20 text-center rounded-md border-gradient"
                             // TODO: ubah ini nanti sesuai default_config
-                            defaultValue={data.jabatan}
-                            value={isEdit || isByPengusulan && data.pangkat}
+                            value={data.jabatan}
                             onChange={(e) => {
                                 setData("jabatan", parseInt(e.target.value));
                             }}

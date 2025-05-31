@@ -112,7 +112,7 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
     Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
         Route::get('/', [PengajuanController::class, 'index'])->name('index');
         Route::post('/approve', [PengajuanController::class, 'approve'])->name('approve');
-        Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel'])->name('cancel');
+        Route::post('/undo-validate/{pengajuan}', [PengajuanController::class, 'undo_validate'])->name('undo-validate');
         Route::post('/reject/{pengajuan}', [PengajuanController::class, 'reject'])->name('reject');
     });
 

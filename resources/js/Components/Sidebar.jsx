@@ -111,7 +111,6 @@ const Sidebar = ({ role }) => {
                                     route: "divisi-sdm.pak.create",
                                     actives: [
                                         "divisi-sdm.pak.create",
-                                        "divisi-sdm.pak.edit",
                                         "divisi-sdm.pak.create-by-pengusulan",
                                     ],
                                 },

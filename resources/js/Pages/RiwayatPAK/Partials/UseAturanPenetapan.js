@@ -2,6 +2,8 @@ import { useForm, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function UseAturanPenetapan(aturanPAK) {
+    console.warn("Sebelum : aturanPAK.tebusanKonversi");
+    console.warn(aturanPAK.tebusanKonversi);
     const { auth, isByPengusulan, pengusulan } = usePage().props;
     const [initialized, setInitialized] = useState(false);
     const { data, setData, post, processing, errors, reset, setDefaults } =
@@ -78,8 +80,8 @@ export default function UseAturanPenetapan(aturanPAK) {
             ak_tipe_tambahan: {},
             jakk: { lama: "", baru: "", jumlah: "", keterangan: "" },
 
-            pangkat: Int32Array,
-            jabatan: Int32Array,
+            pangkat: "",
+            jabatan: "",
             pangkat_keker: "",
             jabatan_keker: "",
 
@@ -111,21 +113,18 @@ export default function UseAturanPenetapan(aturanPAK) {
             aturanPAK.penandaTangan.value[defaultConfigPT - 1]; //tambah 1 karna indeks array dimulai dari 0
 
         const makeDefaultTebusan = (list) =>
-            list.map((item) => ({
-                pihak_tebusan: item.pihak_tebusan,
-                checked: false,
-            }));
+            list.value.map((item) => {
+                const config = list.default_config.find(
+                    (c) => c.id === item.id
+                );
 
-        // 2. Tebusan
-        const tebusanKonversiDefault = makeDefaultTebusan(
-            aturanPAK.tebusanKonversi
-        );
-        const tebusanAkumulasiDefault = makeDefaultTebusan(
-            aturanPAK.tebusanAkumulasi
-        );
-        const tebusanPenetapanDefault = makeDefaultTebusan(
-            aturanPAK.tebusanPenetapan
-        );
+                return {
+                    pihak_tebusan: item.pihak_tebusan,
+                    checked: config ? config.checked : false,
+                };
+            });
+
+
 
         // 3. Predikat Presentase(PP)
         // Fungsi untuk mencari nilai dalam array berdasarkan id
@@ -161,25 +160,26 @@ export default function UseAturanPenetapan(aturanPAK) {
         // Set All Default Based on Default Config
 
         // ANCHOR Logic Checked on DefaultConfig Tebusan Belum
-
-        setData({
-            ...data,
+        // console.warn('Sebelum:', tebusanKonversiDefault);
+        setData((prev) => ({
+            ...prev,
             nama: defaultPenandaTangan.nama,
             nip: defaultPenandaTangan.nip,
             presentase: defaultConfigPP.presentase,
             predikat: defaultConfigPP.predikat,
-            tebusan1: tebusanKonversiDefault,
-            tebusan2: tebusanAkumulasiDefault,
-            tebusan3: tebusanPenetapanDefault,
+            tebusan1: aturanPAK.tebusanKonversi,
+            tebusan2: aturanPAK.tebusanAkumulasi,
+            tebusan3: aturanPAK.tebusanPenetapan,
             pangkat: defaultConfigPangkat.angka,
             jabatan: defaultConfigJabatan.angka,
             no_surat1: `${defaultConfigNoSuratTerakhir.no_surat}/Konv/${defaultConfigNoSuratTerakhir.tahun}`,
             no_surat2: `${defaultConfigNoSuratTerakhir.no_surat}/Akm/${defaultConfigNoSuratTerakhir.tahun}`,
             no_surat3: `${defaultConfigNoSuratTerakhir.no_surat}/PAK/${defaultConfigNoSuratTerakhir.tahun}`,
-        });
+        }));
 
         // Set flag bahwa inisialisasi selesai
         setInitialized(true);
+        // console.warn(data.tebusan1)
     }, []);
 
     // PREDIKAT
@@ -213,22 +213,22 @@ export default function UseAturanPenetapan(aturanPAK) {
     });
 
     // Tebusan Konversi
-    const tebusanKonversi = [];
-    aturanPAK.tebusanKonversi.forEach((item) => {
-        tebusanKonversi.push(item.pihak_tebusan);
-    });
+    // const tebusanKonversi = [];
+    // aturanPAK.tebusanKonversi.value.forEach((item) => {
+    //     tebusanKonversi.push(item.pihak_tebusan);
+    // });
 
-    // Tebusan Akumulasi
-    const tebusanAkumulasi = [];
-    aturanPAK.tebusanAkumulasi.forEach((item) => {
-        tebusanAkumulasi.push(item.pihak_tebusan);
-    });
+    // // Tebusan Akumulasi
+    // const tebusanAkumulasi = [];
+    // aturanPAK.tebusanAkumulasi.value.forEach((item) => {
+    //     tebusanAkumulasi.push(item.pihak_tebusan);
+    // });
 
-    // Tebusan Penetapan
-    const tebusanPenetapan = [];
-    aturanPAK.tebusanPenetapan.forEach((item) => {
-        tebusanPenetapan.push(item.pihak_tebusan);
-    });
+    // // Tebusan Penetapan
+    // const tebusanPenetapan = [];
+    // aturanPAK.tebusanPenetapan.value.forEach((item) => {
+    //     tebusanPenetapan.push(item.pihak_tebusan);
+    // });
 
     // Kesimpulan
     let kesimpulanValue = [];
@@ -245,18 +245,15 @@ export default function UseAturanPenetapan(aturanPAK) {
     const aturanKonvTableProps = {
         koefisienPertahun,
         predikatPresentase,
-        tebusanKonversi,
     };
 
     const aturanAkmTableProps = {
         predikatPresentase,
-        tebusanAkumulasi,
     };
 
     const aturanPAKTableProps = {
         angkaPangkat,
         angkaJabatan,
-        tebusanPenetapan,
         kesimpulan,
     };
 

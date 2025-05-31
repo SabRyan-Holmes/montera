@@ -45,7 +45,7 @@ export default function Index({
     byKesimpulan: initialKesimpulan,
     jabatanList,
     kesimpulanList,
-    folderArsipList
+    folderArsipList,
 }) {
     // ===========================================Pagination===========================================
     moment.locale("id");
@@ -70,7 +70,7 @@ export default function Index({
             });
             setShownMessages([...shownMessages, flash.message]);
         }
-    }, [flash.message, activeModal]);
+    }, [flash.message]);
 
     const Toast = Swal.mixin({
         toast: true,
@@ -84,17 +84,15 @@ export default function Index({
         },
     });
 
-    // useEffect(() => {
-    //     if (flash.message == "Berhasil Divalidasi") {
-    //         Toast.fire({
-    //             icon: "success",
-    //             title: flash.message,
-    //         });
-    //         setTimeout(() => {
-    //             flash.message = null;
-    //         }, 3000);
-    //     }
-    // }, [flash.message]);
+    useEffect(() => {
+        if (flash.toast) {
+            Toast.fire({
+                icon: "success",
+                title: flash.toast,
+            });
+            // alert(flash.toast);
+        }
+    }, [flash.toast]);
 
     // Cancel penagjaun dari divisi SDM
     const handleCancel = (id) => {
@@ -127,7 +125,6 @@ export default function Index({
     };
 
     const handleReject = (id) => {
-
         Swal.fire({
             icon: "warning",
             text: "Anda yakin ingin menolak pengajuan ini?",
@@ -261,7 +258,6 @@ export default function Index({
     }
     // Console
 
-
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
@@ -390,7 +386,7 @@ export default function Index({
                 </form>
 
                 <div className="pt-3 ">
-                {subTitle && (
+                    {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
                                 {subTitle}
@@ -641,8 +637,9 @@ export default function Index({
                                                                     message={
                                                                         "Validasi Cepat" +
                                                                         (pengajuan.status !==
-                                                                            "diajukan" &&
-                                                                            `(Telah ${pengajuan.status})`)
+                                                                        "diajukan"
+                                                                            ? `(Telah ${pengajuan.status})`
+                                                                            : "")
                                                                     }
                                                                 />
                                                             </div>
@@ -650,8 +647,8 @@ export default function Index({
                                                             <div className="relative inline-flex group">
                                                                 <button
                                                                     disabled={
-                                                                        pengajuan.status !==
-                                                                        "diajukan"
+                                                                        pengajuan.status ===
+                                                                        "ditolak"
                                                                     }
                                                                     onClick={() =>
                                                                         handleReject(
@@ -666,8 +663,9 @@ export default function Index({
                                                                     message={
                                                                         "Tolak Pengajuan" +
                                                                         (pengajuan.status !==
-                                                                            "diajukan" &&
-                                                                            `(Telah ${pengajuan.status})`)
+                                                                        "diajukan"
+                                                                            ? `(Telah ${pengajuan.status})`
+                                                                            : "")
                                                                     }
                                                                 />
                                                             </div>
@@ -838,7 +836,7 @@ export default function Index({
                                                                 }
                                                             />
                                                         </div>
-                                                                {/* ANCHOR */}
+                                                        {/* ANCHOR */}
                                                         <ModalArsipDokumen
                                                             pengajuan={
                                                                 pengajuan

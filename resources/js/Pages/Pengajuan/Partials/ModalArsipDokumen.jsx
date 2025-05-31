@@ -31,9 +31,9 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
             nip_pak: pengajuan.riwayat_pak.pegawai['NIP'],
             folder_name: '',
             title: fileName, //default nama PAK
+            approved_pak_path: pengajuan.approved_pak_path,
+            tanggal_divalidasi: pengajuan.tanggal_divalidasi, //default nama PAK
         });
-
-
 
     function formatRoleToRoute(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
@@ -45,10 +45,9 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
             preserveState: true,
             preserveScroll: true,
             onError: (errors) => {
-                alert("Error:", errors);
+                alert(errors);
             },
         });
-        // console.log('Form Data:', formData);
     };
 
     const [search, setSearch] = useState("");
@@ -110,8 +109,8 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
                                 className="block w-full mt-1 h-11"
                                 placeholder="Ketik & pilih nama folder/buat folder baru"
                                 maxLength={70}
-                                value={search}
-                                // defaultValue={data.folder_name}
+                                // value={data.folder_name}
+                                defaultValue={data.folder_name}
                                 isFocused={true}
                                 list="folderNameList"
                                 onChange={(e) => setSearch(e.target.value)}

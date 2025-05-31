@@ -7,7 +7,6 @@ export default function KonversiTable({
     aturanKonvTableProps: {
         koefisienPertahun,
         predikatPresentase,
-        tebusanKonversi,
     },
     isEdit = false,
     isByPengusulan = false
@@ -132,7 +131,7 @@ export default function KonversiTable({
     };
 
 
-
+    console.warn('Sesudah', data.tebusan1)
     return (
         <table className="table text-base table-bordered">
             {/* head */}
@@ -189,7 +188,6 @@ export default function KonversiTable({
                             name="presentase"
                             id="presentase"
                             className="w-24 px-1 text-center rounded-md border-gradient"
-                            defaultValue={data.presentase}
                             value={data.presentase}
                             onChange={(e) => {
                                 setData("presentase", e.target.value);
@@ -261,15 +259,15 @@ export default function KonversiTable({
                 {[...Array(Math.ceil(data.tebusan1.length / 2))].map(
                     (_, rowIndex) => {
                         const start = rowIndex * 2;
-                        const items = tebusanKonversi.slice(start, start + 2);
-
+                        const items = data.tebusan1.slice(start, start + 2);
+                        // console.warn(teb)
                         return (
                             <tr key={rowIndex}>
                                 {/* Kolom "Tebusan" hanya ditampilkan di baris pertama dengan rowSpan dinamis */}
                                 {rowIndex === 0 && (
                                     <td
                                         rowSpan={Math.ceil(
-                                            tebusanKonversi.length / 2
+                                            data.tebusan1.length / 2
                                         )}
                                         className="text-lg font-semibold text-center"
                                     >
@@ -291,24 +289,28 @@ export default function KonversiTable({
                                                 id={`tebusan-${globalIndex}`} // Tambahkan ID                                                className="w-5 h-5 rounded-sm"
                                                 checked={item.checked}
                                                 onChange={() => {
-                                                    const updated = [
-                                                        ...data.tebusan1,
-                                                    ];
-                                                    updated[
-                                                        globalIndex
-                                                    ].checked =
-                                                        !updated[globalIndex]
-                                                            .checked;
-                                                    setData(
-                                                        "tebusan1",
-                                                        updated
-                                                    );
+                                                    setData("tebusan1", data.tebusan1.map((item, i) =>
+                                                        i === globalIndex ? { ...item, checked: !item.checked } : item
+                                                      ));
+
+                                                    // const updated = [
+                                                    //     ...data.tebusan1,
+                                                    // ];
+                                                    // updated[
+                                                    //     globalIndex
+                                                    // ].checked =
+                                                    //     !updated[globalIndex]
+                                                    //         .checked;
+                                                    // setData(
+                                                    //     "tebusan1",
+                                                    //     updated
+                                                    // );
                                                 }}
                                             />
                                             <InputLabel
                                                 htmlFor={`tebusan-${globalIndex}`} // Tambahkan ID
                                                 className="inline-block ml-2 text-sm"
-                                                value={item}
+                                                value={item.pihak_tebusan}
                                             />
                                         </td>
                                     );
