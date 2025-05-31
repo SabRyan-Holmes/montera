@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PengusulanPAK extends Model
 {
     use HasFactory;
+
     protected $table = 'pengusulan_pak';
     protected $guarded = ['id'];
     protected $with = ['pegawai', 'catatan_pegawai', 'catatan_sdm'];

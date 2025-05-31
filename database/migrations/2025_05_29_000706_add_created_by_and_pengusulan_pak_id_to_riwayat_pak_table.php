@@ -9,20 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    // public function up(): void
-    // {
-    //     Schema::table('riwayat_pak', function (Blueprint $table) {
-    //         // Tempatkan kolom baru sebelum 'pegawai_id'
-    //         $table->foreignId('created_by')
-    //               ->constrained('users')
-    //               ->before('pegawai_id'); // Laravel 11 ke atas mendukung 'before'
+    public function up(): void
+    {
+        Schema::table('riwayat_pak', function (Blueprint $table) {
+            // Tempatkan kolom baru sebelum 'pegawai_id'
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->before('pegawai_id');
 
-    //         $table->foreignId('pengusulan_pak_id')
-    //               ->nullable()
-    //               ->constrained('pengusulan_pak')
-    //               ->before('pegawai_id');
-    //     });
-    // }
+            $table->foreignId('pengusulan_pak_id')
+                ->nullable()
+                ->constrained('pengusulan_pak')
+                ->before('pegawai_id');
+        });
+    }
 
     /**
      * Reverse the migrations.

@@ -128,12 +128,9 @@ class DokumenPAKController extends Controller
         Session::put('data', $request->all());
         $dataForStore = $request->except(['id', 'pegawai']);
         $pegawai_id = $request->input('pegawai.id');
-        $dataForStore['created_by'] = Auth::user()->id;
         $dataForStore['pegawai_id'] = $pegawai_id;
         RiwayatPAK::create($dataForStore);
-        // Ekstrak nomor surat
-        // $noSuratTerakhir = AturanPAK::extractNoSurat($dataForStore['no_surat1']) ?? '';
-        // Update ke database
+        // Update no surat
         AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
         return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan ke dalam Database');
     }
@@ -142,23 +139,22 @@ class DokumenPAKController extends Controller
     public function save_and_submit(Request $request)
     {
         // Kalo si store ke database)
+        $dataForStore = $request->except('pegawai');
+        $pegawai_id = $request->input('pegawai.id');
+        $dataForStore['pegawai_id'] = $pegawai_id;
+        $newPAK = RiwayatPAK::create($dataForStore);
+        $validated = [
+            "riwayat_pak_id" => $newPAK->id,
+            "pegawai_id" => $newPAK->pegawai_id,
+            "user_id" => Auth::user()->id,
+        ];
         if (!isset($request->id)) {
-            $dataForStore = $request->except('pegawai');
-            $pegawai_id = $request->input('pegawai.id');
-            $dataForStore['pegawai_id'] = $pegawai_id;
-            $newPAK = RiwayatPAK::create($dataForStore);
-            $validated = [
-                "pak_id" => $newPAK->id,
-                "pegawai_id" => $newPAK->pegawai_id,
-                "pengaju_id" => Auth::user()->id,
-                // Logic Path nanti
-                "path" => "TES"
-            ];
             Pengajuan::create($validated);
-            // TODO: Taruh NO Surat PAK nanti di aturan PAK dan dijadiin default, dan di update setiap kali dilakukan penetapan
-
         }
-        return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'PAK berhasil Diajukan!');
+
+        // TODO: Taruh NO Surat PAK nanti di aturan PAK dan dijadiin default, dan di update setiap kali dilakukan penetapan
+
+        return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Dokumen PAK berhasil Diajukan! Silahkan menunggu untuk diproses.');
     }
 
 

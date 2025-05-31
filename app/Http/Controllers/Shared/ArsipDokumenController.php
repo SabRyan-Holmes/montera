@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ArsipDokumenStoreRequest;
 use App\Models\ArsipDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,9 +36,16 @@ class ArsipDokumenController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ArsipDokumenStoreRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        // Logic Store File PDF Document
+        $fileName = $request->title . '.pdf';
+        $filePath =  storage_path("app/public/arsip_dokumen/{$fileName}");
+        $validated['file_path'] = $filePath;
+        ArsipDokumen::create($validated);
+        return redirect()->back()->with('message', 'Berhasil Mengarsipkan Dokumen!');
     }
 
     /**

@@ -21,9 +21,11 @@ class CetakPAKRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->all());
+        // dd($this->all());
         return [
 
+            'created_by' => ['required', 'integer'],
+            'pengusulan_pak_id' => ['nullable', 'integer'],
             'nama' => ['required', 'string', 'max:36', 'min:1'],
             'periode_mulai' => ['required', 'integer' ],
             'periode_berakhir' => ['required',  'integer'],

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ArsipDokumen extends Model
 {
     use HasFactory;
+    protected $guarded = ['id'];
 
     public function updated_by()
     {

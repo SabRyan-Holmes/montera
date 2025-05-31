@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Models\ArsipDokumen;
 use App\Models\AturanPAK;
 use App\Models\Catatan;
 use App\Models\Pengajuan;
@@ -38,6 +39,8 @@ class PengajuanController extends Controller
         $kesimpulan = AturanPAK::where('name', 'Kesimpulan')->first()->value;
         $kesimpulan_list = collect($kesimpulan)->pluck('jabatan')->toArray();
 
+        // Dapatkan foldername arsip dari user yg login
+        $arsipDokumenByUser = ArsipDokumen::where('user_id', $user->id)->orWhere('pegawai_nip_owner', $user->nip);
         return Inertia::render('Pengajuan/Index', [
             "title" => "Status Pengajuan Terbaru",
             "subTitle" => $subTitle,
@@ -51,7 +54,7 @@ class PengajuanController extends Controller
             "byKesimpulan" => request('byKesimpulan'),
             'jabatanList' => $jabatan_list,
             'kesimpulanList' => $kesimpulan_list,
-        ]);
+            'folderArsipList' => $arsipDokumenByUser->pluck('folder_name')->toArray(),        ]);
     }
 
     /**
@@ -79,7 +82,7 @@ class PengajuanController extends Controller
         if ($request->catatan) {
             $new_catatan = Catatan::create([
                 'user_id' => $request->user_id,
-                // 'tipe' => 'PengusulanPAK',
+                'tipe' => 'ProsesPAK',
                 'isi' => $request->catatan,
             ]);
             $validated['catatan_id'] = $new_catatan->id;
@@ -152,7 +155,6 @@ class PengajuanController extends Controller
 
             $mime = mime_content_type($signaturePath);
             $base64Sig = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($signaturePath));
-
         } else {
             // Manual approve: Validasi dan proses signature upload/draw
             $request->validate([
@@ -210,8 +212,6 @@ class PengajuanController extends Controller
     // CANCEL PIMPINAN
     public function cancel_pengajuan(Pengajuan $pengajuan)
     {
-        // dd($)
-        $PAK = $pengajuan->riwayat_pak();
         $pengajuan->delete();
         // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('message', 'Pengajuan PAK berhasil dibatalkan');

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('catatan_id')->nullable()->constrained('catatans')->onDelete('cascade');
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             $table->string("approved_pak_path")->nullable()->comment('penyimpanan dokumen sementara setelah di validasi/ditandatangani'); //for store validated/approved PAK
+            $table->foreignId('validated_by')->nullable()->constrained('users')->nullable(); //validated by ny tambahin ga?
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_diperbaiki')->nullable();
             $table->datetime("tanggal_divalidasi")->nullable();

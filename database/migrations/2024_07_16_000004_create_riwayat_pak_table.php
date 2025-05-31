@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             // NOTE: Uncomment ini jika di migrasi ulang riwayat_pak
             // $table->foreignId('created_by')->constrained('users'); //updated 24 Mei 2025
-            // $table->foreignId('by_pengusulan_id')->nullable()->constrained('pengusulans'); //updated 29 Mei 2025
+            // $table->foreignId('pengusulan_pak_id')->nullable()->constrained('pengusulan_pak'); //updated 29 Mei 2025
             $table->foreignId('pegawai_id')->constrained('pegawais')->onDelete('cascade');
             $table->string('nama'); //Penanda Tangan
             $table->string('nip'); //Penanda Tangan

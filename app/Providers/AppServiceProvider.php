@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Nonaktifkan foreign key checks saat migrate:fresh
+        // if (app()->runningInConsole()) {
+        //     DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // }
+
         // config(['app.locale' => 'id']);
         Carbon::setLocale('id');
 
