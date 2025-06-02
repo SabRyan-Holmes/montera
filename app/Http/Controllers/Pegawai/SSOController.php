@@ -4,47 +4,99 @@ namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pegawai;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class SSOController extends Controller
 {
     public function showLoginForm()
     {
-        return inertia('Auth/LoginPegawai');
+        return Inertia::render('Auth/SSOLogin', [
+            // 'canAddPegawai' => Route::has('pegawai.add-pegawai.request'),
+            'status' => session('status'),
+        ]);
     }
 
     public function login(Request $request)
     {
-        $credentials = $request->only('nip', 'password');
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+            'nip' => 'required', // ini NIP pegawai yang ingin diakses
+        ]);
 
-        // Simulasi login SSO (diganti sesuai sistemmu)
-        $validSSO = $this->checkWithSSO($credentials['nip'], $credentials['password']);
+        // Step 1: Login ke SSO (pakai username & password)
+        // TODO: Uncomment nanti!
+        // $token = $this->getSSOToken($request->username, $request->password);
 
-        if (!$validSSO) {
-            return back()->withErrors(['login' => 'NIP atau Password SSO salah.']);
-        }
+        // if (!$token) {
+        //     return back()->withErrors(['username' => 'Username/password salah.']);
+        // }
 
-        // Cek apakah pegawai ada di DB internal
-        $pegawai = Pegawai::where('NIP', $credentials['nip'])->first();
+        // NOTE: Untuk Simulasi
+        $token = Str::random(16);
 
+        // Step 2: Ambil data pegawai berdasarkan NIP (nip_baru langsung)
+        $pegawai = Pegawai::where('NIP', $request['nip'])->orWhere('NIP', 'like', '%' . $request['nip'] . '%')->first();
+        // dd($pegawai);
         if (!$pegawai) {
-            return back()->withErrors(['login' => 'Data pegawai belum terdaftar. Hubungi SDM.']);
+            return back()->withErrors(['nip' => 'Data pegawai belum terdaftar di sistem. Hubungi Divisi Sumber Daya Manusia.']);
         }
 
-        // Jika berhasil, simpan data di session manual (atau buat user sementara)
-        Auth::loginUsingId($pegawai->id); // atau gunakan session custom
-        Session::put('pegawai_logged_in', true);
-        Session::put('nip', $pegawai->NIP);
-
-        return redirect()->route('pegawai.dashboard');
+        // Step 3: Simpan info penting di session (tanpa user)
+        session([
+            'nip' => $pegawai['NIP'], //Foreign
+            'name' => $pegawai['Nama'],
+            'role' => 'Pegawai',
+            'token' => $token,
+            'sso' => true,
+            'logged_in' => true,
+        ]);
+        session()->regenerate();
+        return redirect()->route('dashboard');
     }
 
-    private function checkWithSSO($nip, $password)
+
+    private function getSSOToken($username, $password)
     {
-        // Simulasi validasi ke server SSO
-        return $nip === '200002122022012003' && $password === 'tanpaair21';
-        // Ganti dengan request ke API SSO asli
+        try {
+            $response = Http::post('https://bpsjambi.id/sso/api/auth/login', [
+                'username' => $username,
+                'password' => $password,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json()['token'];
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    private function getPegawaiByNipLama($token, $nipLama)
+    {
+        try {
+            $response = Http::post('https://bpsjambi.id/sso/api/pegawai/by-niplama', [
+                'token' => $token,
+                'secret_key' => env('SSO_SECRET_KEY'), // simpan di .env
+                'nip_lama' => $nipLama,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json()['data'];
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

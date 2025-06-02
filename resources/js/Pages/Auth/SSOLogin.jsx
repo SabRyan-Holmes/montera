@@ -11,10 +11,11 @@ import {
 } from "@/Components";
 import GuestLayout from "@/Layouts/GuestLayout";
 
-export default function Login({ status, canResetPassword }) {
+export default function SSOLogin({ status, canAddPegawai }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        login: "",
+        username: "",
         password: "",
+        nip: "",
         remember: false,
     });
 
@@ -26,11 +27,21 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-        const routeName = e.nativeEvent.submitter.value;
-        // alert(routeName)
-        post(route(routeName));
+        post(route("sso-login"));
     };
 
+    useEffect(() => {
+        const savedNip = localStorage.getItem("nip");
+        if (savedNip) {
+            setData("nip", savedNip);
+        }
+    }, []);
+    // Saat NIP berubah, simpan ke localStorage
+    useEffect(() => {
+        if (data.nip) {
+            localStorage.setItem("nip", data.nip);
+        }
+    }, [data.nip]);
     // console.log(errors);
 
     return (
@@ -64,32 +75,35 @@ export default function Login({ status, canResetPassword }) {
             </div>
 
             <p className="mt-5 text-sm font-semibold text-center text-slate-600/90">
-                Selamat Datang, silahkan masuk menggunakan akun anda
+                Silahkan masuk menggunakan akun SSO anda
             </p>
 
             <section className="mx-2 mt-6 ">
                 <form onSubmit={submit}>
-                    <div>
-                        <InputLabel htmlFor="login" value="Email/NIP" />
+                    <fieldset>
+                        <InputLabel htmlFor="username" value="Username" />
 
                         <TextInput
-                            id="login"
+                            id="username"
                             type="text"
-                            name="login"
-                            value={data.login}
+                            name="username"
+                            value={data.username}
                             className="block w-full mt-1 h-11"
-                            autoComplete={data.login}
-                            placeholder="Masukkan Email/NIP"
+                            autoComplete={data.username}
+                            placeholder="Masukkan Username"
                             isFocused={true}
-                            onChange={(e) => setData("login", e.target.value)}
+                            onChange={(e) =>
+                                setData("username", e.target.value)
+                            }
                         />
 
-                        <InputError message={errors.login} className="mt-2" />
-                        <InputError message={errors.nip} className="mt-2" />
-                        <InputError message={errors.email} className="mt-2" />
-                    </div>
+                        <InputError
+                            message={errors.username}
+                            className="mt-2"
+                        />
+                    </fieldset>
 
-                    <div className="mt-4">
+                    <fieldset className="mt-3">
                         <InputLabel htmlFor="password" value="Password" />
 
                         <TextInput
@@ -109,8 +123,25 @@ export default function Login({ status, canResetPassword }) {
                             message={errors.password}
                             className="mt-2"
                         />
-                    </div>
+                    </fieldset>
 
+                    <fieldset className="mt-3">
+                        <InputLabel htmlFor="nip" value="NIP" />
+
+                        <TextInput
+                            id="nip"
+                            type="text"
+                            name="nip"
+                            value={data.nip}
+                            className="block w-full mt-1 h-11"
+                            autoComplete={data.nip}
+                            placeholder="Masukkan NIP Lengkap Anda"
+                            isFocused={true}
+                            onChange={(e) => setData("nip", e.target.value)}
+                        />
+
+                        <InputError message={errors.nip} className="mt-2" />
+                    </fieldset>
                     <div className="block mt-4">
                         <label className="flex items-center">
                             <Checkbox
@@ -127,23 +158,15 @@ export default function Login({ status, canResetPassword }) {
                     </div>
 
                     <div className="flex items-center justify-end mt-4">
-                        {canResetPassword && (
+                        {canAddPegawai && (
                             <Link
                                 href={route("password.request")}
                                 className="text-sm text-gray-600 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                             >
-                                Forgot your password?
+                                NIP pada Sistem Tidak Ditemukan?
                             </Link>
                         )}
-                        <SecondaryButton
-                                asLink
-                                type="button"
-                                href={route("sso-login.form")}
-                                className="scale-90 bg-secondary/5 text-nowrap hover:scale-95"
-                            >
-                                Login via SSO
-                            </SecondaryButton>
-                        <PrimaryButton name="action" value="login" className="ms-4" disabled={processing}>
+                        <PrimaryButton className="ms-4" disabled={processing}>
                             Masuk
                         </PrimaryButton>
                     </div>
