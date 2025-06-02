@@ -181,33 +181,5 @@ class RiwayatPAKController extends Controller
         }
     }
 
-    public function view_pak()
-    {
-        // Ambil data dari session
-        $data = Session::get('data')['data'];
 
-        // Perbarui nilai total_dicetak dengan menambahkannya 1
-        $userId = Auth::user()->id;
-        User::where('id', $userId)
-            ->update([
-                'jumlah_dicetak' => DB::raw('jumlah_dicetak + 1')
-            ]);
-
-        // Bersihkan data untuk menghindari nilai 0/ 0,000 /null   menjadi string kosong ''
-        $this->cleanAllData($data);
-        // dd($data);
-
-        // Buat PDF
-        // SIZE F4
-        $nama_pak = $data['pegawai']['Nama'] . '-' . $data['pegawai']['NIP'] . '-' . 'PAK.pdf';
-        $customF4Paper = array(0, 0, 595.28, 935.43);
-        $pdf = Pdf::loadView('pdf.pak', [
-            "title" => $nama_pak,
-            "pegawai" => "pegawai",
-            "data" => $data, // Kirim data ke view
-        ])->setPaper($customF4Paper, 'portrait')->setWarnings(false);
-
-        // Stream PDF
-        return $pdf->stream($nama_pak);
-    }
 }

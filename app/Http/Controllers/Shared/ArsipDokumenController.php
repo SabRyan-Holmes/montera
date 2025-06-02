@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Shared;
 
+use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArsipDokumenStoreRequest;
 use App\Models\ArsipDokumen;
@@ -15,17 +16,39 @@ class ArsipDokumenController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    { {
-            $user = Auth::user();
-            // dd($user);
-            return Inertia::render('ArsipDokumen/Index', [
-                'title' => 'Arsip Dokumen',
-                'arsipDokumens' => "",
-            ]);
-        }
+
+    protected $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
     }
 
+
+    public function index()
+    {
+        // Untuk sementara ini abaikan dulu
+        // $subTitle = GetSubtitle::getSubtitle(
+        //     request('byStatus'),
+        //     request('byJabatan'),
+        //     request('search')
+        // );
+
+        $arsipDokumen = ArsipDokumen::byUser($this->user)->latest();
+        $folderList = ArsipDokumen::folderListByUser($this->user);
+
+        return Inertia::render('ArsipDokumen/Index', [
+            'title' => 'Arsip Dokumen',
+            'subtitle' => '',
+            'arsipDokumens' => $arsipDokumen ->filter(request()->only('search'))->paginate(10),
+            'folderList' => $folderList,
+            "searchReq" => request('search'),
+
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -39,6 +62,7 @@ class ArsipDokumenController extends Controller
      */
     public function store(ArsipDokumenStoreRequest $request)
     {
+        // dd($request->tanggal_divalidasi);
         $validated = $request->validated();
 
         // Logic Store File PDF Document
@@ -53,6 +77,7 @@ class ArsipDokumenController extends Controller
             Storage::copy($sourcePath, $destinationPath);
             $filePath = 'arsip_dokumen/' . $fileName;
             $validated['file_path'] = $filePath;
+            $validated['size'] = Storage::disk('public')->size($filePath);
         } else {
             abort(404, 'File sumber tidak ditemukan');
         }

@@ -16,11 +16,22 @@ class RiwayatKarirController extends Controller
     /**
      * Display a listing of the resource.
      */
+    protected $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
+
     public function index()
     {
-        $user = Auth::user();
-        $pegawai = Pegawai::where('NIP', $user->nip)->first();
-        $riwayatKarirDiri = RiwayatKarir::where('pegawai_nip', $pegawai->NIP )->latest();
+        $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
+        $riwayatKarirDiri = RiwayatKarir::where('pegawai_nip', $pegawai->NIP)->latest();
+        // dd($riwayatKarirDiri);
 
 
         $subTitle = GetSubtitle::getSubtitle(
@@ -36,9 +47,9 @@ class RiwayatKarirController extends Controller
         return Inertia::render('RiwayatKarir/Index', [
             "title" => "Riwayat Karir & Perubahan Data",
             "subTitle" => $subTitle,
-            "riwayatKarirDiri" => $riwayatKarirDiri,
+            "riwayatKarirDiri" => $riwayatKarirDiri->filter(request(['search']))->paginate(10),
             'riwayatKarirSemua' => 'Semua', //TODO
-            'canValidate' => $user->role == 'Divisi SDM',
+            'canValidate' => $this->user->role == 'Divisi SDM',
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),

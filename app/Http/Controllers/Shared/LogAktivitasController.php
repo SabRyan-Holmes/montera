@@ -18,6 +18,7 @@ class LogAktivitasController extends Controller
     {
         $user = Auth::user();
         $logAktivitas = LogAktivitas::latest();
+        // dd($logAktivitas->paginate(10));
 
         $subTitle = GetSubtitle::getSubtitle(
             request('byStatus'),
@@ -27,7 +28,7 @@ class LogAktivitasController extends Controller
         return Inertia::render('LogAktivitas/Index', [
             "title" => "Log Aktivitas ",
             "subTitle" => $subTitle,
-            "logAktivitas" => LogAktivitas::latest()->paginate(10),
+            "logAktivitas" => $logAktivitas->paginate(10),
             'byRoleReq' => request('byRole'),
             'byJenisReq' => request('byJenis'),
             'searchReq' => request('search'),

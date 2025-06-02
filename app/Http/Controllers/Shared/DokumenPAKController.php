@@ -23,6 +23,16 @@ use Illuminate\Support\Facades\Redirect;
 
 class DokumenPAKController extends Controller
 {
+    protected $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $pegawai = Pegawai::latest();
@@ -102,7 +112,6 @@ class DokumenPAKController extends Controller
     public function preview()
     {
         $data = Session::get('data');
-        $userId = Auth::user()->id;
         $this->cleanAllData($data);
 
         // Buat PDF SIZE F4
@@ -145,7 +154,7 @@ class DokumenPAKController extends Controller
         $validated = [
             "riwayat_pak_id" => $newPAK->id,
             "pegawai_id" => $newPAK->pegawai_id,
-            "user_id" => Auth::user()->id,
+            "user_nip" => $this->user->nip,
         ];
         if (!isset($request->id)) {
             Pengajuan::create($validated);

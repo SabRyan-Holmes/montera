@@ -12,6 +12,7 @@ use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -23,10 +24,24 @@ class PengusulanPAKController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // Ini beneran ga bisa dijadiin public global variabel yang bisa diakses di setiap fungsi di controller ya??
+    protected $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
     public function index()
     {
-        $user = Auth::user();
-        $pengajuan = Pengajuan::latest();
+        $pengusulan_pak = PengusulanPAK::latest();
+
+        if($this->user->role === "Pegawai") {
+            $pengusulan_pak = PengusulanPAK::where('pegawai_nip', $this->user->nip)->latest();
+        }
 
         $subTitle = GetSubtitle::getSubtitle(
             request('byStatus'),
@@ -42,8 +57,8 @@ class PengusulanPAKController extends Controller
         return Inertia::render('PengusulanPAK/Index', [
             "title" => "Pengusulan PAK ",
             "subTitle" => $subTitle,
-            "pengusulanPAK" => PengusulanPAK::latest()->paginate(10),
-            'canValidate' => $user->role == 'Divisi SDM',
+            "pengusulanPAK" => $pengusulan_pak->paginate(10),
+            'canValidate' => $this->user->role == 'Divisi SDM', // TODO:gimana cara agar global user diatas bisa diakses
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),
@@ -56,8 +71,7 @@ class PengusulanPAKController extends Controller
      */
     public function create()
     {
-        $user = Auth::user();
-        $pegawai = Pegawai::where('NIP', $user->nip)->first();
+        $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
         return Inertia::render('PengusulanPAK/Create', [
             'title' => "Tambah Pengusulan PAK",
             'pegawai' => $pegawai
@@ -73,17 +87,27 @@ class PengusulanPAKController extends Controller
 
         if ($request->catatan_pegawai) {
             $new_catatan = Catatan::create([
-                'pegawai_nip' => $request->nip,
-                // 'tipe' => 'PengusulanPAK',
+                'user_nip' => $request->pegawai_nip,
+                'tipe' => 'PengusulanPAK',
                 'isi' => $request->catatan_pegawai,
             ]);
             $validated['catatan_id'] = $new_catatan->id;
         }
 
         if ($request->hasFile('dokumen_pendukung_path')) {
-            // TODO: Bikin logic store dokumen pendukung
-            $fileName = '';
-            $path = '';
+            // TODO: Bikin logic store dokumen pendukung /bisa pdf, png,atau jpg(tergantung yang diupload)
+            // Buat nama file unik
+            $file = $request->file('dokumen_pendukung_path');
+
+            // Dapatkan ekstensi file (otomatis .pdf, .png, dll)
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $request->pegawai_nip . '-Pengusulan-PAK-' . Str::random(10) . '.' . $extension;
+
+            // Simpan file ke storage/public/dokumen_pendukung
+            $path = $file->storeAs('dokumen_pendukung', $fileName, 'public');
+
+            // Simpan path file ke kolom dokumen_pendukung_path
+            $validated['dokumen_pendukung_path'] = $path;
         }
 
         PengusulanPAK::create($validated);
@@ -119,7 +143,8 @@ class PengusulanPAKController extends Controller
      */
     public function destroy(PengusulanPAK $pengusulan_pak)
     {
-        //
+        $pengusulan_pak->delete();
+        return redirect()->back()->with('message', 'Berhasil Membatalkan Pengusulan PAK');
     }
 
     public function approve(Request $request)
@@ -139,12 +164,12 @@ class PengusulanPAKController extends Controller
         // dd($request->all());
         // Store Catatan & The Relationship with Pengusulan & User
         $new_catatan = Catatan::create([
-            'user_id' => Auth::user()->id,
+            'user_nip' => $this->user->nip,
             'isi' => $request->catatan,
         ]);
         PengusulanPAK::find($request->id)->update([
             'status' => 'ditolak',
-            'catatan_sdm_id' => $new_catatan->user_id
+            'catatan_sdm_id' => $new_catatan->id
         ]);
 
         return redirect()->back()->with('message', 'Pengusulan PAK berhasil ditolak');

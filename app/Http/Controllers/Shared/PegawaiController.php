@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Shared;
 
+use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use App\Models\Pegawai;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\PegawaiStoreRequest;
 use App\Http\Requests\UpdatePegawaiRequest;
+use App\Models\RiwayatKarir;
+use App\Services\LogPegawaiChangesService;
 
 class PegawaiController extends Controller
 {
@@ -19,10 +22,11 @@ class PegawaiController extends Controller
         $pegawai = Pegawai::latest();
         $subTitle = "";
 
-        if (request('byDaerah')) {
-            // $category = Pegawai::firstWhere('Daerah', request('byDaerah'));
-            $subTitle = 'Berdasarkan Daerah : ' . request('byDaerah');
-        }
+        $subTitle = GetSubtitle::getSubtitle(
+            request('byStatus'),
+            request('byJabatan'),
+            request('search')
+        );
 
         return Inertia::render('KelolaPegawai/Index', [
             "title" => "Kelola Data Pegawai ",
@@ -50,10 +54,8 @@ class PegawaiController extends Controller
      */
     public function store(PegawaiStoreRequest $request)
     {
-        // dd($request);
         $validated = $request->validated();
         Pegawai::create($validated);
-
         return Redirect::route('divisi-sdm.pegawai.index')->with('message', 'Data Pegawai Berhasil Ditambahkan!');
     }
 
@@ -84,9 +86,13 @@ class PegawaiController extends Controller
      */
     public function update(UpdatePegawaiRequest $request, Pegawai $pegawai)
     {
-        // dd($request);
         $validated = $request->validated();
-        Pegawai::where('id', $pegawai->id)->update($validated);
+
+        $pegawaiOld = $pegawai->toArray(); // ambil data lama sebelum update
+
+        $pegawai->update($validated); // update data
+
+        app(LogPegawaiChangesService::class)->logChanges($pegawaiOld, $validated);
 
         return redirect()->back()->with('message', 'Data Pegawai Berhasil Diupdate!');
     }
@@ -96,7 +102,6 @@ class PegawaiController extends Controller
      */
     public function destroy(Pegawai $pegawai)
     {
-        // dd($pegawai);
         $pegawai->delete();
         return redirect()->back()->with('message', 'Data Pegawai Berhasil DiHapus!');
     }

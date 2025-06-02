@@ -22,9 +22,19 @@ class PengajuanController extends Controller
     /**
      * Display a listing of the resource.
      */
+    protected $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
+
     public function index()
     {
-        $user = Auth::user();
         $pengajuan = Pengajuan::latest();
 
         $subTitle = GetSubtitle::getSubtitle(
@@ -40,14 +50,16 @@ class PengajuanController extends Controller
         $kesimpulan_list = collect($kesimpulan)->pluck('jabatan')->toArray();
 
         // Dapatkan foldername arsip dari user yg login
-        $arsipDokumenByUser = ArsipDokumen::where('user_id', $user->id)->orWhere('pegawai_nip_owner', $user->nip);
+
+        $arsipDokumenByUser = ArsipDokumen::byUser($this->user);
+
         return Inertia::render('Pengajuan/Index', [
             "title" => "Status Pengajuan Terbaru",
             "subTitle" => $subTitle,
             "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
-            'canValidate' => $user->role === 'Pimpinan',
-            'isDivisiSDM' => $user->role === 'Divisi SDM',
-            'isPegawai' => $user->role === 'Pegawai',
+            'canValidate' => $this->user->role === 'Pimpinan',
+            'isDivisiSDM' => $this->user->role === 'Divisi SDM',
+            'isPegawai' => $this->user->role === 'Pegawai',
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),
@@ -74,7 +86,7 @@ class PengajuanController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'user_id' => 'required|integer',
+            'user_nip' => 'required|string',
             'riwayat_pak_id' => 'required|integer',
             'catatan' => 'nullable|string',
         ];
@@ -82,7 +94,7 @@ class PengajuanController extends Controller
 
         if ($request->catatan) {
             $new_catatan = Catatan::create([
-                'user_id' => $request->user_id,
+                'user_nip' => $request->user_nip,
                 'tipe' => 'ProsesPAK',
                 'isi' => $request->catatan,
             ]);

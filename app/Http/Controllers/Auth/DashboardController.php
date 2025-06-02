@@ -20,14 +20,20 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
+
     public function dashboard()
     {
         $user = Auth::user();
-        // dd($user);
+        $session = session();
+
+        // Inisialisasi role dan nip
+        $role = $user?->role ?? $session->get('role');
+        $nip = $user?->nip ?? $session->get('nip');
+
         $dataByRole = null;
         $dataGraph = null;
 
-        if ($user->role == "Divisi SDM" || $user->role == "Pimpinan") {
+        if ($user && ($role == "Divisi SDM" || $role == "Pimpinan")) {
             $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
             $dataGraph = [];
             foreach ($koefisien_per_tahun as $koefisien) {
@@ -43,18 +49,18 @@ class DashboardController extends Controller
             $pegawai_count =  Pegawai::all()->count();
             $pengusulan_count = PengusulanPAK::all()->count();
             $pengajuan_count = Pengajuan::all()->count();
-            $arsip_dokumen_count = ArsipDokumen::where('user_id', $user->id)->count();
+            $arsip_dokumen_count = ArsipDokumen::where('user_nip', $user->nip)->count();
 
             $dataPengusulanGraph = [
-                'Diproses' => PengusulanPAK::where('status', 'diproses' )->count(),
-                'Disetujui' => PengusulanPAK::where('status', 'disetujui' )->count(),
-                'Ditolak' => PengusulanPAK::where('status', 'ditolak' )->count(),
+                'Diproses' => PengusulanPAK::where('status', 'diproses')->count(),
+                'Disetujui' => PengusulanPAK::where('status', 'disetujui')->count(),
+                'Ditolak' => PengusulanPAK::where('status', 'ditolak')->count(),
             ];
 
             $dataPengajuanPAKGraph = [
-                'Diajukan' => Pengajuan::where('status', 'diajukan' )->count(),
-                'Divalidasi' => Pengajuan::where('status', 'divalidasi' )->count(),
-                'Ditolak' => Pengajuan::where('status', 'ditolak' )->count(),
+                'Diajukan' => Pengajuan::where('status', 'diajukan')->count(),
+                'Divalidasi' => Pengajuan::where('status', 'divalidasi')->count(),
+                'Ditolak' => Pengajuan::where('status', 'ditolak')->count(),
             ];
 
             $dataByRole = [
@@ -69,37 +75,38 @@ class DashboardController extends Controller
                 'pengusulanPAKGraph' => $dataPengusulanGraph,
                 'pengajuanPAKGraph' => $dataPengajuanPAKGraph,
             ];
-
-
-
-
         }
 
+
         //  TODO: data for Pegawai Role is Different! Jangan lupa tambahin nanti logikany, kalo lah bisa SSO
-        if ($user->role == "Pegawai") {
+        // Kalo data ny dr SSO dan session ini gimana caranya ngab
+        if ($role == "Pegawai") {
             // NOTE: Dengan asumsi login dari SSO, Tambah logika jika tidak ditemukan nip sama dengan databse, gagal login
-            $pegawai= Pegawai::where('NIP', $user->nip)->first(); //find or Fail
-            $pengusulanPAK = PengusulanPAK::where('pegawai_nip', $pegawai->NIP);
-            $prosesPAK = Pengajuan::whereHas('riwayat_pak', function ($query) use ($pegawai) {
-                $query->where('pegawai_id', $pegawai->id);
-            });
+
+            $pengusulanPAK = PengusulanPAK::byPegawai($nip);
+
+            $pegawai = Pegawai::where('NIP', $nip)->first(); //find or Fail
+            $prosesPAK = Pengajuan::byPegawaiId($pegawai->id);
 
             $pak_count = $prosesPAK->where('status', 'divalidasi')->count();
-            $arsip_dokumen_count = ArsipDokumen::where('pegawai_nip_owner', $pegawai->nip)->count();
+            $arsip_dokumen_count = ArsipDokumen::where('user_nip', $nip)->count();
 
             $dataPengusulanPAKGraph = [
-                'Diproses' => $pengusulanPAK->where('status', 'diproses')->count(),
-                'Disetujui' => $pengusulanPAK->where('status', 'disetujui')->count(),
-                'Ditolak' => $pengusulanPAK->where('status', 'ditolak')->count(),
+                'Diproses' => PengusulanPAK::byPegawaiAndStatus($nip, 'diproses')->count(),
+                'Disetujui' => PengusulanPAK::byPegawaiAndStatus($nip, 'disetujui')->count(),
+                'Ditolak' => PengusulanPAK::byPegawaiAndStatus($nip, 'ditolak')->count(),
             ];
+
+            // Kenapa setelah kode diatas $dataPengusulanPAKGraph count ini malah jadi 0 ?
+
 
             // Pengajuan/Proses PAK
             $dataProsesPAKGraph = [
-                'Diproses' => $prosesPAK->where('status', 'diajukan' )->count(),
-                'Divalidasi' => $prosesPAK->where('status', 'divalidasi' )->count(),
-                'Ditolak' => $prosesPAK->where('status', 'ditolak' )->count(),
+                'Diajukan' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'diajukan')->count(),
+                'Divalidasi' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'divalidasi')->count(),
+                'Ditolak' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'ditolak')->count(),
             ];
-
+            // dd($pengusulanPAK->count);
             $dataByRole = [
                 'PAKCount' => $pak_count,
                 'pengusulanPAKCount' => $pengusulanPAK->count(),
@@ -108,8 +115,6 @@ class DashboardController extends Controller
                 'pengusulanPAKGraph' => $dataPengusulanPAKGraph,
                 'prosesPAKGraph' => $dataProsesPAKGraph,
             ];
-
-
         }
 
         return Inertia::render('Dashboard/AuthDashboard', [
