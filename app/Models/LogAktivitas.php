@@ -9,16 +9,16 @@ class LogAktivitas extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['pegawai'];
+    protected $with = ['pegawai', 'user'];
 
 
     public function user()
     {
-        return $this->belongsTo(User::class); // Tambahkan parameter ketiga
+        return $this->belongsTo(User::class, 'user_nip'); // Tambahkan parameter ketiga
     }
 
     public function pegawai()
     {
-        return $this->belongsTo(Pegawai::class, 'nip', 'NIP'); // Tambahkan parameter ketiga
+        return $this->belongsTo(Pegawai::class, 'pegawai_nip', 'NIP'); // Tambahkan parameter ketiga
     }
 }

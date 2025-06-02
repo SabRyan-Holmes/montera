@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,6 +35,19 @@ class PengusulanPAK extends Model
         return $this->belongsTo(Catatan::class, 'catatan_sdm_id',); // Tambahkan parameter ketiga
     }
 
+    public static function byPegawai($nip)
+    {
+        return static::where(function ($query) use ($nip) {
+            $query->where('pegawai_nip', $nip)->orWhere('pegawai_nip', 'like', '%' . $nip . '%') ;
+        });
+    }
+
+    public static function byPegawaiAndStatus($nip, $status)
+    {
+        return static::byPegawai($nip)
+            ->where('status', $status);
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         // Search By Nama & NIP on Pegawai table
@@ -61,5 +75,39 @@ class PengusulanPAK extends Model
             fn($query, $byStatus) =>
             $query->where('status', 'like', '%' . $byStatus . '%')
         );
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($model) {
+            ActivityLogger::log(
+                'Mengusulkan Penilaian PAK ',
+                'Pegawai dengan NIP: '. $model->pegawai_nip . ' mengusulkan penilaian PAK',
+                get_class($model),
+                $model->id,
+                $model->pegawai_nip ?? null
+            );
+        });
+
+        static::updated(function ($model) {
+            ActivityLogger::log(
+                'Memperbarui Pengusulan PAK' ,
+                'Data dalam pengusulan PAK diperbarui',
+                get_class($model),
+                $model->id,
+                $model->pegawai_nip ?? null
+            );
+        });
+
+        // . class_basename($model)
+        static::deleted(function ($model) {
+            ActivityLogger::log(
+                'Membatalkan Pengusulan PAK ' ,
+                'Pegawai dengan NIP: '. $model->pegawai_nip . ' membatalkan pengusulan PAK',
+                get_class($model),
+                $model->id,
+                $model->pegawai_nip ?? null
+            );
+        });
     }
 }
