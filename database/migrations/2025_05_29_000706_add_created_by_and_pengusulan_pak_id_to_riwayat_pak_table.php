@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::table('riwayat_pak', function (Blueprint $table) {
             // Tempatkan kolom baru sebelum 'pegawai_id'
-            $table->foreignId('created_by')
-                ->constrained('users')
-                ->before('pegawai_id');
+            $table->string('created_by');
+            $table->foreign('created_by')->references('nip')->on('users');
 
             $table->foreignId('pengusulan_pak_id')
                 ->nullable()

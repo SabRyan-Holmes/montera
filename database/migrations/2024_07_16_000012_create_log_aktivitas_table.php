@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('log_aktivitas', function (Blueprint $table) {
             $table->id();
-
-            // Jika user login via User model
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->string('pegawai_nip', 18)->nullable(); // Sesuaikan panjang NIP sesuai kebutuhan
+            // Jika user login via tabel User(Divisi SDM & Pimpinan)
+            $table->string('user_nip', 18)->nullable();
+            $table->foreign('user_nip')->references('nip')->on('users')->onDelete('cascade'); //updated 2 Juni 2025 - fk berdasarkan id -> nip
+            $table->string('pegawai_nip', 18)->nullable(); //jika pegawai dari SSO
             $table->foreign('pegawai_nip')->references('NIP')->on('pegawais')->onDelete('cascade');
-            $table->string('aktivitas'); // Misal: "Mengunduh File PAK"
-            $table->text('keterangan')->nullable(); // Catatan tambahan jika ada
+            $table->string('aktivitas');
+            $table->text('keterangan')->nullable();
             $table->string('entity_type')->nullable();
             $table->unsignedBigInteger('entity_id')->nullable();
             $table->ipAddress('ip_address')->nullable();

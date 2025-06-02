@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('aturan_pak', function (Blueprint $table) {
             $table->id();
-            $table->string('name');           // ex: Penanda Tangan, Koefisien Pertahun
-            $table->json('value');            // bisa array atau associative array
-            $table->json('default_config')->nullable(); // info pointer default (index atau map key->index)
+            $table->string('name');
+            $table->json('value');
+            $table->json('default_config')->nullable();
             $table->timestamps();
         });
     }

@@ -12,6 +12,7 @@ return new class extends Migration
     // Update tgl 10 April 2025:tambahin field Gelar Tambahan di tabel pegawai
     public function up()
     {
+        // NOTE UNUSED karna sudah pernah dimigrasi di hostingan
         // Schema::table('pegawais', function (Blueprint $table) {
         //     $table->string('Gelar Tambahan')->nullable()->after('Daerah'); // atau after kolom yang kamu mau
         // });

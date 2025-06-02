@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('riwayat_pak', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            // NOTE: Uncomment ini jika di migrasi ulang riwayat_pak
-            // $table->foreignId('created_by')->constrained('users'); //updated 24 Mei 2025
+            // NOTE: Uncomment ini jika di migrasi ulang riwayat_pak, atau pake migrasi add created_by& pengusulan_pak_id
+            // $table->string('created_by', 18);  //updated 24 Mei 2025 // Sesuaikan panjang NIP sesuai kebutuhan
+            // $table->foreign('created_by')->references('nip')->on('users');//updated 2 Juni 2025(berdasarkan nip skrg instead of id)
             // $table->foreignId('pengusulan_pak_id')->nullable()->constrained('pengusulan_pak'); //updated 29 Mei 2025
             $table->foreignId('pegawai_id')->constrained('pegawais')->onDelete('cascade');
             $table->string('nama'); //Penanda Tangan

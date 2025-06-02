@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('catatans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');
-            $table->string('pegawai_nip', 18)->nullable(); // Catatn oleh pegawai
-            $table->foreign('pegawai_nip')->references('NIP')->on('pegawais')->onDelete('cascade');
-
+            $table->string('user_nip', 18); // updated tgl 3 Juni 2025 - dk usah pake foreign key lg
             $table->enum('tipe', [
                 'PengusulanPAK',
                 'ProsesPAK',

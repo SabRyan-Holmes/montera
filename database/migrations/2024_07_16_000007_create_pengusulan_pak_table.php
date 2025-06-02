@@ -16,7 +16,8 @@ return new class extends Migration
             // Relasi dengan data pegawai (menggunakan NIP)
             $table->string('pegawai_nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
             $table->foreign('pegawai_nip')->references('NIP')->on('pegawais')->onDelete('cascade');
-
+            $table->string('approved_by', 18)->nullable(); // Sesuaikan panjang NIP sesuai kebutuhan
+            $table->foreign('approved_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-berdasarkan nip skrg
             // Data utama pengajuan
             $table->string('jabatan');
             $table->string('tujuan');
@@ -42,7 +43,7 @@ return new class extends Migration
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_diperbaiki')->nullable();
             $table->datetime('tanggal_disetujui')->nullable();
-            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

@@ -14,17 +14,16 @@ D<?php
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->string('email')->unique();
                 $table->string('nip')->unique();
+                $table->string('email')->nullable();
                 $table->enum('role', ['Divisi SDM', 'Pimpinan', 'Pegawai'])->default('Pegawai');
                 $table->string('unit_kerja')->default('BPS Provinsi Jambi');
                 $table->string('profile_pic_path')->nullable();
-                $table->json('jumlah')->nullable() ;
                 $table->timestamp('email_verified_at')->nullable();
                 $table->string('password');
                 $table->rememberToken();
                 $table->timestamps();
-        });
+            });
 
             Schema::create('password_reset_tokens', function (Blueprint $table) {
                 $table->string('email')->primary();

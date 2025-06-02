@@ -15,12 +15,14 @@ return new class extends Migration
     {
         Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('user_nip', 18);
+            $table->foreign('user_nip')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->foreignId('riwayat_pak_id')->constrained('riwayat_pak')->onDelete('cascade');
             $table->foreignId('catatan_id')->nullable()->constrained('catatans')->onDelete('cascade');
+            $table->string('validated_by', 18);
+            $table->foreign('validated_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             $table->string("approved_pak_path")->nullable()->comment('penyimpanan dokumen sementara setelah di validasi/ditandatangani'); //for store validated/approved PAK
-            $table->foreignId('validated_by')->nullable()->constrained('users')->nullable(); //validated by ny tambahin ga?
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_diperbaiki')->nullable();
             $table->datetime("tanggal_divalidasi")->nullable();
