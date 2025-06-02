@@ -23,7 +23,6 @@ class UpdatePegawaiRequest extends FormRequest
             'Unit Kerja' => 'required|string|max:100',
             'Daerah' => 'required|string|max:40',
             'Gelar Tambahan' => 'nullable|string|max:40',
-
         ];
     }
 

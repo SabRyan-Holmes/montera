@@ -9,8 +9,8 @@ export default function RadialChart({ title, data, chartId }) {
             document.getElementById(chartId) &&
             typeof ApexCharts !== "undefined"
         ) {
-            console.log("data", data);
-            console.log("series", seriesData);
+            // console.log("data", data);
+            // console.log("series", seriesData);
             const chart = new ApexCharts(
                 document.querySelector(`#${chartId}`),
                 getChartOptions({ seriesData, labels })

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class RiwayatKarir extends Model
 {
@@ -14,12 +15,22 @@ class RiwayatKarir extends Model
 
     public function pegawai()
     {
-        return $this->belongsTo(Pegawai::class, 'NIP', 'nip');
+        return $this->belongsTo(Pegawai::class, 'pegawai_nip', 'NIP');
     }
 
     public function updated_by()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function scopeFilter(Builder $query, array $filters): void
+    {
+        // Search By Nama & NIP
+        $query->when(
+            $filters['search'] ?? false,
+            fn($query, $search) =>
+            $query->where('jenis_perubahan', 'like', '%' . $search . '%')
+                // ->orWhere('NIP', 'like', '%' . $search . '%')
+        );
+    }
 }

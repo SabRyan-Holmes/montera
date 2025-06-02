@@ -192,7 +192,6 @@ export default function Index({
                             {pegawais.data?.map((pegawai, i) => (
                                 <tr
                                     key={i}
-                                    className="group/item hover:bg-secondary/35"
                                 >
                                     <td className="text-center">{i + 1}</td>
                                     <td>
@@ -255,9 +254,8 @@ export default function Index({
                                                     "divisi-sdm.pegawai.show",
                                                     pegawai["NIP"]
                                                 )}
-                                                className="action-btn group/button group-hover/item:bg-hijau text-hijau"
-                                            >
-                                                <FaEye className="scale-125 fill-hijau/75 group-hover/item:fill-white" />
+                                                className="action-btn group/button action-btn-success "                                            >
+                                                <FaEye className="scale-125 group-hover/button:fill-white " />
                                             </Link>
                                             <TooltipHover
                                                 message={"Lihat Data"}
@@ -273,9 +271,9 @@ export default function Index({
                                                     "divisi-sdm.pegawai.edit",
                                                     pegawai["NIP"]
                                                 )}
-                                                className="action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70"
+                                                className="action-btn group/button action-btn-secondary"
                                             >
-                                                <FaEdit className=" fill-secondary group-hover/item:fill-white" />
+                                                <FaEdit className=" fill-secondary group-hover/button:fill-white" />
                                             </Link>
                                             <TooltipHover
                                                 message={"Edit Data"}
@@ -288,9 +286,9 @@ export default function Index({
                                                 onClick={() =>
                                                     handleDelete(pegawai["NIP"])
                                                 }
-                                                className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-110 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                className="action-btn action-btn-warning group/button"
                                             >
-                                                <FaTrash className="scale-125 fill-red-500 group-hover/item:fill-white" />
+                                                <FaTrash className="scale-125 group-hover/button:fill-white" />
                                             </button>
                                             <TooltipHover
                                                 message={"Hapus Data"}

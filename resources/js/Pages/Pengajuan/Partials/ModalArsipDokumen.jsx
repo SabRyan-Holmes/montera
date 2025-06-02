@@ -26,8 +26,7 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
 
     const { data, setData, reset, post, processing, errors,  } =
         useForm({
-            user_id: auth.user.id,
-            pegawai_nip_owner: null,
+            user_nip: auth.user.nip ?? null,
             nip_pak: pengajuan.riwayat_pak.pegawai['NIP'],
             folder_name: '',
             title: fileName, //default nama PAK

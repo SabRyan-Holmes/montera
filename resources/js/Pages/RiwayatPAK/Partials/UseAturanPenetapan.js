@@ -8,7 +8,7 @@ export default function UseAturanPenetapan(aturanPAK) {
     const [initialized, setInitialized] = useState(false);
     const { data, setData, post, processing, errors, reset, setDefaults } =
         useForm({
-            created_by: auth.user.id,
+            created_by: auth.user.nip,
             pengusulan_pak_id: isByPengusulan ? pengusulan.id : null,
             // Kalo Edit Ini langsungg terisi dengan useEffect
             id: null,

@@ -105,7 +105,7 @@ export default function Index({
         type: "",
         // Kalo Dari SDM
         riwayat_pak_id: "",
-        user_id: auth.user.id,
+        user_nip: auth.user.nip ?? null,
     });
     // console.log("subtitle");
     // console.log(subTitle);
@@ -315,10 +315,10 @@ export default function Index({
                                                                     type: "Catatan Pengajuan Divisi SDM",
                                                                     riwayat_pak_id:
                                                                         pak.id,
-                                                                    user_id:
+                                                                    user_nip:
                                                                         auth
                                                                             .user
-                                                                            .id,
+                                                                            .nip,
                                                                 });
                                                                 setIsPopUpOpen(
                                                                     true
@@ -328,24 +328,6 @@ export default function Index({
                                                         >
                                                             <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
                                                         </button>
-                                                        {/* <Link
-                                                            as="button"
-                                                            href={route(
-                                                                "divisi-sdm.pengajuan.store"
-                                                            )}
-                                                            data={{
-                                                                riwayat_pak_id:
-                                                                    pak.id,
-                                                                user_id:
-                                                                    auth.user
-                                                                        .id,
-                                                            }}
-                                                            method="post"
-                                                            className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
-                                                        >
-                                                            <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
-                                                        </Link> */}
-
                                                         <TooltipHover
                                                             message={
                                                                 "Ajukan ke Pimpinan"

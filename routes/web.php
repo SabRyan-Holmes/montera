@@ -16,12 +16,18 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::get('/', function () {
-    return Inertia::render('Auth/Login');
-})->middleware('guest');
+// Route::get('/', function () {
+//     return Inertia::render('Auth/Login');
+// })->middleware('guest');
 
-Route::get('/pegawai/login', [SSOController::class, 'showLoginForm'])->name('pegawai.login');
-Route::post('/pegawai/login', [SSOController::class, 'loginpegawai']);
+// Login SSO
+Route::middleware('guest')->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('Auth/Login');
+    });
+    Route::get('/sso-login', [SSOController::class, 'showLoginForm'])->name('sso-login.form');
+    Route::post('/sso-login', [SSOController::class, 'login'])->name('sso-login');
+});
 
 // <============================================================ All Actor ============================================================>
 
@@ -31,7 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['authOrSSO'])->name('dashboard');
 
 // Preview PAK PDF
 Route::prefix('/pak')->name('pak.')->group(function () {
@@ -138,7 +144,7 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
 
 
 // <============================================================ Pegawai ============================================================>
-Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
+Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(function () {
     // Pengusulan(CR)
     Route::resource('pengusulan-pak', PengusulanPAKController::class);
 
@@ -153,7 +159,6 @@ Route::middleware(['auth', 'pegawai'])->prefix('pegawai')->name('pegawai.')->gro
 
     // Arsip Dokumen
     Route::resource('arsip-dokumen', ArsipDokumenController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
-
 
     // Panduan/Bantuan
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv

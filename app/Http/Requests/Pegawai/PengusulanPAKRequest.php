@@ -38,7 +38,7 @@ class PengusulanPAKRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'jabatan' => 'string|max:40',
+            'jabatan' => 'string|max:150',
             'tujuan' => 'string|max:150',
             'periode_mulai' => 'required|date_format:Y-m-d',
             'periode_berakhir' => 'required|date_format:Y-m-d|after_or_equal:periode_mulai',

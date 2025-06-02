@@ -171,6 +171,7 @@ export default function Index({
     };
     // console.log("activeModalId");
     // console.log(activeModalId);
+    const [expandedRows, setExpandedRows] = useState({});
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -285,9 +286,10 @@ export default function Index({
                                     {pengusulanPAK.data?.map((data, i) => (
                                         <tr className="font-semibold text-center">
                                             <td>1</td>
-                                            <td>
-                                                <span className="block">
-                                                    {data.pegawai["Nama"]}
+                                            <td className="">
+                                                {/* TODO: Bikin bisa expanded nanti */}
+                                                <span className="block text-ellipsis text-nowrap">
+                                                    {data.pegawai["Nama"]}{" "}
                                                     {data.pegawai[
                                                         "Gelar Tambahan"
                                                     ] ?? ""}
@@ -559,8 +561,9 @@ export default function Index({
                                                         <div className="relative inline-flex group">
                                                             <Link
                                                                 as="button"
+                                                                method="delete"
                                                                 href={route(
-                                                                    "pegawai.pengusulan-pak.edit",
+                                                                    "pegawai.pengusulan-pak.destroy",
                                                                     data.id
                                                                 )}
                                                                 disabled={

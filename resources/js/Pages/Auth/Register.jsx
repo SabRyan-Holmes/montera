@@ -30,6 +30,31 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
+
+            <div className="flex items-center justify-start gap-2">
+                <a href="/">
+                    <ApplicationLogo className="w-8 h-8 mx-auto text-gray-500 fill-current aspect-square " />
+                </a>
+
+                <strong className="text-sm italic font-bold text-slate-600">
+                    BPS Provinsi Jambi
+                </strong>
+            </div>
+
+            <div className="flex-col justify-center w-full mt-5">
+                <strong className="flex justify-center mb-1 text-2xl tracking-wider uppercase text-slate-500 text-gradient bg-gradient-to-br from-primary/80 via-slate-500 to-secondary/70">
+                    SIPACAK
+                </strong>
+
+                <strong className="block -mt-1 text-lg font-semibold text-center text-slate-600">
+                    Sistem Penetapan & Pencetakan Angka Kredit
+                </strong>
+            </div>
+
+            <p className="mt-5 text-sm font-semibold text-center text-slate-600/90">
+                Silahkan lakukan validasi SSO   menggunakan akun anda
+            </p>
+
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
@@ -38,7 +63,7 @@ export default function Register() {
                         id="name"
                         name="name"
                         value={data.name}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="name"
                         isFocused={true}
                         onChange={(e) => setData('name', e.target.value)}
@@ -56,7 +81,7 @@ export default function Register() {
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="username"
                         onChange={(e) => setData('email', e.target.value)}
                         required
@@ -73,7 +98,7 @@ export default function Register() {
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
                         required
@@ -90,7 +115,7 @@ export default function Register() {
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="new-password"
                         onChange={(e) => setData('password_confirmation', e.target.value)}
                         required
@@ -102,7 +127,7 @@ export default function Register() {
                 <div className="flex items-center justify-end mt-4">
                     <Link
                         href={route('login')}
-                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        className="text-sm text-gray-600 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
                         Already registered?
                     </Link>

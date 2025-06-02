@@ -88,6 +88,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
     const submit = (e) => {
         e.preventDefault();
         post(route("pegawai.pengusulan-pak.store"), {
+            forceFormData: true,
             onSuccess: () => {
                 console.log("berhasil");
             },
@@ -95,6 +96,31 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
     };
 
     const [minPeriode, setMinPeriode] = useState("");
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const validTypes = ["application/pdf", "image/jpeg", "image/png"];
+            const fileType = file.type;
+
+            if (!validTypes.includes(fileType)) {
+                alert("Hanya file PDF, JPG, atau PNG yang diizinkan");
+                e.target.value = ""; // Reset input file
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                // 2MB
+                alert("Ukuran file maksimal 2MB");
+                e.target.value = "";
+                return;
+            }
+
+            // if (onChange) {
+            //     onChange(e); // Panggil prop onChange jika ada
+            // }
+            setData('dokumen_pendukung_path', file)
+        }
+    };
 
     // console.log("isi errors", errors);
     console.log("isi data", data);
@@ -210,7 +236,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                             defaultValue={data.jabatan}
                                             isFocused={true}
                                             placeholder="Masukkan jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
-                                            maxLength={100}
+                                            maxLength={200}
                                             onChange={(e) =>
                                                 setData(
                                                     "jabatan",
@@ -446,6 +472,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                         <InputLabel
                                             className="text-lg"
                                             forName="dokumen_pendukung_path"
+                                            htmlFor="dokumen_pendukung_path"
                                             value="Dokumen Pendukung"
                                         />
                                     </td>
@@ -455,7 +482,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                                 div
                                                 className="relative inline "
                                             >
-                                                <FileInput name="dokumen_pendukung_path" />
+                                                <FileInput id="dokumen_pendukung_path" name="dokumen_pendukung_path" onChange={handleFileChange} />
                                                 <span className="mt-2 badge-optional">
                                                     Opsional
                                                 </span>

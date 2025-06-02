@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { MdPersonSearch } from "react-icons/md";
 import { InputLabel, PrimaryButton } from "@/Components";
+import moment from "moment/min/moment-with-locales";
+
 export default function Index({
     auth,
     logAktivitas,
@@ -17,6 +19,10 @@ export default function Index({
     const [search, setSearch] = useState(initialSearch);
     const [byRole, setByRole] = useState(initialRole);
     const [byJenis, setByJenis] = useState(initialJenis);
+    const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
+    moment.locale("id");
+
+    console.warn(logAktivitas)
 
     // ANCHOR
     return (
@@ -127,7 +133,11 @@ export default function Index({
                                         </span>
                                     </th>
 
-                                    <th scope="col" width="60%">
+                                    <th
+                                        scope="col"
+                                        width="60%"
+                                        className="text-center rounded-tr-xl"
+                                    >
                                         <span className="flex justify-center">
                                             Keterangan Aktivitas
                                         </span>
@@ -135,23 +145,40 @@ export default function Index({
                                 </tr>
                             </thead>
                             <tbody>
-                                {logAktivitas.data?.map((pengajuan, i) => (
+                                {logAktivitas.data?.map((data, i) => (
                                     <tr
                                         role="list"
                                         key={i}
                                         className="group/item hover:bg-secondary/35"
                                     >
                                         <td className="text-center">{i + 1}</td>
-                                        <td>{logAktivitas.created_at}</td>
                                         <td>
-                                            <span className="block">
-                                                {"logAktivitas.pegawai.Nama"}
+                                            <span>
+                                                {moment(data.created_at).format(
+                                                    "LL"
+                                                )}
                                             </span>
-                                            <span className="block ">
-                                                {"logAktivitas.pegawai.NIP"}
+                                            <span className="block text-xs text-nowrap">
+                                                {moment(
+                                                    data.created_at
+                                                ).fromNow()}
                                             </span>
                                         </td>
-                                        <td
+                                        <td className="relative group">
+                                            {/* Logic menampilkan user role Divisi SDM/Pimpinan dengan Pegawai  */}
+                                            <span className="block text-nowrap">
+                                                {data.user?.name ?? data.pegawai.Nama}
+                                            </span>
+                                            <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                                {data.user?.nip ?? data.pegawai.NIP}
+                                            </span>
+                                            <span className="badge-base">
+                                                {data.user?.role ?? "Pegawai"}
+                                            </span>
+                                        </td>
+                                        <td>{data.aktivitas}</td>
+                                        <td>{data.keterangan}</td>
+                                        {/* <td
                                             className="relative group cursor-pointer max-w-[300px] text-xs"
                                             onClick={() =>
                                                 setExpandedRows((prev) => ({
@@ -161,7 +188,6 @@ export default function Index({
                                                 }))
                                             }
                                         >
-                                            {/* Konten teks */}
                                             <span>
                                                 {expandedRows[logAktivitas.id]
                                                     ? logAktivitas["keterangan"]
@@ -175,18 +201,16 @@ export default function Index({
                                                       ]}
                                             </span>
 
-                                            {/* Tooltip bubble */}
                                             {!expandedRows[logAktivitas.id] && (
                                                 <div
                                                     className="absolute z-[999] w-20 px-3 py-1 mt-2 text-xs text-white transition-opacity duration-200
                                                 -translate-x-1/2 bg-accent rounded shadow-lg opacity-0 pointer-events-none left-1/2 top-full group-hover:opacity-100"
                                                 >
                                                     Klik untuk tampilkan lengkap
-                                                    {/* Segitiga bawah tooltip */}
                                                     <div className="absolute w-2 h-2 rotate-45 -translate-x-1/2 bg-accent -top-1 left-1/2"></div>
                                                 </div>
                                             )}
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 ))}
                             </tbody>

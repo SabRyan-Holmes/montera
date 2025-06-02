@@ -22,7 +22,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengajuan.id,
-            validated_by: auth.user.id,
+            validated_by: auth.user.nip,
             signature: "", // nanti diisi base64 image
             signatureType: "",
         });

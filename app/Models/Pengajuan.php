@@ -20,6 +20,20 @@ class Pengajuan extends Model
 
     }
 
+    public static function byPegawaiId($pegawaiId)
+    {
+        return static::whereHas('riwayat_pak', function ($query) use ($pegawaiId) {
+            $query->where('pegawai_id', $pegawaiId);
+        });
+    }
+
+
+    public static function byPegawaiIdAndStatus($id, $status)
+    {
+        return static::byPegawaiId($id)
+            ->where('status', $status);
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         // Search By Nama & NIP on Pegawai table

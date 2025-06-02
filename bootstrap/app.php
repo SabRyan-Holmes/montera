@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ])->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
+            'authOrSSO' => \App\Http\Middleware\AuthOrSSO::class,
             'pegawai' => \App\Http\Middleware\Pegawai::class,
             'Divisi SDM' => \App\Http\Middleware\DivisiSDM::class,
             'pimpinan' => \App\Http\Middleware\Pimpinan::class,
@@ -26,5 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+
+    })// 👉 Tambahkan ini untuk menggunakan Console Kernel buatanmu
+    // ->withConsoleKernel(\App\Console\Kernel::class)
+    ->create();

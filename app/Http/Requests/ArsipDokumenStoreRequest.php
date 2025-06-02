@@ -22,12 +22,12 @@ class ArsipDokumenStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'nullable|integer',
-            'pegawai_nip_owner' => 'nullable|string',
+            'user_nip' => 'nullable|string',
             'nip_pak' => 'required|string',
             'folder_name' => 'required|string|max:70',
             'title' => 'required|string|max:150',
-            'approved_pak_path' => 'required|string|max:150'
+            'approved_pak_path' => 'required|string|max:150',
+            'tanggal_divalidasi' => 'required|date'
         ];
     }
 }

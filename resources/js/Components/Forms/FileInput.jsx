@@ -1,30 +1,6 @@
 import React from "react";
 
-export default function FileInput({ name, type = "file" }) {
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const validTypes = ["application/pdf", "image/jpeg", "image/png"];
-            const fileType = file.type;
-
-            if (!validTypes.includes(fileType)) {
-                alert("Hanya file PDF, JPG, atau PNG yang diizinkan");
-                e.target.value = ""; // Reset input file
-                return;
-            }
-
-            if (file.size > 2 * 1024 * 1024) {
-                // 2MB
-                alert("Ukuran file maksimal 2MB");
-                e.target.value = "";
-                return;
-            }
-
-            if (onChange) {
-                onChange(e); // Panggil prop onChange jika ada
-            }
-        }
-    };
+export default function FileInput({ name, type = "file",  ...props }) {
 
     return (
         <div className="flex items-center justify-center w-full">
@@ -59,10 +35,10 @@ export default function FileInput({ name, type = "file" }) {
                     </p>
                 </div>
                 <input
+                    {...props}
                     id={name}
                     type={type}
                     accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileChange}
                     name={name}
                     className="hidden"
                 />

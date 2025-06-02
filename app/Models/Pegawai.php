@@ -31,8 +31,6 @@ class Pegawai extends Model
                 ->orWhere('NIP', 'like', '%' . $search . '%')
         );
 
-
-
         // Berdasarkan Jabatan
         $query->when(
             $filters['byJabatan'] ?? false,
