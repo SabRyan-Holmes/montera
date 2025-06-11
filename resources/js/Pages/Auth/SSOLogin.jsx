@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
 import {
     ApplicationLogo,
@@ -10,25 +10,53 @@ import {
     SecondaryButton,
 } from "@/Components";
 import GuestLayout from "@/Layouts/GuestLayout";
+import { ReCAPTCHA } from "react-google-recaptcha";
 
 export default function SSOLogin({ status, canAddPegawai }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         username: "",
         password: "",
+        captcha: "", // tambahkan ini
         nip: "",
         remember: false,
     });
 
     useEffect(() => {
+        console.log("recaptchaRef.current", recaptchaRef.current);
+
+        console.log(import.meta.env.VITE_RECAPTCHA_SITE_KEY)
         return () => {
             reset("password");
         };
     }, []);
 
-    const submit = (e) => {
+    const recaptchaRef = useRef();
+
+    const submit = async (e) => {
         e.preventDefault();
-        post(route("sso-login"));
+
+        if (!recaptchaRef.current || !recaptchaRef.current.executeAsync) {
+            alert("reCAPTCHA belum siap.");
+            return;
+        }
+
+        try {
+            const token = await recaptchaRef.current.executeAsync();
+            console.log("Token dari Recaptcha:", token);
+
+            post(route("sso-login"), {
+                ...data,
+                captcha: token,
+            });
+
+            recaptchaRef.current.reset();
+        } catch (error) {
+            console.error("Gagal mendapatkan token:", error);
+            alert("Gagal mendapatkan token reCAPTCHA.");
+        }
     };
+
+
 
     useEffect(() => {
         const savedNip = localStorage.getItem("nip");
@@ -101,6 +129,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
                             message={errors.username}
                             className="mt-2"
                         />
+                        <InputError message={errors.captcha} className="mt-2" />
                     </fieldset>
 
                     <fieldset className="mt-3">
@@ -124,6 +153,13 @@ export default function SSOLogin({ status, canAddPegawai }) {
                             className="mt-2"
                         />
                     </fieldset>
+                    <div className="mt-3">
+                        <ReCAPTCHA
+                            ref={recaptchaRef}
+                            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                            size="normal" // agar otomatis
+                        />
+                    </div>
 
                     <fieldset className="mt-3">
                         <InputLabel htmlFor="nip" value="NIP" />
@@ -166,7 +202,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
                                 NIP pada Sistem Tidak Ditemukan?
                             </Link>
                         )}
-                        <PrimaryButton className="ms-4" disabled={processing}>
+                        <PrimaryButton type="submit" className="ms-4" disabled={processing}>
                             Masuk
                         </PrimaryButton>
                     </div>

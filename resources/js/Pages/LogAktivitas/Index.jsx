@@ -24,6 +24,12 @@ export default function Index({
 
     console.warn(logAktivitas)
 
+    const styleByRole= {
+        'Divisi SDM' : 'badge-xs-primary',
+        'Pimpinan' : 'badge-xs-success',
+        'Pegawai' : 'badge-xs-secondary',
+    }
+
     // ANCHOR
     return (
         <Authenticated user={auth.user} title={title}>
@@ -169,10 +175,10 @@ export default function Index({
                                             <span className="block text-nowrap">
                                                 {data.user?.name ?? data.pegawai.Nama}
                                             </span>
-                                            <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                            <span className="block p-1 mx-auto mt-1 font-medium round ed-md w-fit bg-primary/10">
                                                 {data.user?.nip ?? data.pegawai.NIP}
                                             </span>
-                                            <span className="badge-base">
+                                            <span className={styleByRole[data.user?.role ?? "Pegawai"]}>
                                                 {data.user?.role ?? "Pegawai"}
                                             </span>
                                         </td>

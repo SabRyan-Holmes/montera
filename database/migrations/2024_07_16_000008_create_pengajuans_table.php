@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('user_nip')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->foreignId('riwayat_pak_id')->constrained('riwayat_pak')->onDelete('cascade');
             $table->foreignId('catatan_id')->nullable()->constrained('catatans')->onDelete('cascade');
-            $table->string('validated_by', 18);
+            $table->string('validated_by', 18)->nullable();
             $table->foreign('validated_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             $table->string("approved_pak_path")->nullable()->comment('penyimpanan dokumen sementara setelah di validasi/ditandatangani'); //for store validated/approved PAK

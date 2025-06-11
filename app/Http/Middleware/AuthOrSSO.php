@@ -19,7 +19,7 @@ class AuthOrSSO
         // 1. Kalau user login biasa (Auth) dan role-nya Pimpinan atau SDM
         if (Auth::check()) {
             $role = Auth::user()->role;
-            if (in_array($role, ['Divisi SDM', 'Pimpinan'])) {
+            if (in_array($role, ['Divisi SDM', 'Pimpinan', 'Pegawai'])) {
                 return $next($request);
             }
         }

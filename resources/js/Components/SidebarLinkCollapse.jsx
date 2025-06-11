@@ -9,7 +9,7 @@ export default function SidebarLinkCollapse({ children, submenu }) {
     return (
         <li className="mx-2 active:text-primary">
             <details open={isAnyActive}>
-                <summary className="font-bold text-white cursor-pointer">{children}</summary>
+                <summary className="text-base font-bold text-white cursor-pointer">{children}</summary>
                 <ul>
                     {submenu.map((item, i) => (
                         <SidebarLink

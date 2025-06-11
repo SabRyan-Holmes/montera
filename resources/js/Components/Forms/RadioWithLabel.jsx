@@ -1,10 +1,12 @@
 import React from "react";
 import { InputLabelCustom } from "..";
+import { usePage } from "@inertiajs/react";
 
 export default function RadioWithLabel({ name, value, radioValue, ...props }) {
     // Pisahkan nama dan NIP berdasarkan tanda "-"
     const [nama, nip] = value.split(" - ");
     const uniqueId = `${name}_${radioValue}`; // Buat ID unik
+    const { user } = usePage().props.auth;
     return (
         <div className="flex items-center gap-3 my-2">
             <input
@@ -13,11 +15,13 @@ export default function RadioWithLabel({ name, value, radioValue, ...props }) {
                 name={name}
                 value={radioValue}
                 id={uniqueId} // Gunakan ID unik
-                className="radio radio-primary"
+                className="radio radio-primary disabled:radio-primary/80"
             />
             <label htmlFor={uniqueId} className="flex flex-col">
                 <span className="text-lg font-medium">{nama}</span>
-                <span className="text-base font-medium text-gray-500">{nip}</span>
+                <span className="text-base font-medium text-gray-500">
+                    {nip}
+                </span>
             </label>
         </div>
     );

@@ -26,6 +26,8 @@ import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
 import { SidebarLinkCollapse, TooltipHover } from ".";
 import { FaInfoCircle } from "react-icons/fa";
+import { MdWorkHistory } from "react-icons/md"
+
 const Sidebar = ({ role }) => {
     // console.log(active)
 
@@ -37,7 +39,7 @@ const Sidebar = ({ role }) => {
             {/* Smooth Gradient Background */}
             <div className="absolute inset-0 transform shadow-xl bg-gradient-to-br from-slate-950 via-gray-800 to-sky-950 rounded-tr-2xl rounded-br-2xl" />
 
-            <ul className="relative z-10 h-full p-4 space-y-4 overflow-y-scroll overflow-x-clip w-[19rem] text-slate-100">
+            <ul className="relative z-10 h-full p-4 space-y-4  overflow-x-clip w-[19rem] text-slate-100">
                 {/* Sidebar content */}
                 {/*  */}
                 <div className="flex items-center justify-start gap-2 mb-5">
@@ -125,20 +127,7 @@ const Sidebar = ({ role }) => {
                                     route: "divisi-sdm.pengajuan.index",
                                     actives: ["divisi-sdm.pengajuan.index"],
                                 },
-                                {
-                                    label: (
-                                        <>
-                                            {/* Arsip Dokumen */}
-                                            <RiArchive2Fill />
-                                            Arsip Dokumen
-                                        </>
-                                    ),
-                                    route: "divisi-sdm.arsip-dokumen.index",
-                                    actives: [
-                                        "divisi-sdm.arsip-dokumen.index",
-                                        "divisi-sdm.arsip-dokumen.show",
-                                    ],
-                                },
+
                             ]}
                         >
                             <span className="flex items-center">
@@ -152,9 +141,8 @@ const Sidebar = ({ role }) => {
                                 {
                                     label: (
                                         <>
-                                            {/* Kelola Riwayat PAK */}
-                                            <IoDocuments className="mr-2" />
-                                            Kelola Riwayat PAK
+                                            <IoDocuments  />
+                                             Riwayat PAK
                                         </>
                                     ),
                                     route: "divisi-sdm.riwayat-pak.index",
@@ -167,9 +155,21 @@ const Sidebar = ({ role }) => {
                                 {
                                     label: (
                                         <>
-                                            {/* Kelola Pegawai */}
-                                            <FaUserTie className="mr-2" />
-                                            Kelola Pegawai
+                                            <IoSettings  />
+                                             Aturan PAK
+                                        </>
+                                    ),
+                                    route: "divisi-sdm.aturan-pak.index",
+                                    actives: [
+                                        "divisi-sdm.aturan-pak.index",
+                                        "divisi-sdm.aturan-pak.edit",
+                                    ],
+                                },
+                                {
+                                    label: (
+                                        <>
+                                            <FaUserTie  />
+                                             Pegawai
                                         </>
                                     ),
                                     route: "divisi-sdm.pegawai.index",
@@ -183,20 +183,19 @@ const Sidebar = ({ role }) => {
                                 {
                                     label: (
                                         <>
-                                            {/* Kelola Aturan PAK */}
-                                            <IoSettings className="mr-2" />
-                                            Kelola Aturan PAK
+                                            <RiArchive2Fill />
+                                            Arsip Dokumen
                                         </>
                                     ),
-                                    route: "divisi-sdm.aturan-pak.index",
+                                    route: "divisi-sdm.arsip-dokumen.index",
                                     actives: [
-                                        "divisi-sdm.aturan-pak.index",
-                                        "divisi-sdm.aturan-pak.edit",
+                                        "divisi-sdm.arsip-dokumen.index",
+                                        "divisi-sdm.arsip-dokumen.show",
                                     ],
                                 },
                             ]}
                         >
-                            <span className="flex items-center">
+                            <span className="flex items-center ">
                                 <FaDatabase className="mr-2" />
                                 Data Master
                             </span>
@@ -249,7 +248,7 @@ const Sidebar = ({ role }) => {
                 )}
                 {/* !SECTION - DIVISI SDM */}
 
-                {/* SECTION - PIMPINAN */}
+                {/* SECTION - PIMPINAN - Iterasi 2 */}
                 {role === "Pimpinan" && (
                     <section className="scale-105 menu">
                         {/* Link Dashboard */}
@@ -262,78 +261,43 @@ const Sidebar = ({ role }) => {
                             Dashboard
                         </SidebarLink>
 
-                        <SidebarLinkCollapse
-                            submenu={[
-                                {
-                                    label: (
-                                        <>
-                                            {/* Pengajuan PAK */}
-                                            <BsFillSendArrowUpFill />
-                                            Pengajuan PAK
-                                        </>
-                                    ),
-                                    route: "pimpinan.pengajuan.index",
-                                    actives: ["pimpinan.pengajuan.index"],
-                                },
-                                {
-                                    label: (
-                                        <>
-                                            {/* Kelola Aturan PAK */}
-                                            <IoSettings />
-                                            Aturan PAK
-                                        </>
-                                    ),
-                                    route: "pimpinan.aturan-pak.index",
-                                    actives: [
-                                        "pimpinan.aturan-pak.index",
-                                        "pimpinan.aturan-pak.edit",
-                                    ],
-                                },
-                                {
-                                    label: (
-                                        <>
-                                            {/* Kelola Aturan PAK */}
-                                            <FaUserTie />
-                                            Daftar Pegawai
-                                        </>
-                                    ),
-                                    route: "pimpinan.pegawai.index",
-                                    actives: ["pimpinan.pegawai.index"],
-                                },
-                                {
-                                    label: (
-                                        <>
-                                            {/* Kelola Aturan PAK */}
-                                            <IoSettings />
-                                            Riwayat Karir Pegawai
-                                        </>
-                                    ),
-                                    route: "pimpinan.pegawai.index",
-                                    actives: ["pimpinan.pegawai.index"],
-                                },
-                                {
-                                    label: (
-                                        <>
-                                            {/* Arsip Dokumen */}
-                                            <RiArchive2Fill />
-                                            Arsip Dokumen
-                                        </>
-                                    ),
-                                    route: "pimpinan.arsip-dokumen.index",
-                                    actives: [
-                                        "pimpinan.arsip-dokumen.index",
-                                        "pimpinan.arsip-dokumen.edit",
-                                    ],
-                                },
-                            ]}
-                        >
-                            <span className="flex items-center">
-                                <RiAppsFill className="mr-2 scale-105" /> Main
-                            </span>
-                        </SidebarLinkCollapse>
+                        <SidebarLink
+                                href={route("pimpinan.pengajuan.index")}
+                                actives={["pimpinan.pengajuan.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <BsFillSendArrowUpFill />
+                                Pengajuan PAK
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route("pegawai.aturan-pak.index")}
+                                actives={["pegawai.aturan-pak.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <IoSettings />
+                                Aturan PAK
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route("pimpinan.pegawai.index")}
+                                actives={["pimpinan.pegawai.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <RiArchive2Fill />
+                                Daftar Pegawai
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route("pimpinan.riwayat-karir.index")}
+                                actives={["pimpinan.riwayat-karir.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <MdWorkHistory />
+                                Riwayat Karir Pegawai
+                            </SidebarLink>
+
 
                         <SidebarLinkCollapse
                             submenu={[
+
                                 {
                                     label: (
                                         <>
@@ -343,7 +307,7 @@ const Sidebar = ({ role }) => {
                                         </>
                                     ),
                                     route: "pimpinan.log-aktivitas",
-                                    active: "pimpinan.log-aktivitas",
+                                    actives: ["pimpinan.log-aktivitas"],
                                 },
                                 {
                                     label: (
@@ -369,14 +333,14 @@ const Sidebar = ({ role }) => {
                                 },
                             ]}
                         >
-                           <span className="flex items-center">
+                            <span className="flex items-center">
                                 <FaInfoCircle className="mr-2" />
                                 Info
                             </span>
                         </SidebarLinkCollapse>
                     </section>
                 )}
-                {/* !SECTION - PIMPINAN */}
+                {/* !SECTION - PIMPINAN - Iterasi 2*/}
 
                 {/* SECTION - PEGAWAI */}
                 {!role ||
@@ -392,85 +356,61 @@ const Sidebar = ({ role }) => {
                                 Dashboard
                             </SidebarLink>
 
-                            <SidebarLinkCollapse
-                                submenu={[
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Pengusulan Pegawai */}
-                                                <MdOutlineAssignmentInd />
-                                                Pengusulan PAK
-                                            </>
-                                        ),
-                                        route: "pegawai.pengusulan-pak.index",
-                                        actives: [
-                                            "pegawai.pengusulan-pak.index",
-                                            "pegawai.pengusulan-pak.edit",
-                                            "pegawai.pengusulan-pak.create",
-                                        ],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Pengajuan PAK */}
-                                                <BsFillSendArrowUpFill />
-                                                Status Proses PAK
-                                            </>
-                                        ),
-                                        route: "pegawai.proses-pak.index",
-                                        actives: ["pegawai.proses-pak.index"],
-                                    },
-
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Kelola Aturan PAK */}
-                                                <FaChartLine />
-                                                Riwayat Karir & Data
-                                            </>
-                                        ),
-                                        route: "pegawai.riwayat-karir.index",
-                                        actives: [
-                                            "pegawai.riwayat-karir.index",
-                                        ],
-                                    },
-
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Arsip Dokumen */}
-                                                <RiArchive2Fill />
-                                                Arsip Dokumen
-                                            </>
-                                        ),
-                                        route: "pegawai.arsip-dokumen.index",
-                                        actives: [
-                                            "pegawai.arsip-dokumen.index",
-                                            "pegawai.arsip-dokumen.edit",
-                                        ],
-                                    },
-                                    // TODO: Tanyoin Nanti boleh dk pegawai melihat aturan PAK
-                                    {
-                                        label: (
-                                            <>
-                                                {/* Kelola Aturan PAK */}
-                                                <IoSettings />
-                                                Aturan PAK
-                                            </>
-                                        ),
-                                        route: "pegawai.aturan-pak.index",
-                                        actives: ["pegawai.aturan-pak.index"],
-                                    },
+                            <SidebarLink
+                                href={route("pegawai.pengusulan-pak.index")}
+                                actives={[
+                                    "pegawai.pengusulan-pak.index",
+                                    "pegawai.pengusulan-pak.edit",
+                                    "pegawai.pengusulan-pak.create",
                                 ]}
+                                className="z-20 mx-[18px] -mb-1"
                             >
-                                <span className="flex items-center">
-                                    <RiAppsFill className="mr-2 scale-105" />{" "}
-                                    Main
-                                </span>
-                            </SidebarLinkCollapse>
+                                <MdOutlineAssignmentInd />
+                                Pengusulan PAK
+                            </SidebarLink>
+
+                            <SidebarLink
+                                href={route("pegawai.proses-pak.index")}
+                                actives={["pegawai.proses-pak.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <BsFillSendArrowUpFill />
+                                Proses/Pengajuan PAK
+                            </SidebarLink>
+
+                            <SidebarLink
+                                href={route("pegawai.aturan-pak.index")}
+                                actives={["pegawai.aturan-pak.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <IoSettings />
+                                Aturan PAK
+                            </SidebarLink>
+
+                            <SidebarLink
+                                href={route("pegawai.riwayat-karir.index")}
+                                actives={["pegawai.riwayat-karir.index"]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <MdWorkHistory />
+                                Riwayat Karir
+                            </SidebarLink>
+
+                            <SidebarLink
+                                href={route("pegawai.arsip-dokumen.index")}
+                                actives={[
+                                    "pegawai.arsip-dokumen.index",
+                                    "pegawai.arsip-dokumen.edit",
+                                ]}
+                                className="z-20 mx-[18px] -mb-1"
+                            >
+                                <RiArchive2Fill />
+                                Arsip Dokumen
+                            </SidebarLink>
 
                             <SidebarLinkCollapse
                                 submenu={[
+
                                     {
                                         label: (
                                             <>
@@ -495,7 +435,7 @@ const Sidebar = ({ role }) => {
                                     },
                                 ]}
                             >
-                                <span className="flex items-center">
+                                <span className="flex items-center text-base">
                                     <FaInfoCircle className="mr-2" />
                                     Info
                                 </span>

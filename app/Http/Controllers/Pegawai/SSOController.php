@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -25,22 +26,35 @@ class SSOController extends Controller
 
     public function login(Request $request)
     {
+        // dd($request);
         $request->validate([
             'username' => 'required',
             'password' => 'required',
-            'nip' => 'required', // ini NIP pegawai yang ingin diakses
+            'nip' => 'required',
+            'captcha' => 'required', // validasi token
         ]);
+
+        // dd($request);
+        // Verifikasi CAPTCHA
+        $verify = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'), // dari dashboard Google
+            'response' => $request->captcha,
+        ]);
+
+        if (!$verify->json('success')) {
+            return back()->withErrors(['captcha' => 'Verifikasi CAPTCHA gagal. Silakan coba lagi.']);
+        }
 
         // Step 1: Login ke SSO (pakai username & password)
         // TODO: Uncomment nanti!
-        // $token = $this->getSSOToken($request->username, $request->password);
+        $token = $this->getSSOToken($request->username, $request->password);
 
-        // if (!$token) {
-        //     return back()->withErrors(['username' => 'Username/password salah.']);
-        // }
+        if (!$token) {
+            return back()->withErrors(['username' => 'Username/password salah.']);
+        }
 
         // NOTE: Untuk Simulasi
-        $token = Str::random(16);
+        // $token = Str::random(16);
 
         // Step 2: Ambil data pegawai berdasarkan NIP (nip_baru langsung)
         $pegawai = Pegawai::where('NIP', $request['nip'])->orWhere('NIP', 'like', '%' . $request['nip'] . '%')->first();
@@ -65,21 +79,44 @@ class SSOController extends Controller
 
     private function getSSOToken($username, $password)
     {
+        $client = new \GuzzleHttp\Client([
+            // Kalau perlu, matikan SSL verify:
+            'verify' => false,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60',
+                'Accept' => 'application/json',
+            ]
+        ]);
+
         try {
-            $response = Http::post('https://bpsjambi.id/sso/api/auth/login', [
-                'username' => $username,
-                'password' => $password,
+            $response = $client->post('https://bpsjambi.id/sso/api/auth/login', [
+                'json' => [
+                    'username' => $username,
+                    'password' => $password,
+                ]
             ]);
 
-            if ($response->successful()) {
-                return $response->json()['token'];
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+
+            Log::info('SSO Login Status: ' . $statusCode);
+            Log::info('SSO Login Body: ' . $body);
+
+            if ($statusCode === 200) {
+                $data = json_decode($body, true);
+                return $data['token'] ?? null;
             }
 
             return null;
         } catch (\Exception $e) {
+            Log::error('SSO Login Error: ' . $e->getMessage());
             return null;
         }
     }
+
+
+
 
     private function getPegawaiByNipLama($token, $nipLama)
     {

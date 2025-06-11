@@ -21,17 +21,10 @@ const Navbar = ({ user, title }) => {
     const second = nameParts[1];
     const fullName = first + " " + second;
 
-    function formatRole(role) {
-        return role
-            .replace(/_/g, " ")
-            .toLowerCase()
-            .split(" ")
-            .map((word) =>
-                word === "sdm"
-                    ? "SDM"
-                    : word.charAt(0).toUpperCase() + word.slice(1)
-            )
-            .join(" ");
+    const styleByRole= {
+        'Divisi SDM' : 'text-primary',
+        'Pimpinan' : 'text-hijau',
+        'Pegawai' : 'text-secondary',
     }
 
     return (
@@ -79,12 +72,10 @@ const Navbar = ({ user, title }) => {
                                         <span
                                             className={
                                                 "block text-xs text-right " +
-                                                (formatRole(user.role) == "Divisi SDM"  || formatRole(user.role) == "Pimpinan"
-                                                    ? "text-primary"
-                                                    : "text-secondary")
+                                                (styleByRole[user.role])
                                             }
                                         >
-                                            {formatRole(user.role)}
+                                            {user.role}
                                         </span>
                                     </div>
                                     {/* {user.profile ? (

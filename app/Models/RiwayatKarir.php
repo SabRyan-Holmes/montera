@@ -20,17 +20,38 @@ class RiwayatKarir extends Model
 
     public function updated_by()
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by', 'nip');
     }
 
     public function scopeFilter(Builder $query, array $filters): void
     {
-        // Search By Nama & NIP
+        // Search By Jenis Perubahan
+        $query->when(
+            $filters['jenisPerubahan'] ?? false,
+            fn($query, $byJenisPerubahan) =>
+            $query->where('jenis_perubahan', 'like', '%' . $byJenisPerubahan . '%')
+            // ->orWhere('NIP', 'like', '%' . $search . '%')
+        );
+
+
+
+        // Berdasarkan Jabatan
+        $query->when(
+            $filters['byJabatan'] ?? false,
+            fn($query, $byJabatan) =>
+            $query->whereHas('pegawai', function ($q) use ($byJabatan) {
+                $q->where('Jabatan/TMT', 'like', '%' . $byJabatan . '%');
+            })
+        );
+
+        // Search By Nama & NIP on Pegawai table
         $query->when(
             $filters['search'] ?? false,
             fn($query, $search) =>
-            $query->where('jenis_perubahan', 'like', '%' . $search . '%')
-                // ->orWhere('NIP', 'like', '%' . $search . '%')
+            $query->whereHas('pegawai', function ($q) use ($search) {
+                $q->where('Nama', 'like', '%' . $search . '%')
+                    ->orWhere('NIP', 'like', '%' . $search . '%');
+            })
         );
     }
 }

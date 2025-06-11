@@ -13,7 +13,7 @@ export default forwardRef(function TextInputSecondary({ type = 'text', className
         <input
             {...props}
             type={type}
-            className={`rounded-md  placeholder:text-accent h-12 shadow-md shadow-primary/15 text-slate-600 bg-slate-200/40 border-x-orange-800 border-[1.4px] border-y-sky-800 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary ${className}`}
+            className={`rounded-md px-2 placeholder:text-accent font-semibold h-12 shadow-md shadow-primary/15 text-slate-500 bg-slate-200/40 border-x-orange-800 border-[1.4px] border-y-sky-800 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary ${className}`}
             ref={input}
         />
     );

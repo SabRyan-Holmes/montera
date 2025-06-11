@@ -23,6 +23,7 @@ class AturanPAKService // Boleh pakai nama Helper
                     return [
                         'pihak_tebusan' => $item['pihak_tebusan'] ?? '',
                         'checked' => $aturan->default_config[$i]['checked'] ?? false,
+                        'updated_at' => $item['updated_at'] ?? '',
                     ];
                 })->toArray();
             };

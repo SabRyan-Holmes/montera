@@ -112,7 +112,7 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
 
 // <============================================================ Pimpinan ============================================================>
 
-Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->group(function () {
+Route::middleware(['authOrSSO', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->group(function () {
 
     //Pengajuan PAK(Read, Approve,Reject)
     Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
@@ -122,10 +122,14 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
         Route::post('/reject/{pengajuan}', [PengajuanController::class, 'reject'])->name('reject');
     });
 
-    // Daftar Pegawai(R)
-    Route::get('/pegawai', [PengajuanController::class, 'index'])->name('pegawai.index');
     // Aturan PAK(R)
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
+
+    // Daftar Pegawai(R)
+    Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai.index');
+
+    // Riwayat Karir
+    Route::get('/riwayat-karir', [RiwayatKarirController::class, 'index'])->name('riwayat-karir.index');
 
     // Arsip Dokumen
     Route::resource('arsip-dokumen', ArsipDokumenController::class);
@@ -139,9 +143,6 @@ Route::middleware(['auth', 'pimpinan'])->prefix('pimpinan')->name('pimpinan.')->
     // Download Template
     Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
 });
-
-
-
 
 // <============================================================ Pegawai ============================================================>
 Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(function () {

@@ -9,32 +9,49 @@ use App\Models\Pegawai;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\PegawaiStoreRequest;
 use App\Http\Requests\UpdatePegawaiRequest;
+use App\Models\AturanPAK;
 use App\Models\RiwayatKarir;
+use App\Services\AturanPAKService;
 use App\Services\LogPegawaiChangesService;
+use Illuminate\Support\Facades\Auth;
 
 class PegawaiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    protected $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $pegawai = Pegawai::latest();
         $subTitle = "";
 
         $subTitle = GetSubtitle::getSubtitle(
-            request('byStatus'),
             request('byJabatan'),
+            request('byDaerah'),
             request('search')
         );
 
+        $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+        // $koefisien_per_tahun = AturanPAKService::get(['koefisienPertahun']);
+
         return Inertia::render('KelolaPegawai/Index', [
-            "title" => "Kelola Data Pegawai ",
+            "title" => "Data Pegawai ",
             "subTitle" => $subTitle,
             "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
-            "searchReq" => request('search'),
-            "byDaerahReq" => request('byDaerah'),
-            "byJabatanReq" => request('byJabatan')
+            "searchReq" => request('search') ?? "",
+            "byDaerahReq" => request('byDaerah') ?? "Semua Kategori",
+            "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",
+            'isDivisiSDM' => $this->user->role === 'Divisi SDM',
+            'jabatanList' => collect($koefisien_per_tahun)->pluck('jabatan')->toArray()
         ]);
     }
 
@@ -105,6 +122,4 @@ class PegawaiController extends Controller
         $pegawai->delete();
         return redirect()->back()->with('message', 'Data Pegawai Berhasil DiHapus!');
     }
-
-
 }

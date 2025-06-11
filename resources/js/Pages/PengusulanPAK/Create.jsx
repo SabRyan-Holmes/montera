@@ -122,15 +122,14 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
         }
     };
 
-    // console.log("isi errors", errors);
-    console.log("isi data", data);
+
     return (
         <Authenticated
             user={auth.user}
             title={title}
             current={route().current()}
         >
-            <section className="h-full m-10 mb-24 laptop:h-full">
+            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <div className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
                         <ul>
@@ -168,7 +167,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                             {/* head */}
                             <thead>
                                 <tr className="text-lg bg-primary/70">
-                                    <th colSpan={2}>Detail Pengusulan PAK</th>
+                                    <th colSpan={2}>Pengusulan Penilaian PAK</th>
                                 </tr>
                             </thead>
                             <tbody className=" bo">

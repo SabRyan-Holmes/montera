@@ -203,6 +203,7 @@ class PengajuanController extends Controller
 
         // 5. Update status
         $pengajuan->update([
+            'validated_by' => $this->user->nip,
             'status' => 'divalidasi',
             'tanggal_divalidasi' => now(),
             'approved_pak_path' => "approved_pak/{$nama_pak}",

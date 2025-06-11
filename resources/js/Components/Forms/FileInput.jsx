@@ -6,7 +6,7 @@ export default function FileInput({ name, type = "file",  ...props }) {
         <div className="flex items-center justify-center w-full">
             <label
                 forHtml={name}
-                className="flex flex-col items-center justify-center w-full h-64 border rounded-lg cursor-pointer border-gradient bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                className="flex flex-col items-center justify-center w-full h-64 border rounded-lg cursor-pointer border-gradient bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 "
             >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg

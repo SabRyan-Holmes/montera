@@ -29,30 +29,42 @@ class RiwayatKarirController extends Controller
 
     public function index()
     {
-        $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
-        $riwayatKarirDiri = RiwayatKarir::where('pegawai_nip', $pegawai->NIP)->latest();
-        // dd($riwayatKarirDiri);
+        // $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
+        $riwayatKarir = null;
+        $title = '';
+        if ($this->user->role === "Pegawai") {
+            $riwayatKarirDiri = RiwayatKarir::where('pegawai_nip', $this->user->nip)->orWhere('pegawai_nip', 'like', '%' . $this->user->nip . '%')->latest();
+            $riwayatKarir = $riwayatKarirDiri;
+            $title = "Riwayat Karir Diri";
+        } else { //if Divisi SDM or Pimpinan get all
+            $riwayatKarir = RiwayatKarir::latest();
+            $title = "Riwayat Karir Pegawai";
+        }
+
 
 
         $subTitle = GetSubtitle::getSubtitle(
-            request('byStatus'),
-            request('byJabatan'),
-            request('search')
+            byJabatan: request('byJabatan'),
+            search: request('search'),
+            byJenisPerubahan: request('search')
         );
 
 
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
         $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
 
+
+
+
         return Inertia::render('RiwayatKarir/Index', [
-            "title" => "Riwayat Karir & Perubahan Data",
+            "title" => $title,
             "subTitle" => $subTitle,
-            "riwayatKarirDiri" => $riwayatKarirDiri->filter(request(['search']))->paginate(10),
-            'riwayatKarirSemua' => 'Semua', //TODO
+            // "riwayatKarirDiri" => $riwayatKarirDiri->filter(request(['search']))->paginate(10),
+            'riwayatKarir' => $riwayatKarir->filter(request(['byJenisPerubahan', 'byJabatan', 'search']))->paginate(10), //TODO
             'canValidate' => $this->user->role == 'Divisi SDM',
-            "searchReq" => request('search'),
-            "byStatusReq" => request('byStatus'),
-            "byJabatanReq" => request('byJabatan'),
+            "searchReq" => request('search') ?? "",
+            "byJenisPerubahanReq" => request('byJenisPerubahan') ?? "Semua Kategori",
+            "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",
             "jabatanList" => $jabatan_list
         ]);
     }

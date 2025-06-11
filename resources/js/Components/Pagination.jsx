@@ -7,26 +7,28 @@ import { TiArrowRight } from "react-icons/ti";
 import ReactPaginate from "react-paginate";
 
 export default function Paginations({ datas, urlRoute, filters }) {
-
-    let filter1= filters.filter1
-    let filter2= filters.filter2
-    let filterSearch= filters.search
+    const filter1 = filters.filter1;
+    const filter2 = filters.filter2;
+    const filterSearch = filters.filterSearch;
 
     const handlePageClick = (event) => {
         const selectedPage = event.selected + 1;
-        const newOffset = (selectedPage - 1) * datas.per_page;
+
         router.get(
             urlRoute,
-            { page: selectedPage, filter1, filter2, filterSearch },
+            {
+                page: selectedPage,
+                filter1,
+                filter2,
+                filterSearch,
+            },
             {
                 replace: true,
                 preserveState: true,
-                onSuccess: () => {
-                    setItemOffset(newOffset); // Update the offset after successful page load
-                },
             }
         );
     };
+
     return (
         <div className="mb-8 text-sm box-footer">
             <div className="items-center justify-between sm:flex">
@@ -40,8 +42,7 @@ export default function Paginations({ datas, urlRoute, filters }) {
                         datas.next_page_url && (
                             <a
                                 className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                href={datas.next_page_url}
-                                onClick={() => setNum(num + 1)}
+                                href="#"
                             >
                                 <span className="sr-only">Next</span>
                                 <span aria-hidden="true">Next</span>
@@ -56,8 +57,7 @@ export default function Paginations({ datas, urlRoute, filters }) {
                         datas.prev_page_url && (
                             <a
                                 className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                href={datas.next_page_url}
-                                onClick={() => setNum(num + 1)}
+                                href="#"
                             >
                                 <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
                                 <span className="sr-only">Prev</span>
@@ -66,9 +66,7 @@ export default function Paginations({ datas, urlRoute, filters }) {
                         )
                     }
                     renderOnZeroPageCount={null}
-                    containerClassName={
-                        "flex items-center text-center justify-center mt-8 mb-4 gap-4 "
-                    }
+                    containerClassName="flex items-center text-center justify-center mt-8 mb-4 gap-4"
                     pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
                     activeClassName="bg-primary text-white"
                     className="flex justify-end gap-2"

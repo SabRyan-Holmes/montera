@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { InputLabel, PrimaryButton, SecondaryButton } from "@/Components";
+import { InputLabel, PrimaryButton, SecondaryButton, TooltipHover } from "@/Components";
 import { RiArchive2Fill, RiArrowGoBackFill } from "react-icons/ri";
-import { FaDatabase, FaFolder, FaFileAlt } from "react-icons/fa";
-import { FaClockRotateLeft, FaFilePdf } from "react-icons/fa6";
+import { FaDatabase, FaFolder, FaFileAlt, FaEdit } from "react-icons/fa";
+import { FaClockRotateLeft, FaEye, FaFilePdf, FaTrash } from "react-icons/fa6";
 import { HiDocumentSearch } from "react-icons/hi";
 import moment from "moment/min/moment-with-locales";
 
@@ -169,18 +169,18 @@ export default function Index({
                         <table className="table w-full">
                             <thead>
                                 <tr className="text-sm text-gray-600">
-                                    <th>Nama Dokumen</th>
+                                    <th width="40%" >Nama Dokumen</th>
                                     <th>Ukuran</th>
                                     <th>Diarsipkan</th>
                                     <th>Divalidasi</th>
-                                    <th>Aksi</th>
+                                    <th className="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {arsipDokumens.data.map((data, idx) => (
                                     <tr
                                         key={idx}
-                                        className="cursor-pointer group/item hover:bg-primary/40"
+                                        className="overflow-hidden cursor-pointer group/item hover:bg-primary/40"
                                     >
                                         <td className="flex items-center gap-2">
                                             <FaFilePdf className="text-green-500" />
@@ -189,10 +189,20 @@ export default function Index({
                                         <td>{formatSize(data.size)}</td>
                                         <td>{moment(data.created_at).fromNow()}</td>
                                         <td>{moment(data.tanggal_divalidasi).fromNow()}</td>
-                                        <td>
-                                            <button className="btn btn-xs btn-outline btn-primary">
-                                                Lihat
+                                        <td className="space-x-2 text-center text-nowrap ">
+                                            <button className="relative group action-btn action-btn-primary">
+                                                <FaEye className='scale-125 group-hover:fill-white' />
+                                                <TooltipHover message='Lihat Dokumen'/>
                                             </button>
+                                            <button className="relative group action-btn action-btn-secondary">
+                                                <FaEdit className='scale-125 group-hover:fill-white' />
+                                                <TooltipHover message='Lihat Dokumen'/>
+                                            </button>
+                                            <button className="relative group action-btn action-btn-warning">
+                                                <FaTrash className='scale-125 group-hover:fill-white' />
+                                                <TooltipHover message='Lihat Dokumen'/>
+                                            </button>
+
                                         </td>
                                     </tr>
                                 ))}

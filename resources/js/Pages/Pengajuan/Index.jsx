@@ -17,7 +17,6 @@ import {
     TooltipHover,
     useFilterSearch,
 } from "@/Components";
-import { TiArrowRight } from "react-icons/ti";
 import { TbEyeCheck } from "react-icons/tb";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import ModalCekValidasi from "./Partials/ModalCekValidasi";
@@ -26,7 +25,6 @@ import { FaEdit } from "react-icons/fa";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import moment from "moment/min/moment-with-locales";
 import ModalCekPengajuan from "./Partials/ModalCekPengajuan";
-import { RiInboxArchiveLine } from "react-icons/ri";
 import { BiSolidArchiveIn } from "react-icons/bi";
 import ModalArsipDokumen from "./Partials/ModalArsipDokumen";
 
@@ -565,7 +563,6 @@ export default function Index({
                                                 </td>
 
                                                 {/* SECTION Action Button-Role Pimpinan  */}
-
                                                 {canValidate && (
                                                     <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                         {/* Actor Pimpinan */}
@@ -697,9 +694,9 @@ export default function Index({
                                                                         )
                                                                         .showModal()
                                                                 }
-                                                                className="transition-all scale-110 group/button action-btn border-hijau/20 hover:bg-hijau"
+                                                                className="action-btn action-btn-primary group/button"
                                                             >
-                                                                <FaEye className="scale-125 fill-hijau stroke-hijau group-hover/button:fill-white" />
+                                                                <FaEye className="scale-125 group-hover/button:fill-white" />
                                                             </button>
                                                             <TooltipHover
                                                                 message={
@@ -752,23 +749,66 @@ export default function Index({
                                                                 />
                                                             </div>
                                                         )}
-                                                        <div className="relative inline-flex group">
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleCancel(
-                                                                        pengajuan.id
-                                                                    )
-                                                                }
-                                                                className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning"
-                                                            >
-                                                                <MdCancel className="scale-125 fill-warning/80 group-hover/button:fill-white" />
-                                                            </button>
-                                                            <TooltipHover
-                                                                message={
-                                                                    "Batalkan"
-                                                                }
-                                                            />
-                                                        </div>
+                                                        {pengajuan.status ===
+                                                        "divalidasi" ? (
+                                                            <div className="relative inline-flex group">
+                                                                <ModalArsipDokumen
+                                                                    pengajuan={
+                                                                        pengajuan
+                                                                    }
+                                                                    setActiveModal={
+                                                                        setActiveModal
+                                                                    }
+                                                                />
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setActiveModal(
+                                                                            `ModalArsipDokumen-${pengajuan.id}`
+                                                                        );
+                                                                        // open modal
+                                                                        document
+                                                                            .getElementById(
+                                                                                `ModalArsipDokumen-${pengajuan.id}`
+                                                                            )
+                                                                            .showModal();
+                                                                    }}
+                                                                    disabled={
+                                                                        pengajuan.status !==
+                                                                        "divalidasi"
+                                                                    }
+                                                                    className="action-btn-success action-btn group/button"
+                                                                >
+                                                                    <BiSolidArchiveIn className="scale-150 group-hover/button:fill-white" />
+                                                                </button>
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Arsipkan Dokumen" +
+                                                                        (pengajuan.status !==
+                                                                        "divalidasi"
+                                                                            ? "(PAK harus divalidasi terlebih dahulu)"
+                                                                            : "")
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="relative inline-flex group">
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleCancel(
+                                                                            pengajuan.id
+                                                                        )
+                                                                    }
+                                                                    className="transition-all scale-110 group/button action-btn border-warning/20 hover:bg-warning"
+                                                                >
+                                                                    <MdCancel className="scale-125 fill-warning/80 group-hover/button:fill-white" />
+                                                                </button>
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Batalkan"
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        )}
                                                     </td>
                                                 )}
                                                 {/* !SECTION Action Button-Role Divisi SDM  */}

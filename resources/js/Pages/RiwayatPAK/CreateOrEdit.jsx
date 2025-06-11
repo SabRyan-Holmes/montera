@@ -263,7 +263,7 @@ export default function Index({
             current={route().current()}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop max-w-screen-desktop">
-                <section className="m-10 ">
+                <section className="m-10 my-3 ">
                     {/* Preview PDF di iframe */}
                     {showIframe && (
                         <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
@@ -349,7 +349,7 @@ export default function Index({
                             <>
                                 {/* Konten untuk memilih Pegawai Start */}
 
-                                <h1 className="text-2xl font-medium my-7">
+                                <h1 className="my-4 text-2xl font-medium">
                                     Pilih Pegawai
                                 </h1>
                                 <div className="mb-6">

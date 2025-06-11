@@ -5,6 +5,7 @@ namespace App\Http\Controllers\DivisiSDM;
 use App\Http\Controllers\Controller;
 use App\Models\AturanPAK;
 use App\Models\Koefisien;
+use App\Services\AturanPAKService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,23 +16,9 @@ class AturanPAKController extends Controller
      */
     public function index()
     {
-        // IMPORTANT! Don't Touch this code !
-        $aturan_pak = [
-            'penandaTangan' => AturanPAK::where('name', 'Penanda Tangan')->first(['value', 'default_config']),
-            'koefisienPertahun' => AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value,
-            'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first(['value', 'default_config']),
-            'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first(['value', 'default_config']),
-            'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first(['value', 'default_config']),
-            'tebusanKonversi' => AturanPAK::where('name', 'Tebusan Konversi')->first(['value', 'default_config']),
-            'tebusanAkumulasi' => AturanPAK::where('name', 'Tebusan Akumulasi')->first(['value', 'default_config']),
-            'tebusanPenetapan' => AturanPAK::where('name', 'Tebusan Penetapan')->first(['value', 'default_config']),
-            'kesimpulan' => AturanPAK::where('name', 'Kesimpulan')->first(['value', 'default_config']),
-            'rumus' => AturanPAK::where('name', 'Rumus')->first()->value,
-        ];
-
-        return Inertia::render('KelolaAturanPAK/Index', [
-            'title' => 'Kelola Aturan PAK',
-            'aturanPAK' => $aturan_pak,
+        return Inertia::render('AturanPAK/Index', [
+            'title' => 'Aturan PAK',
+            'aturanPAK' => AturanPAKService::get(),
         ]);
     }
 
