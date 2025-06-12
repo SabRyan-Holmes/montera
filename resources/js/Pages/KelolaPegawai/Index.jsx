@@ -18,6 +18,7 @@ import {
     TbLayoutSidebarLeftCollapse,
     TbLayoutSidebarRightCollapse,
 } from "react-icons/tb";
+import ShowModal from "./Show";
 
 export default function Index({
     auth,
@@ -32,9 +33,10 @@ export default function Index({
     isDivisiSDM,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
-
-    function handleDelete(id) {
+    const [activeModal, setActiveModal] = useState(null);
+    function handleDelete(nip) {
         Swal.fire({
+            ...(activeModal && { target: `#${activeModal}` }),
             icon: "warning",
             text: "Anda yakin ingin menghapus data pegawai ini?",
             showCancelButton: true,
@@ -50,13 +52,9 @@ export default function Index({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("divisi-sdm.pegawai.destroy", id), {
+                router.delete(route("divisi-sdm.pegawai.destroy", nip), {
                     onSuccess: () => {
-                        // console.log(
-                        //     "data pegawai dengan id ",
-                        //     id,
-                        //     "berhasil di delete!"
-                        // );
+                        document.getElementById(activeModal).close();
                     },
                     onError: () => {
                         console.log("Gagal Menghapus Data");
@@ -69,6 +67,7 @@ export default function Index({
     useEffect(() => {
         if (flash.message) {
             Swal.fire({
+                ...(activeModal && { target: `#${activeModal}` }),
                 title: "Berhasil!",
                 text: `${flash.message}`,
                 icon: "success",
@@ -89,8 +88,6 @@ export default function Index({
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
-
-
 
     // ===========================================Other Logics===========================================
 
@@ -123,7 +120,7 @@ export default function Index({
                     )}
                 </section>
 
-                <section className="pt-3 overflow-auto">
+                <section className="pt-3 ">
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -133,7 +130,7 @@ export default function Index({
                     )}
                     {pegawais.data.length > 0 ? (
                         <>
-                            <table className="table text-xs table-bordered">
+                            <table className="table overflow-x-scroll text-xs table-bordered">
                                 <thead className="text-sm font-medium text-white bg-primary ">
                                     <tr className="text-center">
                                         <th
@@ -257,7 +254,7 @@ export default function Index({
                                                         .trim()}
                                                 </span>
                                             </td> */}
-                                            <td className="text-center text-nowrap">
+                                            <td className="text-center ">
                                                 <span>{pegawai["Daerah"]}</span>
                                                 /
                                                 <span className="block ">
@@ -299,16 +296,31 @@ export default function Index({
                                             {isDivisiSDM ? (
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="a"
-                                                            href={route(
-                                                                "divisi-sdm.pegawai.show",
-                                                                pegawai["NIP"]
-                                                            )}
+                                                        <button
+                                                            as="button"
+                                                            onClick={() => {
+                                                                setActiveModal(
+                                                                    `Show-${pegawai.id}`
+                                                                );
+                                                                document
+                                                                    .getElementById(
+                                                                        `Show-${pegawai.id}`
+                                                                    )
+                                                                    .showModal();
+                                                            }}
                                                             className="action-btn group/button action-btn-success "
                                                         >
                                                             <FaEye className="scale-125 group-hover/button:fill-white " />
-                                                        </Link>
+                                                        </button>
+                                                        <ShowModal
+                                                            handleDelete={
+                                                                handleDelete
+                                                            }
+                                                            setActiveModal={
+                                                                setActiveModal
+                                                            }
+                                                            pegawai={pegawai}
+                                                        />
                                                         <TooltipHover
                                                             message={
                                                                 "Lihat Data"

@@ -189,6 +189,7 @@ export default function Index({
                                         <td>{formatSize(data.size)}</td>
                                         <td>{moment(data.created_at).fromNow()}</td>
                                         <td>{moment(data.tanggal_divalidasi).fromNow()}</td>
+                                        {/* TODO: Logic Action Button */}
                                         <td className="space-x-2 text-center text-nowrap ">
                                             <button className="relative group action-btn action-btn-primary">
                                                 <FaEye className='scale-125 group-hover:fill-white' />

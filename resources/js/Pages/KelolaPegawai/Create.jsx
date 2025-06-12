@@ -7,7 +7,7 @@ import {
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
-import { FaCheck, FaDatabase, FaPlus } from "react-icons/fa6";
+import { FaCheck, FaDatabase, FaPlus, FaUserTie } from "react-icons/fa6";
 import { FaSave, FaUserPlus } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { PiSealWarning } from "react-icons/pi";
@@ -47,16 +47,16 @@ export default function Create({ auth, pegawai, title, flash }) {
             title={title}
             current={route().current()}
         >
-            <section className="h-full m-10 mb-24 laptop:h-full">
-                <div className="flex justify-between">
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+                <section className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
                         <ul>
                             <li>
                                 <a
                                     href={route("divisi-sdm.pegawai.index")}
-                                    className="gap-2"
+                                    className="inline-flex items-center gap-2 "
                                 >
-                                    <FaDatabase className="w-4 h-4 stroke-current" />
+                                    <FaUserTie className="w-4 h-4 stroke-current" />
                                     <span>Kelola Data</span>
                                 </a>
                             </li>
@@ -77,10 +77,9 @@ export default function Create({ auth, pegawai, title, flash }) {
                         <span>Kembali</span>
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
-                </div>
+                </section>
 
-                <div className="mx-auto overflow-x-auto max-w-screen-laptop">
-                    <h1 className="mt-8 mb-4 text-3xl capitalize">{title}</h1>
+                <section className="m-10 mx-auto overflow-x-auto max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-bordered ">
                             {/* head */}
@@ -469,8 +468,8 @@ export default function Create({ auth, pegawai, title, flash }) {
                             </SuccessButton>
                         </div>
                     </form>
-                </div>
-            </section>
+                </section>
+            </main>
         </Authenticated>
     );
 }

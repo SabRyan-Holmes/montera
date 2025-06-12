@@ -45,8 +45,8 @@ export default function DetailPegawai({ pegawai , collapse = true}) {
                 ) : !isCollapsed ? (
                     <>
                         <tr>
-                            <td>Nama</td>
-                            <td>{pegawai.Nama} {pegawai['Gelar Tambahan'] ?? ''} </td>
+                            <td width="50%">Nama</td>
+                            <td width="50%">{pegawai.Nama} {pegawai['Gelar Tambahan'] ?? ''} </td>
                         </tr>
                         <tr>
                             <td>NIP/NRP</td>
@@ -57,7 +57,7 @@ export default function DetailPegawai({ pegawai , collapse = true}) {
                             <td>{pegawai["NOMOR SERI KARPEG"] || "-"}</td>
                         </tr>
                         <tr>
-                            <td>PANGKAT/GOLONGAN/TMT</td>
+                            <td>PANGKAT/GOLONGAN RUANGAN/TMT</td>
                             <td>{pegawai["Pangkat/Golongan Ruangan/TMT"]}</td>
                         </tr>
                         <tr>

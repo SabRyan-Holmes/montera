@@ -65,6 +65,7 @@ class SSOController extends Controller
 
         // Step 3: Simpan info penting di session (tanpa user)
         session([
+            'id' => $pegawai['id'],
             'nip' => $pegawai['NIP'], //Foreign
             'name' => $pegawai['Nama'],
             'role' => 'Pegawai',

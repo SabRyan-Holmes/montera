@@ -128,8 +128,8 @@ export default function Edit({ auth, pegawai, title, flash }) {
             title={title}
             current={route().current()}
         >
-            <section className="px-24 mx-auto mb-24 phone:h-screen laptop:h-full max-w-screen-laptop">
-                <div className="flex justify-between">
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+                <section className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
                         <ul>
                             <li>
@@ -164,11 +164,10 @@ export default function Edit({ auth, pegawai, title, flash }) {
                         <span>Kembali</span>
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
-                </div>
+                </section>
 
-                <h1 className="my-6 text-2xl capitalize">{title}</h1>
 
-                <div className="overflow-x-auto">
+                <section className="m-10 mx-auto overflow-x-auto max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-auto ">
                             {/* head */}
@@ -451,8 +450,8 @@ export default function Edit({ auth, pegawai, title, flash }) {
                             </button>
                         </div>
                     </form>
-                </div>
-            </section>
+                </section>
+            </main>
         </Authenticated>
     );
 }

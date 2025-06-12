@@ -375,7 +375,7 @@ const Sidebar = ({ role }) => {
                                 className="z-20 mx-[18px] -mb-1"
                             >
                                 <BsFillSendArrowUpFill />
-                                Proses/Pengajuan PAK
+                                Proses Pengajuan PAK
                             </SidebarLink>
 
                             <SidebarLink

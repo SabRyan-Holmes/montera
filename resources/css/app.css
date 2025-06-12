@@ -252,15 +252,15 @@ table.table-bordered > tfoot > tr > td {
 }
 
 .badge-xs-primary {
-    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-primary bg-opacity-90 badge-xs text-slate-600;
+    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-primary font-semibold bg-opacity-70 badge-xs text-slate-600;
 }
 
 .badge-xs-secondary {
-    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-secondary bg-opacity-90 badge-xs text-slate-600;
+    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-secondary font-semibold bg-opacity-90 badge-xs text-slate-600;
 }
 
 .badge-xs-success {
-    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-success bg-opacity-90 badge-xs text-slate-600;
+    @apply absolute right-3 top-0.5  bottom-0.5 badge badge-success font-semibold bg-opacity-90 badge-xs text-slate-600;
 }
 
 .folder-card {

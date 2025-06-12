@@ -36,12 +36,18 @@ class PengajuanController extends Controller
     public function index()
     {
         $pengajuan = Pengajuan::latest();
+        // Kalo pegawai tampilkan proses PAK unutk pegawai itu saja
+        if($this->user->role === 'Pegawai') {
+            $pengajuan = Pengajuan::byPegawaiId($this->user->id)->latest();
+        }
 
         $subTitle = GetSubtitle::getSubtitle(
             request('byJabatan'),
             request('byDaerah'),
             request('search')
         );
+
+
 
         // TODO: LOGIKA Filter by PAK field nanti
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
@@ -54,7 +60,7 @@ class PengajuanController extends Controller
         $arsipDokumenByUser = ArsipDokumen::byUser($this->user);
 
         return Inertia::render('Pengajuan/Index', [
-            "title" => "Status Pengajuan Terbaru",
+            "title" => "Proses Pengajuan PAK",
             "subTitle" => $subTitle,
             "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
             'canValidate' => $this->user->role === 'Pimpinan',

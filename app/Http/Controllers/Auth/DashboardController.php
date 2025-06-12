@@ -85,9 +85,11 @@ class DashboardController extends Controller
 
             $pengusulanPAK = PengusulanPAK::byPegawai($nip);
 
-            $pegawai = Pegawai::where('NIP', $nip)->first(); //find or Fail
+            $pegawai = Pegawai::byNIP($nip)->first(); //find or Fail
+            if (!$pegawai) {
+                return back()->withErrors(['nip' => 'Data pegawai dengan NIP ini belum terdaftar di sistem. Hubungi Divisi Sumber Daya Manusia.']);
+            }
             $prosesPAK = Pengajuan::byPegawaiId($pegawai->id);
-
             $pak_count = $prosesPAK->where('status', 'divalidasi')->count();
             $arsip_dokumen_count = ArsipDokumen::where('user_nip', $nip)->count();
 

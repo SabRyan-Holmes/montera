@@ -7,7 +7,7 @@ import {
 } from "@/Components";
 import { router, useForm } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
-import { FaCheck, FaEraser, FaFileSignature, FaTrash } from "react-icons/fa6";
+import { FaCheck, FaEraser, FaFileSignature, FaRegFilePdf, FaTrash } from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SignatureCanvas from "react-signature-canvas";
@@ -16,6 +16,7 @@ import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/PengusulanPAKTable";
+import { FaFilePdf } from "react-icons/fa";
 
 export default function ModalCekPengajuan({
     pengajuan,
@@ -278,7 +279,7 @@ export default function ModalCekPengajuan({
                     }
                     type="submit"
                 >
-                    <IoDocument className="w-4 h-4 fill-secondary" />
+                    <FaRegFilePdf className="w-4 h-4 mr-1 fill-secondary" />
                     Lihat Dokumen
                 </SecondaryButton>
 

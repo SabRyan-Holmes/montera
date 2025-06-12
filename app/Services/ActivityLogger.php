@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Request;
 
 class ActivityLogger
 {
+
+
     public static function log($aktivitas, $keterangan = null, $entityType = null, $entityId = null, $pegawaiNip = null)
     {
         LogAktivitas::create([

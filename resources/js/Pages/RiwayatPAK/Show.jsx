@@ -12,6 +12,7 @@ import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { usePage } from "@inertiajs/react";
 import { FaEdit } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa6";
+import PengusulanPAKTable from "../PengusulanPAK/Partials/PengusulanPAKTable";
 
 export default function Show({ riwayatPAK }) {
     const [showIframe, setShowIframe] = useState(false);
@@ -34,6 +35,18 @@ export default function Show({ riwayatPAK }) {
     };
 
     const { props } = usePage();
+
+    const pengusulanPAK = riwayatPAK.pengusulan_pak;
+    const pengusulanPAKRef = useRef(null); // <-- buat ref
+    const scrollToPengusulanPAK = () => {
+        if (pengusulanPAKRef.current) {
+            pengusulanPAKRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest",
+            });
+        }
+    };
 
     return (
         <dialog id={`Show-${riwayatPAK.id}`} className="modal">
@@ -71,7 +84,17 @@ export default function Show({ riwayatPAK }) {
                     <h1 className="my-4 text-xl font-medium">
                         Data Riwayat dalam Penetapan Angka Kredit
                     </h1>
-                    <DetailPAKTable data={riwayatPAK} />
+                    <DetailPAKTable  collapse={false} data={riwayatPAK}  onScrollToPengusulanPAK={scrollToPengusulanPAK}/>
+                </div>
+
+                <div
+                    className="px-2 my-10 mb-16 overflow-x-auto"
+                    ref={pengusulanPAKRef}
+                >
+                    <h1 className="my-4 text-xl font-medium">
+                        Data Pengusulan Sebagai Sumber Penetapan Angka Kredit
+                    </h1>
+                    <PengusulanPAKTable collapse={false} data={pengusulanPAK} />
                 </div>
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
@@ -84,24 +107,23 @@ export default function Show({ riwayatPAK }) {
 
             {/* Floating Action Button */}
             <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                <PrimaryButton
+                <SecondaryButton
                     as="button"
                     onClick={() => previewPdf(riwayatPAK)}
                     type="submit"
-                    className=""
                 >
-                    <FaFilePdf className="w-4 h-4 mr-1 fill-white" />
+                    <FaFilePdf className="w-4 h-4 mr-1 fill-secondary" />
                     LIHAT DOKUMEN
-                </PrimaryButton>
+                </SecondaryButton>
 
-                <SecondaryButton
+                <PrimaryButton
                 asLink
                 href={route('divisi-sdm.pak.edit', { id: riwayatPAK.id })}
-                 className="bg-white"
+                 className="text-white bg-secondary"
                 >
-                    <FaEdit className="inline-flex items-center justify-center w-4 h-4 mr-1 fill-secondary " />
+                    <FaEdit className="w-4 h-4 mr-1 " />
                     Edit Data
-                </SecondaryButton>
+                </PrimaryButton>
             </div>
             {/* Floating Action Button */}
         </dialog>

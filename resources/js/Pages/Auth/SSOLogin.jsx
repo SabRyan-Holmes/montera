@@ -10,7 +10,7 @@ import {
     SecondaryButton,
 } from "@/Components";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { ReCAPTCHA } from "react-google-recaptcha";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function SSOLogin({ status, canAddPegawai }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,7 +24,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
     useEffect(() => {
         console.log("recaptchaRef.current", recaptchaRef.current);
 
-        console.log(import.meta.env.VITE_RECAPTCHA_SITE_KEY)
+        console.log(import.meta.env.VITE_RECAPTCHA_SITE_KEY);
         return () => {
             reset("password");
         };
@@ -35,7 +35,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
     const submit = async (e) => {
         e.preventDefault();
 
-        if (!recaptchaRef.current || !recaptchaRef.current.executeAsync) {
+        if (!recaptchaRef.current || !recaptchaRef.current.executeAsync()) {
             alert("reCAPTCHA belum siap.");
             return;
         }
@@ -153,13 +153,6 @@ export default function SSOLogin({ status, canAddPegawai }) {
                             className="mt-2"
                         />
                     </fieldset>
-                    <div className="mt-3">
-                        <ReCAPTCHA
-                            ref={recaptchaRef}
-                            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                            size="normal" // agar otomatis
-                        />
-                    </div>
 
                     <fieldset className="mt-3">
                         <InputLabel htmlFor="nip" value="NIP" />
@@ -171,13 +164,14 @@ export default function SSOLogin({ status, canAddPegawai }) {
                             value={data.nip}
                             className="block w-full mt-1 h-11"
                             autoComplete={data.nip}
-                            placeholder="Masukkan NIP Lengkap Anda"
+                            placeholder="Masukkan NIP Anda"
                             isFocused={true}
                             onChange={(e) => setData("nip", e.target.value)}
                         />
 
                         <InputError message={errors.nip} className="mt-2" />
                     </fieldset>
+
                     <div className="block mt-4">
                         <label className="flex items-center">
                             <Checkbox
@@ -193,6 +187,15 @@ export default function SSOLogin({ status, canAddPegawai }) {
                         </label>
                     </div>
 
+                    <div className="mt-4">
+                            <ReCAPTCHA
+                                ref={recaptchaRef}
+                                sitekey={
+                                    import.meta.env.VITE_RECAPTCHA_SITE_KEY
+                                }
+                                size="normal"
+                            />
+                        </div>
                     <div className="flex items-center justify-end mt-4">
                         {canAddPegawai && (
                             <Link
@@ -202,7 +205,11 @@ export default function SSOLogin({ status, canAddPegawai }) {
                                 NIP pada Sistem Tidak Ditemukan?
                             </Link>
                         )}
-                        <PrimaryButton type="submit" className="ms-4" disabled={processing}>
+                        <PrimaryButton
+                            type="submit"
+                            className="ms-4"
+                            disabled={processing}
+                        >
                             Masuk
                         </PrimaryButton>
                     </div>

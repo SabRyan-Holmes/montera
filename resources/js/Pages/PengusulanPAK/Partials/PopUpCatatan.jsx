@@ -34,7 +34,7 @@ export default function PopUpCatatan({ onClose, popUpData: {id} }) {
     // console.log(id)
 
     return (
-        <section className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-50 ">
+        <section className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 bg-opacity-50 ">
             <div className="w-full max-w-md p-6 mx-4 bg-white rounded-lg shadow-lg">
                 <h2 className="mb-4 text-xl font-bold text-gray-800">
                     Alasan penolakan/catatan perbaikan

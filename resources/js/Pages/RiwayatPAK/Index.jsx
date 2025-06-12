@@ -143,7 +143,7 @@ export default function Index({
                     setSearch={setSearch}
                 />
 
-                <div className="pt-3 ">
+                <section className="pt-3 ">
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -173,7 +173,16 @@ export default function Index({
                                         >
                                             Nama & NIP
                                         </th>
-
+                                        {/* <th
+                                            scope="col"
+                                            width="7%"
+                                            className="w-16 p-1 text-xs"
+                                        >
+                                            <span>AK Terakhir </span>
+                                            <span className="block">
+                                                AK Terbaru
+                                            </span>
+                                        </th> */}
                                         <th
                                             scope="col"
                                             width="7%"
@@ -189,9 +198,7 @@ export default function Index({
                                                 Kesimpulan
                                             </span>
                                         </th>
-                                        <th scope="col" >
-                                                Terakhir diperbarui
-                                        </th>
+                                        <th scope="col">Terakhir diperbarui</th>
                                         <th
                                             scope="col"
                                             className="text-center rounded-tr-xl"
@@ -205,7 +212,6 @@ export default function Index({
                                         <tr
                                             role="list"
                                             key={i}
-                                            className="group/item hover:bg-secondary/35"
                                         >
                                             <td className="text-center">
                                                 {i + 1}
@@ -222,6 +228,15 @@ export default function Index({
                                                     {pak.pegawai["NIP"]}
                                                 </span>
                                             </td>
+                                            {/* <td className="text-center">
+                                                <span className="block">
+                                                    {pak["ak_terakhir"] } {'/'}
+                                                </span>
+
+                                                <span className="block p-1 mt-1 font-medium ">
+                                                    {pak["angka_kredit"] ?? ""}
+                                                </span>
+                                            </td> */}
 
                                             <td className="text-center">
                                                 {parseFloat(
@@ -264,18 +279,18 @@ export default function Index({
                                                 )}
                                             </td>
                                             <td className="text-center">
-                                            <div className="mt-2">
-                                                        <span className="block">
-                                                            {moment(
-                                                                pak.updated_at
-                                                            ).format("LL")}
-                                                        </span>
-                                                        <span className="block text-[12px]">
-                                                            {moment(
-                                                                pak.updated_at
-                                                            ).fromNow()}
-                                                        </span>
-                                                    </div>
+                                                <div className="mt-2">
+                                                    <span className="block">
+                                                        {moment(
+                                                            pak.updated_at
+                                                        ).format("LL")}
+                                                    </span>
+                                                    <span className="block text-[12px]">
+                                                        {moment(
+                                                            pak.updated_at
+                                                        ).fromNow()}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 {/* CEK SUDAH DIAJUKAN ATAU BELUM */}
@@ -283,9 +298,9 @@ export default function Index({
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             disabled
-                                                            className="cursor-not-allowed hover:scale-105 action-btn group/button group-hover/item:bg-accent/80 text-accent/80"
+                                                            className="action-btn group action-btn-primary"
                                                         >
-                                                            <BsFillSendFill className="scale-125 fill-accent/70 group-hover/item:fill-white" />
+                                                            <BsFillSendFill className="scale-125 group-hover:fill-white" />
                                                         </button>
 
                                                         <TooltipHover
@@ -324,9 +339,9 @@ export default function Index({
                                                                     true
                                                                 );
                                                             }}
-                                                            className="action-btn group/button group-hover/item:bg-primary/80 text-primary/80"
+                                                            className="action-btn action-btn-primary group"
                                                         >
-                                                            <BsFillSendFill className="scale-125 fill-primary/70 group-hover/item:fill-white" />
+                                                            <BsFillSendFill className="scale-125 group-hover:fill-white" />
                                                         </button>
                                                         <TooltipHover
                                                             message={
@@ -348,9 +363,9 @@ export default function Index({
                                                                 )
                                                                 .showModal()
                                                         }
-                                                        className="action-btn group/button group-hover/item:bg-hijau text-hijau"
+                                                        className="action-btn group/button action-btn-success"
                                                     >
-                                                        <FaEye className="scale-125 fill-hijau/75 group-hover/item:fill-white" />
+                                                        <FaEye className="scale-125 group-hover:fill-white" />
                                                     </button>
                                                     <TooltipHover
                                                         message={"Lihat Data"}
@@ -368,9 +383,9 @@ export default function Index({
                                                             "divisi-sdm.pak.edit",
                                                             { id: pak.id }
                                                         )}
-                                                        className="action-btn group/button group-hover/item:bg-secondary/70 text-secondary/70"
+                                                        className="action-btn action-btn-secondary group"
                                                     >
-                                                        <FaEdit className="scale-125 fill-secondary group-hover/item:fill-white" />
+                                                        <FaEdit className="scale-125 group-hover:fill-white" />
                                                     </Link>
 
                                                     <TooltipHover
@@ -385,9 +400,9 @@ export default function Index({
                                                         onClick={() =>
                                                             handleDelete(pak.id)
                                                         }
-                                                        className="items-center justify-center inline-block gap-2 mx-auto font-medium text-center text-red-500  hover:scale-[1.3] transition-all scale-110 group/button group-hover/item:bg-red-500 group-hover/item:text-white action-btn border-hijau/20 hover:bg-hijau hover:text-white"
+                                                        className="action-btn action-btn-warning group"
                                                     >
-                                                        <FaTrash className="scale-125 fill-red-500 group-hover/item:fill-white" />
+                                                        <FaTrash className="scale-125 group-hover:fill-white" />
                                                     </button>
                                                     <TooltipHover
                                                         message={"Hapus Data"}
@@ -408,7 +423,7 @@ export default function Index({
                             </h2>
                         </div>
                     )}
-                </div>
+                </section>
 
                 {riwayatPAK.data.length > 0 && (
                     // Pagination

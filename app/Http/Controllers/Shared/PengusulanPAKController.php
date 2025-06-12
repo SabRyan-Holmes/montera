@@ -55,7 +55,7 @@ class PengusulanPAKController extends Controller
 
 
         return Inertia::render('PengusulanPAK/Index', [
-            "title" => "Pengusulan PAK ",
+            "title" => "Pengusulan Penilaian PAK ",
             "subTitle" => $subTitle,
             "pengusulanPAK" => $pengusulan_pak->paginate(10),
             'canValidate' => $this->user->role == 'Divisi SDM', // TODO:gimana cara agar global user diatas bisa diakses

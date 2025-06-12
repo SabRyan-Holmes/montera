@@ -240,7 +240,7 @@ export default function DynamicTableSection({
                                                 .join(" ")}
                                         >
                                             {/* Conditional rendering yang benar */}
-                                            {/* ANCHOR */}
+                                            {/* ANCHOR : TODO: Benerin lagi tampilan untuk tebusan dan bisa diatur defaultny*/}
 
                                             {title.includes("Tebusan") ? (
                                                 <div className="flex items-center gap-2">
@@ -266,9 +266,9 @@ export default function DynamicTableSection({
                                                         : item[col.field]}
 
                                                     {/* If Default Value Setted(Divisi SDM View) */}
-                                                    {withAction &&
+                                                    {(withAction &&
                                                         item.id ==
-                                                            defaultConfig && (
+                                                            defaultConfig) && (
                                                             <span className="badge-optional">
                                                                 Default
                                                             </span>

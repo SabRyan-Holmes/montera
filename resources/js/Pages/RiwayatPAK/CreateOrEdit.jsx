@@ -457,14 +457,14 @@ export default function Index({
                             {/* PENETAPAN ANGKA KREDIT | END*/}
                         </div>
 
-                        <div className="flex justify-center w-full pb-12 mt-10 gap-7 ">
+                        <div className="flex justify-center w-full gap-5 pb-12 mt-10 ">
                             <SecondaryButton
                                 type="submit"
                                 name="action"
                                 value="preview"
                                 className="scale-110 hover:scale-[1.15] hover:bg-secondary/80 group hover:text-white "
                             >
-                                Preview Dokumen
+                                PRATINJAU DOKUMEN
                                 <FaFilePdf className="mx-1" />
                             </SecondaryButton>
 
@@ -496,7 +496,7 @@ export default function Index({
                                     value="save"
                                     className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
                                 >
-                                    Tambah
+                                    Simpan
                                     <FaSave className="mx-1" />
                                 </SuccessButton>
                             )}
@@ -507,7 +507,7 @@ export default function Index({
                                 value="save_submit"
                                 className="scale-110 hover:scale-[1.15] hover:bg-primary/80 "
                             >
-                                Simpan dan Ajukan
+                                Ajukan
                                 <BsFillSendFill className="mx-1" />
                             </PrimaryButton>
                         </div>

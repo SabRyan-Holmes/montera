@@ -14,7 +14,7 @@ class LogAktivitas extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_nip'); // Tambahkan parameter ketiga
+        return $this->belongsTo(User::class, 'user_nip', 'nip'); // Tambahkan parameter ketiga
     }
 
     public function pegawai()

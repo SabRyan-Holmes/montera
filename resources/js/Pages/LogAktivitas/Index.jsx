@@ -22,14 +22,28 @@ export default function Index({
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
     moment.locale("id");
 
-    console.warn(logAktivitas)
+    console.warn(logAktivitas);
 
-    const styleByRole= {
-        'Divisi SDM' : 'badge-xs-primary',
-        'Pimpinan' : 'badge-xs-success',
-        'Pegawai' : 'badge-xs-secondary',
+    const styleByRole = {
+        "Divisi SDM": "badge-xs-primary",
+        Pimpinan: "badge-xs-success",
+        Pegawai: "badge-xs-secondary",
+    };
+
+    function formatModel(modelPath) {
+        if (!modelPath) return '';
+
+        // Ambil kata terakhir setelah backslash
+        const parts = modelPath.split('\\');
+        const className = parts[parts.length - 1];
+
+        // Pisahkan berdasarkan huruf kapital (kecuali huruf kapital berurutan)
+        const readableName = className.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+        return readableName;
     }
 
+    // TODO:Filter& Search
     // ANCHOR
     return (
         <Authenticated user={auth.user} title={title}>
@@ -115,10 +129,10 @@ export default function Index({
                     </form>
                 </section>
 
-                <section>
+                <section className="mt-5">
                     {logAktivitas.data.length ? (
                         <table className="table text-xs table-bordered">
-                            <thead className="text-sm font-medium text-white bg-primary ">
+                            <thead className="text-sm font-medium text-center text-white bg-primary ">
                                 <tr>
                                     <th
                                         scope="col"
@@ -133,9 +147,14 @@ export default function Index({
                                     <th scope="col" width="20%" className="">
                                         Nama, NIP & Role
                                     </th>
-                                    <th scope="col" width="15%">
+                                    <th scope="col" width="12%">
                                         <span className="flex justify-center">
                                             Jenis Aktivitas
+                                        </span>
+                                    </th>
+                                    <th scope="col" width="15%">
+                                        <span className="flex justify-center">
+                                            Target Entitas
                                         </span>
                                     </th>
 
@@ -158,13 +177,13 @@ export default function Index({
                                         className="group/item hover:bg-secondary/35"
                                     >
                                         <td className="text-center">{i + 1}</td>
-                                        <td>
+                                        <td className="text-center">
                                             <span>
                                                 {moment(data.created_at).format(
                                                     "LL"
                                                 )}
                                             </span>
-                                            <span className="block text-xs text-nowrap">
+                                            <span className="block text-xs font-extralight text-nowrap">
                                                 {moment(
                                                     data.created_at
                                                 ).fromNow()}
@@ -173,16 +192,32 @@ export default function Index({
                                         <td className="relative group">
                                             {/* Logic menampilkan user role Divisi SDM/Pimpinan dengan Pegawai  */}
                                             <span className="block text-nowrap">
-                                                {data.user?.name ?? data.pegawai.Nama}
+                                                {data.user?.name ??
+                                                    data.pegawai?.Nama}
                                             </span>
                                             <span className="block p-1 mx-auto mt-1 font-medium round ed-md w-fit bg-primary/10">
-                                                {data.user?.nip ?? data.pegawai.NIP}
+                                                {data.user?.nip ??
+                                                    data.pegawai?.NIP}
                                             </span>
-                                            <span className={styleByRole[data.user?.role ?? "Pegawai"]}>
+                                            <span
+                                                className={
+                                                    styleByRole[
+                                                        data.user?.role ??
+                                                            "Pegawai"
+                                                    ]
+                                                }
+                                            >
                                                 {data.user?.role ?? "Pegawai"}
                                             </span>
                                         </td>
-                                        <td>{data.aktivitas}</td>
+                                        <td className="text-center">
+                                            {data.aktivitas}
+                                        </td>
+                                        <td>
+                                            <span className="flex justify-center">
+                                                {formatModel(data.entity_type)} {'(ID: #'} {data.entity_id} {')'}
+                                            </span>
+                                        </td>
                                         <td>{data.keterangan}</td>
                                         {/* <td
                                             className="relative group cursor-pointer max-w-[300px] text-xs"

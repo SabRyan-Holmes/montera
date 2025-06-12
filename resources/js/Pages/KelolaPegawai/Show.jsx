@@ -1,78 +1,56 @@
-import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React from "react";
-import { useForm } from "@inertiajs/react";
+import { DetailPegawai, PrimaryButton, SecondaryButton } from "@/Components";
+import { router } from "@inertiajs/react";
+import React, { useState } from "react";
+import { IoCloseOutline, IoDocument } from "react-icons/io5";
+import { usePage } from "@inertiajs/react";
 import { FaEdit } from "react-icons/fa";
-import { FaDatabase } from "react-icons/fa6";
-import { FaUserEdit } from "react-icons/fa";
-import { RiArrowGoBackFill } from "react-icons/ri";
-import { Head, Link } from "@inertiajs/react";
-import { DetailPegawai, SecondaryButton } from "@/Components";
+import { FaTrash } from "react-icons/fa6";
 
-export default function Show({ auth, pegawai, title }) {
-    // console.log('isi current', current)
+export default function ShowModal({ pegawai, setActiveModal, handleDelete }) {
+    const { props } = usePage();
+
     return (
-        <Authenticated
-            user={auth.user}
-            title={title}
-            current={route().current()}
+        <dialog
+            id={`Show-${pegawai.id}`}
+            onClose={() => setActiveModal(null)}
+            className="modal"
         >
-            <Head title={title} />
-            <section className="px-24 mx-auto mb-24 phone:h-screen laptop:h-full max-w-screen-laptop">
-                <div className="flex justify-between">
-                    <div className="mt-2 text-sm breadcrumbs">
-                        <ul>
-                            <li>
-                                <a
-                                    href={route("divisi-sdm.pegawai.index")}
-                                    className="gap-2"
-                                >
-                                    <FaDatabase className="w-4 h-4 stroke-current" />
-                                    <span>Kelola Data</span>
-                                </a>
-                            </li>
+            <div className="relative w-full max-w-3xl modal-box">
+                <form method="dialog">
+                    <button className="absolute btn btn-md btn-circle btn-ghost right-2 top-2">
+                        <IoCloseOutline className="w-10 h-10 stroke-accent group-hover/item:fill-white" />
+                    </button>
+                </form>
 
-                            <li>
-                                <span className="inline-flex items-center gap-2">
-                                    {pegawai.Nama}
-                                </span>
-                            </li>
+                <div className="px-2 my-10 mb-16 overflow-x-auto">
+                    <h3 className="mb-2 text-xl font-bold">
+                        Lihat Detail Data Pegawai
+                    </h3>
 
-                            <li>
-                                <span className="inline-flex items-center gap-2">
-                                    <FaUserEdit className="w-4 h-4 stroke-current" />
-
-                                    {title}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <SecondaryButton
-                        onClick={() => window.history.back()}
-                        className="capitalize bg-secondary/5 "
-                    >
-                        <span>Kembali</span>
-                        <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
-                    </SecondaryButton>
-                </div>
-
-                <div className="mt-10 overflow-x-auto">
                     <DetailPegawai pegawai={pegawai} collapse={false} />
-
-                    <div className="flex items-center justify-center w-full my-9">
-                        <SecondaryButton
-                            asLink
-                            href={route(
-                                "divisi-sdm.pegawai.edit",
-                                pegawai["NIP"]
-                            )}
-                            className="text-white scale-110 bg-secondary glass hover:bg-secondary"
-                        >
-                            <span>Edit Data</span>
-                            <FaEdit className="w-4 h-5 mx-1 -mt-1 fill-white group-hover/button:fill-white" />
-                        </SecondaryButton>
-                    </div>
                 </div>
-            </section>
-        </Authenticated>
+            </div>
+
+            {/* Floating Action Button */}
+            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-28 left-1/2">
+                <SecondaryButton
+                    asLink
+                    href={route("divisi-sdm.pegawai.edit", pegawai["NIP"])}
+                    // className=" bg-secondary"
+                >
+                    <FaEdit className="w-4 h-4 mr-1 " />
+                    Edit Data
+                </SecondaryButton>
+
+                <SecondaryButton
+                    onClick={() => handleDelete(pegawai["NIP"])}
+                    className="text-white bg-warning/80"
+                >
+                    <FaTrash className="w-4 h-4 mr-1 " />
+                    Hapus Data
+                </SecondaryButton>
+            </div>
+            {/* Floating Action Button */}
+        </dialog>
     );
 }

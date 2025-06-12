@@ -69,7 +69,7 @@ export default function Index({
     };
 
     moment.locale("id");
-    console.warn(riwayatKarir);
+    // console.warn(riwayatKarir);
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
@@ -174,7 +174,7 @@ export default function Index({
 
                 <section>
                     {role === "Pegawai" && (
-                        <strong className="block py-6 text-2xl">
+                        <strong className="block py-3 text-2xl">
                             Riwayat Karir Saya
                         </strong>
                     )}
@@ -266,7 +266,7 @@ export default function Index({
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
                                 {!subTitle
-                                    ? "Belum Ada Data Pegawai Terbaru Untuk Saat Ini"
+                                    ? "Belum Ada Data Riwayat Karir Terbaru Untuk Saat Ini"
                                     : "Tidak Ditemukan"}
                             </h2>
                         </div>

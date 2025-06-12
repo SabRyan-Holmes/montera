@@ -394,7 +394,7 @@ export default function Index({
                     {pengajuans.data.length ? (
                         <>
                             <table className="table text-xs table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
+                                <thead className="text-sm font-medium text-center text-white bg-primary ">
                                     <tr>
                                         <th
                                             scope="col"
@@ -412,7 +412,7 @@ export default function Index({
                                             width="20%"
                                             className=""
                                         >
-                                            Nama & NIP
+                                            Nama & NIP Pegawai
                                         </th>
                                         <th scope="col" width="15%">
                                             <span className="flex justify-center">

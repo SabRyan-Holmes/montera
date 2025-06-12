@@ -172,6 +172,8 @@ export default function Index({
     // console.log("activeModalId");
     // console.log(activeModalId);
     const [expandedRows, setExpandedRows] = useState({});
+    const role = auth.user.role;
+
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -203,6 +205,11 @@ export default function Index({
                 </div>
 
                 <div className="pt-3 ">
+                {role === "Pegawai" && (
+                        <strong className="block py-3 text-xl">
+                            Pengusulan Saya
+                        </strong>
+                    )}
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -210,12 +217,13 @@ export default function Index({
                             </strong>
                         </div>
                     )}
+
                     {pengusulanPAK.data.length ? (
                         // ANCHOR
                         <>
                             {/* Table Content */}
                             <table className="table text-xs table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
+                                <thead className="text-sm font-medium text-center text-white bg-primary ">
                                     <tr>
                                         <th
                                             scope="col"
@@ -225,7 +233,7 @@ export default function Index({
                                         >
                                             No
                                         </th>
-                                        <th scope="col" width="15%">
+                                        <th scope="col" width="25%">
                                             NAMA & NIP
                                         </th>
                                         <th scope="col" width="15%">
@@ -266,7 +274,7 @@ export default function Index({
                                         </th>
                                         <th
                                             scope="col"
-                                            width="2rem"
+                                            width="10%"
                                             className="text-center "
                                         >
                                             Status & Waktu
@@ -288,7 +296,7 @@ export default function Index({
                                             <td>1</td>
                                             <td className="">
                                                 {/* TODO: Bikin bisa expanded nanti */}
-                                                <span className="block text-ellipsis text-nowrap">
+                                                <span className="block text-ellipsis">
                                                     {data.pegawai["Nama"]}{" "}
                                                     {data.pegawai[
                                                         "Gelar Tambahan"
