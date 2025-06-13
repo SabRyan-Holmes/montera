@@ -29,7 +29,9 @@ export default function Index({
     pegawaiList,
     aturanPAK,
     // IF Edit
-    isEdit,
+    isEdit = false,
+    isRevisi = false,
+    pengajuanId = null,
     riwayat,
 
     // IF By Pengusulan
@@ -61,8 +63,10 @@ export default function Index({
                 ...riwayat,
                 id: riwayat.id,
                 pegawai: riwayat.pegawai,
+                //forRevisiPengajuanPAK
+                ...(pengajuanId && { pengajuanId: pengajuanId }),
             });
-            // console.log("riwayat", riwayat);
+            // g("", riwayat);
             setPegawaiState(riwayat.pegawai);
         } else if (isByPengusulan && pegawai) {
             const { koefisienPertahun } = aturanKonvTableProps;
@@ -109,6 +113,7 @@ export default function Index({
             }));
             // console.log("first Mounted");
         }
+        // alert(isRevisi)
     }, [initialized]);
 
     // Kalo dpt nilai pegawai stelah dipilih
@@ -177,51 +182,52 @@ export default function Index({
         e.preventDefault();
 
         const action = e.nativeEvent.submitter.value;
-        let endpoint = "";
 
-        if (action === "preview") {
-            endpoint = "/pak/process";
-        } else if (action === "save") {
-            endpoint = "/divisi-sdm/pak/save";
-        } else if (action === "save_submit") {
-            endpoint = "/divisi-sdm/pak/save-and-submit";
-        }
+        const endpoints = {
+            preview: "/pak/process",
+            save: "/divisi-sdm/pak/save",
+            submit: "/divisi-sdm/pak/save-and-submit",
+        };
 
-        // console.log;
-        router.post(endpoint, data, {
-            preserveScroll: true,
-            preserveState: true,
-            onStart: () => setIsLoading(true),
-            onFinish: () => setIsLoading(false),
-            onError: (errors) => {
-                console.error("Error:", errors);
-            },
-            onSuccess: (page) => {
-                if (action === "preview") setShowIframe(true);
-                // Tambah logic lain sesuai tombolnya
-            },
-        });
+        const routeNames = {
+            update: "divisi-sdm.riwayat-pak.update",
+            "re-submit": "divisi-sdm.pengajuan.ajukan-ulang",
+        };
 
+        let endpoint = endpoints[action] ?? "";
+        let routeName = routeNames[action] ?? "";
+
+        // alert(action);
         // EDIT MODE
-        if (isEdit && action === "update") {
-            // console.log("isi Edit :", isEdit);
+        if (isEdit) {
             let idRiwayatPAK = data.id;
-            router.patch(
-                route("divisi-sdm.riwayat-pak.update", idRiwayatPAK),
-                data,
-                {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onStart: () => setIsLoading(true),
-                    onFinish: () => setIsLoading(false),
-                    onError: (errors) => {
-                        alert("Error:", errors);
-                    },
-                    onSuccess: (page) => {
-                        // Tambah logic lain sesuai tombolnya
-                    },
-                }
-            );
+            // alert(idRiwayatPAK)
+            router.patch(route(routeName, data.id), data, {
+                preserveScroll: true,
+                preserveState: true,
+                onStart: () => setIsLoading(true),
+                onFinish: () => setIsLoading(false),
+                onError: (errors) => {
+                    alert("Error:", errors);
+                },
+                onSuccess: (page) => {
+                    // Tambah logic lain sesuai tombolnya
+                },
+            });
+        } else {
+            router.post(endpoint, data, {
+                preserveScroll: true,
+                preserveState: true,
+                onStart: () => setIsLoading(true),
+                onFinish: () => setIsLoading(false),
+                onError: (errors) => {
+                    console.error("Error:", errors);
+                },
+                onSuccess: (page) => {
+                    if (action === "preview") setShowIframe(true);
+                    // Tambah logic lain sesuai tombolnya
+                },
+            });
         }
     };
 
@@ -415,7 +421,7 @@ export default function Index({
                                 data={data}
                                 setData={setData}
                                 // EDIT
-                                isEdit={true}
+                                isEdit={isEdit}
                                 historyData={isEdit ? riwayat : {}}
                                 pengusulanData={isByPengusulan && pengusulan}
                             />
@@ -457,7 +463,7 @@ export default function Index({
                             {/* PENETAPAN ANGKA KREDIT | END*/}
                         </div>
 
-                        <div className="flex justify-center w-full gap-5 pb-12 mt-10 ">
+                        <div className="flex justify-center w-full gap-6 pb-12 mt-10 space-x-2">
                             <SecondaryButton
                                 type="submit"
                                 name="action"
@@ -468,7 +474,8 @@ export default function Index({
                                 <FaFilePdf className="mx-1" />
                             </SecondaryButton>
 
-                            {isEdit ? (
+                            {!isRevisi && <></>}
+                            {isEdit && !isRevisi ? (
                                 <>
                                     <SuccessButton
                                         type="submit"
@@ -490,26 +497,40 @@ export default function Index({
                                     </button>
                                 </>
                             ) : (
-                                <SuccessButton
-                                    type="submit"
-                                    name="action"
-                                    value="save"
-                                    className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
-                                >
-                                    Simpan
-                                    <FaSave className="mx-1" />
-                                </SuccessButton>
+                                !isRevisi && (
+                                    <SuccessButton
+                                        type="submit"
+                                        name="action"
+                                        value="save"
+                                        className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                    >
+                                        Simpan
+                                        <FaSave className="mx-1" />
+                                    </SuccessButton>
+                                )
                             )}
 
-                            <PrimaryButton
-                                type="submit"
-                                name="action"
-                                value="save_submit"
-                                className="scale-110 hover:scale-[1.15] hover:bg-primary/80 "
-                            >
-                                Ajukan
-                                <BsFillSendFill className="mx-1" />
-                            </PrimaryButton>
+                            {isRevisi ? (
+                                <PrimaryButton
+                                    type="submit"
+                                    name="action"
+                                    value="re-submit"
+                                    className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                >
+                                    Ajukan Ulang
+                                    <BsFillSendFill className="mx-1" />
+                                </PrimaryButton>
+                            ) : (
+                                <PrimaryButton
+                                    type="submit"
+                                    name="action"
+                                    value="submit"
+                                    className="scale-110 hover:scale-[1.15] hover:bg-primary/80 "
+                                >
+                                    Ajukan
+                                    <BsFillSendFill className="mx-1" />
+                                </PrimaryButton>
+                            )}
                         </div>
                     </form>
                 </section>

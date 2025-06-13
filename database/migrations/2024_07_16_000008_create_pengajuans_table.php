@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
             $table->string("approved_pak_path")->nullable()->comment('penyimpanan dokumen sementara setelah di validasi/ditandatangani'); //for store validated/approved PAK
             $table->datetime('tanggal_ditolak')->nullable();
-            $table->datetime('tanggal_diperbaiki')->nullable();
+            $table->datetime('tanggal_direvisi')->nullable();
             $table->datetime("tanggal_divalidasi")->nullable();
             $table->timestamps();
         });

@@ -31,14 +31,14 @@ export default function Index({
     };
 
     function formatModel(modelPath) {
-        if (!modelPath) return '';
+        if (!modelPath) return "";
 
         // Ambil kata terakhir setelah backslash
-        const parts = modelPath.split('\\');
+        const parts = modelPath.split("\\");
         const className = parts[parts.length - 1];
 
         // Pisahkan berdasarkan huruf kapital (kecuali huruf kapital berurutan)
-        const readableName = className.replace(/([a-z])([A-Z])/g, '$1 $2');
+        const readableName = className.replace(/([a-z])([A-Z])/g, "$1 $2");
 
         return readableName;
     }
@@ -174,10 +174,10 @@ export default function Index({
                                     <tr
                                         role="list"
                                         key={i}
-                                        className="group/item hover:bg-secondary/35"
+                                        className="text-center group/item hover:bg-secondary/35"
                                     >
-                                        <td className="text-center">{i + 1}</td>
-                                        <td className="text-center">
+                                        <td>{i + 1}</td>
+                                        <td>
                                             <span>
                                                 {moment(data.created_at).format(
                                                     "LL"
@@ -210,15 +210,21 @@ export default function Index({
                                                 {data.user?.role ?? "Pegawai"}
                                             </span>
                                         </td>
-                                        <td className="text-center">
-                                            {data.aktivitas}
-                                        </td>
+                                        <td>{data.aktivitas}</td>
                                         <td>
-                                            <span className="flex justify-center">
-                                                {formatModel(data.entity_type)} {'(ID: #'} {data.entity_id} {')'}
-                                            </span>
+                                                <span className="block">
+                                                    {formatModel(
+                                                        data.entity_type
+                                                    )}
+                                                </span>
+                                                <span className="block">
+                                                    {"(ID: #"} {data.entity_id}{" "}
+                                                    {")"}
+                                                </span>
                                         </td>
-                                        <td>{data.keterangan}</td>
+                                        <td className="text-left">
+                                            {data.keterangan}
+                                        </td>
                                         {/* <td
                                             className="relative group cursor-pointer max-w-[300px] text-xs"
                                             onClick={() =>

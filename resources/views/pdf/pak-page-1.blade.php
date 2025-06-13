@@ -87,8 +87,7 @@
                         <td colspan="2" style="border-right-color: transparent;">
                             Nomor Seri Karpeg
                         </td>
-                        <td colspan="2"
-                            >
+                        <td colspan="2">
                             : {{ optional($data['pegawai'])['Nomor Seri Karpeg'] ?? '-' }}
                         </td>
                     </tr>
@@ -99,8 +98,7 @@
                         <td colspan="2" style="border-right-color: transparent;">
                             Tempat/Tgl Lahir
                         </td>
-                        <td colspan="2"
-                            style=";
+                        <td colspan="2" style=";
                         ">
                             : {{ $data['pegawai']['Tempat/Tanggal Lahir'] }}
                         </td>
@@ -112,8 +110,7 @@
                         <td colspan="2" style="border-right-color: transparent;">
                             Jenis Kelamin
                         </td>
-                        <td colspan="2"
-                            style=";
+                        <td colspan="2" style=";
                         ">
                             : {{ $data['pegawai']['Jenis Kelamin'] }}
                         </td>
@@ -123,12 +120,10 @@
                     <tr>
                         <th>
                             6</th>
-                        <td colspan="2"
-                            style="border-right-color: transparent; white-space: nowrap;">
+                        <td colspan="2" style="border-right-color: transparent;">
                             Pangkat/Golongan Ruang/TMT
                         </td>
-                        <td colspan="2"
-                            style="text-wrap: nowrap;">
+                        <td colspan="2" style="text-wrap: nowrap;">
                             : {{ $data['pegawai']['Pangkat/Golongan Ruangan/TMT'] }}
                         </td>
                     </tr>
@@ -140,8 +135,7 @@
                         <td colspan="2" style="border-right-color: transparent;">
                             Jabatan/TMT
                         </td>
-                        <td colspan="2"
-                            style=";   text-wrap: nowrap;">
+                        <td colspan="2">
                             : {{ $data['pegawai']['Jabatan/TMT'] }}
                         </td>
                     </tr>
@@ -153,8 +147,7 @@
                         <td colspan="2" style="border-right-color: transparent;">
                             Unit Kerja
                         </td>
-                        <td colspan="2"
-                            style=";   text-wrap: nowrap;">
+                        <td colspan="2">
                             : {{ $data['pegawai']['Unit Kerja'] }}
                         </td>
                     </tr>
@@ -166,8 +159,7 @@
                         <td colspan="2" style="border-right-color: transparent;">
                             Intansi
                         </td>
-                        <td colspan="2"
-                            style=";
+                        <td colspan="2" style=";
                                 ">
                             : {{ 'Badan Pusat Statistik' }}
                         </td>
@@ -179,16 +171,14 @@
 
                 <tfoot>
                     <tr style="text-transform: uppercase; ">
-                        <th colspan="5"
-                            style="font-weight: 700;">
+                        <th colspan="5" style="font-weight: 700;">
                             konversi predikat kinerja ke angka kredit
                         </th>
                     </tr>
                     {{-- ---------------------------------------- --}}
 
                     <tr style="font-weight:400;">
-                        <th colspan="3"
-                            style="text-transform: capitalize;">
+                        <th colspan="3" style="text-transform: capitalize;">
                             Hasil Penilaian Kinerja
                         </th>
                         <th rowSpan="2" style=" ">
@@ -230,7 +220,7 @@
                         <th colspan="2">
                             {{ $data['predikat'] }}
                         </th>
-                        <th >
+                        <th>
                             {{ $data['angka_periode'] }}
                             /12
                         </th>

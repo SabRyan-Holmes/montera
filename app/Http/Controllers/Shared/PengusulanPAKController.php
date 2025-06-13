@@ -125,9 +125,14 @@ class PengusulanPAKController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PengusulanPAK $pengusulan_pak)
+    public function edit(PengusulanPAK $pengusulanPAK, Request $request)
     {
-        //
+        $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
+        return Inertia::render('PengusulanPAK/Create', [
+            'title' => "Tambah Pengusulan PAK",
+            'pegawai' => $pegawai,
+            'pengusulanPAK' =>$pengusulanPAK
+        ]);
     }
 
     /**

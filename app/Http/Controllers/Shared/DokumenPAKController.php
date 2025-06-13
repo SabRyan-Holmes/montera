@@ -192,17 +192,15 @@ class DokumenPAKController extends Controller
 
     public function download_template()
     {
+        $filePath = public_path('storage/TEMPLATE_PAK.docx');
 
-        // TODO : Download template logic(dalam docx kalo bisa)
-        // return $download;
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return redirect('storage/TEMPLATE_PAK.docx');
     }
 
-    public function test_pdf()
-    {
-        $pdf = Pdf::loadHTML('<h1>Test PDF</h1><p>This is a simple PDF document.</p>')
-            ->setPaper('A4', 'portrait')
-            ->setWarnings(false);
 
-        return $pdf->stream('test.pdf');
-    }
+
 }

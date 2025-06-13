@@ -16,6 +16,7 @@ export default function SidebarLinkCollapse({ children, submenu }) {
                             key={i}
                             href={route(item.route)}
                             active={item.actives?.some((r) => route().current(r))}
+                            asDownload={item.route.includes('download') || item.route.includes('help')} // Custom flag
                         >
                             {item.label}
                         </SidebarLink>

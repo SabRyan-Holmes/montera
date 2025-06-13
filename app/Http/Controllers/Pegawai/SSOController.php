@@ -26,24 +26,29 @@ class SSOController extends Controller
 
     public function login(Request $request)
     {
-        // dd($request);
+        $request->merge($request->json()->all()); // optional safeguard
+
+
         $request->validate([
             'username' => 'required',
             'password' => 'required',
             'nip' => 'required',
-            'captcha' => 'required', // validasi token
+            'captcha' => '', // validasi token
         ]);
 
         // dd($request);
         // Verifikasi CAPTCHA
-        $verify = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => env('RECAPTCHA_SECRET_KEY'), // dari dashboard Google
-            'response' => $request->captcha,
-        ]);
+        // Log::info('Captcha token: ' . $request->captcha);
+        // Log::info('Secret key: ' . env('RECAPTCHA_SECRET_KEY'));
+        // $verify = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        //     'secret' => env('RECAPTCHA_SECRET_KEY'), // dari dashboard Google
+        //     'response' => $request->captcha,
+        // ]);
 
-        if (!$verify->json('success')) {
-            return back()->withErrors(['captcha' => 'Verifikasi CAPTCHA gagal. Silakan coba lagi.']);
-        }
+
+        // if (!$verify->json('success')) {
+        //     return back()->withErrors(['captcha' => 'Verifikasi CAPTCHA gagal. Silakan coba lagi.']);
+        // }
 
         // Step 1: Login ke SSO (pakai username & password)
         // TODO: Uncomment nanti!
@@ -77,21 +82,23 @@ class SSOController extends Controller
         return redirect()->route('dashboard');
     }
 
-
     private function getSSOToken($username, $password)
     {
         $client = new \GuzzleHttp\Client([
-            // Kalau perlu, matikan SSL verify:
-            'verify' => false,
+            'verify' => false, // Boleh matikan kalau HTTPS bermasalah
             'headers' => [
-                'Content-Type' => 'application/json',
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60',
-                'Accept' => 'application/json',
-            ]
+                'User-Agent'    => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+                'Origin'        => 'https://bpsjambi.id',
+                'Referer'       => 'https://bpsjambi.id/sso/public/index.php/auth/login',
+            ],
+            // Timeout opsional
+            'timeout' => 10,
         ]);
 
         try {
-            $response = $client->post('https://bpsjambi.id/sso/api/auth/login', [
+            $response = $client->post('https://bpsjambi.id/sso/public/index.php/auth/login', [
                 'json' => [
                     'username' => $username,
                     'password' => $password,
@@ -110,11 +117,16 @@ class SSOController extends Controller
             }
 
             return null;
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            Log::error('SSO ClientException: ' . $e->getMessage());
+            Log::error('Response: ' . $e->getResponse()->getBody()->getContents());
+            return null;
         } catch (\Exception $e) {
             Log::error('SSO Login Error: ' . $e->getMessage());
             return null;
         }
     }
+
 
 
 

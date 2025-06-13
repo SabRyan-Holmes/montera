@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['authOrSSO'])->name('dashboard');
 
 // Preview PAK PDF
-Route::prefix('/pak')->name('pak.')->group(function () {
+Route::middleware(['authOrSSO'])->prefix('/pak')->name('pak.')->group(function () {
     Route::post('/process', [DokumenPAKController::class, 'process'])->name('process');
     Route::get('/preview', [DokumenPAKController::class, 'preview'])->name('preview');
 });
@@ -49,7 +49,7 @@ Route::prefix('/pak')->name('pak.')->group(function () {
 
 // <============================================================ Divisi SDM ============================================================>
 
-Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-sdm.')->group(function () {
+Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-sdm.')->group(function () {
     // Dashboard(=> Export Data Pegawai Ke csv)
     Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data Pegawai Ke csv
     Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
@@ -71,9 +71,12 @@ Route::middleware(['auth', 'Divisi SDM'])->prefix('/divisi-sdm')->name('divisi-s
         Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
     });
 
-    // Pengajuan PAK(CRUD, Cancel)
-    Route::resource('pengajuan', PengajuanController::class);
+    // Pengajuan PAK(CRUD, Revisi, RESEBMIT, Cancel) //NOTE!! Urutan jangan diubah, resource harus paling bawah
+    Route::get('/pengajuan/revisi', [PengajuanController::class, 'revisi'])->name('pengajuan.revisi');
+    Route::patch('/pengajuan/ajukan-ulang', [PengajuanController::class, 'ajukan_ulang'])->name('pengajuan.ajukan-ulang');
     Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel_pengajuan'])->name('pengajuan.cancel');
+    Route::resource('pengajuan', PengajuanController::class);
+
 
     // Arsip Dokumen(CRUD)
     Route::resource('arsip-dokumen', ArsipDokumenController::class);
@@ -147,7 +150,7 @@ Route::middleware(['authOrSSO', 'pimpinan'])->prefix('pimpinan')->name('pimpinan
 // <============================================================ Pegawai ============================================================>
 Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(function () {
     // Pengusulan(CR)
-    Route::resource('pengusulan-pak', PengusulanPAKController::class);
+    Route::resource('pengusulan-pak', PengusulanPAKController::class)->parameters(['pengusulan-pak' => 'pengusulanPAK'])->only(['index','create', 'store', 'show', 'edit', 'update', 'destroy']);;
 
     //Status Proses PAK/Pengajuan(R)
     Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('proses-pak.index');
@@ -169,16 +172,14 @@ Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(fun
 });
 
 
+Route::middleware(['authOrSSO'])->prefix('/info')->name('info.')->group(function () {
+    // Panduan/Bantuan
+    Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv
+    // Download Template
+    Route::get('/download-template', [DokumenPAKController::class, 'download_template'])->name('download-template');
+});
+
 require __DIR__ . '/auth.php';
-
-
-
-// Tes
-// Route::get('/test-pdf', [DokumenPAKController::class, 'test_pdf']);
-
-// Route::get('/tes', function () {
-//     return Inertia::render('Test');
-// });
 
 // Route::resource('riwayat-pak', RiwayatPAKController::class)
 // ->except(['index', 'preview']) //Resource kecuali index karna beda parameter

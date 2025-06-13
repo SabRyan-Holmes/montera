@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Shared;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Models\AturanPAK;
 use App\Models\Pegawai;
 use App\Models\Pengajuan;
 use App\Models\RiwayatPAK;
 use App\Models\User;
+use App\Services\ActivityLogger;
+use App\Services\AturanPAKService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -86,13 +89,13 @@ class RiwayatPAKController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request)
+    public function edit(RiwayatPAK $riwayat)
     {
-        $riwayat = RiwayatPAK::findOrFail($request->id);
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Edit Penetapan Angka Kredit',
-            'riwayat' => $riwayat,
-            'isEdit' => true
+            'isEdit' => true,
+            'riwayat' => RiwayatPAK::findOrFail($riwayat->id),
+            'aturanPAK' => AturanPAKService::get(),
         ]);
     }
 
@@ -107,7 +110,15 @@ class RiwayatPAKController extends Controller
             return back()->withErrors('Data yang ingin diupdate tidak ditemukan.');
         }
 
+
         $riwayat->update($request->all());
+        $no_surat =  AturanPAK::extractNoSurat($riwayat['no_surat3']);
+        ActivityLogger::log(
+            'Update Data',
+            Auth::user()->name . ' (' . Auth::user()->role  . ') memperbarui data riwayat PAK dengan no PAK ' . $no_surat,
+            get_class($riwayat),
+            $riwayat->id,
+        );
 
         // return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Riwayat Berhasil Diupdate!');
         return redirect()->back()->with('message', 'Data Penetapan Angka Kredit Berhasil Diupdate!');
@@ -180,6 +191,4 @@ class RiwayatPAKController extends Controller
             }
         }
     }
-
-
 }

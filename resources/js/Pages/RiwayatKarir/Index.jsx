@@ -188,7 +188,7 @@ export default function Index({
 
                     {riwayatKarir.data.length > 0 ? (
                         <table className="table text-xs table-bordered">
-                            <thead className="text-sm font-medium text-white bg-primary ">
+                            <thead className="text-sm font-medium text-center text-white bg-primary ">
                                 <tr>
                                     <th
                                         scope="col"
@@ -203,11 +203,7 @@ export default function Index({
                                     <th scope="col" width="20%" className="">
                                         Diperbarui Oleh
                                     </th>
-                                    <th
-                                        scope="col"
-                                        width="10%"
-                                        className="text-center"
-                                    >
+                                    <th scope="col" width="10%">
                                         <span>Jenis</span>
                                         <span className="block">Perubahan</span>
                                     </th>
@@ -219,9 +215,7 @@ export default function Index({
                                     </th>
 
                                     <th scope="col" width="60%">
-                                        <span className="flex justify-center">
-                                            Keterangan Aktivitas
-                                        </span>
+                                        Keterangan Aktivitas
                                     </th>
                                 </tr>
                             </thead>
@@ -245,7 +239,7 @@ export default function Index({
                                             <span className="block">
                                                 {data.updated_by.name}
                                             </span>
-                                            <span className="block ">
+                                            <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
                                                 {data.updated_by.nip}
                                             </span>
                                             <span className="badge-base">

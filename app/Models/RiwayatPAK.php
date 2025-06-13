@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatPAK extends Model
 {
@@ -64,5 +66,19 @@ class RiwayatPAK extends Model
                 $q->where('Daerah', $byDaerah);
             })
         );
+    }
+
+
+    protected static function booted()
+    {
+        static::deleted(function ($model) {
+            $no_surat =  AturanPAK::extractNoSurat($model['no_surat3']);
+            ActivityLogger::log(
+                'Hapus Data',
+                Auth::user()->name . ' (' . Auth::user()->role  . ') menghapus riwayat PAK dengan no PAK #' .  $no_surat,
+                get_class($model),
+                $model->id,
+            );
+        });
     }
 }

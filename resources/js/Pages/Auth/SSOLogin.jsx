@@ -35,7 +35,11 @@ export default function SSOLogin({ status, canAddPegawai }) {
     const submit = async (e) => {
         e.preventDefault();
 
-        if (!recaptchaRef.current || !recaptchaRef.current.executeAsync()) {
+        if (
+            !recaptchaRef.current ||
+            !recaptchaRef.current.executeAsync ||
+            !recaptchaRef.current.props.grecaptcha.execute
+        ) {
             alert("reCAPTCHA belum siap.");
             return;
         }
@@ -44,19 +48,20 @@ export default function SSOLogin({ status, canAddPegawai }) {
             const token = await recaptchaRef.current.executeAsync();
             console.log("Token dari Recaptcha:", token);
 
-            post(route("sso-login"), {
-                ...data,
-                captcha: token,
+            setData("captcha", token); // <- Ini penting
+
+            post(route("sso-login" ), {
+                data:data,
+                forceFormData:true,
+                onFinish: () => recaptchaRef.current.reset(), // reset setelah kirim
             });
 
-            recaptchaRef.current.reset();
+            // recaptchaRef.current.reset();
         } catch (error) {
             console.error("Gagal mendapatkan token:", error);
             alert("Gagal mendapatkan token reCAPTCHA.");
         }
     };
-
-
 
     useEffect(() => {
         const savedNip = localStorage.getItem("nip");
@@ -187,15 +192,11 @@ export default function SSOLogin({ status, canAddPegawai }) {
                         </label>
                     </div>
 
-                    <div className="mt-4">
-                            <ReCAPTCHA
-                                ref={recaptchaRef}
-                                sitekey={
-                                    import.meta.env.VITE_RECAPTCHA_SITE_KEY
-                                }
-                                size="normal"
-                            />
-                        </div>
+                    <ReCAPTCHA
+                        ref={recaptchaRef}
+                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                        size="invisible"
+                    />
                     <div className="flex items-center justify-end mt-4">
                         {canAddPegawai && (
                             <Link

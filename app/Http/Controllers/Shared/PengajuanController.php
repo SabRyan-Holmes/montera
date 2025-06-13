@@ -7,7 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\ArsipDokumen;
 use App\Models\AturanPAK;
 use App\Models\Catatan;
+use App\Models\Pegawai;
 use App\Models\Pengajuan;
+use App\Models\RiwayatPAK;
+use App\Services\ActivityLogger;
+use App\Services\AturanPAKService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,8 +41,9 @@ class PengajuanController extends Controller
     {
         $pengajuan = Pengajuan::latest();
         // Kalo pegawai tampilkan proses PAK unutk pegawai itu saja
-        if($this->user->role === 'Pegawai') {
-            $pengajuan = Pengajuan::byPegawaiId($this->user->id)->latest();
+        $pegawai = Pegawai::byNIp($this->user->nip);
+        if ($this->user->role === 'Pegawai') {
+            $pengajuan = Pengajuan::byPegawaiId(Auth::user()->id)->latest();
         }
 
         $subTitle = GetSubtitle::getSubtitle(
@@ -63,7 +68,7 @@ class PengajuanController extends Controller
             "title" => "Proses Pengajuan PAK",
             "subTitle" => $subTitle,
             "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
-            'canValidate' => $this->user->role === 'Pimpinan',
+            'isPimpinan' => $this->user->role === 'Pimpinan',
             'isDivisiSDM' => $this->user->role === 'Divisi SDM',
             'isPegawai' => $this->user->role === 'Pegawai',
             "searchReq" => request('search'),
@@ -144,7 +149,7 @@ class PengajuanController extends Controller
     public function destroy(Pengajuan $pengajuan)
     {
         $pengajuan->delete();
-        return redirect()->back()->with('message', 'Pengajuan Berhasil Dibatalkan!');
+        return redirect()->back()->with('message', 'Pengajuan PAK Berhasil Dihapus!');
     }
 
 
@@ -215,9 +220,17 @@ class PengajuanController extends Controller
             'approved_pak_path' => "approved_pak/{$nama_pak}",
         ]);
 
+        $no_surat =  AturanPAK::extractNoSurat($pengajuan->riwayat_pak['no_surat3']);
+        ActivityLogger::log(
+            'Validasi Pengajuan PAK',
+            $this->user->name . '(' . $this->user->role . ') menyetujui pengajuan PAK dengan NO PAK: ' . $no_surat,
+            Pengajuan::class,
+            $pengajuan->id,
+            null
+        );
+
         // 6. Redirect dengan feedback
-        return redirect()->back()->with('toast' , 'Pengajuan berhasil divalidasi.');
-        // return redirect()->back()->with(($request->boolean('fast_approve') ? 'toast' : 'message') , 'Pengajuan berhasil divalidasi.');
+        return redirect()->back()->with('toast', 'Pengajuan PAK berhasil divalidasi.');
     }
 
 
@@ -226,8 +239,15 @@ class PengajuanController extends Controller
     public function reject(Pengajuan $pengajuan)
     {
         $pengajuan->update(['status' => 'ditolak',   "tanggal_ditolak" => now()]);
-        // dd($pengajuan); //ISI ny malah data model doang tanpa field dan id
-        // TODO: Tambahin logic catatan dr pimpinan disni
+        $no_surat =  AturanPAK::extractNoSurat($pengajuan->riwayat_pak['no_surat3']);
+        ActivityLogger::log(
+            'Tolak Pengajuan PAK',
+            $this->user->name . '(' . $this->user->role . ') menolak pengajuan PAK dengan NO PAK: ' . $no_surat,
+            Pengajuan::class,
+            $pengajuan->id,
+            null
+        );
+
         return redirect()->back()->with('message', 'Pengajuan Berhasil Ditolak!'); // atau redirect ke halaman tertentu
 
     }
@@ -258,6 +278,14 @@ class PengajuanController extends Controller
             "approved_pak_path" => null,
         ]);
 
+        $no_surat =  AturanPAK::extractNoSurat($pengajuan->riwayat_pak['no_surat3']);
+        ActivityLogger::log(
+            'Undo Validasi Pengajuan PAK',
+            $this->user->name . '(' . $this->user->role . ') membatalkan validasi pengajuan PAK dengan NO PAK: ' . $no_surat,
+            Pengajuan::class,
+            $pengajuan->id,
+            null
+        );
         // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('message', 'Validasi pengajuan berhasil direset');
     }
@@ -300,5 +328,45 @@ class PengajuanController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="' . $nama_pak . '"')
             ->header('X-Frame-Options', 'SAMEORIGIN');
+    }
+
+
+    public function revisi(Request $request)
+    {
+        // dd($request);
+        return Inertia::render('RiwayatPAK/CreateOrEdit', [
+            'title' => 'Revisi Penetapan Angka Kredit',
+            'isEdit' => true,
+            'riwayat' => RiwayatPAK::findOrFail($request->pakId),
+            'isRevisi' => $request->isRevisi,
+            'pengajuanId' => $request->pengajuanId,
+            'aturanPAK' => AturanPAKService::get(),
+        ]);
+    }
+
+    public function ajukan_ulang(Request $request, RiwayatPAK $riwayat)
+    {
+        // dd($riwayat);
+        $pengajuanPAK = Pengajuan::findOrfail($request->pengajuanId);
+        if (!$riwayat) {
+            return back()->withErrors('Data yang ingin diupdate tidak ditemukan.');
+        }
+
+        $riwayat->update($request->except('pengajuanId'));
+
+        $pengajuanPAK->update([
+            'status' => 'diajukan',
+            'tanggal_direvisi' => now()
+        ]);
+
+        $no_surat =  AturanPAK::extractNoSurat($pengajuanPAK->riwayat_pak['no_surat3']);
+        ActivityLogger::log(
+            'Revisi Pengajuan PAK',
+            $this->user->name . '(' . $this->user->role . ') merevisi pengajuan PAK dengan NO PAK: ' . $no_surat,
+            Pengajuan::class,
+            $pengajuanPAK->id,
+        );
+
+        return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Pengajuan PAK berhasil direvisi & diajukan ulang');
     }
 }

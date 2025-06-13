@@ -34,7 +34,7 @@ export default function Index({
     title,
     flash,
     subTitle,
-    canValidate,
+    isPimpinan,
     isDivisiSDM,
     isPegawai,
     searchReq: initialSearch,
@@ -414,7 +414,7 @@ export default function Index({
                                         >
                                             Nama & NIP Pegawai
                                         </th>
-                                        <th scope="col" width="15%">
+                                        <th scope="col" width="20%">
                                             <span className="flex justify-center">
                                                 Jabatan
                                             </span>
@@ -563,7 +563,7 @@ export default function Index({
                                                 </td>
 
                                                 {/* SECTION Action Button-Role Pimpinan  */}
-                                                {canValidate && (
+                                                {isPimpinan && (
                                                     <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                         {/* Actor Pimpinan */}
 
@@ -644,8 +644,8 @@ export default function Index({
                                                             <div className="relative inline-flex group">
                                                                 <button
                                                                     disabled={
-                                                                        pengajuan.status ===
-                                                                        "ditolak"
+                                                                        pengajuan.status !==
+                                                                        "diajukan"
                                                                     }
                                                                     onClick={() =>
                                                                         handleReject(
@@ -710,6 +710,16 @@ export default function Index({
                                                             <div className="relative inline-flex group">
                                                                 <Link
                                                                     as="a"
+                                                                    onStart={()=> {
+                                                                        console.log(route(
+                                                                            "divisi-sdm.pengajuan.revisi",
+                                                                            { pakId: pengajuan.riwayat_pak.id, isRevisi: true, pengajuanId: pengajuan.id }
+                                                                        ))
+                                                                    }}
+                                                                    href={route(
+                                                                        "divisi-sdm.pengajuan.revisi",
+                                                                        { pakId: pengajuan.riwayat_pak.id, isRevisi: true, pengajuanId: pengajuan.id }
+                                                                    )}
                                                                     className="transition-all scale-110 group/button action-btn border-secondary/20 hover:bg-secondary"
                                                                 >
                                                                     <FaEdit className="scale-125 fill-secondary group-hover/button:fill-white" />
@@ -717,7 +727,7 @@ export default function Index({
 
                                                                 <TooltipHover
                                                                     message={
-                                                                        "Lihat Detail PAK"
+                                                                        "Revisi Pengajuan PAK"
                                                                     }
                                                                 />
                                                             </div>

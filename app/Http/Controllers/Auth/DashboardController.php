@@ -163,8 +163,12 @@ class DashboardController extends Controller
 
     public function help_and_guide()
     {
-        return Inertia::render('Help&Guide/Index', [
-            'title' => 'Panduan & Bantuan',
-        ]);
+        $filePath = public_path('storage/PANDUAN_SIPACAK.pdf');
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return redirect('/storage/PANDUAN_SIPACAK.pdf');
     }
 }

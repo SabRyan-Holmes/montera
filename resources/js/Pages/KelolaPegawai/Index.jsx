@@ -320,6 +320,7 @@ export default function Index({
                                                                 setActiveModal
                                                             }
                                                             pegawai={pegawai}
+                                                            canManage={true}
                                                         />
                                                         <TooltipHover
                                                             message={
@@ -371,23 +372,35 @@ export default function Index({
                                                 </td>
                                             ) : (
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                    <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="a"
-                                                            href={route(
-                                                                "divisi-sdm.pegawai.show",
-                                                                pegawai["NIP"]
-                                                            )}
+                                                       <div className="relative inline-flex group">
+                                                        <button
+                                                            as="button"
+                                                            onClick={() => {
+                                                                setActiveModal(
+                                                                    `Show-${pegawai.id}`
+                                                                );
+                                                                document
+                                                                    .getElementById(
+                                                                        `Show-${pegawai.id}`
+                                                                    )
+                                                                    .showModal();
+                                                            }}
                                                             className="action-btn group/button action-btn-success "
-                                                        >
-                                                            <span className="group-hover/button:text-white">
-                                                                Lihat Detail
-                                                            </span>
+                                                        ><span className="group-hover:text-white">Lihat</span>
                                                             <FaEye className="ml-2 scale-125 group-hover/button:fill-white " />
-                                                        </Link>
+                                                        </button>
+                                                        <ShowModal
+                                                            handleDelete={
+                                                                handleDelete
+                                                            }
+                                                            setActiveModal={
+                                                                setActiveModal
+                                                            }
+                                                            pegawai={pegawai}
+                                                        />
                                                         <TooltipHover
                                                             message={
-                                                                "Lihat Detail Pegawai"
+                                                                "Lihat Data"
                                                             }
                                                         />
                                                     </div>

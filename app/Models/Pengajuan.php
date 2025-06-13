@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class Pengajuan extends Model
 {
@@ -69,5 +71,29 @@ class Pengajuan extends Model
             $query->where('kesimpulan', 'like', '%' . $byKesimpulan . '%')
         );
 
+    }
+
+    protected static function booted()
+    {
+
+        static::created(function ($model) {
+            ActivityLogger::log(
+                'Mengajukan PAK',
+                Auth::user()->name . ' (' . Auth::user()->role  . ') Mengajukan PAK untuk divalidasi Pimpinan : ',
+                get_class($model),
+                $model->id,
+                $model->pegawai_nip ?? null
+            );
+        });
+
+        static::deleted(function ($model) {
+            ActivityLogger::log(
+                'Hapus Data',
+                Auth::user()->name . ' (' . Auth::user()->role  . ') menghapus data pengajuan PAK dengan ID #' . $model->id,
+                get_class($model),
+                $model->id,
+                $model->pegawai_nip ?? null
+            );
+        });
     }
 }

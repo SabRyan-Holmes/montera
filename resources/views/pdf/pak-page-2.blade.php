@@ -115,7 +115,7 @@
                     <td colspan="2" style="border-right-color: transparent; white-space: nowrap;">
                         Pangkat/Golongan Ruang/TMT
                     </td>
-                    <td colspan="3" style="white-space: nowrap;">
+                    <td colspan="3" ">
                         : {{ $data['pegawai']['Pangkat/Golongan Ruangan/TMT'] }}
                     </td>
                 </tr>
@@ -128,7 +128,7 @@
                     <td colspan="2" style="border-right-color: transparent;">
                         Jabatan/TMT
                     </td>
-                    <td colspan="3" style=" padding: 0.3rem; white-space: nowrap;">
+                    <td colspan="3" style=" padding: 0.3rem;">
                         : {{ $data['pegawai']['Jabatan/TMT'] }}
                     </td>
                 </tr>

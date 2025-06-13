@@ -222,8 +222,8 @@ const Sidebar = ({ role }) => {
                                             Panduan/Bantuan
                                         </>
                                     ),
-                                    route: "divisi-sdm.help-and-guide",
-                                    actives: ["divisi-sdm.help-and-guide"],
+                                    route: "info.help-and-guide",
+                                    actives: ["info.help-and-guide"],
                                 },
                                 {
                                     label: (
@@ -233,8 +233,8 @@ const Sidebar = ({ role }) => {
                                             Download Template
                                         </>
                                     ),
-                                    route: "divisi-sdm.download-template",
-                                    actives: ["divisi-sdm.download-template"],
+                                    route: "info.download-template",
+                                    actives: ["info.download-template"],
                                 },
                             ]}
                         >
@@ -270,8 +270,8 @@ const Sidebar = ({ role }) => {
                                 Pengajuan PAK
                             </SidebarLink>
                             <SidebarLink
-                                href={route("pegawai.aturan-pak.index")}
-                                actives={["pegawai.aturan-pak.index"]}
+                                href={route("pimpinan.aturan-pak.index")}
+                                actives={["pimpinan.aturan-pak.index"]}
                                 className="z-20 mx-[18px] -mb-1"
                             >
                                 <IoSettings />
@@ -317,7 +317,7 @@ const Sidebar = ({ role }) => {
                                             Panduan/Bantuan
                                         </>
                                     ),
-                                    route: "pimpinan.help-and-guide",
+                                    route: "info.help-and-guide",
                                     actives: ["pimpinan.help-and-guide"],
                                 },
                                 {
@@ -328,7 +328,7 @@ const Sidebar = ({ role }) => {
                                             Download Template
                                         </>
                                     ),
-                                    route: "pimpinan.download-template",
+                                    route: "info.download-template",
                                     actives: ["divisi-sdm.download-template"],
                                 },
                             ]}
@@ -419,8 +419,8 @@ const Sidebar = ({ role }) => {
                                                 Panduan/Bantuan
                                             </>
                                         ),
-                                        route: "pegawai.help-and-guide",
-                                        actives: ["pegawai.help-and-guide"],
+                                        route: "info.help-and-guide",
+                                        actives: ["info.help-and-guide"],
                                     },
                                     {
                                         label: (
@@ -430,8 +430,8 @@ const Sidebar = ({ role }) => {
                                                 Download Template
                                             </>
                                         ),
-                                        route: "pegawai.download-template",
-                                        actives: ["pegawai.download-template"],
+                                        route: "info.download-template",
+                                        actives: ["info.download-template"],
                                     },
                                 ]}
                             >

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class AturanPAK extends Model
 {
@@ -44,5 +46,35 @@ class AturanPAK extends Model
     {
         // Todo Misal ny ada $ullsurat = 1500.564/Akm/2025. gimana caa ambil 2025 /tahun ny?
         return strstr($fullNoSurat, '/', true) ?: $fullNoSurat;
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($model) {
+            ActivityLogger::log(
+                'Tambah Data',
+                Auth::user()->name . ' (' . Auth::user()->role  . ') menambahkan data aturan PAK dengan jenis : ' . $model->name,
+                get_class($model),
+                $model->id,
+            );
+        });
+
+        static::updated(function ($model) {
+            ActivityLogger::log(
+                'Update Data',
+                Auth::user()->name . ' (' . Auth::user()->role  . ') memperbarui data aturan PAK dengan jenis ' . $model->name, //TODO tambahanin detail yg ditambahny mungkin?
+                get_class($model),
+                $model->id,
+            );
+        });
+
+        static::deleted(function ($model) {
+            ActivityLogger::log(
+                'Hapus Data',
+                Auth::user()->name . ' (' . Auth::user()->role  . ') menghapus data aturan PAK dengan jenis ' . $model->name,
+                get_class($model),
+                $model->id,
+            );
+        });
     }
 }

@@ -35,7 +35,8 @@ return new class extends Migration
             $table->enum('status', [
                 'diproses',
                 'disetujui',
-                'ditolak'
+                'ditolak',
+                'direvisi',
             ])->default('diproses');
 
             // Tracking proses

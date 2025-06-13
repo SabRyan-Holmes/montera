@@ -380,8 +380,8 @@ export default function Index({
                                                     <Link
                                                         as="a"
                                                         href={route(
-                                                            "divisi-sdm.pak.edit",
-                                                            { id: pak.id }
+                                                            "divisi-sdm.riwayat-pak.edit",
+                                                             pak.id
                                                         )}
                                                         className="action-btn action-btn-secondary group"
                                                     >

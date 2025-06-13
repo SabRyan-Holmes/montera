@@ -6,7 +6,12 @@ import { usePage } from "@inertiajs/react";
 import { FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
 
-export default function ShowModal({ pegawai, setActiveModal, handleDelete }) {
+export default function ShowModal({
+    pegawai,
+    setActiveModal,
+    handleDelete,
+    canManage = false,
+}) {
     const { props } = usePage();
 
     return (
@@ -32,24 +37,26 @@ export default function ShowModal({ pegawai, setActiveModal, handleDelete }) {
             </div>
 
             {/* Floating Action Button */}
-            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-28 left-1/2">
-                <SecondaryButton
-                    asLink
-                    href={route("divisi-sdm.pegawai.edit", pegawai["NIP"])}
-                    // className=" bg-secondary"
-                >
-                    <FaEdit className="w-4 h-4 mr-1 " />
-                    Edit Data
-                </SecondaryButton>
+            {canManage && (
+                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-28 left-1/2">
+                    <SecondaryButton
+                        asLink
+                        href={route("divisi-sdm.pegawai.edit", pegawai["NIP"])}
+                        // className=" bg-secondary"
+                    >
+                        <FaEdit className="w-4 h-4 mr-1 " />
+                        Edit Data
+                    </SecondaryButton>
 
-                <SecondaryButton
-                    onClick={() => handleDelete(pegawai["NIP"])}
-                    className="text-white bg-warning/80"
-                >
-                    <FaTrash className="w-4 h-4 mr-1 " />
-                    Hapus Data
-                </SecondaryButton>
-            </div>
+                    <SecondaryButton
+                        onClick={() => handleDelete(pegawai["NIP"])}
+                        className="text-white bg-warning/80"
+                    >
+                        <FaTrash className="w-4 h-4 mr-1 " />
+                        Hapus Data
+                    </SecondaryButton>
+                </div>
+            )}
             {/* Floating Action Button */}
         </dialog>
     );
