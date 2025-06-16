@@ -130,7 +130,7 @@ export default function Index({
                     )}
                     {pegawais.data.length > 0 ? (
                         <>
-                            <table className="table overflow-x-scroll text-xs table-bordered">
+                            <table className="table overflow-x-scroll text-xs text-center table-bordered">
                                 <thead className="text-sm font-medium text-white bg-primary ">
                                     <tr className="text-center">
                                         <th

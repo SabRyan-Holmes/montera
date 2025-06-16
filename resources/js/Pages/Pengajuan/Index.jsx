@@ -384,6 +384,13 @@ export default function Index({
                 </form>
 
                 <div className="pt-3 ">
+                    {isPegawai && (
+                        <div className="mb-2">
+                            <strong className="text-2xl font-bold text-gray-600 ">
+                                Proses PAK Saya
+                            </strong>
+                        </div>
+                    )}
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -391,6 +398,7 @@ export default function Index({
                             </strong>
                         </div>
                     )}
+
                     {pengajuans.data.length ? (
                         <>
                             <table className="table text-xs table-bordered">
@@ -407,18 +415,30 @@ export default function Index({
                                         <th scope="col" width="10%">
                                             No PAK
                                         </th>
-                                        <th
-                                            scope="col"
-                                            width="20%"
-                                            className=""
-                                        >
-                                            Nama & NIP Pegawai
-                                        </th>
-                                        <th scope="col" width="20%">
-                                            <span className="flex justify-center">
-                                                Jabatan
-                                            </span>
-                                        </th>
+                                        {!isPegawai ? (
+                                            <>
+                                                <th
+                                                    scope="col"
+                                                    width="20%"
+                                                    className=""
+                                                >
+                                                    Nama & NIP Pegawai
+                                                </th>
+                                                <th scope="col" width="20%">
+                                                    Jabatan
+                                                </th>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <th scope="col" width="10%">
+                                                    AK Terakhir
+                                                </th>
+                                                <th scope="col" width="10%">
+                                                    AK Terbaru
+                                                </th>
+                                            </>
+                                        )}
+
                                         <th
                                             scope="col"
                                             width="7%"
@@ -454,10 +474,12 @@ export default function Index({
                                         let pegawai =
                                             pengajuan.riwayat_pak.pegawai;
                                         return (
-                                            <tr role="list" key={i}>
-                                                <td className="text-center">
-                                                    {i + 1}
-                                                </td>
+                                            <tr
+                                                role="list"
+                                                key={i}
+                                                className="text-center"
+                                            >
+                                                <td>{i + 1}</td>
                                                 <td>
                                                     {
                                                         pengajuan.riwayat_pak[
@@ -465,23 +487,51 @@ export default function Index({
                                                         ]
                                                     }
                                                 </td>
+                                                {!isPegawai ? (
+                                                    <>
+                                                        <td>
+                                                            <span className="block">
+                                                                {
+                                                                    pegawai[
+                                                                        "Nama"
+                                                                    ]
+                                                                }
+                                                                {pegawai[
+                                                                    "Gelar Tambahan"
+                                                                ] ?? ""}
+                                                            </span>
+                                                            <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                                                {pegawai["NIP"]}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            {pegawai[
+                                                                "Jabatan/TMT"
+                                                            ]
+                                                                .split("/")[0]
+                                                                .trim()}
+                                                        </td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                    <td>
+                                                    {parseFloat(
+                                                        pengajuan.riwayat_pak[
+                                                            "ak_terakhir"
+                                                        ]
+                                                    ).toFixed(3)}
+                                                    </td>
+                                                    <td>
+                                                    {parseFloat(
+                                                        pengajuan.riwayat_pak[
+                                                            "angka_kredit"
+                                                        ]
+                                                    ).toFixed(3)}
+                                                    </td>
+                                                    </>
+                                                )}
+
                                                 <td>
-                                                    <span className="block">
-                                                        {pegawai["Nama"]}
-                                                        {pegawai[
-                                                            "Gelar Tambahan"
-                                                        ] ?? ""}
-                                                    </span>
-                                                    <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
-                                                        {pegawai["NIP"]}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {pegawai["Jabatan/TMT"]
-                                                        .split("/")[0]
-                                                        .trim()}
-                                                </td>
-                                                <td className="text-center">
                                                     {parseFloat(
                                                         pengajuan.riwayat_pak[
                                                             "jakk"
@@ -489,7 +539,7 @@ export default function Index({
                                                     ).toFixed(3)}
                                                 </td>
                                                 <td
-                                                    className="relative group cursor-pointer max-w-[300px] text-xs"
+                                                    className="relative text-left group cursor-pointer max-w-[300px] text-xs"
                                                     onClick={() =>
                                                         setExpandedRows(
                                                             (prev) => ({
@@ -541,7 +591,7 @@ export default function Index({
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td className="w-5 p-0 m-0 text-center ">
+                                                <td className="w-5 p-0 py-2 m-0">
                                                     <StatusLabel
                                                         status={
                                                             pengajuan.status
@@ -566,9 +616,6 @@ export default function Index({
                                                 {isPimpinan && (
                                                     <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                         {/* Actor Pimpinan */}
-
-                                                        {/* Dialog Cek dan Validasi, Membuat Tanda Tangan/sign, dan melihat PDF */}
-                                                        {/* Jika Belum divalidasi */}
 
                                                         <>
                                                             <ModalCekValidasi
@@ -606,7 +653,9 @@ export default function Index({
                                                                     className="action-btn-success action-btn group/button"
                                                                     disabled={
                                                                         pengajuan.status !==
-                                                                        "diajukan"
+                                                                            "diajukan" &&
+                                                                        pengajuan.status !==
+                                                                            "direvisi"
                                                                     }
                                                                     method="post"
                                                                     data={{
@@ -645,7 +694,9 @@ export default function Index({
                                                                 <button
                                                                     disabled={
                                                                         pengajuan.status !==
-                                                                        "diajukan"
+                                                                            "diajukan" &&
+                                                                        pengajuan.status !==
+                                                                            "direvisi"
                                                                     }
                                                                     onClick={() =>
                                                                         handleReject(
@@ -710,15 +761,31 @@ export default function Index({
                                                             <div className="relative inline-flex group">
                                                                 <Link
                                                                     as="a"
-                                                                    onStart={()=> {
-                                                                        console.log(route(
-                                                                            "divisi-sdm.pengajuan.revisi",
-                                                                            { pakId: pengajuan.riwayat_pak.id, isRevisi: true, pengajuanId: pengajuan.id }
-                                                                        ))
+                                                                    onStart={() => {
+                                                                        console.log(
+                                                                            route(
+                                                                                "divisi-sdm.pengajuan.revisi",
+                                                                                {
+                                                                                    pakId: pengajuan
+                                                                                        .riwayat_pak
+                                                                                        .id,
+                                                                                    isRevisi: true,
+                                                                                    pengajuanId:
+                                                                                        pengajuan.id,
+                                                                                }
+                                                                            )
+                                                                        );
                                                                     }}
                                                                     href={route(
                                                                         "divisi-sdm.pengajuan.revisi",
-                                                                        { pakId: pengajuan.riwayat_pak.id, isRevisi: true, pengajuanId: pengajuan.id }
+                                                                        {
+                                                                            pakId: pengajuan
+                                                                                .riwayat_pak
+                                                                                .id,
+                                                                            isRevisi: true,
+                                                                            pengajuanId:
+                                                                                pengajuan.id,
+                                                                        }
                                                                     )}
                                                                     className="transition-all scale-110 group/button action-btn border-secondary/20 hover:bg-secondary"
                                                                 >
@@ -727,7 +794,7 @@ export default function Index({
 
                                                                 <TooltipHover
                                                                     message={
-                                                                        "Revisi Pengajuan PAK"
+                                                                        "Revisi Data"
                                                                     }
                                                                 />
                                                             </div>
@@ -895,6 +962,7 @@ export default function Index({
                                                                 setActiveModal
                                                             }
                                                         />
+                                                        {/* NOTE: Di Iterasi Awal Arsip Dokumen Belum ada */}
                                                         <div className="relative inline-flex group">
                                                             <button
                                                                 onClick={() => {

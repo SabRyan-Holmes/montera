@@ -42,8 +42,8 @@ class PengusulanPAKRequest extends FormRequest
             'tujuan' => 'string|max:150',
             'periode_mulai' => 'required|date_format:Y-m-d',
             'periode_berakhir' => 'required|date_format:Y-m-d|after_or_equal:periode_mulai',
-            'jumlah_ak_terakhir' => 'required|decimal:0,5000',
-            'jumlah_ak_diajukan' => 'required|decimal:0,5000',
+            'ak_terakhir' => 'required|decimal:0,5000',
+            'ak_diajukan' => 'required|decimal:0,5000',
             'uraian_tugas' => 'nullable|string|max:1000',
             'dokumen_pendukung_path' => 'nullable|sometimes|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
@@ -66,8 +66,8 @@ class PengusulanPAKRequest extends FormRequest
         return [
             'periode_mulai' => 'periode mulai',
             'periode_berakhir' => 'periode berakhir',
-            'jumlah_ak_terakhir' => 'jumlah angka kredit terakhir',
-            'jumlah_ak_diajukan' => 'jumlah angka kredit diajukan',
+            'ak_terakhir' => 'jumlah angka kredit terakhir',
+            'ak_diajukan' => 'jumlah angka kredit diajukan',
             'uraian_tugas' => 'uraian tugas',
             'dokumen_pendukung_path' => 'dokumen pendukung',
         ];

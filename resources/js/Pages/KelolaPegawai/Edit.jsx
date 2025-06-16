@@ -28,10 +28,14 @@ export default function Edit({ auth, pegawai, title, flash }) {
         reset,
         clearErrors,
     } = useForm({
+        Nama: pegawai["Nama"],
+        NIP: pegawai["NIP"],
+        "Tempat/Tanggal Lahir": pegawai["Tempat/Tanggal Lahir"],
         "Nomor Seri Karpeg": pegawai["Nomor Seri Karpeg"],
         "Pangkat/Golongan Ruangan/TMT": pegawai["Pangkat/Golongan Ruangan/TMT"],
         Pendidikan: pegawai["Pendidikan"],
         "Jabatan/TMT": pegawai["Jabatan/TMT"],
+        "Jenis Kelamin": pegawai["Jenis Kelamin"],
         "Masa Kerja Golongan": pegawai["Masa Kerja Golongan"],
         "Unit Kerja": pegawai["Unit Kerja"],
         Daerah: pegawai["Daerah"],
@@ -166,7 +170,6 @@ export default function Edit({ auth, pegawai, title, flash }) {
                     </SecondaryButton>
                 </section>
 
-
                 <section className="m-10 mx-auto overflow-x-auto max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-auto ">
@@ -188,7 +191,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             id="Nama"
                                             type="text"
                                             name="Nama"
-                                            value={pegawai.Nama}
+                                            value={data["Nama"]}
                                             disabled
                                             className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                         />
@@ -202,7 +205,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             id="NIP"
                                             type="text"
                                             name="NIP"
-                                            value={pegawai["NIP"]}
+                                            value={data["NIP"]}
                                             disabled
                                             className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                         />
@@ -219,7 +222,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             type="text"
                                             name="Nomor Seri Karpeg"
                                             defaultValue={
-                                                pegawai["Nomor Seri Karpeg"]
+                                                data["Nomor Seri Karpeg"]
                                             }
                                             className="w-full px-2 h-9 border-gradient placeholder:text-accent "
                                             placeholder="Masukkan nomor Seri Karpeg. contoh: P 152011"
@@ -273,9 +276,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         <TextInput
                                             type="text"
                                             name="Tempat/Tanggal Lahir"
-                                            value={
-                                                pegawai["Tempat/Tanggal Lahir"]
-                                            }
+                                            value={data["Tempat/Tanggal Lahir"]}
                                             disabled
                                             className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
                                             onChange={(e) =>
@@ -293,7 +294,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         <TextInput
                                             type="text"
                                             name="Jenis Kelamin"
-                                            value={pegawai["Jenis Kelamin"]}
+                                            value={data["Jenis Kelamin"]}
                                             className="w-full px-2 h-9 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
                                             disabled
                                             placeholder="input disini"
@@ -307,7 +308,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             type="text"
                                             name="Pendidikan"
                                             className="h-9 w-[30rem] px-2  placeholder:text-accent "
-                                            defaultValue={pegawai["Pendidikan"]}
+                                            defaultValue={data["Pendidikan"]}
                                             placeholder="Masukkan Pendidikan. contoh: S1 Manajemen"
                                             onChange={(e) =>
                                                 setData(
@@ -325,9 +326,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             type="text"
                                             name="Jabatan/TMT"
                                             className="h-9 w-[30rem] px-2  placeholder:text-accent "
-                                            defaultValue={
-                                                pegawai["Jabatan/TMT"]
-                                            }
+                                            defaultValue={data["Jabatan/TMT"]}
                                             placeholder="Masukkan Jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
                                             onChange={(e) =>
                                                 setData(
@@ -367,7 +366,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         <TextInput
                                             type="text"
                                             name="Unit Kerja"
-                                            defaultValue={pegawai["Unit Kerja"]}
+                                            defaultValue={data["Unit Kerja"]}
                                             className="h-9 w-[30rem] px-2  placeholder:text-accent "
                                             placeholder="Masukkan Unit Kerja. contoh: BPS Kabupaten Batang Hari"
                                             onChange={(e) =>
@@ -385,7 +384,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         <select
                                             className="w-full text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                             name="Daerah"
-                                            defaultValue={pegawai.Daerah}
+                                            defaultValue={data['Daerah']}
                                             onChange={(e) =>
                                                 setData(
                                                     "Daerah",
@@ -423,8 +422,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                             type="text"
                                             name="Gelar Tambahan"
                                             defaultValue={
-                                                pegawai["Gelar Tambahan"] &&
-                                                pegawai["Gelar Tambahan"]
+                                                data["Gelar Tambahan"]
                                             }
                                             className="h-9 w-[30rem] px-2  placeholder:text-accent "
                                             placeholder="Masukkan Gelar Tambahan(opsional)"

@@ -9,15 +9,15 @@ class LogPegawaiChangesService
 {
     protected $fieldsToTrack = [
         'Nomor Seri Karpeg' => 'No Seri Karpeg',
-        'Pangkat/Golongan Ruangan/TMT' => 'pangkat/golongan ruang/TMT',
-        'Jabatan/TMT' => 'jabatan/TMT',
-        'Tempat/Tanggal Lahir' => 'tempat/tanggal Lahir',
-        'Jenis Kelamin' => 'jenis kelamin',
-        'Pendidikan' => 'pendidikan',
-        'Unit Kerja' => 'unit kerja',
-        'Masa Kerja Golongan' => 'masa kerja golongan',
-        'Daerah' => 'daerah',
-        'Gelar Tambahan' => 'gelar tambahan',
+        'Pangkat/Golongan Ruangan/TMT' => 'Pangkat/Golru/TMT',
+        'Jabatan/TMT' => 'Jabatan/TMT',
+        'Tempat/Tanggal Lahir' => 'Tempat/Tanggal Lahir',
+        'Jenis Kelamin' => 'Jenis Kelamin',
+        'Pendidikan' => 'Pendidikan',
+        'Unit Kerja' => 'Unit Kerja',
+        'Masa Kerja Golongan' => 'Masa Kerja Golongan',
+        'Daerah' => 'Daerah',
+        'Gelar Tambahan' => 'Gelar Tambahan',
     ];
 
      public function logChanges(array $pegawaiOld, array $pegawaiNew): void

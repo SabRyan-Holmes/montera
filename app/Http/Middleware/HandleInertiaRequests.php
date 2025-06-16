@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user() ?? (
                     session('logged_in') ? [
+                        'id' => session('id'),
                         'name' => session('name'),
                         'nip' => session('nip'),
                         'role' => session('role'),

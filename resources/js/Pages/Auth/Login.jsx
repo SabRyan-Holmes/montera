@@ -139,11 +139,11 @@ export default function Login({ status, canResetPassword }) {
                                 asLink
                                 type="button"
                                 href={route("sso-login.form")}
-                                className="scale-90 bg-secondary/5 text-nowrap hover:scale-95"
+                                className="font-extrabold bg-secondary/5 text-nowrap hover:scale-105"
                             >
-                                Login via SSO
+                                Login SSO
                             </SecondaryButton>
-                        <PrimaryButton name="action" value="login" className="ms-4" disabled={processing}>
+                        <PrimaryButton name="action" value="login" className="scale-105 hover:scale-[1.15] ms-3" disabled={processing}>
                             Masuk
                         </PrimaryButton>
                     </div>

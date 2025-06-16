@@ -62,6 +62,7 @@ class RiwayatKarirController extends Controller
             // "riwayatKarirDiri" => $riwayatKarirDiri->filter(request(['search']))->paginate(10),
             'riwayatKarir' => $riwayatKarir->filter(request(['byJenisPerubahan', 'byJabatan', 'search']))->paginate(10), //TODO
             'canValidate' => $this->user->role == 'Divisi SDM',
+            'isPegawai' => $this->user->role == 'Pegawai',
             "searchReq" => request('search') ?? "",
             "byJenisPerubahanReq" => request('byJenisPerubahan') ?? "Semua Kategori",
             "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",

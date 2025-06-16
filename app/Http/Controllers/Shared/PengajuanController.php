@@ -41,9 +41,10 @@ class PengajuanController extends Controller
     {
         $pengajuan = Pengajuan::latest();
         // Kalo pegawai tampilkan proses PAK unutk pegawai itu saja
-        $pegawai = Pegawai::byNIp($this->user->nip);
+        $pegawai = Pegawai::byNIP($this->user->nip)->first();
+        // dd($pegawai);
         if ($this->user->role === 'Pegawai') {
-            $pengajuan = Pengajuan::byPegawaiId(Auth::user()->id)->latest();
+            $pengajuan = Pengajuan::byPegawaiId( $pegawai->id ?? $this->user->id )->latest();
         }
 
         $subTitle = GetSubtitle::getSubtitle(

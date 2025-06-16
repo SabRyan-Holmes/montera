@@ -50,9 +50,9 @@ export default function SSOLogin({ status, canAddPegawai }) {
 
             setData("captcha", token); // <- Ini penting
 
-            post(route("sso-login" ), {
-                data:data,
-                forceFormData:true,
+            post(route("sso-login"), {
+                data: data,
+                forceFormData: true,
                 onFinish: () => recaptchaRef.current.reset(), // reset setelah kirim
             });
 
@@ -123,7 +123,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
                             value={data.username}
                             className="block w-full mt-1 h-11"
                             autoComplete={data.username}
-                            placeholder="Masukkan Username"
+                            placeholder="Masukkan Username SSO Anda"
                             isFocused={true}
                             onChange={(e) =>
                                 setData("username", e.target.value)
@@ -159,7 +159,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
                         />
                     </fieldset>
 
-                    <fieldset className="mt-3">
+                    {/* <fieldset className="mt-3">
                         <InputLabel htmlFor="nip" value="NIP" />
 
                         <TextInput
@@ -175,7 +175,7 @@ export default function SSOLogin({ status, canAddPegawai }) {
                         />
 
                         <InputError message={errors.nip} className="mt-2" />
-                    </fieldset>
+                    </fieldset> */}
 
                     <div className="block mt-4">
                         <label className="flex items-center">
@@ -192,23 +192,32 @@ export default function SSOLogin({ status, canAddPegawai }) {
                         </label>
                     </div>
 
-                    <ReCAPTCHA
+                    {/* <ReCAPTCHA
                         ref={recaptchaRef}
                         sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                         size="invisible"
-                    />
+                    /> */}
                     <div className="flex items-center justify-end mt-4">
                         {canAddPegawai && (
                             <Link
                                 href={route("password.request")}
                                 className="text-sm text-gray-600 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                             >
-                                NIP pada Sistem Tidak Ditemukan?
+                                NIP Anda Tidak Ditemukan?
                             </Link>
                         )}
+                        <SecondaryButton
+                            asLink
+                            type="button"
+                            href={route("reguler-login.form")}
+                            className="font-extrabold bg-secondary/5 text-nowrap hover:scale-105"
+                        >
+                            Login Reguler
+                        </SecondaryButton>
+
                         <PrimaryButton
                             type="submit"
-                            className="ms-4"
+                            className="scale-105 hover:scale-[1.15] ms-3"
                             disabled={processing}
                         >
                             Masuk

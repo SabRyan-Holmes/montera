@@ -4,8 +4,9 @@ import useFilterSearch from "@/Components/UseFilterSearchCustom";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import moment from "moment/min/moment-with-locales";
 import { router } from "@inertiajs/react";
-import { InputLabel, PrimaryButton } from "@/Components";
+import { InputLabel, PrimaryButton, SecondaryButton } from "@/Components";
 import { MdPersonSearch } from "react-icons/md";
+import { FaUserTie } from "react-icons/fa6";
 
 const DEFAULT_CATEGORY = "Semua Kategori";
 export default function Index({
@@ -18,6 +19,7 @@ export default function Index({
     byJabatanReq: initialJabatan,
     byJenisPerubahanReq: initialJenisPerubahan,
     jabatanList = [],
+    isPegawai = false,
 }) {
     // ===========================================Handling Search & Filter===========================================
     const [searchInput, setSearchInput] = useState(initialSearch);
@@ -73,9 +75,8 @@ export default function Index({
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                <section>
+                <section className="w-full">
                     <form
-                        className="max-w-screen-laptop"
                         onSubmit={handleSubmit}
                     >
                         <div className="flex items-center justify-between gap-3 my-3">
@@ -139,44 +140,82 @@ export default function Index({
                             </div>
 
                             {/* SEARCH */}
-                            <div className="flex-none w-80">
-                                <InputLabel
-                                    value="Nama/NIP"
-                                    Htmlfor="search"
-                                    className="max-w-sm ml-1 text-lg"
-                                />
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                        <MdPersonSearch className="w-6 h-6 fill-primary" />
-                                    </div>
-                                    <input
-                                        type="search"
-                                        id="search"
-                                        name="search"
-                                        value={searchInput}
-                                        onChange={(e) =>
-                                            setSearchInput(e.target.value)
-                                        }
-                                        className="w-full p-4 py-[13px] pl-10 text-sm text-gray-900 border border-gradient rounded-md"
-                                        placeholder="Cari Nama Pegawai/NIP.."
+                            {isPegawai ? (
+                                <div className=" w-80">
+                                    <InputLabel
+                                        value="Data Lama/Data Baru"
+                                        Htmlfor="search"
+                                        className="max-w-sm ml-1 text-lg"
                                     />
-                                    <PrimaryButton
-                                        type="submit"
-                                        className="absolute end-2 bottom-[6px]"
-                                    >
-                                        Search
-                                    </PrimaryButton>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
+                                            <MdPersonSearch className="w-6 h-6 fill-primary" />
+                                        </div>
+                                        <input
+                                            type="search"
+                                            id="search"
+                                            name="search"
+                                            value={searchInput}
+                                            onChange={(e) =>
+                                                setSearchInput(e.target.value)
+                                            }
+                                            className="w-full p-4 py-[13px] pl-10 text-sm text-gray-900 border border-gradient rounded-md"
+                                            placeholder="Cari Data Lama/Data Baru.."
+                                        />
+                                        <PrimaryButton
+                                            type="submit"
+                                            className="absolute end-2 bottom-[6px]"
+                                        >
+                                            Search
+                                        </PrimaryButton>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="flex-none w-80">
+                                    <InputLabel
+                                        value="Nama/NIP"
+                                        Htmlfor="search"
+                                        className="max-w-sm ml-1 text-lg"
+                                    />
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
+                                            <MdPersonSearch className="w-6 h-6 fill-primary" />
+                                        </div>
+                                        <input
+                                            type="search"
+                                            id="search"
+                                            name="search"
+                                            value={searchInput}
+                                            onChange={(e) =>
+                                                setSearchInput(e.target.value)
+                                            }
+                                            className="w-full p-4 py-[13px] pl-10 text-sm text-gray-900 border border-gradient rounded-md"
+                                            placeholder="Cari Nama Pegawai/NIP.."
+                                        />
+                                        <PrimaryButton
+                                            type="submit"
+                                            className="absolute end-2 bottom-[6px]"
+                                        >
+                                            Search
+                                        </PrimaryButton>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </form>
                 </section>
 
                 <section>
                     {role === "Pegawai" && (
-                        <strong className="block py-3 text-2xl">
-                            Riwayat Karir Saya
-                        </strong>
+                        <div className="flex items-center justify-between my-3">
+                            <strong className="block text-2xl">
+                                Riwayat Karir Saya
+                            </strong>
+                            <SecondaryButton className="inline-flex items-center bg-secondary/10" onclick="showDetailModal()">
+                                <FaUserTie className="w-4 h-4 mr-2" />
+                                <span>Data Pegawai Terkini</span>
+                            </SecondaryButton>
+                        </div>
                     )}
                     {subTitle && (
                         <div className="my-4">

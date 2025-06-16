@@ -72,7 +72,7 @@ class PengusulanPAKController extends Controller
     public function create()
     {
         $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
-        return Inertia::render('PengusulanPAK/Create', [
+        return Inertia::render('PengusulanPAK/CreateOrEdit', [
             'title' => "Tambah Pengusulan PAK",
             'pegawai' => $pegawai
         ]);
@@ -128,7 +128,7 @@ class PengusulanPAKController extends Controller
     public function edit(PengusulanPAK $pengusulanPAK, Request $request)
     {
         $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
-        return Inertia::render('PengusulanPAK/Create', [
+        return Inertia::render('PengusulanPAK/CreateOrEdit', [
             'title' => "Tambah Pengusulan PAK",
             'pegawai' => $pegawai,
             'pengusulanPAK' =>$pengusulanPAK

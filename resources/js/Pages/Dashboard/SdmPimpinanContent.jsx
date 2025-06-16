@@ -89,7 +89,7 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                     </div>
                     {/* TODO tambahin riwayat PAK belum diajukan jg nanti */}
 
-                    <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                    {/* <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                         <div className="p-4 bg-hijau">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
@@ -105,7 +105,7 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                                 {dataByRole["pengusulanCount"]}
                             </p>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                         <div className="p-4 bg-bermuda">
@@ -124,18 +124,36 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                             </p>
                         </div>
                     </div>
+                    <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                        <div className="p-4 bg-bermuda/75">
+                            <IconContext.Provider
+                                value={{ color: "white", size: "50px" }}
+                            >
+                                <HiDocumentDuplicate className="w-12 h-full" />
+                            </IconContext.Provider>
+                        </div>
+                        <div className="px-4 text-gray-700">
+                            <h3 className="text-sm tracking-wider">
+                                Pengajuan PAK masih  diproses
+                            </h3>
+                            <p className="text-3xl">
+                                {dataByRole["pengajuanCount"]}
+                            </p>
+                        </div>
+                    </div>
                 </section>
             </div>
 
             <div className="flex items-start mt-10 justify-evenly">
                 {/* TODO: */}
-                <section>
+                {/* NOTE: Iterasi AWAL Pengusulan PAK belum ad */}
+                {/* <section>
                     <RadialChart
                         title={"Proses Pengusulan PAK"}
                         data={dataByRole["pengusulanPAKGraph"]}
                         chartId={"pengusulan-pak"}
                     />
-                </section>
+                </section> */}
 
                 <section>
                     <RadialChart

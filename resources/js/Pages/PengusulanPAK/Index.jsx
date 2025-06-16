@@ -318,10 +318,10 @@ export default function Index({
                                             </td>
                                             <td>
                                                 <span className="block">
-                                                    {data.jumlah_ak_terakhir}
+                                                    {data.ak_terakhir}
                                                 </span>
                                                 <span className="block mt-1">
-                                                    {data.jumlah_ak_diajukan}
+                                                    {data.ak_diajukan}
                                                 </span>
                                             </td>
                                             <td>

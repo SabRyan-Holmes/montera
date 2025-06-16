@@ -65,13 +65,13 @@ export default function PengusulanPAKTable({ data, collapse = true }) {
                         <tr>
                             <td>Jumlah Angka Kredit Terakhir</td>
                             <td className="text-base font-normal">
-                                {data["jumlah_ak_terakhir"]}
+                                {data["ak_terakhir"]}
                             </td>
                         </tr>
                         <tr>
                             <td>Jumlah Angka Kredit Diajukan</td>
                             <td className="text-base font-normal">
-                                {data["jumlah_ak_diajukan"]}
+                                {data["ak_diajukan"]}
                             </td>
                         </tr>
 

@@ -18,7 +18,7 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
 
     // Ambil File name dari path sebagi default title
     const fileName = pengajuan.approved_pak_path
-    .split("/")
+    ?.split("/")
     .pop()
     .replace(".pdf", "");
 

@@ -51,7 +51,7 @@ export default function AkumulasiTable({
 
     useEffect(() => {
         if (pengusulanData !== null) {
-            var ak_terakhir = parseFloat(pengusulanData.jumlah_ak_terakhir).toFixed(3);
+            var ak_terakhir = parseFloat(pengusulanData.ak_terakhir).toFixed(3);
             setData("ak_terakhir", ak_terakhir);
             data.ak_terakhir = ak_terakhir;
         }

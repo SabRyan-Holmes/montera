@@ -24,7 +24,7 @@ use Inertia\Inertia;
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Auth/Login');
-    });
+    })->name('reguler-login.form');
     Route::get('/sso-login', [SSOController::class, 'showLoginForm'])->name('sso-login.form');
     Route::post('/sso-login', [SSOController::class, 'login'])->name('sso-login');
 });
@@ -153,7 +153,7 @@ Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(fun
     Route::resource('pengusulan-pak', PengusulanPAKController::class)->parameters(['pengusulan-pak' => 'pengusulanPAK'])->only(['index','create', 'store', 'show', 'edit', 'update', 'destroy']);;
 
     //Status Proses PAK/Pengajuan(R)
-    Route::get('/proses-pak', [PengajuanController::class, 'index'])->name('proses-pak.index');
+    Route::get('/proses-pak/pengajuan', [PengajuanController::class, 'index'])->name('proses-pak.index');
 
     // Aturan PAK (R), //NOTE! Ini mungkin dak usah?
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
