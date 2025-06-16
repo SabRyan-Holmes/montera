@@ -13,21 +13,20 @@ return new class extends Migration
     {
         Schema::create('pengusulan_pak', function (Blueprint $table) {
             $table->id();
-            // Relasi dengan data pegawai (menggunakan NIP)
+            // Relasi dengan data pegawai  & user (by NIP)
             $table->string('pegawai_nip', 18); // Sesuaikan panjang NIP sesuai kebutuhan
             $table->foreign('pegawai_nip')->references('NIP')->on('pegawais')->onDelete('cascade');
             $table->string('approved_by', 18)->nullable(); // Sesuaikan panjang NIP sesuai kebutuhan
             $table->foreign('approved_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-berdasarkan nip skrg
             // Data utama pengajuan
-            $table->string('jabatan');
             $table->string('tujuan');
             $table->date('periode_mulai');
             $table->date('periode_berakhir');
-            $table->decimal('jumlah_ak_terakhir', 8, 3);
-            $table->decimal('jumlah_ak_diajukan', 8, 3);
-
+            $table->decimal('ak_terakhir', 8, 3);
+            $table->decimal('ak_diajukan', 8, 3);
+            $table->boolean('is_penilaian_pdd')->default(false);
             // Data pendukung (opsional)
-            $table->text('uraian_tugas')->nullable();
+            $table->string('dokumen_utama_path')->nullable();
             $table->string('dokumen_pendukung_path')->nullable();
             $table->foreignId('catatan_pegawai_id')->nullable()->constrained('catatans')->onDelete('cascade');
 

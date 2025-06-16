@@ -18,22 +18,24 @@ import { MdOutlineAssignmentInd } from "react-icons/md";
 import Swal from "sweetalert2";
 import { BsFillSendFill } from "react-icons/bs";
 
-export default function Create({ auth, pegawai, title, flash, isEdit }) {
-    const jabatanDefault = pegawai["Jabatan/TMT"].split("/")[0].trim();
+export default function Create({
+    auth,
+    pegawai,
+    title,
+    flash,
+    isEdit,
+    pengusulanPAK = null,
+}) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        // ANCHOR
-        // REVIEW : Ini kalo data ny dr SSO tolong dirubah
-        // nama: auth.user.name,
         pegawai_nip: pegawai["NIP"],
-        jabatan: jabatanDefault,
         tujuan: "Evaluasi Kinerja Tahunan",
         periode_mulai: "",
         periode_berakhir: "",
-        jumlah_ak_terakhir: 0.0,
-        jumlah_ak_diajukan: 0.0,
-
+        ak_terakhir: 0.0,
+        ak_diajukan: 0.0,
+        is_penilaian_pdd: "Tidak",
         // data pendukung(opsional)
-        uraian_tugas: "",
+        dokumen_utama_path: null,
         dokumen_pendukung_path: null,
         catatan_pegawai: "",
     });
@@ -79,13 +81,20 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
             }, 3000);
         }
     }, [errors]);
-    const [alert, setAlert] = useState(false);
+    const [_alert, set_Alert] = useState(false);
 
     useEffect(() => {
-        setAlert(true);
+        if (isEdit && pengusulanPAK) {
+            setData({
+                ...pengusulanPAK,
+                id: pengusulanPAK.id,
+            });
+        }
+        // set_Alert(true);
     }, []);
 
     const submit = (e) => {
+
         e.preventDefault();
         post(route("pegawai.pengusulan-pak.store"), {
             forceFormData: true,
@@ -96,8 +105,10 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
     };
 
     const [minPeriode, setMinPeriode] = useState("");
-    const handleFileChange = (e) => {
+    const handleFileChange = (dataName,e) => {
         const file = e.target.files[0];
+        console.log(file); // ini lebih aman daripada alert
+        alert(`File terpilih: ${file.name}`);
         if (file) {
             const validTypes = ["application/pdf", "image/jpeg", "image/png"];
             const fileType = file.type;
@@ -118,11 +129,15 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
             // if (onChange) {
             //     onChange(e); // Panggil prop onChange jika ada
             // }
-            setData('dokumen_pendukung_path', file)
+            setData(dataName, file);
         }
     };
 
-
+    // Console.log
+    useEffect(() => {
+        console.log("data :")
+        console.log(data)
+    }, [data]);
     return (
         <Authenticated
             user={auth.user}
@@ -164,15 +179,14 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                 <div className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-bordered ">
-                            {/* head */}
                             <thead>
                                 <tr className="text-lg bg-primary/70">
-                                    <th colSpan={2}>Pengusulan Penilaian PAK</th>
+                                    <th colSpan={2}>
+                                        Pengusulan Penilaian PAK
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className=" bo">
-                                {/* ANCHOR */}
-                                {/* row 1 */}
                                 <tr className="border">
                                     <td width="35%">
                                         <InputLabel
@@ -194,7 +208,6 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                         />
                                     </td>
                                 </tr>
-                                {/* row 2 */}
                                 <tr className="border">
                                     <td>
                                         <InputLabel
@@ -212,9 +225,6 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                             className="w-full px-2 h-9 placeholder:text-accent "
                                             isFocused={true}
                                             maxLength={18}
-                                            onChange={(e) =>
-                                                setData("nip", e.target.value)
-                                            }
                                         />
                                     </td>
                                 </tr>
@@ -232,16 +242,11 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                             type="text"
                                             name="jabatan"
                                             className="w-full px-2 h-9 placeholder:text-accent"
-                                            defaultValue={data.jabatan}
+                                            value={pegawai["Jabatan/TMT"]}
+                                            disabled
                                             isFocused={true}
                                             placeholder="Masukkan jabatan. contoh: Statistisi Ahli Muda / 01-05-2022 "
                                             maxLength={200}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "jabatan",
-                                                    e.target.value
-                                                )
-                                            }
                                         />
                                     </td>
                                 </tr>
@@ -259,8 +264,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                             className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                             name="tujuan"
                                             id="tujuan"
-                                            value={isEdit && data.tujuan}
-                                            defaultValue={data.tujuan}
+                                            value={data.tujuan}
                                             onChange={(e) =>
                                                 setData(
                                                     "tujuan",
@@ -366,14 +370,14 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                     <td>
                                         <InputLabel
                                             className="text-lg"
-                                            forName="jumlah_ak_terakhir"
+                                            forName="ak_terakhir"
                                             value="Jumlah Angka Kredit Terakhir"
                                         />
                                     </td>
                                     <td className="border-x">
                                         <TextInput
                                             type="number"
-                                            name="jumlah_ak_terakhir"
+                                            name="ak_terakhir"
                                             min={0}
                                             step={0.01}
                                             max={5000}
@@ -385,7 +389,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                                     e.target.value
                                                 );
                                                 setData(
-                                                    "jumlah_ak_terakhir",
+                                                    "ak_terakhir",
                                                     isNaN(value)
                                                         ? ""
                                                         : value.toFixed(3)
@@ -403,14 +407,14 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                     <td>
                                         <InputLabel
                                             className="text-lg"
-                                            forName="jumlah_ak_diajukan"
+                                            forName="ak_diajukan"
                                             value="Jumlah Angka Kredit Diajukan"
                                         />
                                     </td>
                                     <td className="border-x">
                                         <TextInput
                                             type="number"
-                                            name="jumlah_ak_diajukan"
+                                            name="ak_diajukan"
                                             min={0}
                                             step={0.01}
                                             max={5000}
@@ -421,7 +425,7 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                                     e.target.value
                                                 );
                                                 setData(
-                                                    "jumlah_ak_diajukan",
+                                                    "ak_diajukan",
                                                     isNaN(value)
                                                         ? ""
                                                         : value.toFixed(3)
@@ -436,29 +440,54 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                     </td>
                                 </tr>
 
-                                <tr>
+                                <tr className="border">
                                     <td>
                                         <InputLabel
                                             className="text-lg"
-                                            forHtml="uraian_tugas"
-                                            value="Uraian Tugas"
+                                            forName="is_penilaian_pdd"
+                                            value="Ajukan Penilaian Pendidikan Terbaru?"
+                                        />
+                                    </td>
+                                    <td className="border-x">
+                                        <select
+                                            className="w-full max-w-xs text-sm border select border-gradient selection:text-accent disabled:text-accent"
+                                            name="is_penilaian_pdd"
+                                            id="is_penilaian_pdd"
+                                            value={data.is_penilaian_pdd}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "is_penilaian_pdd",
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            <option value={false}>Tidak</option>
+                                            <option value={true}>Ya</option>
+                                        </select>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                            {/* ANCHOR */}
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="dokumen_utama_path"
+                                            htmlFor="dokumen_utama_path"
+                                            value="Dokumen Utama"
                                         />
                                     </td>
                                     <td>
                                         <fieldset>
-                                            <div className="relative laptop:w-full">
-                                                <textarea
-                                                    name="uraian_tugas"
-                                                    className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
-                                                    placeholder="Masukkan Uraian Tugas."
-                                                    maxLength={1000}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "uraian_tugas",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                ></textarea>
+                                            <div
+                                                div
+                                                className="relative inline "
+                                            >
+                                                <FileInput
+                                                    id="dokumen_utama_path"
+                                                    name="dokumen_utama_path"
+                                                    onChange={(e) => handleFileChange('dokumen_utama_path', e)}
+                                                />
                                                 <span className="mt-2 badge-optional">
                                                     Opsional
                                                 </span>
@@ -481,7 +510,11 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                                 div
                                                 className="relative inline "
                                             >
-                                                <FileInput id="dokumen_pendukung_path" name="dokumen_pendukung_path" onChange={handleFileChange} />
+                                                <FileInput
+                                                    id="dokumen_pendukung_path"
+                                                    name="dokumen_pendukung_path"
+                                                    onChange={(e) => handleFileChange('dokumen_pendukung_path', e)}
+                                                />
                                                 <span className="mt-2 badge-optional">
                                                     Opsional
                                                 </span>
@@ -567,6 +600,8 @@ export default function Create({ auth, pegawai, title, flash, isEdit }) {
                                 <BsFillSendFill className="w-4 h-4 fill-white" />
                             </SuccessButton>
                         </div>
+
+                        {/* TODO: Tambah tombol "Usulkan Ulang" untuk revisi pengusulan nanti */}
                     </form>
                 </div>
             </section>
