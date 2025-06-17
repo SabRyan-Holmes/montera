@@ -15,7 +15,7 @@ import { usePage } from "@inertiajs/react";
 import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
-import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/PengusulanPAKTable";
+import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/DetailPengusulanPAKTable";
 
 export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
     const {auth } = usePage().props

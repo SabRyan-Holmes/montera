@@ -229,7 +229,7 @@ table.table-bordered > tfoot > tr > td {
 }
 
 .label-base {
-    @apply inline-flex p-1 mx-3 text-xs font-semibold text-center uppercase rounded-md;
+    @apply inline-flex p-1 mx-auto text-xs font-semibold text-center uppercase rounded-md;
 }
 
 .user-profile-image {

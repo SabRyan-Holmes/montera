@@ -12,7 +12,7 @@ import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { usePage } from "@inertiajs/react";
 import { FaEdit } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa6";
-import PengusulanPAKTable from "../PengusulanPAK/Partials/PengusulanPAKTable";
+import PengusulanPAKTable from "../PengusulanPAK/Partials/DetailPengusulanPAKTable";
 
 export default function Show({ riwayatPAK }) {
     const [showIframe, setShowIframe] = useState(false);

@@ -10,15 +10,33 @@ use Illuminate\Support\Facades\Auth;
 
 class Pengajuan extends Model
 {
-    protected $guarded = ['id'];
-    protected $with = ['riwayat_pak'];
     use HasFactory;
+    protected $guarded = ['id'];
+    protected $with = ['pengaju', 'validator','riwayat_pak', 'catatan'];
 
 
+
+    public function pengaju()
+    {
+        return $this->belongsTo(User::class, 'user_nip', 'nip');
+
+    }
+
+    public function validator()
+    {
+        return $this->belongsTo(User::class, 'validated_by', 'nip');
+
+    }
 
     public function riwayat_pak()
     {
         return $this->belongsTo(RiwayatPAK::class, 'riwayat_pak_id');
+
+    }
+
+    public function catatan()
+    {
+        return $this->belongsTo(Catatan::class, 'catatan_id');
 
     }
 

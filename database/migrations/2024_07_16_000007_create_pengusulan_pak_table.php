@@ -26,8 +26,8 @@ return new class extends Migration
             $table->decimal('ak_diajukan', 8, 3);
             $table->boolean('is_penilaian_pdd')->default(false);
             // Data pendukung (opsional)
-            $table->string('dokumen_utama_path')->nullable();
-            $table->string('dokumen_pendukung_path')->nullable();
+            $table->string('dokumen_utama_path'); // Dokumen penilaian kinerja
+            $table->string('dokumen_pendukung_path')->nullable(); // Dokumen penilaian pendidikan (Ijazah Terbaru)
             $table->foreignId('catatan_pegawai_id')->nullable()->constrained('catatans')->onDelete('cascade');
 
             // Status pengajuan

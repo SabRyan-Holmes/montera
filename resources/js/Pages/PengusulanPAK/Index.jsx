@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import { FaCheck, FaEye, FaTrash } from "react-icons/fa6";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
-import { RiLoader2Fill } from "react-icons/ri";
-import { TbEyeCheck } from "react-icons/tb";
 import { IoClose, IoCloseOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import { Link, router, useRemember } from "@inertiajs/react";
@@ -238,7 +236,7 @@ export default function Index({
                                         </th>
                                         <th scope="col" width="15%">
                                             <span className="flex justify-center">
-                                                Jabatan
+                                                Jabatan/TMT
                                             </span>
                                         </th>
                                         <th
@@ -264,12 +262,12 @@ export default function Index({
 
                                         <th
                                             scope="col"
-                                            width="15%"
-                                            className="w-16 p-1 text-xs text-center"
+                                            width="10%"
+                                            className="p-0 text-xs text-center "
                                         >
-                                            <span>Data </span>
+                                            <span>Penilaian</span>
                                             <span className="block">
-                                                Pendukung
+                                            Pendidikan
                                             </span>
                                         </th>
                                         <th
@@ -306,17 +304,17 @@ export default function Index({
                                                     {data.pegawai["NIP"]}
                                                 </span>
                                             </td>
-                                            <td>{data.jabatan}</td>
-                                            <td>
+                                            <td>{data.pegawai['Jabatan/TMT']}</td>
+                                            <td >
                                                 {moment(
                                                     data.periode_mulai
                                                 ).format("MMMM")}
-                                                -
+                                                {' - '}
                                                 {moment(
                                                     data.periode_berakhir
                                                 ).format("MMMM YYYY")}
                                             </td>
-                                            <td>
+                                            <td className="text-base">
                                                 <span className="block">
                                                     {data.ak_terakhir}
                                                 </span>
@@ -324,7 +322,7 @@ export default function Index({
                                                     {data.ak_diajukan}
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td className="text-base">
                                                 {data.dokumen_pendukung_path
                                                     ? "Ada"
                                                     : "Tidak Ada"}
@@ -560,7 +558,7 @@ export default function Index({
                                                             </Link>
                                                             <TooltipHover
                                                                 message={
-                                                                    "Perbaiki/Edit Usulan PAK" + (data.status !==
+                                                                    "Revisi Data" + (data.status !==
                                                                         "ditolak" ? '(setelah ditolak)' : '')
                                                                 }
                                                             />

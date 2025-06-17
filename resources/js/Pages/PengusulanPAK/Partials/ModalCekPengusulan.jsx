@@ -1,4 +1,3 @@
-// ModalCekValidasi.jsx
 import {
     DetailPAKTable,
     DetailPegawai,
@@ -15,13 +14,10 @@ import {
     FaTrash,
 } from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import SignatureCanvas from "react-signature-canvas";
 import { usePage } from "@inertiajs/react";
-import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
-import PengusulanPAKTable from "./PengusulanPAKTable";
+import PengusulanPAKTable from "./DetailPengusulanPAKTable";
 import PopUpCatatan from "./PopUpCatatan";
 import { CgCloseO } from "react-icons/cg";
 export default function ModalCekPengusulan({
@@ -89,7 +85,6 @@ export default function ModalCekPengusulan({
             preserveScroll: true,
             preserveState: true,
             onError: (errors) => {
-                setLoading(false);
                 console.log("Error:", errors);
             },
             onSuccess: () => {
@@ -132,37 +127,6 @@ export default function ModalCekPengusulan({
             onClose={() => setActiveModalId(null)}
             className="modal z-[100]"
         >
-            {showIframe && (
-                <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
-                    <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
-                        <button
-                            className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
-                            onClick={() => setShowIframe(false)}
-                        >
-                            <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
-                        </button>
-
-                        {/* Indikator Loading */}
-                        {loading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                <AiOutlineLoading3Quarters className="w-12 h-12 text-white animate-spin" />
-                            </div>
-                        )}
-
-                        {/* Iframe muncul setelah loading selesai */}
-                        {!loading && (
-                            <iframe
-                                // src={route("pak.preview")}
-                                src={linkIframe}
-                                width="100%"
-                                height="100%"
-                                className="border-0"
-                            ></iframe>
-                        )}
-                    </div>
-                </div>
-            )}
-
             <div className="relative w-full max-w-3xl modal-box">
                 <form method="dialog">
                     <button className="absolute btn btn-md btn-circle btn-ghost right-2 top-2">
@@ -170,58 +134,88 @@ export default function ModalCekPengusulan({
                     </button>
                 </form>
 
-                <h3 className="mb-2 text-xl font-bold">
-                    Detail Pengusulan PAK
-                </h3>
-
-                <div className="px-2 overflow-x-auto">
-                    <h1 className="my-4 text-xl font-medium">
-                        Data Ringkasan dalam Pengusulan PAK
-                    </h1>
-                    <PengusulanPAKTable data={pengusulanPAK} collapse={false} />
-                </div>
-
-                <div className="px-2 my-10 mb-16 overflow-x-auto">
-                    <h1 className="my-4 text-xl font-medium">
-                        Data Pegawai dalam Pengusulan
-                    </h1>
-                    <DetailPegawai pegawai={pengusulanPAK.pegawai} />
-                </div>
-
-                {canValidate ? (
-                    <>
-                        {/* IF Approved */}
-                        {pengusulanPAK.status === "disetujui" && (
-                            <>
-                                <div
-                                    role="alert"
-                                    className="mb-20 alert bg-hijau"
+                {/*  CONTENT START */}
+                <section>
+                    {showIframe && (
+                        <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                            <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                                <button
+                                    className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
+                                    onClick={() => setShowIframe(false)}
                                 >
-                                    <FaRegCircleCheck className="w-5 h-5" />
-                                    <span className="text-base font-medium text-black">
-                                        Pengusulan PAK ini sudah disetujui!
-                                    </span>
-                                </div>
-                            </>
-                        )}
-                        {/* IF Rejected */}
-                        {pengusulanPAK.status === "ditolak" && (
-                            <>
-                                <div
-                                    role="alert"
-                                    className="mb-20 alert bg-warning"
-                                >
-                                    <CgCloseO className="w-6 h-6" />
-                                    <span className="text-base font-medium text-black">
-                                        Pengusulan PAK ini sudah telah ditolak!
-                                    </span>
-                                </div>
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <></>
-                )}
+                                    <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
+                                </button>
+
+                                <iframe
+                                    src={linkIframe}
+                                    width="100%"
+                                    height="100%"
+                                    className="border-0"
+                                ></iframe>
+                            </div>
+                        </div>
+                    )}
+
+                    <h3 className="mb-2 text-xl font-bold">
+                        Detail Pengusulan PAK
+                    </h3>
+
+                    <div className="px-2 overflow-x-auto">
+                        <h1 className="my-4 text-xl font-medium">
+                            Data Ringkasan dalam Pengusulan PAK
+                        </h1>
+                        <PengusulanPAKTable
+                            data={pengusulanPAK}
+                            collapse={false}
+                            setLinkIframe={setLinkIframe}
+                            setShowIframe={setShowIframe}
+                        />
+                    </div>
+
+                    <div className="px-2 my-10 mb-16 overflow-x-auto">
+                        <h1 className="my-4 text-xl font-medium">
+                            Data Pegawai dalam Pengusulan
+                        </h1>
+                        <DetailPegawai pegawai={pengusulanPAK.pegawai} />
+                    </div>
+
+                    {canValidate ? (
+                        <>
+                            {/* IF Approved */}
+                            {pengusulanPAK.status === "disetujui" && (
+                                <>
+                                    <div
+                                        role="alert"
+                                        className="mb-20 alert bg-hijau"
+                                    >
+                                        <FaRegCircleCheck className="w-5 h-5" />
+                                        <span className="text-base font-medium text-black">
+                                            Pengusulan PAK ini sudah disetujui!
+                                        </span>
+                                    </div>
+                                </>
+                            )}
+                            {/* IF Rejected */}
+                            {pengusulanPAK.status === "ditolak" && (
+                                <>
+                                    <div
+                                        role="alert"
+                                        className="mb-20 alert bg-warning"
+                                    >
+                                        <CgCloseO className="w-6 h-6" />
+                                        <span className="text-base font-medium text-black">
+                                            Pengusulan PAK ini sudah telah
+                                            ditolak!
+                                        </span>
+                                    </div>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                </section>
+                {/*  CONTENT START */}
             </div>
 
             {canValidate && (
@@ -275,9 +269,12 @@ export default function ModalCekPengusulan({
                     {/* SECTION Floating Action Button DISETUJUI */}
                     {pengusulanPAK.status === "disetujui" && (
                         <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                               <SuccessButton
+                            <SuccessButton
                                 asLink
-                                href={route('divisi-sdm.pak.create-by-pengusulan',data.id)}
+                                href={route(
+                                    "divisi-sdm.pak.create-by-pengusulan",
+                                    data.id
+                                )}
                                 disabled={processing}
                                 className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
                             >

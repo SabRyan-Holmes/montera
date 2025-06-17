@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\ActivityLogger;
+use FontLib\Table\Type\name;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -50,14 +51,17 @@ class AturanPAK extends Model
 
     protected static function booted()
     {
-        static::created(function ($model) {
-            ActivityLogger::log(
-                'Tambah Data',
-                Auth::user()->name . ' (' . Auth::user()->role  . ') menambahkan data aturan PAK dengan jenis : ' . $model->name,
-                get_class($model),
-                $model->id,
-            );
-        });
+        // static::created(function ($model) {
+        //     $user = Auth::user();
+        //     $name = $user ? $user->name : 'Administrator';
+        //     $role = $user ? ' (' . $user->role  . ')' : '';
+        //     ActivityLogger::log(
+        //         'Tambah Data',
+        //         $name . $role  . ' menambahkan data aturan PAK dengan jenis : ' . $model->name,
+        //         get_class($model),
+        //         $model->id,
+        //     );
+        // });
 
         static::updated(function ($model) {
             ActivityLogger::log(

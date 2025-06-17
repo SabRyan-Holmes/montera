@@ -17,6 +17,7 @@ class PengusulanPAK extends Model
     protected $casts = [
         'periode_mulai' => 'date:Y-m',
         'periode_berakhir' => 'date:Y-m',
+        'is_penilaian_pdd' => 'boolean',
     ];
 
 
@@ -38,7 +39,7 @@ class PengusulanPAK extends Model
     public static function byPegawai($nip)
     {
         return static::where(function ($query) use ($nip) {
-            $query->where('pegawai_nip', $nip)->orWhere('pegawai_nip', 'like', '%' . $nip . '%') ;
+            $query->where('pegawai_nip', $nip)->orWhere('pegawai_nip', 'like', '%' . $nip . '%');
         });
     }
 
@@ -82,7 +83,7 @@ class PengusulanPAK extends Model
         static::created(function ($model) {
             ActivityLogger::log(
                 'Mengusulkan Penilaian PAK ',
-                'Pegawai dengan NIP: '. $model->pegawai_nip . ' mengusulkan penilaian PAK',
+                'Pegawai dengan NIP: ' . $model->pegawai_nip . ' mengusulkan penilaian PAK',
                 get_class($model),
                 $model->id,
                 $model->pegawai_nip ?? null
@@ -91,7 +92,7 @@ class PengusulanPAK extends Model
 
         static::updated(function ($model) {
             ActivityLogger::log(
-                'Memperbarui Pengusulan PAK' ,
+                'Memperbarui Pengusulan PAK',
                 'Data dalam pengusulan PAK diperbarui',
                 get_class($model),
                 $model->id,
@@ -102,8 +103,8 @@ class PengusulanPAK extends Model
         // . class_basename($model)
         static::deleted(function ($model) {
             ActivityLogger::log(
-                'Membatalkan Pengusulan PAK ' ,
-                'Pegawai dengan NIP: '. $model->pegawai_nip . ' membatalkan pengusulan PAK',
+                'Membatalkan Pengusulan PAK ',
+                'Pegawai dengan NIP: ' . $model->pegawai_nip . ' membatalkan pengusulan PAK',
                 get_class($model),
                 $model->id,
                 $model->pegawai_nip ?? null

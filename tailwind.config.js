@@ -20,7 +20,7 @@ export default {
             colors: {
                 transparent: "transparent",
                 current: "currentColor",
-                "primary-dark": "#38bdf8",
+                "primary-dark": "oklch(50% 0.134 242.749)",
                 secondary: "#fb923c",
                 oren: "#fb923c",
                 hijau: "#22c55e",

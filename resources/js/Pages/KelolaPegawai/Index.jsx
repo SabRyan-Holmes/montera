@@ -168,7 +168,7 @@ export default function Index({
                                                     {showLastUpdated ? (
                                                         <>
                                                             <button
-                                                                className="action-btn hover:scale-[1.15] hover:bg-primary-dark/30"
+                                                                className="action-btn hover:scale-[1.15] hover:bg-bermuda"
                                                                 onClick={() =>
                                                                     setShowLastUpdated(
                                                                         !showLastUpdated
@@ -182,7 +182,7 @@ export default function Index({
                                                     ) : (
                                                         <div className="flex items-center justify-center gap-2">
                                                             <button
-                                                                className=" action-btn hover:scale-125 hover:bg-primary-dark/30"
+                                                                className=" action-btn hover:scale-125 hover:bg-bermuda"
                                                                 onClick={() =>
                                                                     setShowLastUpdated(
                                                                         !showLastUpdated

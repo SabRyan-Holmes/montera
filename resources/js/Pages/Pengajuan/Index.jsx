@@ -514,20 +514,22 @@ export default function Index({
                                                     </>
                                                 ) : (
                                                     <>
-                                                    <td>
-                                                    {parseFloat(
-                                                        pengajuan.riwayat_pak[
-                                                            "ak_terakhir"
-                                                        ]
-                                                    ).toFixed(3)}
-                                                    </td>
-                                                    <td>
-                                                    {parseFloat(
-                                                        pengajuan.riwayat_pak[
-                                                            "angka_kredit"
-                                                        ]
-                                                    ).toFixed(3)}
-                                                    </td>
+                                                        <td>
+                                                            {parseFloat(
+                                                                pengajuan
+                                                                    .riwayat_pak[
+                                                                    "ak_terakhir"
+                                                                ]
+                                                            ).toFixed(3)}
+                                                        </td>
+                                                        <td>
+                                                            {parseFloat(
+                                                                pengajuan
+                                                                    .riwayat_pak[
+                                                                    "angka_kredit"
+                                                                ]
+                                                            ).toFixed(3)}
+                                                        </td>
                                                     </>
                                                 )}
 
@@ -729,6 +731,12 @@ export default function Index({
                                                         {/* Actor Divisi SDM */}
                                                         {/* Tombol Lihat Detail Riwayat PAK */}
                                                         <ModalCekPengajuan
+                                                            setActiveModal={
+                                                                setActiveModal
+                                                            }
+                                                            activeModal={
+                                                                activeModal
+                                                            }
                                                             pengajuan={
                                                                 pengajuan
                                                             }
@@ -738,13 +746,16 @@ export default function Index({
                                                         />
                                                         <div className="relative inline-flex group">
                                                             <button
-                                                                onClick={() =>
-                                                                    document
-                                                                        .getElementById(
-                                                                            `ModalCekPengajuan-${pengajuan.id}`
-                                                                        )
-                                                                        .showModal()
-                                                                }
+                                                                onClick={() => {
+                                                                    setActiveModal(
+                                                                        `ModalCekPengajuan-${pengajuan.id}`
+                                                                    );
+                                                                    // document
+                                                                    // .getElementById(
+                                                                    //     `ModalCekPengajuan-${pengajuan.id}`
+                                                                    // )
+                                                                    // .showModal()
+                                                                }}
                                                                 className="action-btn action-btn-primary group/button"
                                                             >
                                                                 <FaEye className="scale-125 group-hover/button:fill-white" />
@@ -816,12 +827,12 @@ export default function Index({
                                                                     method="post"
                                                                     className="transition-all scale-110 group/button action-btn border-secondary/20 hover:bg-secondary"
                                                                 >
-                                                                    <IoDocument className="scale-125 fill-secondary group-hover/button:fill-white" />
+                                                                    <IoDocument className="scale-125  fill-secondary group-hover/button:fill-white" />
                                                                 </Link>
                                                                 {/* Tooltip Hover  */}
                                                                 <TooltipHover
                                                                     message={
-                                                                        "Lihat Tampilan PDF"
+                                                                        "Pratinjau Dokumen"
                                                                     }
                                                                 />
                                                             </div>

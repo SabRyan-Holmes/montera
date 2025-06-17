@@ -31,10 +31,12 @@ class RiwayatKarirController extends Controller
     {
         // $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
         $riwayatKarir = null;
+        $pegawai = null;
         $title = '';
         if ($this->user->role === "Pegawai") {
             $riwayatKarirDiri = RiwayatKarir::where('pegawai_nip', $this->user->nip)->orWhere('pegawai_nip', 'like', '%' . $this->user->nip . '%')->latest();
             $riwayatKarir = $riwayatKarirDiri;
+            $pegawai = Pegawai::byNIP($this->user->nip)->first();
             $title = "Riwayat Karir Diri";
         } else { //if Divisi SDM or Pimpinan get all
             $riwayatKarir = RiwayatKarir::latest();
@@ -59,10 +61,10 @@ class RiwayatKarirController extends Controller
         return Inertia::render('RiwayatKarir/Index', [
             "title" => $title,
             "subTitle" => $subTitle,
-            // "riwayatKarirDiri" => $riwayatKarirDiri->filter(request(['search']))->paginate(10),
             'riwayatKarir' => $riwayatKarir->filter(request(['byJenisPerubahan', 'byJabatan', 'search']))->paginate(10), //TODO
             'canValidate' => $this->user->role == 'Divisi SDM',
             'isPegawai' => $this->user->role == 'Pegawai',
+            'pegawai' => $pegawai,
             "searchReq" => request('search') ?? "",
             "byJenisPerubahanReq" => request('byJenisPerubahan') ?? "Semua Kategori",
             "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",

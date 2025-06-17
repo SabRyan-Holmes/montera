@@ -4,9 +4,10 @@ import useFilterSearch from "@/Components/UseFilterSearchCustom";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import moment from "moment/min/moment-with-locales";
 import { router } from "@inertiajs/react";
-import { InputLabel, PrimaryButton, SecondaryButton } from "@/Components";
+import { DetailPegawai, InputLabel, Modal, PrimaryButton, SecondaryButton } from "@/Components";
 import { MdPersonSearch } from "react-icons/md";
 import { FaUserTie } from "react-icons/fa6";
+import ModalShowPegawai from "./Partials/ModalShowPegawai";
 
 const DEFAULT_CATEGORY = "Semua Kategori";
 export default function Index({
@@ -20,6 +21,7 @@ export default function Index({
     byJenisPerubahanReq: initialJenisPerubahan,
     jabatanList = [],
     isPegawai = false,
+    pegawai,
 }) {
     // ===========================================Handling Search & Filter===========================================
     const [searchInput, setSearchInput] = useState(initialSearch);
@@ -71,14 +73,15 @@ export default function Index({
     };
 
     moment.locale("id");
-    // console.warn(riwayatKarir);
+    const [showPegawai, setShowPegawai] = useState(false);
+    const closeModal = () => {
+        setShowPegawai(false);
+    };
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="w-full">
-                    <form
-                        onSubmit={handleSubmit}
-                    >
+                    <form onSubmit={handleSubmit}>
                         <div className="flex items-center justify-between gap-3 my-3">
                             <div className="flex items-center justify-start gap-3">
                                 {/* JABATAN */}
@@ -211,7 +214,23 @@ export default function Index({
                             <strong className="block text-2xl">
                                 Riwayat Karir Saya
                             </strong>
-                            <SecondaryButton className="inline-flex items-center bg-secondary/10" onclick="showDetailModal()">
+                            <Modal
+                                show={showPegawai}
+                                onClose={closeModal}
+                                maxWidth="3xl"
+                            >
+                                <div className="m-10 mb-16 overflow-x-auto ">
+                                    <h1 className="my-4 text-xl font-medium">
+                                        Detail Pegawai Saya (Di Sistem Terkini )
+                                    </h1>
+                                    <DetailPegawai collapse={false} pegawai={pegawai} />
+                                </div>
+                            </Modal>
+
+                            <SecondaryButton
+                                className="inline-flex items-center bg-secondary/10"
+                                onClick={() => setShowPegawai(true)}
+                            >
                                 <FaUserTie className="w-4 h-4 mr-2" />
                                 <span>Data Pegawai Terkini</span>
                             </SecondaryButton>

@@ -31,9 +31,9 @@ export default function Create({
         tujuan: "Evaluasi Kinerja Tahunan",
         periode_mulai: "",
         periode_berakhir: "",
-        ak_terakhir: 0.0,
-        ak_diajukan: 0.0,
-        is_penilaian_pdd: "Tidak",
+        ak_terakhir: "",
+        ak_diajukan: "",
+        is_penilaian_pdd: false,
         // data pendukung(opsional)
         dokumen_utama_path: null,
         dokumen_pendukung_path: null,
@@ -94,7 +94,6 @@ export default function Create({
     }, []);
 
     const submit = (e) => {
-
         e.preventDefault();
         post(route("pegawai.pengusulan-pak.store"), {
             forceFormData: true,
@@ -105,39 +104,59 @@ export default function Create({
     };
 
     const [minPeriode, setMinPeriode] = useState("");
-    const handleFileChange = (dataName,e) => {
+    const handleFileChange = (e, dataName) => {
         const file = e.target.files[0];
-        console.log(file); // ini lebih aman daripada alert
-        alert(`File terpilih: ${file.name}`);
-        if (file) {
-            const validTypes = ["application/pdf", "image/jpeg", "image/png"];
-            const fileType = file.type;
+        if (!file) return;
 
-            if (!validTypes.includes(fileType)) {
-                alert("Hanya file PDF, JPG, atau PNG yang diizinkan");
-                e.target.value = ""; // Reset input file
-                return;
-            }
+        const validTypes = ["application/pdf"];
+        const fileType = file.type;
 
-            if (file.size > 2 * 1024 * 1024) {
-                // 2MB
-                alert("Ukuran file maksimal 2MB");
-                e.target.value = "";
-                return;
-            }
-
-            // if (onChange) {
-            //     onChange(e); // Panggil prop onChange jika ada
-            // }
-            setData(dataName, file);
+        if (!validTypes.includes(fileType)) {
+            // alert("Hanya file PDF, JPG, atau PNG yang diizinkan");
+            alert("Hanya file PDF yang diizinkan");
+            e.target.value = "";
+            return;
         }
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert("Ukuran file maksimal 2MB");
+            e.target.value = "";
+            return;
+        }
+
+        // Simpan file
+        setUploadedFiles((prev) => ({
+            ...prev,
+            [dataName]: file,
+        }));
+
+        if (file.type === "application/pdf") {
+            const url = URL.createObjectURL(file);
+            setPreviewUrls((prev) => ({
+                ...prev,
+                [dataName]: url,
+            }));
+        }
+
+        setData(dataName, file); // simpan ke form
     };
 
     // Console.log
     useEffect(() => {
-        console.log("data :")
-        console.log(data)
+        console.log("data :");
+        console.log(data);
     }, [data]);
+
+    const [uploadedFiles, setUploadedFiles] = useState({
+        dokumen_utama_path: null,
+        dokumen_pendukung_path: null,
+    });
+
+    const [previewUrls, setPreviewUrls] = useState({
+        dokumen_utama_path: null,
+        dokumen_pendukung_path: null,
+    });
+
     return (
         <Authenticated
             user={auth.user}
@@ -383,6 +402,7 @@ export default function Create({
                                             max={5000}
                                             className="px-2 laptop:w-full h-9 placeholder:text-accent "
                                             placeholder="Input Angka Kredit. contoh: 240.256"
+                                            value={data.ak_terakhir}
                                             maxLength={100}
                                             onChange={(e) => {
                                                 const value = parseFloat(
@@ -420,6 +440,7 @@ export default function Create({
                                             max={5000}
                                             className="px-2 laptop:w-full h-9 placeholder:text-accent "
                                             placeholder="Input Angka Kredit. contoh: 272.234"
+                                            value={data.ak_diajukan}
                                             onChange={(e) => {
                                                 const value = parseFloat(
                                                     e.target.value
@@ -440,6 +461,43 @@ export default function Create({
                                     </td>
                                 </tr>
 
+                                <tr>
+                                    <td>
+                                        <InputLabel
+                                            className="text-lg"
+                                            forName="dokumen_utama_path"
+                                            htmlFor="dokumen_utama_path"
+                                            value="Dokumen Penilaian Kinerja
+"
+                                        />
+                                    </td>
+                                    <td>
+                                        <fieldset>
+                                            <div
+                                                div
+                                                className="relative inline "
+                                            >
+                                                {/* ANCHOR */}
+                                                <FileInput
+                                                    id="dokumen_utama_path"
+                                                    name="dokumen_utama_path"
+                                                    file={
+                                                        uploadedFiles.dokumen_utama_path
+                                                    }
+                                                    previewUrl={
+                                                        previewUrls.dokumen_utama_path
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleFileChange(
+                                                            e,
+                                                            "dokumen_utama_path"
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
                                 <tr className="border">
                                     <td>
                                         <InputLabel
@@ -461,47 +519,19 @@ export default function Create({
                                                 )
                                             }
                                         >
-                                            <option value={false}>Tidak</option>
-                                            <option value={true}>Ya</option>
+                                            <option value={0}>Tidak</option>
+                                            <option value={1}>Ya</option>
                                         </select>
                                     </td>
                                 </tr>
 
-                                <tr>
-                                            {/* ANCHOR */}
-                                    <td>
-                                        <InputLabel
-                                            className="text-lg"
-                                            forName="dokumen_utama_path"
-                                            htmlFor="dokumen_utama_path"
-                                            value="Dokumen Utama"
-                                        />
-                                    </td>
-                                    <td>
-                                        <fieldset>
-                                            <div
-                                                div
-                                                className="relative inline "
-                                            >
-                                                <FileInput
-                                                    id="dokumen_utama_path"
-                                                    name="dokumen_utama_path"
-                                                    onChange={(e) => handleFileChange('dokumen_utama_path', e)}
-                                                />
-                                                <span className="mt-2 badge-optional">
-                                                    Opsional
-                                                </span>
-                                            </div>
-                                        </fieldset>
-                                    </td>
-                                </tr>
                                 <tr>
                                     <td>
                                         <InputLabel
                                             className="text-lg"
                                             forName="dokumen_pendukung_path"
                                             htmlFor="dokumen_pendukung_path"
-                                            value="Dokumen Pendukung"
+                                            value=" Dokumen Penilaian Pendidikan (Ijazah Terbaru)"
                                         />
                                     </td>
                                     <td>
@@ -513,11 +543,25 @@ export default function Create({
                                                 <FileInput
                                                     id="dokumen_pendukung_path"
                                                     name="dokumen_pendukung_path"
-                                                    onChange={(e) => handleFileChange('dokumen_pendukung_path', e)}
+                                                    file={
+                                                        uploadedFiles.dokumen_pendukung_path
+                                                    }
+                                                    previewUrl={
+                                                        previewUrls.dokumen_pendukung_path
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleFileChange(
+                                                            e,
+                                                            "dokumen_pendukung_path"
+                                                        )
+                                                    }
                                                 />
-                                                <span className="mt-2 badge-optional">
-                                                    Opsional
-                                                </span>
+                                                {data.is_penilaian_pdd ==
+                                                    false && (
+                                                    <span className="mt-2 badge-optional">
+                                                        Opsional
+                                                    </span>
+                                                )}
                                             </div>
                                         </fieldset>
                                     </td>
@@ -536,7 +580,7 @@ export default function Create({
                                                 <textarea
                                                     name="catatan_tambahan"
                                                     className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
-                                                    placeholder="Masukkan Uraian Tugas."
+                                                    placeholder="Masukkan Catatan Tambahan"
                                                     maxLength={100}
                                                     onChange={(e) =>
                                                         setData(

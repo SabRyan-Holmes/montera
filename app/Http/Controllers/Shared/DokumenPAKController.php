@@ -111,6 +111,8 @@ class DokumenPAKController extends Controller
 
     public function preview()
     {
+        // $data = null;
+
         $data = Session::get('data');
         $this->cleanAllData($data);
 

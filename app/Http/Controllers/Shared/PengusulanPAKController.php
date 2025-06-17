@@ -39,7 +39,7 @@ class PengusulanPAKController extends Controller
     {
         $pengusulan_pak = PengusulanPAK::latest();
 
-        if($this->user->role === "Pegawai") {
+        if ($this->user->role === "Pegawai") {
             $pengusulan_pak = PengusulanPAK::where('pegawai_nip', $this->user->nip)->latest();
         }
 
@@ -94,24 +94,26 @@ class PengusulanPAKController extends Controller
             $validated['catatan_id'] = $new_catatan->id;
         }
 
-        if ($request->hasFile('dokumen_pendukung_path')) {
-            // TODO: Bikin logic store dokumen pendukung /bisa pdf, png,atau jpg(tergantung yang diupload)
-            // Buat nama file unik
-            $file = $request->file('dokumen_pendukung_path');
+        // skrg ada 2 macam file yaitu dokumen_pendukung_path dan dokumen_utama_path
+        // TODO: Gimana cara bikin logic ny, itu direstore kalo itu ada sesuai nama datany kalo bisa logic ny jangan pake manual kaya if ($request->hasFile('dokumen_pendukung_path') ||
+        $uploadMap = [
+            'dokumen_utama_path' => '-Penilaian-Kinerja~',
+            'dokumen_pendukung_path' => '-Penilaian-Pendidikan~',
+        ];
 
-            // Dapatkan ekstensi file (otomatis .pdf, .png, dll)
-            $extension = $file->getClientOriginalExtension();
-            $fileName = $request->pegawai_nip . '-Pengusulan-PAK-' . Str::random(10) . '.' . $extension;
-
-            // Simpan file ke storage/public/dokumen_pendukung
-            $path = $file->storeAs('dokumen_pendukung', $fileName, 'public');
-
-            // Simpan path file ke kolom dokumen_pendukung_path
-            $validated['dokumen_pendukung_path'] = $path;
+        foreach ($uploadMap as $field => $alias) {
+            if ($request->hasFile($field)) {
+                $file = $request->file($field);
+                $extension = $file->getClientOriginalExtension();
+                $timestamp = now()->format('Ymd_His');
+                $fileName = $request->pegawai_nip . $alias . $timestamp . '.' . $extension;
+                $path = $file->storeAs('dokumen_pengusulan_pak', $fileName, 'public');
+                $validated[$field] = $path;
+            }
         }
 
         PengusulanPAK::create($validated);
-        return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan Berhasil Diajukan!');
+        return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan Penilaian PAK Berhasil!');
     }
 
     /**
@@ -131,7 +133,7 @@ class PengusulanPAKController extends Controller
         return Inertia::render('PengusulanPAK/CreateOrEdit', [
             'title' => "Tambah Pengusulan PAK",
             'pegawai' => $pegawai,
-            'pengusulanPAK' =>$pengusulanPAK
+            'pengusulanPAK' => $pengusulanPAK
         ]);
     }
 

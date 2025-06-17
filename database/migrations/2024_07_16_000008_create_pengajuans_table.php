@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
-            $table->string('user_nip', 18);
+            $table->string('user_nip', 18);//pengaju
             $table->foreign('user_nip')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->foreignId('riwayat_pak_id')->constrained('riwayat_pak')->onDelete('cascade');
-            $table->foreignId('catatan_id')->nullable()->constrained('catatans')->onDelete('cascade');
+            $table->foreignId('catatan_pengaju_id')->nullable()->constrained('catatans')->onDelete('cascade');
+            $table->foreignId('catatan_validator_id')->nullable()->constrained('catatans')->onDelete('cascade');
             $table->string('validated_by', 18)->nullable();
             $table->foreign('validated_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
