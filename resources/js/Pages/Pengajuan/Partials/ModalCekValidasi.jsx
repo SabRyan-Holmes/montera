@@ -1,7 +1,7 @@
-// ModalCekValidasi.jsx
 import {
     DetailPAKTable,
     DetailPegawai,
+    Modal,
     SecondaryButton,
     SuccessButton,
 } from "@/Components";
@@ -17,8 +17,12 @@ import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/DetailPengusulanPAKTable";
 
-export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
-    const {auth } = usePage().props
+export default function ModalCekValidasi({
+    pengajuan,
+    setActiveModal,
+    activeModal,
+}) {
+    const { auth } = usePage().props;
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengajuan.id,
@@ -65,14 +69,17 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route("pimpinan.pengajuan.undo-validate", pengajuan.id), {
-                    onSuccess: () => {
-                        //
-                    },
-                    onError: () => {
-                        console.log("Gagal Menghapus Data");
-                    },
-                });
+                router.post(
+                    route("pimpinan.pengajuan.undo-validate", pengajuan.id),
+                    {
+                        onSuccess: () => {
+                            //
+                        },
+                        onError: () => {
+                            console.log("Gagal Menghapus Data");
+                        },
+                    }
+                );
             }
         });
     };
@@ -243,7 +250,7 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
     const { props } = usePage();
 
     // TODO ? Mungkin sebaiknya tamabhakna juga Catatan Evaluasi/Review Dari Pimpinan
-    const pegawai = pengajuan.riwayat_pak.pegawai
+    const pegawai = pengajuan.riwayat_pak.pegawai;
     const pengusulanPAK = pengajuan.riwayat_pak.pengusulan_pak;
     const pengusulanPAKRef = useRef(null); // <-- buat ref
     const scrollToPengusulanPAK = () => {
@@ -255,13 +262,14 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
             });
         }
     };
+    const modalId = `ModalCekValidasi-${pengajuan.id}`;
     return (
-        <dialog
-            id={`ModalCekValidasi-${pengajuan.id}`} onClose={()=> setActiveModal(null)}
-            className="modal z-[100]"
+        <Modal
+            id={`ModalCekValidasi-${pengajuan.id}`}
+            onClose={() => setActiveModal(null)}
+            show={activeModal === modalId}
+            maxWidth="4xl"
         >
-            {/* Saya ingin ditampilkan iframe pdf ini setelah ditekan tombol Lihat Dokumen, dan ditampilkan diatas dialog, gimana caranya? */}
-            {/* ✅ IFRAME ditampilkan di atas modal jika showIframe true dan linkIframe ada */}
             {showIframe && (
                 <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
                     <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
@@ -292,259 +300,265 @@ export default function ModalCekValidasi({ pengajuan, setActiveModal }) {
                     </div>
                 </div>
             )}
+            <main className="w-full mx-auto my-4 text-center ">
+                <section className="relative w-full max-w-4xl mx-auto modal-box">
+                    <h3 className="mb-2 text-xl font-bold">Detail Pengajuan</h3>
 
-            <div className="relative w-full max-w-3xl modal-box">
-                <form method="dialog">
-                    <button className="absolute btn btn-md btn-circle btn-ghost right-2 top-2">
-                        <IoCloseOutline className="w-10 h-10 stroke-accent group-hover/item:fill-white" />
-                    </button>
-                </form>
+                    <div className="px-2 overflow-x-auto">
+                        <h1 className="my-4 text-xl font-medium">
+                            Data Penetapan Angka Kredit dalam Pengajuan
+                        </h1>
+                        <DetailPAKTable
+                            data={pengajuan.riwayat_pak}
+                            collapse={false}
+                            onScrollToPengusulanPAK={scrollToPengusulanPAK}
+                        />
+                    </div>
 
-                <h3 className="mb-2 text-xl font-bold">Detail Pengajuan</h3>
+                    <div
+                        className="px-2 my-10 mb-16 overflow-x-auto"
+                        ref={pengusulanPAKRef}
+                    >
+                        <h1 className="my-4 text-xl font-medium">
+                            Data Pengusulan Sebagai Sumber Penetapan Angka
+                            Kredit
+                        </h1>
+                        <PengusulanPAKTable
+                            collapse={false}
+                            data={pengusulanPAK}
+                        />
+                    </div>
 
-                <div className="px-2 overflow-x-auto">
-                    <h1 className="my-4 text-xl font-medium">
-                        Data Penetapan Angka Kredit dalam Pengajuan
-                    </h1>
-                    <DetailPAKTable
-                        data={pengajuan.riwayat_pak}
-                        collapse={false}
-                        onScrollToPengusulanPAK={scrollToPengusulanPAK}
-                    />
-                </div>
+                    <div className="px-2 my-10 mb-16 overflow-x-auto">
+                        <h1 className="my-4 text-xl font-medium">
+                            Data Pegawai dalam Penetapan Angka Kredit
+                        </h1>
+                        <DetailPegawai pegawai={pegawai} />
+                    </div>
 
-                <div
-                    className="px-2 my-10 mb-16 overflow-x-auto"
-                    ref={pengusulanPAKRef}
-                >
-                    <h1 className="my-4 text-xl font-medium">
-                        Data Pengusulan Sebagai Sumber Penetapan Angka Kredit
-                    </h1>
-                    <PengusulanPAKTable collapse={false} data={pengusulanPAK} />
-                </div>
-
-                <div className="px-2 my-10 mb-16 overflow-x-auto">
-                    <h1 className="my-4 text-xl font-medium">
-                        Data Pegawai dalam Penetapan Angka Kredit
-                    </h1>
-                    <DetailPegawai pegawai={pegawai} />
-                </div>
-
-                {/* SIGNATURE  */}
-                {pengajuan.status == "diajukan" && (
-                    <div className="my-20">
-                        <div className="flex justify-center w-1/3 gap-2 mx-auto mb-2 ">
-                            <button
-                                onClick={() => {
-                                    setMode("draw");
-                                }}
-                                className={
-                                    "action-btn " +
-                                    (mode === "draw"
-                                        ? "bg-secondary"
-                                        : "bg-white")
-                                }
-                            >
-                                Tulis TTD
-                                <PiSignature className="ml-1 scale-110" />
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setMode("upload");
-                                    // reset()
-                                }}
-                                className={
-                                    "action-btn " +
-                                    (mode === "upload"
-                                        ? "bg-secondary"
-                                        : "bg-white")
-                                }
-                            >
-                                Upload Gambar
-                            </button>
-                        </div>
-
-                        {mode === "draw" && (
-                            <div className="m-7">
-                                <p className="mt-4 font-semibold">
-                                    Gambar Tanda Tangan Anda disini.
-                                </p>
-                                <SignatureCanvas
-                                    ref={sigCanvas}
-                                    penColor="black"
-                                    canvasProps={{
-                                        width: 300,
-                                        height: 170,
-                                        className:
-                                            "border border-accent rounded-md m-5 mx-auto",
+                    {/* SIGNATURE  */}
+                    {pengajuan.status == "diajukan" && (
+                        <div className="my-20">
+                            <div className="flex justify-center w-1/3 gap-2 mx-auto mb-2 ">
+                                <button
+                                    onClick={() => {
+                                        setMode("draw");
                                     }}
-                                />
-
-                                <div className="flex justify-center w-1/3 gap-1 mx-auto mb-2">
-                                    <button
-                                        onClick={() => {
-                                            sigCanvas.current.clear();
-                                            reset("signature");
-                                        }}
-                                        className="mx-10 action-btn"
-                                    >
-                                        Clear
-                                        <FaEraser className="" />
-                                    </button>
-                                    <button
-                                        onClick={handleUseDraw}
-                                        className={
-                                            `mx-10 action-btn ` +
-                                            (data.signatureType == "draw" &&
-                                            data.signature
-                                                ? "bg-hijau/50"
-                                                : "bg-hijau/15")
-                                        }
-                                    >
-                                        Gunakan TTD Ini
-                                        {data.signatureType == "draw" &&
-                                            data.signature && <FaCheck className="ml-1" />}
-                                    </button>
-                                </div>
+                                    className={
+                                        "action-btn " +
+                                        (mode === "draw"
+                                            ? "bg-secondary"
+                                            : "bg-white")
+                                    }
+                                >
+                                    Tulis TTD
+                                    <PiSignature className="ml-1 scale-110" />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setMode("upload");
+                                        // reset()
+                                    }}
+                                    className={
+                                        "action-btn " +
+                                        (mode === "upload"
+                                            ? "bg-secondary"
+                                            : "bg-white")
+                                    }
+                                >
+                                    Upload Gambar
+                                </button>
                             </div>
-                        )}
 
-                        {mode === "upload" && (
-                            <div className="m-7">
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    name="sigImage"
-                                    className="-mt-4"
-                                    onChange={handleUploadChange}
-                                />
-                                {previewImage && (
-                                    <div className="mt-4">
-                                        <img
-                                            src={previewImage}
-                                            alt="Preview Tanda Tangan"
-                                            className="mx-auto border-2 border-accent m-5 rounded-md w-[300px] h-[170px] "
-                                        />
+                            {mode === "draw" && (
+                                <div className="m-7">
+                                    <p className="mt-4 font-semibold">
+                                        Gambar Tanda Tangan Anda disini.
+                                    </p>
+                                    <SignatureCanvas
+                                        ref={sigCanvas}
+                                        penColor="black"
+                                        canvasProps={{
+                                            width: 300,
+                                            height: 170,
+                                            className:
+                                                "border border-accent rounded-md m-5 mx-auto",
+                                        }}
+                                    />
+
+                                    <div className="flex justify-center w-1/3 gap-1 mx-auto mb-2">
                                         <button
-                                            onClick={() =>
-                                                setData((prev) => ({
-                                                    ...prev,
-                                                    signature: uploadedFiles,
-                                                    signatureType: mode,
-                                                }))
-                                            }
+                                            onClick={() => {
+                                                sigCanvas.current.clear();
+                                                reset("signature");
+                                            }}
+                                            className="mx-10 action-btn"
+                                        >
+                                            Clear
+                                            <FaEraser className="" />
+                                        </button>
+                                        <button
+                                            onClick={handleUseDraw}
                                             className={
                                                 `mx-10 action-btn ` +
-                                                (data.signatureType ==
-                                                    "upload" && data.signature
+                                                (data.signatureType == "draw" &&
+                                                data.signature
                                                     ? "bg-hijau/50"
                                                     : "bg-hijau/15")
                                             }
                                         >
                                             Gunakan TTD Ini
-                                            {data.signatureType == "upload" &&
-                                                data.signature && <FaCheck />}
+                                            {data.signatureType == "draw" &&
+                                                data.signature && (
+                                                    <FaCheck className="ml-1" />
+                                                )}
                                         </button>
                                     </div>
-                                )}
+                                </div>
+                            )}
+
+                            {mode === "upload" && (
+                                <div className="m-7">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        name="sigImage"
+                                        className="-mt-4"
+                                        onChange={handleUploadChange}
+                                    />
+                                    {previewImage && (
+                                        <div className="mt-4">
+                                            <img
+                                                src={previewImage}
+                                                alt="Preview Tanda Tangan"
+                                                className="mx-auto border-2 border-accent m-5 rounded-md w-[300px] h-[170px] "
+                                            />
+                                            <button
+                                                onClick={() =>
+                                                    setData((prev) => ({
+                                                        ...prev,
+                                                        signature:
+                                                            uploadedFiles,
+                                                        signatureType: mode,
+                                                    }))
+                                                }
+                                                className={
+                                                    `mx-10 action-btn ` +
+                                                    (data.signatureType ==
+                                                        "upload" &&
+                                                    data.signature
+                                                        ? "bg-hijau/50"
+                                                        : "bg-hijau/15")
+                                                }
+                                            >
+                                                Gunakan TTD Ini
+                                                {data.signatureType ==
+                                                    "upload" &&
+                                                    data.signature && (
+                                                        <FaCheck />
+                                                    )}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {pengajuan.status === "divalidasi" && (
+                        <>
+                            <div role="alert" className="mb-20 alert bg-hijau">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-6 h-6 stroke-current shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                                <span className="text-base font-medium text-black">
+                                    Dokumen Penetapan Angka Kredit untuk
+                                    pengajuan ini sudah diValidasi!
+                                </span>
                             </div>
-                        )}
+                        </>
+                    )}
+                </section>
+
+                {/* Floating Action Button */}
+                {pengajuan.status === "diajukan" && (
+                    <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-3 left-1/2">
+                        <SecondaryButton
+                            onClick={() => handleViewPdf(pengajuan)}
+                            type="submit"
+                            className="rounded shadow hover:scale-105"
+                        >
+                            <IoDocument className="w-4 h-4 fill-secondary" />
+                            Lihat Dokumen
+                        </SecondaryButton>
+
+                        <SuccessButton
+                            onClick={handleApprove}
+                            className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
+                        >
+                            <FaFileSignature className="w-4 h-4 fill-white " />
+                            Validasi Dokumen
+                        </SuccessButton>
                     </div>
                 )}
 
                 {pengajuan.status === "divalidasi" && (
-                    <>
-                        <div role="alert" className="mb-20 alert bg-hijau">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-6 h-6 stroke-current shrink-0"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                            <span className="text-base font-medium text-black">
-                                Dokumen Penetapan Angka Kredit untuk pengajuan
-                                ini sudah diValidasi!
-                            </span>
-                        </div>
-                    </>
+                    <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-3 left-1/2">
+                        <SecondaryButton
+                            onClick={() => {
+                                const url = `/storage/${pengajuan.approved_pak_path}`;
+                                setLinkIframe(url);
+                                setShowIframe(true);
+                            }}
+                            className="rounded shadow hover:scale-105"
+                        >
+                            <IoDocument className="mr-2 scale-125 fill-secondary" />
+                            Lihat Dokumen
+                        </SecondaryButton>
+
+                        <SecondaryButton
+                            onClick={() => handleCancel()}
+                            className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
+                        >
+                            <MdCancel className="mr-2 scale-125 fill-warning " />
+                            Batalkan Validasi
+                        </SecondaryButton>
+                    </div>
                 )}
-            </div>
+
+                {pengajuan.status === "ditolak" && (
+                    <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-3 left-1/2">
+                        <SecondaryButton
+                            onClick={() => handleViewPdf(pengajuan)}
+                            type="submit"
+                            className="rounded shadow hover:scale-105"
+                        >
+                            <IoDocument className="w-4 h-4 fill-secondary" />
+                            Lihat Dokumen
+                        </SecondaryButton>
+
+                        <SecondaryButton
+                            onClick={() => handleCancel()}
+                            className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
+                        >
+                            <MdCancel className="mr-2 scale-125 fill-warning " />
+                            Reset Validasi
+                        </SecondaryButton>
+                    </div>
+                )}
+            </main>
 
             {/* Floating Action Button */}
-            {pengajuan.status === "diajukan" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <SecondaryButton
-                        onClick={() => handleViewPdf(pengajuan)}
-                        type="submit"
-                        className="rounded shadow hover:scale-105"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
-
-                    <SuccessButton
-                        onClick={handleApprove}
-                        className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
-                    >
-                        <FaFileSignature className="w-4 h-4 fill-white " />
-                        Validasi Dokumen
-                    </SuccessButton>
-                </div>
-            )}
-
-            {pengajuan.status === "divalidasi" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                    <SecondaryButton
-                        onClick={() => {
-                            const url = `/storage/${pengajuan.approved_pak_path}`;
-                            setLinkIframe(url);
-                            setShowIframe(true);
-                        }}
-                        className="rounded shadow hover:scale-105"
-                    >
-                        <IoDocument className="mr-2 scale-125 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
-
-                    <SecondaryButton
-                        onClick={() => handleCancel()}
-                        className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-warning " />
-                        Batalkan Validasi
-                    </SecondaryButton>
-                </div>
-            )}
-
-            {pengajuan.status === "ditolak" && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
-                  <SecondaryButton
-                        onClick={() => handleViewPdf(pengajuan)}
-                        type="submit"
-                        className="rounded shadow hover:scale-105"
-                    >
-                        <IoDocument className="w-4 h-4 fill-secondary" />
-                        Lihat Dokumen
-                    </SecondaryButton>
-
-                    <SecondaryButton
-                        onClick={() => handleCancel()}
-                        className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
-                    >
-                        <MdCancel className="mr-2 scale-125 fill-warning " />
-                        Reset Validasi
-                    </SecondaryButton>
-                </div>
-            )}
-
-            {/* Floating Action Button */}
-        </dialog>
+        </Modal>
     );
 }

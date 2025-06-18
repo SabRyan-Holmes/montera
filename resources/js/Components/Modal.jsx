@@ -36,7 +36,7 @@ export default function Modal({
     return (
         <Transition show={show} leave="duration-200">
             <Dialog
-                as="div"
+                as="section"
                 id={id}
                 className="fixed inset-0 z-50 flex items-center px-4 overflow-y-auto transition-all transform sm:px-0 "
                 onClose={close}

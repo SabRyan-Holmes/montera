@@ -44,7 +44,7 @@ class PengajuanController extends Controller
         $pegawai = Pegawai::byNIP($this->user->nip)->first();
         // dd($pegawai);
         if ($this->user->role === 'Pegawai') {
-            $pengajuan = Pengajuan::byPegawaiId( $pegawai->id ?? $this->user->id )->latest();
+            $pengajuan = Pengajuan::byPegawaiId($pegawai->id ?? $this->user->id)->latest();
         }
 
         $subTitle = GetSubtitle::getSubtitle(
@@ -160,40 +160,20 @@ class PengajuanController extends Controller
 
 
     // ===========================================================================================================================================
-    public function approve(Request $request)
+    public function approve(Pengajuan $pengajuan)
     {
-        // 1. Ambil Pengajuan, Pegawai, dan siapkan signature default
-        $pengajuan = Pengajuan::findOrFail($request->id);
+
+        // 1.Ambil Pengajuan dan Pegawai
         $pegawai = $pengajuan->riwayat_pak->pegawai;
+        // 2. Ambil ttd
+        $signaturePath = public_path('storage/validasi_pimpinan/default.png');
 
-        // 2. Siapkan variabel signature
-        $base64Sig = null;
-
-        if ($request->fast_approve) {
-            // dd($request);
-            // Fast Approve: ambil gambar default dari public folder
-            // TODO: Ubah nanti kalo dh dpt file resmi
-            $signaturePath = public_path('storage/validasi_pimpinan/default.png');
-
-            if (!file_exists($signaturePath)) {
-                return back()->withErrors(['signature' => 'File tanda tangan default tidak ditemukan.']);
-            }
-
-            $mime = mime_content_type($signaturePath);
-            $base64Sig = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($signaturePath));
-        } else {
-            // Manual approve: Validasi dan proses signature upload/draw
-            $request->validate([
-                'id' => 'required|integer',
-                'signature' => $request->signatureType === 'upload'
-                    ? 'required|image|max:2000'
-                    : 'required|string',
-            ]);
-
-            $base64Sig = $request->signatureType === 'upload'
-                ? 'data:' . $request->file('signature')->getMimeType() . ';base64,' . base64_encode(file_get_contents($request->file('signature')->getRealPath()))
-                : $request->signature;
+        if (!file_exists($signaturePath)) {
+            return back()->withErrors(['signature' => 'File tanda tangan default tidak ditemukan.']);
         }
+
+        $mime = mime_content_type($signaturePath);
+        $base64Sig = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($signaturePath));
 
         // 3. Ambil dan bersihkan data
         $data = optional($pengajuan->riwayat_pak)->toArray() ?? [];

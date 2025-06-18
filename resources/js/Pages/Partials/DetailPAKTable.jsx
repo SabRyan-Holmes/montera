@@ -58,7 +58,7 @@ export default function DetailData({
                 {!isCollapsed && (
                     <tbody>
                         <tr>
-                            <td width="40%">No PAK</td>
+                            <td width="50%">No PAK</td>
                             <td>{data["no_surat3"]}</td>
                         </tr>
                         <tr>
@@ -133,6 +133,10 @@ export default function DetailData({
                         </tr>
                         <tr>
                             <td>Angka Kredit Terakhir</td>
+                            <td>{data["ak_terakhir"]}</td>
+                        </tr>
+                        <tr>
+                            <td>AK Dasar Yang Diberikan</td>
                             <td>{data["ak_terakhir"]}</td>
                         </tr>
                         <tr>

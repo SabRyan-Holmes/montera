@@ -12,32 +12,33 @@ class Pengajuan extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['pengaju', 'validator','riwayat_pak', 'catatan'];
+    protected $with = ['pengaju', 'validator', 'riwayat_pak', 'catatan_pengaju', 'catatan_validator'];
 
 
 
     public function pengaju()
     {
         return $this->belongsTo(User::class, 'user_nip', 'nip');
-
     }
 
     public function validator()
     {
         return $this->belongsTo(User::class, 'validated_by', 'nip');
-
     }
 
     public function riwayat_pak()
     {
         return $this->belongsTo(RiwayatPAK::class, 'riwayat_pak_id');
-
     }
 
-    public function catatan()
+    public function catatan_pengaju()
     {
-        return $this->belongsTo(Catatan::class, 'catatan_id');
+        return $this->belongsTo(Catatan::class, 'catatan_pengaju_id');
+    }
 
+    public function catatan_validator()
+    {
+        return $this->belongsTo(Catatan::class, 'catatan_validator_id');
     }
 
     public static function byPegawaiId($pegawaiId)
@@ -75,20 +76,19 @@ class Pengajuan extends Model
             })
         );
 
-         // Berdasarkan Status
-         $query->when(
+        // Berdasarkan Status
+        $query->when(
             $filters['byStatus'] ?? false,
             fn($query, $byStatus) =>
             $query->where('status', 'like', '%' . $byStatus . '%')
         );
 
-         // Berdasarkan Kesimpulan
-         $query->when(
+        // Berdasarkan Kesimpulan
+        $query->when(
             $filters['byKesimpulan'] ?? false,
             fn($query, $byKesimpulan) =>
             $query->where('kesimpulan', 'like', '%' . $byKesimpulan . '%')
         );
-
     }
 
     protected static function booted()

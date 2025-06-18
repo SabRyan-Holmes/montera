@@ -21,37 +21,19 @@ import { MdCancel } from "react-icons/md";
 import PopUpCatatan from "./Partials/PopUpCatatan";
 import { BsFillSendArrowUpFill, BsFillSendFill } from "react-icons/bs";
 
-// ANCHOR
-
 export default function Index({
     auth,
     pengusulanPAK,
     title,
     subTitle,
     flash,
-    canValidate,
-    searchReq: initialSearch,
-    byStatusReq: initialStatus,
-    byJabatanReq: initialJabatan,
+    isDivisiSDM,
+    searchReq,
+    byStatusReq,
+    byJabatanReq,
     jabatanList,
 }) {
     moment.locale("id");
-    const {
-        search,
-        setSearch,
-        byFilter1,
-        setByFilter1,
-        byFilter2,
-        setByFilter2,
-    } = useFilterSearch({
-        initialSearch,
-        initialStatus,
-        initialJabatan,
-        routeName: canValidate
-            ? "/divisi-sdm/pengusulan-pak"
-            : "/pegawai/pengusulan-pak",
-    });
-
     const [shownMessages, setShownMessages] = useRemember([]);
     useEffect(() => {
         if (flash.message && !shownMessages.includes(flash.message)) {
@@ -67,14 +49,12 @@ export default function Index({
         }
     }, [flash.message]);
 
-    // SWAL POP UP
     const [activeModalId, setActiveModalId] = useState(null);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpData, setPopUpData] = useState({
         id: "",
     });
 
-    // Cek message dan status modal
     useEffect(() => {
         if (flash.message) {
             if (activeModalId !== null) {
@@ -87,9 +67,7 @@ export default function Index({
                     confirmButtonText: "Oke",
                     confirmButtonColor: "#2D95C9",
                 });
-                // Kirim pesan ke modal tertentu saja
             } else {
-                // Tampilkan Swal global
                 Swal.fire({
                     title: "Berhasil!",
                     text: `${flash.message}`,
@@ -106,39 +84,7 @@ export default function Index({
         }
     }, [flash.message, activeModalId]);
 
-    // Cancel penagjaun dari divisi SDM
-    const handleCancel = (id) => {
-        Swal.fire({
-            icon: "warning",
-            text: "Anda yakin ingin membatalkan pengajuan PAK ini?",
-            showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: "Tidak",
-            confirmButtonColor: "#2D95C9",
-            cancelButtonColor: "#9ca3af",
-            customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
-                confirmButton: "order-2",
-                denyButton: "order-3",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.post(route("divisi-sdm.pengajuan.cancel", id), {
-                    onSuccess: () => {
-                        //
-                    },
-                    onError: () => {
-                        console.log("Gagal Menghapus Data");
-                    },
-                });
-            }
-        });
-    };
-
     const handleReject = (id) => {
-        // console.log("isi id di handleReject");
-        // console.log(id);
         Swal.fire({
             icon: "warning",
             text: "Anda yakin ingin menolak pengusulan ini?",
@@ -167,30 +113,51 @@ export default function Index({
             }
         });
     };
-    // console.log("activeModalId");
-    // console.log(activeModalId);
-    const [expandedRows, setExpandedRows] = useState({});
+
     const role = auth.user.role;
+    function formatRole(label) {
+        return label.trim().toLowerCase().replace(/\s+/g, "-");
+    }
 
-
+    const [activeModal, setActiveModal] = useState(null);
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <div className="flex items-center justify-between w-full">
                     <FilterSearchCustom
-                        filter1Label={"Status"}
-                        byFilter1={byFilter1}
-                        setByFilter1={setByFilter1}
-                        filter1List={["diproses", "ditolak", "disetujui"]}
-                        filter2Label={"Jabatan"}
-                        byFilter2={byFilter2}
-                        setByFilter2={setByFilter2}
-                        filter2List={jabatanList}
-                        showSearch={canValidate}
-                        search={search}
-                        setSearch={setSearch}
+                        routeName={`/${formatRole(role)}/pengusulan-pak`}
+                        initialFilters={{
+                            byJabatan: byJabatanReq,
+                            byStatus: byStatusReq,
+                        }}
+                        filtersConfig={[
+                            {
+                                name: "byJabatan",
+                                label: "Jabatan",
+                                options: jabatanList,
+                            },
+                            {
+                                name: "byStatus",
+                                label: "Status ",
+                                options: [
+                                    "diajukan",
+                                    "direvisi",
+                                    "ditolak",
+                                    "divalidasi",
+                                ],
+                            },
+                        ]}
+                        searchConfig={
+                            isDivisiSDM && {
+                                name: "search",
+                                label: "Nama/NIP Pegawai",
+                                placeholder: "Ketik Nama/NIP Pegawai..",
+                                initialValue: searchReq,
+                            }
+                        }
                     />
-                    {!canValidate && (
+
+                    {!isDivisiSDM && (
                         <Link
                             as="button"
                             href={route("pegawai.pengusulan-pak.create")}
@@ -203,7 +170,7 @@ export default function Index({
                 </div>
 
                 <div className="pt-3 ">
-                {role === "Pegawai" && (
+                    {role === "Pegawai" && (
                         <strong className="block py-3 text-xl">
                             Pengusulan Saya
                         </strong>
@@ -217,9 +184,7 @@ export default function Index({
                     )}
 
                     {pengusulanPAK.data.length ? (
-                        // ANCHOR
                         <>
-                            {/* Table Content */}
                             <table className="table text-xs table-bordered">
                                 <thead className="text-sm font-medium text-center text-white bg-primary ">
                                     <tr>
@@ -267,7 +232,7 @@ export default function Index({
                                         >
                                             <span>Penilaian</span>
                                             <span className="block">
-                                            Pendidikan
+                                                Pendidikan
                                             </span>
                                         </th>
                                         <th
@@ -291,7 +256,7 @@ export default function Index({
                                     {/* ANCHOR */}
                                     {pengusulanPAK.data?.map((data, i) => (
                                         <tr className="font-semibold text-center">
-                                            <td>1</td>
+                                            <td>{i + 1}</td>
                                             <td className="">
                                                 {/* TODO: Bikin bisa expanded nanti */}
                                                 <span className="block text-ellipsis">
@@ -304,12 +269,14 @@ export default function Index({
                                                     {data.pegawai["NIP"]}
                                                 </span>
                                             </td>
-                                            <td>{data.pegawai['Jabatan/TMT']}</td>
-                                            <td >
+                                            <td>
+                                                {data.pegawai["Jabatan/TMT"]}
+                                            </td>
+                                            <td>
                                                 {moment(
                                                     data.periode_mulai
                                                 ).format("MMMM")}
-                                                {' - '}
+                                                {" - "}
                                                 {moment(
                                                     data.periode_berakhir
                                                 ).format("MMMM YYYY")}
@@ -348,11 +315,14 @@ export default function Index({
                                             <td className="text-center whitespace-nowrap text-nowrap">
                                                 <ModalCekPengusulan
                                                     pengusulanPAK={data}
-                                                    setActiveModalId={
-                                                        setActiveModalId
+                                                    setActiveModal={
+                                                        setActiveModal
+                                                    }
+                                                    activeModal={
+                                                        activeModal
                                                     }
                                                     handleReject={handleReject}
-                                                    canValidate={canValidate}
+                                                    isDivisiSDM={isDivisiSDM}
                                                     setPopUpData={setPopUpData}
                                                     setIsPopUpOpen={
                                                         setIsPopUpOpen
@@ -374,20 +344,15 @@ export default function Index({
                                                     )}
                                                 </div>
 
-                                                {canValidate ? (
+                                                {isDivisiSDM ? (
                                                     <section className="space-x-2">
                                                         <div className="relative inline-flex group">
                                                             <button
                                                                 className="transition-all scale-110 group/button action-btn border-primary/20 hover:bg-primary"
                                                                 onClick={() => {
-                                                                    setActiveModalId(
-                                                                        data.id
+                                                                    setActiveModal(
+                                                                        `ModalCekPengusulan-${data.id}`
                                                                     );
-                                                                    document
-                                                                        .getElementById(
-                                                                            `DialogCekPengusulan-${data.id}`
-                                                                        )
-                                                                        .showModal();
                                                                 }}
                                                             >
                                                                 <FaEye className="scale-125 fill-primary stroke-primary group-hover/button:fill-white" />
@@ -558,8 +523,11 @@ export default function Index({
                                                             </Link>
                                                             <TooltipHover
                                                                 message={
-                                                                    "Revisi Data" + (data.status !==
-                                                                        "ditolak" ? '(setelah ditolak)' : '')
+                                                                    "Revisi Data" +
+                                                                    (data.status !==
+                                                                    "ditolak"
+                                                                        ? "(setelah ditolak)"
+                                                                        : "")
                                                                 }
                                                             />
                                                         </div>
@@ -599,14 +567,14 @@ export default function Index({
                             <Pagination
                                 datas={pengusulanPAK}
                                 urlRoute={
-                                    (!canValidate
+                                    (!isDivisiSDM
                                         ? "/pegawai"
                                         : "/divisi-sdm") + "/pengusulan-pak"
                                 }
                                 filters={{
-                                    filter1: byFilter1,
-                                    filter2: byFilter2,
-                                    filterSearch: search,
+                                    filter1: byJabatanReq,
+                                    filter2: byStatusReq,
+                                    filterSearch: searchReq,
                                 }}
                             />
                         </>

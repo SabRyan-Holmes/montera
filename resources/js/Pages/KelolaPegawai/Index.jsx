@@ -98,7 +98,6 @@ export default function Index({
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-center justify-between">
-                    {/* Cukup paanggil komponen */}
                     <FilterSearchPegawai
                         initialSearch={searchReq}
                         initialDaerah={byDaerahReq}

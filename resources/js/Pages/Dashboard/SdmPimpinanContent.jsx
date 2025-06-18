@@ -5,7 +5,6 @@ import { FaFileAlt } from "react-icons/fa";
 import { FaUserLarge, FaUsers, FaUserTie } from "react-icons/fa6";
 import { HiDocumentDuplicate } from "react-icons/hi2";
 
-
 export default function SdmDashboardContent({ dataGraph, dataByRole }) {
     const nonFungsional =
         dataByRole["pegawaiCount"] - dataByRole["pegawaiFungsional"];
@@ -87,9 +86,8 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                             <p className="text-3xl">{dataByRole["PAKCount"]}</p>
                         </div>
                     </div>
-                    {/* TODO tambahin riwayat PAK belum diajukan jg nanti */}
 
-                    {/* <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                    <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                         <div className="p-4 bg-hijau">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
@@ -105,7 +103,7 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                                 {dataByRole["pengusulanCount"]}
                             </p>
                         </div>
-                    </div> */}
+                    </div>
 
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                         <div className="p-4 bg-bermuda">
@@ -134,7 +132,7 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                         </div>
                         <div className="px-4 text-gray-700">
                             <h3 className="text-sm tracking-wider">
-                                Pengajuan PAK masih  diproses
+                                Pengajuan PAK masih diproses
                             </h3>
                             <p className="text-3xl">
                                 {dataByRole["pengajuanCount"]}
@@ -145,15 +143,13 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
             </div>
 
             <div className="flex items-start mt-10 justify-evenly">
-                {/* TODO: */}
-                {/* NOTE: Iterasi AWAL Pengusulan PAK belum ad */}
-                {/* <section>
+                <section>
                     <RadialChart
                         title={"Proses Pengusulan PAK"}
                         data={dataByRole["pengusulanPAKGraph"]}
                         chartId={"pengusulan-pak"}
                     />
-                </section> */}
+                </section>
 
                 <section>
                     <RadialChart

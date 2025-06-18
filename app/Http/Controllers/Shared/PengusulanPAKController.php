@@ -24,9 +24,7 @@ class PengusulanPAKController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // Ini beneran ga bisa dijadiin public global variabel yang bisa diakses di setiap fungsi di controller ya??
     protected $user;
-
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -44,24 +42,23 @@ class PengusulanPAKController extends Controller
         }
 
         $subTitle = GetSubtitle::getSubtitle(
-            request('byStatus'),
-            request('byJabatan'),
-            request('search')
+            byJabatan: request('byJabatan'),
+            byStatus: request('byStatus'),
+            search: request('search'),
+            searchLabel: 'Cari pegawai dengan Nama/NIP : '
         );
 
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
         $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
-        // dd($jabatan_list);
-
 
         return Inertia::render('PengusulanPAK/Index', [
             "title" => "Pengusulan Penilaian PAK ",
             "subTitle" => $subTitle,
-            "pengusulanPAK" => $pengusulan_pak->paginate(10),
-            'canValidate' => $this->user->role == 'Divisi SDM', // TODO:gimana cara agar global user diatas bisa diakses
-            "searchReq" => request('search'),
-            "byStatusReq" => request('byStatus'),
-            "byJabatanReq" => request('byJabatan'),
+            "pengusulanPAK" => $pengusulan_pak->filter(request(['search', 'byJabatan', 'byStatus']))->paginate(10),
+            'isDivisiSDM' => $this->user->role == 'Divisi SDM',
+            "searchReq" => request('search') ?? "",
+            "byStatusReq" => request('byStatus') ?? "Semua Kategori",
+            "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",
             "jabatanList" => $jabatan_list
         ]);
     }
@@ -94,8 +91,6 @@ class PengusulanPAKController extends Controller
             $validated['catatan_id'] = $new_catatan->id;
         }
 
-        // skrg ada 2 macam file yaitu dokumen_pendukung_path dan dokumen_utama_path
-        // TODO: Gimana cara bikin logic ny, itu direstore kalo itu ada sesuai nama datany kalo bisa logic ny jangan pake manual kaya if ($request->hasFile('dokumen_pendukung_path') ||
         $uploadMap = [
             'dokumen_utama_path' => '-Penilaian-Kinerja~',
             'dokumen_pendukung_path' => '-Penilaian-Pendidikan~',

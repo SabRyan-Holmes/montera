@@ -49,9 +49,6 @@ export default function FilterSearchPegawai({
         }
     }, [submittedSearch, byDaerah, byJabatan]);
 
-
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
         setSubmittedSearch(searchInput);
@@ -61,7 +58,6 @@ export default function FilterSearchPegawai({
         <form className="max-w-screen-laptop" onSubmit={handleSubmit}>
             <div className="flex items-center justify-between gap-3 my-3">
                 <div className="flex items-center justify-start gap-3">
-                    {/* JABATAN */}
                     <div className="flex-none w-60">
                         <InputLabel value="Jabatan" Htmlfor="Jabatan" className="max-w-sm ml-1 text-lg" />
                         <select
@@ -77,7 +73,6 @@ export default function FilterSearchPegawai({
                         </select>
                     </div>
 
-                    {/* DAERAH */}
                     <div className="flex-none w-fit">
                         <InputLabel value="Daerah" Htmlfor="Daerah" className="max-w-sm ml-1 text-lg" />
                         <select
@@ -103,7 +98,6 @@ export default function FilterSearchPegawai({
                     </div>
                 </div>
 
-                {/* SEARCH */}
                 <div className="flex-none w-80">
                     <InputLabel value="Nama/NIP" Htmlfor="search" className="max-w-sm ml-1 text-lg" />
                     <div className="relative">

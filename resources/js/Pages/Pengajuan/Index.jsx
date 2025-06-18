@@ -259,7 +259,6 @@ export default function Index({
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                {/* Preview PDF di iframe */}
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
                         <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
@@ -278,7 +277,6 @@ export default function Index({
                         </div>
                     </div>
                 )}
-                {/* Preview PDF di iframe */}
 
                 <form className="flex items-center justify-between w-full gap-3 my-3">
                     <div className="flex items-center justify-start gap-3">
@@ -370,7 +368,7 @@ export default function Index({
                                 defaultValue={search}
                                 onSubmit={(e) => setSearch(e.target.value)}
                                 name="search"
-                                className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
+                                className="w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
                                 placeholder="Cari Nama Pegawai/NIP.."
                             />
                             <PrimaryButton
@@ -620,37 +618,43 @@ export default function Index({
                                                         {/* Actor Pimpinan */}
 
                                                         <>
-                                                            <ModalCekValidasi
+                                                            <ModalCekPengajuan
                                                                 pengajuan={
                                                                     pengajuan
                                                                 }
                                                                 setActiveModal={
                                                                     setActiveModal
                                                                 }
-                                                                message={
-                                                                    modalMessage
+                                                                activeModal={
+                                                                    activeModal
+                                                                }
+                                                                isPimpinan={
+                                                                    isPimpinan
                                                                 }
                                                             />
-                                                            <button
-                                                                className="action-btn-secondary action-btn group/button"
-                                                                onClick={() => {
-                                                                    setActiveModal(
-                                                                        `ModalCekValidasi-${pengajuan.id}`
-                                                                    );
-                                                                    document
-                                                                        .getElementById(
-                                                                            `ModalCekValidasi-${pengajuan.id}`
-                                                                        )
-                                                                        .showModal();
-                                                                }}
-                                                            >
-                                                                <TbEyeCheck className="scale-150 group-hover/button:stroke-white " />
-                                                            </button>
+                                                            <div className="relative inline-flex group">
+                                                                <button
+                                                                    className="action-btn-primary action-btn group"
+                                                                    onClick={() => {
+                                                                        setActiveModal(
+                                                                            `ModalCekPengajuan-${pengajuan.id}`
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <FaEye className="scale-125 group-hover:fill-white " />
+                                                                </button>
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Lihat Data"
+                                                                    }
+                                                                />
+                                                            </div>
                                                             <div className="relative inline-flex group">
                                                                 <Link
                                                                     as="button"
                                                                     href={route(
-                                                                        "pimpinan.pengajuan.approve"
+                                                                        "pimpinan.pengajuan.approve",
+                                                                        pengajuan.id
                                                                     )}
                                                                     className="action-btn-success action-btn group/button"
                                                                     disabled={
@@ -660,10 +664,6 @@ export default function Index({
                                                                             "direvisi"
                                                                     }
                                                                     method="post"
-                                                                    data={{
-                                                                        fast_approve: true,
-                                                                        id: pengajuan.id,
-                                                                    }}
                                                                     preserveScroll={
                                                                         true
                                                                     }
@@ -683,7 +683,7 @@ export default function Index({
                                                                 </Link>
                                                                 <TooltipHover
                                                                     message={
-                                                                        "Validasi Cepat" +
+                                                                        "Validasi Pengajuan" +
                                                                         (pengajuan.status !==
                                                                         "diajukan"
                                                                             ? `(Telah ${pengajuan.status})`
@@ -750,11 +750,6 @@ export default function Index({
                                                                     setActiveModal(
                                                                         `ModalCekPengajuan-${pengajuan.id}`
                                                                     );
-                                                                    // document
-                                                                    // .getElementById(
-                                                                    //     `ModalCekPengajuan-${pengajuan.id}`
-                                                                    // )
-                                                                    // .showModal()
                                                                 }}
                                                                 className="action-btn action-btn-primary group/button"
                                                             >
@@ -827,7 +822,7 @@ export default function Index({
                                                                     method="post"
                                                                     className="transition-all scale-110 group/button action-btn border-secondary/20 hover:bg-secondary"
                                                                 >
-                                                                    <IoDocument className="scale-125  fill-secondary group-hover/button:fill-white" />
+                                                                    <IoDocument className="scale-125 fill-secondary group-hover/button:fill-white" />
                                                                 </Link>
                                                                 {/* Tooltip Hover  */}
                                                                 <TooltipHover

@@ -1,4 +1,3 @@
-// ModalCekValidasi.jsx
 import {
     DetailPAKTable,
     DetailPegawai,
@@ -8,22 +7,13 @@ import {
 } from "@/Components";
 import { router, useForm } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
-import {
-    FaCheck,
-    FaEraser,
-    FaFileSignature,
-    FaRegFilePdf,
-    FaTrash,
-} from "react-icons/fa6";
+import { FaFileSignature, FaRegFilePdf } from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import SignatureCanvas from "react-signature-canvas";
 import { usePage } from "@inertiajs/react";
-import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 import PengusulanPAKTable from "@/Pages/PengusulanPAK/Partials/DetailPengusulanPAKTable";
-import { FaFilePdf } from "react-icons/fa";
 import DetailPengajuan from "./DetailPengajuanPAKTable";
 
 export default function ModalCekPengajuan({
@@ -31,6 +21,7 @@ export default function ModalCekPengajuan({
     setActiveModal,
     activeModal,
     isDivisiSDM,
+    isPimpinan,
 }) {
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
@@ -120,7 +111,43 @@ export default function ModalCekPengajuan({
 
     const { props } = usePage();
 
-    // TODO ? Mungkin sebaiknya tamabhakna juga Catatan Evaluasi/Review Dari Pimpinan
+    const handleApprove = () => {
+        post(route("pimpinan.pengajuan.approve", pengajuan.id), {
+            preserveScroll: true,
+            preserveState: true,
+            onError: (errors) => {
+                setLoading(false);
+                console.error("Error:", errors);
+            },
+            onSuccess: () => {
+                Swal.fire({
+                    target: `#ModalCekPengajuan-${pengajuan.id}`,
+                    title: "Berhasil!",
+                    text: "Dokumen berhasil divalidasi.",
+                    icon: "success",
+                    showCancelButton: true,
+                    confirmButtonText: "Lihat Dokumen",
+                    cancelButtonText: "Oke",
+                    confirmButtonColor: "#2D95C9",
+                    cancelButtonColor: "#9ca3af",
+                    customClass: {
+                        actions: "my-actions",
+                        cancelButton: "order-1 right-gap",
+                        confirmButton: "order-2",
+                        denyButton: "order-3",
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const url = `/storage/${pengajuan.approved_pak_path}`; // Sesuaikan dengan path yang ada di pengajuan
+                        setLinkIframe(url);
+                        setShowIframe(true);
+                    }
+                });
+
+                console.log("Sukses Menvalidasi");
+            },
+        });
+    };
 
     const pegawai = pengajuan.riwayat_pak.pegawai;
     const pengusulanPAK = pengajuan.riwayat_pak.pengusulan_pak;
@@ -144,7 +171,7 @@ export default function ModalCekPengajuan({
             maxWidth="4xl"
         >
             {showIframe && (
-                <div className="w-full fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                <div className="w-full max-w-screen-laptop fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
                     <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
                         <button
                             className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
@@ -176,17 +203,19 @@ export default function ModalCekPengajuan({
 
             <main className="w-full mx-auto my-4 text-center ">
                 <section className="relative w-full max-w-4xl mx-auto modal-box">
-                    <h3 className="mb-2 text-3xl font-bold">
+                    <h3 className="my-5 text-3xl font-bold">
                         Detail Pengajuan PAK
                     </h3>
                     <div className="px-2 overflow-x-auto">
                         <DetailPengajuan
                             collapse={false}
                             data={pengajuan}
+                            setLinkIframe={setLinkIframe}
+                            setShowIframe={setShowIframe}
                         />
                     </div>
                     <div className="px-2 overflow-x-auto">
-                        <h1 className="my-4 text-xl font-medium">
+                        <h1 className="mb-3 text-xl font-medium mt-7 ">
                             Data Penetapan Angka Kredit dalam Pengajuan
                         </h1>
                         <DetailPAKTable
@@ -197,21 +226,23 @@ export default function ModalCekPengajuan({
                     </div>
 
                     <div
-                        className="px-2 my-10 mb-16 overflow-x-auto"
+                        className="px-2 overflow-x-auto"
                         ref={pengusulanPAKRef}
                     >
-                        <h1 className="my-4 text-xl font-medium">
+                        <h1 className="mb-3 text-xl font-medium mt-7 ">
                             Data Pengusulan Sebagai Sumber Penetapan Angka
                             Kredit
                         </h1>
                         <PengusulanPAKTable
                             collapse={false}
                             data={pengusulanPAK}
+                            setLinkIframe={setLinkIframe}
+                            setShowIframe={setShowIframe}
                         />
                     </div>
 
-                    <div className="px-2 my-10 mb-16 overflow-x-auto">
-                        <h1 className="my-4 text-xl font-medium">
+                    <div className="px-2 overflow-x-auto">
+                        <h1 className="mb-3 text-xl font-medium mt-7">
                             Data Pegawai dalam Penetapan Angka Kredit
                         </h1>
                         <DetailPegawai pegawai={pegawai} />
@@ -243,29 +274,100 @@ export default function ModalCekPengajuan({
                 </section>
 
                 {/* Floating Action Button */}
-                <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 text-nowrap bottom-3 left-1/2">
-                    <SecondaryButton
-                        onClick={() => handleViewPdf(pengajuan)}
-                        type="submit"
-                    >
-                        <FaRegFilePdf className="w-4 h-4 mr-1 fill-secondary" />
-                        {pengajuan.status === "divalidasi"
-                            ? "Lihat"
-                            : "Pratinjau"}{" "}
-                        Dokumen
-                    </SecondaryButton>
-
-                    {/* ANCHOR */}
-                    {isDivisiSDM && pengajuan.status === "diajukan" && (
+                {isDivisiSDM ? (
+                    <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 text-nowrap bottom-3 left-1/2">
                         <SecondaryButton
-                            onClick={() => handleCancel()}
-                            className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
+                            onClick={() => handleViewPdf(pengajuan)}
+                            type="submit"
                         >
-                            <MdCancel className="mr-2 scale-125 fill-warning " />
-                            Batalkan Pengajuan
+                            <FaRegFilePdf className="w-4 h-4 mr-1 fill-secondary" />
+                            {pengajuan.status === "divalidasi"
+                                ? "Lihat"
+                                : "Pratinjau"}{" "}
+                            Dokumen
                         </SecondaryButton>
-                    )}
-                </section>
+
+                        {/* ANCHOR */}
+                        {isDivisiSDM && pengajuan.status === "diajukan" && (
+                            <SecondaryButton
+                                onClick={() => handleCancel()}
+                                className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
+                            >
+                                <MdCancel className="mr-2 scale-125 fill-warning " />
+                                Batalkan Pengajuan
+                            </SecondaryButton>
+                        )}
+                    </section>
+                ) : (
+                    //IF Pimpinan
+                    <section>
+                        {pengajuan.status === "diajukan" && (
+                            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-3 left-1/2">
+                                <SecondaryButton
+                                    onClick={() => handleViewPdf(pengajuan)}
+                                    type="submit"
+                                    className="rounded shadow hover:scale-105"
+                                >
+                                    <IoDocument className="w-4 h-4 fill-secondary" />
+                                    Lihat Dokumen
+                                </SecondaryButton>
+
+                                <SuccessButton
+                                    onClick={handleApprove}
+                                    className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
+                                >
+                                    <FaFileSignature className="w-4 h-4 fill-white " />
+                                    Validasi Dokumen
+                                </SuccessButton>
+                            </div>
+                        )}
+
+                        {pengajuan.status === "divalidasi" && (
+                            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-3 left-1/2">
+                                <SecondaryButton
+                                    onClick={() => {
+                                        const url = `/storage/${pengajuan.approved_pak_path}`;
+                                        setLinkIframe(url);
+                                        setShowIframe(true);
+                                    }}
+                                    className="rounded shadow hover:scale-105"
+                                >
+                                    <IoDocument className="mr-2 scale-125 fill-secondary" />
+                                    Lihat Dokumen
+                                </SecondaryButton>
+
+                                <SecondaryButton
+                                    onClick={() => handleCancel()}
+                                    className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
+                                >
+                                    <MdCancel className="mr-2 scale-125 fill-warning " />
+                                    Batalkan Validasi
+                                </SecondaryButton>
+                            </div>
+                        )}
+
+                        {pengajuan.status === "ditolak" && (
+                            <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-3 left-1/2">
+                                <SecondaryButton
+                                    onClick={() => handleViewPdf(pengajuan)}
+                                    type="submit"
+                                    className="rounded shadow hover:scale-105"
+                                >
+                                    <IoDocument className="w-4 h-4 fill-secondary" />
+                                    Lihat Dokumen
+                                </SecondaryButton>
+
+                                <SecondaryButton
+                                    onClick={() => handleCancel()}
+                                    className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
+                                >
+                                    <MdCancel className="mr-2 scale-125 fill-warning " />
+                                    Reset Validasi
+                                </SecondaryButton>
+                            </div>
+                        )}
+                    </section>
+                )}
             </main>
         </Modal>
     );

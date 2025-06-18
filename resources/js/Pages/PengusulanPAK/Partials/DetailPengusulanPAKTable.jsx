@@ -56,7 +56,7 @@ export default function PengusulanPAKTable({
                                 </span>
                             ) : (
                                 <span className="float-right text-sm font-normal ">
-                                    [Sembunyikan]{" "}
+                                    [Sembunyikan]
                                     <HiBarsArrowUp className="inline mx-2 scale-150" />
                                 </span>
                             )}
@@ -66,7 +66,7 @@ export default function PengusulanPAKTable({
                 {!isCollapsed && (
                     <tbody>
                         <tr>
-                            <td width="40%">Tanggal Pengusulan</td>
+                            <td width="50%">Tanggal Pengusulan</td>
                             <td className="text-base font-normal">
                                 {moment(data.created_at).format("LL")} (
                                 {moment(data.created_at).fromNow()})
@@ -74,7 +74,7 @@ export default function PengusulanPAKTable({
                         </tr>
 
                         <tr>
-                            <td width="40%">Tujuan Pengusulan </td>
+                            <td>Tujuan Pengusulan </td>
                             <td className="text-base font-normal">
                                 {data["tujuan"]}
                             </td>
@@ -82,11 +82,11 @@ export default function PengusulanPAKTable({
                         <tr>
                             <td>Periode Penilaian</td>
                             <td className="text-base font-normal">
-                                {moment(data.periode_mulai).format("MMMM")}{" "}
-                                {" - "}{" "}
+                                {moment(data.periode_mulai).format("MMMM")}
+                                {" - "}
                                 {moment(data.periode_berakhir).format(
                                     "MMMM YYYY"
-                                )}{" "}
+                                )}
                             </td>
                         </tr>
 
@@ -116,7 +116,9 @@ export default function PengusulanPAKTable({
                                     className="inline-flex items-center gap-1 text-primary-dark hover:text-primary hover:underline"
                                 >
                                     <FaFilePdf className="w-5 h-5" />
-                                    <span className="text-left">{penilaianKinerja}</span>
+                                    <span className="text-left">
+                                        {penilaianKinerja}
+                                    </span>
                                 </button>
                             </td>
                         </tr>
@@ -134,7 +136,9 @@ export default function PengusulanPAKTable({
                                         className="inline-flex items-center justify-start gap-1 text-primary-dark hover:text-primary hover:underline"
                                     >
                                         <FaFilePdf className="w-5 h-5" />
-                                        <span className="text-left">{penilaianPendidikan}</span>
+                                        <span className="text-left">
+                                            {penilaianPendidikan}
+                                        </span>
                                     </button>
                                 ) : (
                                     <span>
