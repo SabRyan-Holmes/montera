@@ -59,7 +59,6 @@ export default function PegawaiContent({ dataByRole }) {
                     </div>
                 </div>
 
-
                 <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
                     <div className="p-4 bg-hijau">
                         <IconContext.Provider
@@ -77,7 +76,7 @@ export default function PegawaiContent({ dataByRole }) {
                 </div>
 
                 {/* NOTE: Di iterasi awal ini belum ada */}
-                {/* <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
+                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
                     <div className="p-4 bg-bermuda">
                         <IconContext.Provider
                             value={{ color: "white", size: "50px" }}
@@ -91,9 +90,9 @@ export default function PegawaiContent({ dataByRole }) {
                         </h3>
                         <p className="text-3xl">{arsipDokumenCount}</p>
                     </div>
-                </div> */}
+                </div>
 
-                {/* <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
+                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
                     <div className="p-4 bg-hijau">
                         <IconContext.Provider
                             value={{ color: "white", size: "50px" }}
@@ -107,18 +106,16 @@ export default function PegawaiContent({ dataByRole }) {
                         </h3>
                         <p className="text-3xl">{pengusulanCount ?? 0}</p>
                     </div>
-                </div> */}
+                </div>
             </section>
             <div className="flex w-full mt-10 ">
-                {/* TODO: */}
-                {/* NOTE: Di iterasi awal ini belum ada */}
-                {/* <section className="w-full">
+                <section className="w-full">
                     <RadialChart
                         title={"Proses Pengusulan PAK"}
                         data={dataByRole["pengusulanPAKGraph"]}
                         chartId={"pengusulan-pak"}
                     />
-                </section> */}
+                </section>
 
                 <section className="w-full">
                     <RadialChart

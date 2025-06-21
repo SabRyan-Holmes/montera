@@ -10,6 +10,7 @@ import ReactPaginate from "react-paginate";
 import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import {
+    FilterSearchCustom,
     InputLabel,
     Pagination,
     PrimaryButton,
@@ -27,6 +28,7 @@ import moment from "moment/min/moment-with-locales";
 import ModalCekPengajuan from "./Partials/ModalCekPengajuan";
 import { BiSolidArchiveIn } from "react-icons/bi";
 import ModalArsipDokumen from "./Partials/ModalArsipDokumen";
+import ModalCatatan from "../../Components/ModalCatatan";
 
 export default function Index({
     auth,
@@ -37,10 +39,10 @@ export default function Index({
     isPimpinan,
     isDivisiSDM,
     isPegawai,
-    searchReq: initialSearch,
-    byStatusReq: initialStatus,
-    byJabatanReq: initialJabatan,
-    byKesimpulan: initialKesimpulan,
+    searchReq,
+    byStatusReq,
+    byJabatanReq,
+    byKesimpulanReq,
     jabatanList,
     kesimpulanList,
     folderArsipList,
@@ -51,7 +53,6 @@ export default function Index({
     // ===========================================Handling Pop Up,Dialog & Message===========================================
     // SWAL POP UP
     const [shownMessages, setShownMessages] = useRemember([]);
-    const [modalMessage, setModalMessage] = useState(null);
     const [activeModal, setActiveModal] = useState(null);
 
     // Cek message dan status modal
@@ -122,143 +123,20 @@ export default function Index({
         });
     };
 
-    const handleReject = (id) => {
-        Swal.fire({
-            icon: "warning",
-            text: "Anda yakin ingin menolak pengajuan ini?",
-            showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: "Tidak",
-            confirmButtonColor: "#2D95C9",
-            cancelButtonColor: "#9ca3af",
-            customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
-                confirmButton: "order-2",
-                denyButton: "order-3",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.post(route("pimpinan.pengajuan.reject", id), {
-                    onSuccess: () => {
-                        //
-                    },
-                    onError: () => {
-                        alert("Gagal Menolak Pengajuan");
-                    },
-                });
-            }
-        });
-    };
-
     // ===========================================Handling Search & Filter===========================================
 
     // ANCHOR
-    const [search, setSearch] = useState(initialSearch);
-    const [byStatus, setByStatus] = useState(initialStatus);
-    const [byJabatan, setByJabatan] = useState(initialJabatan);
-    const [byKesimpulan, setByKesimpulan] = useState(initialKesimpulan);
-
-    useEffect(() => {
-        if (
-            (byJabatan && byJabatan !== initialJabatan) ||
-            (byStatus && byStatus !== initialStatus) ||
-            (byKesimpulan && byKesimpulan !== initialKesimpulan)
-        ) {
-            router.get(
-                routeName,
-                { byJabatan, byStatus, byKesimpulan },
-                { replace: true, preserveState: true }
-            );
-        } else if (
-            (byJabatan !== initialJabatan && search !== initialSearch) ||
-            (byStatus !== initialStatus && search !== initialSearch) ||
-            (byKesimpulan !== initialKesimpulan && search !== initialSearch)
-        ) {
-            router.get(
-                routeName,
-                { byJabatan, byStatus, byKesimpulan, search },
-                { replace: true, preserveState: true }
-            );
-        }
-    }, [byJabatan, byStatus, byKesimpulan]); // Tambahkan byKesimpulan di sini
-
-    useEffect(() => {
-        if (
-            byJabatan === "Semua Kategori" &&
-            byStatus === "Semua Kategori" &&
-            byKesimpulan === "Semua Kategori"
-        ) {
-            router.get(
-                routeName,
-                { search },
-                { replace: true, preserveState: true }
-            );
-        } else if (
-            byJabatan === "Semua Kategori" &&
-            byStatus === "Semua Kategori"
-        ) {
-            router.get(
-                routeName,
-                { byKesimpulan, search },
-                { replace: true, preserveState: true }
-            );
-        } else if (
-            byJabatan === "Semua Kategori" &&
-            byKesimpulan === "Semua Kategori"
-        ) {
-            router.get(
-                routeName,
-                { byStatus, search },
-                { replace: true, preserveState: true }
-            );
-        } else if (
-            byStatus === "Semua Kategori" &&
-            byKesimpulan === "Semua Kategori"
-        ) {
-            router.get(
-                routeName,
-                { byJabatan, search },
-                { replace: true, preserveState: true }
-            );
-        } else if (byJabatan === "Semua Kategori") {
-            router.get(
-                routeName,
-                { byStatus, byKesimpulan, search },
-                { replace: true, preserveState: true }
-            );
-        } else if (byStatus === "Semua Kategori") {
-            router.get(
-                routeName,
-                { byJabatan, byKesimpulan, search },
-                { replace: true, preserveState: true }
-            );
-        } else if (byKesimpulan === "Semua Kategori") {
-            router.get(
-                routeName,
-                { byJabatan, byStatus, search },
-                { replace: true, preserveState: true }
-            );
-        } else if (search && search !== initialSearch) {
-            router.get(
-                routeName,
-                { search },
-                { replace: true, preserveState: true }
-            );
-        }
-    }, [search]);
 
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
     const [showIframe, setShowIframe] = useState(false);
 
-    function formatRoleToRoute(label) {
-        return "/" + label.trim().toLowerCase().replace(/\s+/g, "-");
+    const role = auth.user.role;
+    function formatRole(label) {
+        return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
-    // Console
-
     return (
         <Authenticated user={auth.user} title={title}>
-            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
                         <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
@@ -278,108 +156,59 @@ export default function Index({
                     </div>
                 )}
 
-                <form className="flex items-center justify-between w-full gap-3 my-3">
-                    <div className="flex items-center justify-start gap-3">
-                        <div className="flex-none laptop:w-fit">
-                            <InputLabel
-                                value="Jabatan"
-                                Htmlfor="byJabatan"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
-                                name="byJabatan"
-                                value={byJabatan}
-                                onChange={(e) => setByJabatan(e.target.value)}
-                            >
-                                <option value="">Semua Kategori</option>
-                                {jabatanList.map((item) => (
-                                    <option className="capitalize">
-                                        {item}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex-none laptop:w-fit">
-                            <InputLabel
-                                value="Status"
-                                Htmlfor="byStatus"
-                                className="max-w-sm ml-1 text-lg"
-                            />
+                <ModalCatatan
+                    activeModal={activeModal}
+                    setActiveModal={setActiveModal}
+                    routeName={"pimpinan.pengajuan.reject"}
+                />
 
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
-                                name="byStatus"
-                                id="byStatus"
-                                value={byStatus}
-                                onChange={(e) => setByStatus(e.target.value)}
-                            >
-                                <option value="">Semua Kategori</option>
-                                <option>diproses</option>
-                                <option>ditolak</option>
-                                <option>disetujui</option>
-                            </select>
-                        </div>
-                        <div className="flex-none laptop:w-fit">
-                            <InputLabel
-                                value="Kesimpulan"
-                                Htmlfor="byKesimpulan"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-
-                            <select
-                                className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
-                                name="byKesimpulan"
-                                id="byKesimpulan"
-                                value={byKesimpulan}
-                                onChange={(e) =>
-                                    setByKesimpulan(e.target.value)
-                                }
-                            >
-                                <option value="">Semua Kategori</option>
-                                {kesimpulanList.map((item) => (
-                                    <option className="capitalize">
-                                        {item}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="w-80">
-                        <InputLabel
-                            value="Nama/NIP"
-                            Htmlfor="search"
-                            className="max-w-sm ml-1 text-lg"
-                        />
-
-                        <label
-                            htmlFor="search"
-                            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                        >
-                            Search
-                        </label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                <MdPersonSearch className="w-6 h-6 fill-primary" />
-                            </div>
-                            <input
-                                type="search"
-                                id="search"
-                                defaultValue={search}
-                                onSubmit={(e) => setSearch(e.target.value)}
-                                name="search"
-                                className="w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
-                                placeholder="Cari Nama Pegawai/NIP.."
-                            />
-                            <PrimaryButton
-                                type="submit"
-                                className=" absolute end-2 bottom-[6px] "
-                            >
-                                Search
-                            </PrimaryButton>
-                        </div>
-                    </div>
-                </form>
+                <section className="flex items-center justify-between w-full">
+                    <FilterSearchCustom
+                        routeName={`/${formatRole(role)}/${
+                            isPegawai ? "proses-pak/pengajuan" : "pengajuan"
+                        }`}
+                        initialFilters={{
+                            byJabatan: byJabatanReq,
+                            byStatus: byStatusReq,
+                            byKesimpulan: byKesimpulanReq,
+                        }}
+                        filtersConfig={[
+                            // TODO: saya ingin filetJbaatan ini ada kalo !isPegawai doang
+                            ...(!isPegawai
+                                ? [
+                                      {
+                                          name: "byJabatan",
+                                          label: "Jabatan",
+                                          options: jabatanList,
+                                      },
+                                  ]
+                                : []),
+                            {
+                                name: "byStatus",
+                                label: "Status ",
+                                options: [
+                                    "diajukan",
+                                    "direvisi",
+                                    "ditolak",
+                                    "divalidasi",
+                                ],
+                            },
+                            {
+                                name: "byKesimpulan",
+                                label: "Kesimpulan ",
+                                options: kesimpulanList,
+                            },
+                        ]}
+                        searchConfig={
+                            !isPegawai && {
+                                name: "search",
+                                label: "Nama/NIP Pegawai",
+                                placeholder: "Ketik Nama/NIP Pegawai..",
+                                initialValue: searchReq,
+                            }
+                        }
+                    />
+                </section>
 
                 <div className="pt-3 ">
                     {isPegawai && (
@@ -503,11 +332,11 @@ export default function Index({
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            {pegawai[
-                                                                "Jabatan/TMT"
-                                                            ]
-                                                                .split("/")[0]
-                                                                .trim()}
+                                                            {
+                                                                pegawai[
+                                                                    "Jabatan/TMT"
+                                                                ]
+                                                            }
                                                         </td>
                                                     </>
                                                 ) : (
@@ -658,10 +487,12 @@ export default function Index({
                                                                     )}
                                                                     className="action-btn-success action-btn group/button"
                                                                     disabled={
-                                                                        pengajuan.status !==
-                                                                            "diajukan" &&
-                                                                        pengajuan.status !==
-                                                                            "direvisi"
+                                                                        ![
+                                                                            "diajukan",
+                                                                            "direvisi",
+                                                                        ].includes(
+                                                                            pengajuan.status
+                                                                        )
                                                                     }
                                                                     method="post"
                                                                     preserveScroll={
@@ -694,17 +525,23 @@ export default function Index({
 
                                                             <div className="relative inline-flex group">
                                                                 <button
-                                                                    disabled={
-                                                                        pengajuan.status !==
-                                                                            "diajukan" &&
-                                                                        pengajuan.status !==
-                                                                            "direvisi"
-                                                                    }
-                                                                    onClick={() =>
-                                                                        handleReject(
-                                                                            pengajuan.id
+                                                                     disabled={
+                                                                        ![
+                                                                            "diajukan",
+                                                                            "direvisi",
+                                                                        ].includes(
+                                                                            pengajuan.status
                                                                         )
                                                                     }
+                                                                    onClick={() => {
+                                                                        setActiveModal(
+                                                                            `ModalCatatan-${pengajuan.id}`
+                                                                        );
+
+                                                                        // handleReject(
+                                                                        //     pengajuan.id
+                                                                        // )
+                                                                    }}
                                                                     className="action-btn-warning action-btn group/button"
                                                                 >
                                                                     <IoCloseOutline className="scale-150 fill-warning stroke-warning/80 group-hover/button:stroke-white" />
@@ -1011,27 +848,30 @@ export default function Index({
                             {/* Pagination */}
                             <Pagination
                                 datas={pengajuans}
-                                urlRoute={
-                                    //TODO ubah kalo dah login lewat SSO untuk Actor Pegawai
-                                    formatRoleToRoute(auth.user.role) +
-                                    (isPegawai ? "/proses-pak" : "/pengajuan")
-                                }
+                                urlRoute={`/${formatRole(role)}/${
+                                    isPegawai
+                                        ? "proses-pak/pengajuan"
+                                        : "pengajuan"
+                                }`}
                                 filters={{
-                                    filter1: byStatus,
-                                    filter2: byJabatan,
-                                    filterSearch: search,
+                                    byJabatan: byJabatanReq,
+                                    byStatus: byStatusReq,
+                                    byKesimpulan: byKesimpulanReq,
+                                    search: searchReq, // ikutkan juga kalau ada search
                                 }}
                             />
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
-                                Belum Ada Pengajuan Untuk Saat Ini
+                                {!subTitle
+                                    ? "Belum Ada Proses Pengajuan PAK Terbaru Untuk Saat Ini"
+                                    : "Tidak Ditemukan"}
                             </h2>
                         </div>
                     )}
                 </div>
-            </section>
+            </main>
         </Authenticated>
     );
 }

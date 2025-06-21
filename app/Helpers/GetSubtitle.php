@@ -4,43 +4,43 @@ namespace App\Helpers;
 
 class GetSubtitle
 {
-    public $defaultSearch ="Cari pegawai dengan Nama/NIP";
     public static function getSubtitle(
         ?string $byJabatan = null,
         ?string $byDaerah = null,
         ?string $search = null,
         ?string $byJenisPerubahan = null,
         ?string $byStatus = null,
-        ?string $searchLabel = "Cari pegawai dengan Nama/NIP"
-
+        ?string $searchLabel = "Cari pegawai dengan Nama/NIP : ",
+        ?string $byKesimpulan = null
     ): string {
-        if ($byJabatan && $byDaerah) {
-            return "Berdasarkan Jabatan : $byJabatan dan Daerah : $byDaerah";
-        }
+        $filters = [];
 
         if ($byJabatan) {
-            return "Berdasarkan Jabatan : $byJabatan";
+            $filters[] = "Jabatan : $byJabatan";
         }
 
         if ($byDaerah) {
-            return "Berdasarkan Daerah : $byDaerah";
+            $filters[] = "Daerah : $byDaerah";
         }
 
         if ($byJenisPerubahan) {
-            return "Berdasarkan Jenis Perubahan : $byJenisPerubahan";
+            $filters[] = "Jenis Perubahan : $byJenisPerubahan";
         }
 
         if ($byStatus) {
-            return "Berdasarkan Status : $byStatus";
+            $filters[] = "Status : $byStatus";
         }
 
-        if ($byJabatan && $byStatus) {
-            return "Berdasarkan Jabatan : $byJabatan dan Status : $byStatus";
+        if ($byKesimpulan) {
+            $filters[] = "Kesimpulan : $byKesimpulan";
         }
 
+        if (!empty($filters)) {
+            return "Berdasarkan " . implode(" dan ", $filters);
+        }
 
         if ($search) {
-            return  $searchLabel. $search;
+            return $searchLabel . $search;
         }
 
         return "";

@@ -86,9 +86,9 @@ export default function Index({
                                     onChange={(e) => setByRole(e.target.value)}
                                 >
                                     <option value="">Semua Kategori</option>
-                                    <option>diproses</option>
-                                    <option>ditolak</option>
-                                    <option>disetujui</option>
+                                    <option>Pegawai</option>
+                                    <option>Divisi SDM</option>
+                                    <option>Pimpinan</option>
                                 </select>
                             </div>
                         </div>

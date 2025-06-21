@@ -7,10 +7,6 @@ import { TiArrowRight } from "react-icons/ti";
 import ReactPaginate from "react-paginate";
 
 export default function Paginations({ datas, urlRoute, filters }) {
-    const filter1 = filters.filter1;
-    const filter2 = filters.filter2;
-    const filterSearch = filters.filterSearch;
-
     const handlePageClick = (event) => {
         const selectedPage = event.selected + 1;
 
@@ -18,9 +14,7 @@ export default function Paginations({ datas, urlRoute, filters }) {
             urlRoute,
             {
                 page: selectedPage,
-                filter1,
-                filter2,
-                filterSearch,
+                ...filters, // 🧠 ini penting: langsung spread semua filter apapun namanya
             },
             {
                 replace: true,
@@ -28,6 +22,7 @@ export default function Paginations({ datas, urlRoute, filters }) {
             }
         );
     };
+
 
     return (
         <div className="mb-8 text-sm box-footer">

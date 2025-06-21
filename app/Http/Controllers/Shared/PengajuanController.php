@@ -58,8 +58,7 @@ class PengajuanController extends Controller
         // TODO: LOGIKA Filter by PAK field nanti
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
         $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
-        $kesimpulan = AturanPAK::where('name', 'Kesimpulan')->first()->value;
-        $kesimpulan_list = collect($kesimpulan)->pluck('jabatan')->toArray();
+        $kesimpulan_list = collect(AturanPAKService::get('kesimpulan')['kesimpulan']->value ?? [])->pluck('kesimpulan');
 
         // Dapatkan foldername arsip dari user yg login
 
@@ -75,7 +74,7 @@ class PengajuanController extends Controller
             "searchReq" => request('search'),
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),
-            "byKesimpulan" => request('byKesimpulan'),
+            "byKesimpulanReq" => request('byKesimpulan'),
             'jabatanList' => $jabatan_list,
             'kesimpulanList' => $kesimpulan_list,
             'folderArsipList' => $arsipDokumenByUser->pluck('folder_name')->toArray(),
@@ -107,7 +106,7 @@ class PengajuanController extends Controller
         if ($request->catatan) {
             $new_catatan = Catatan::create([
                 'user_nip' => $request->user_nip,
-                'tipe' => 'ProsesPAK',
+                'tipe' => 'Pengajuan PAK-Divisi SDM',
                 'isi' => $request->catatan,
             ]);
             $validated['catatan_id'] = $new_catatan->id;
@@ -217,10 +216,24 @@ class PengajuanController extends Controller
 
 
 
-    public function reject(Pengajuan $pengajuan)
+    public function reject(Pengajuan $pengajuan, Request $request)
     {
-        $pengajuan->update(['status' => 'ditolak',   "tanggal_ditolak" => now()]);
+        // dd($request);
+        $new_catatan = null;
+        // TODO? : Mungkin sebaikny tambhakn tipe kek penolakan dari validator/pimpinan?
+        if ($request->catatan) {
+            $new_catatan = Catatan::create([
+                'user_nip' => $this->user->nip,
+                'isi' => $request->catatan,
+                'tipe' => 'Pengajuan PAK-Pimpinan',
+                'penting' => true
+            ]);
+        }
+
+        $pengajuan->update(['status' => 'ditolak',    "tanggal_ditolak" => now(),  'catatan_validator_id' =>  $new_catatan->id ?? null]);
         $no_surat =  AturanPAK::extractNoSurat($pengajuan->riwayat_pak['no_surat3']);
+
+
         ActivityLogger::log(
             'Tolak Pengajuan PAK',
             $this->user->name . '(' . $this->user->role . ') menolak pengajuan PAK dengan NO PAK: ' . $no_surat,
@@ -254,9 +267,11 @@ class PengajuanController extends Controller
         // Update kolom status dan kosongkan path file
         $pengajuan->update([
             "status" => 'diajukan',
+            "validated_by" => null,
             "tanggal_ditolak" => null,
             "tanggal_divalidasi" => null,
-            "approved_pak_path" => null,
+            "approved_pak_path" => null, //TODO: nanti sekalian hapus file validasi
+            // "catatan_validator_id" => null //REVIEW: sekalian hapus catatan?
         ]);
 
         $no_surat =  AturanPAK::extractNoSurat($pengajuan->riwayat_pak['no_surat3']);
@@ -349,5 +364,14 @@ class PengajuanController extends Controller
         );
 
         return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Pengajuan PAK berhasil direvisi & diajukan ulang');
+    }
+
+    public function markAsRead(Pengajuan $pengajuan)
+    {
+
+
+        return response()->json([
+            'message' => 'Pengajuan ditandai sebagai sudah dibaca dan status diperbarui.'
+        ]);
     }
 }

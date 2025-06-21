@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('user_nip', 18); // updated tgl 3 Juni 2025 - dk usah pake foreign key lg
             $table->enum('tipe', [
                 'PengusulanPAK',
-                'ProsesPAK',
-                'Verifikasi',
-                'Koreksi',
-                'Persetujuan',
+                'Pengusulan PAK-Pegawai',
+                'Pengusulan PAK-Divisi SDM',
+                'Pengajuan PAK-Divisi SDM',
+                'Pengajuan PAK-Pimpinan',
                 'Lainnya'
             ])->default('PengusulanPAK');
             // Konten catatan (long text)

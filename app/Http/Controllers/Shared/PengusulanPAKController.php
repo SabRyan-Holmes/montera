@@ -85,7 +85,7 @@ class PengusulanPAKController extends Controller
         if ($request->catatan_pegawai) {
             $new_catatan = Catatan::create([
                 'user_nip' => $request->pegawai_nip,
-                'tipe' => 'PengusulanPAK',
+                'tipe' => 'Pengusulan PAK-Pegawai',
                 'isi' => $request->catatan_pegawai,
             ]);
             $validated['catatan_id'] = $new_catatan->id;
@@ -168,6 +168,7 @@ class PengusulanPAKController extends Controller
         $new_catatan = Catatan::create([
             'user_nip' => $this->user->nip,
             'isi' => $request->catatan,
+            'tipe' => "Pengusulan PAK-Divisi SDM"
         ]);
         PengusulanPAK::find($request->id)->update([
             'status' => 'ditolak',

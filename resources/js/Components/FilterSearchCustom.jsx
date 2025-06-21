@@ -65,11 +65,11 @@ export default function FilterSearchCustom({
     };
 
     return (
-        <form className="max-w-screen-laptop" onSubmit={handleSubmit}>
-            <div className="flex items-center justify-between gap-3 my-3">
-                <div className="flex flex-wrap items-center justify-start gap-3">
+        <form className="w-full" onSubmit={handleSubmit}>
+            <section className="flex items-center justify-between w-full gap-3 my-3 ">
+            <div className="flex flex-wrap items-center gap-3">
                     {filtersConfig.map(({ name, label, options }) => (
-                        <div key={name} className="flex-none w-60">
+                        <div key={name} className="flex-none w-fit">
                             <InputLabel
                                 value={label}
                                 Htmlfor={name}
@@ -124,7 +124,7 @@ export default function FilterSearchCustom({
                         </div>
                     </div>
                 )}
-            </div>
+            </section>
         </form>
     );
 }

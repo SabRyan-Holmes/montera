@@ -32,11 +32,11 @@ return new class extends Migration
 
             // Status pengajuan
             $table->enum('status', [
-                'diproses',
+                'diusulkan',
                 'disetujui',
                 'ditolak',
                 'direvisi',
-            ])->default('diproses');
+            ])->default('diusulkan');
 
             // Tracking proses
             $table->foreignId('catatan_sdm_id')->nullable()->constrained('catatans')->onDelete('cascade');

@@ -68,7 +68,7 @@ Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('div
         Route::get('/create-by/pengusulan/{pengusulan}', [DokumenPAKController::class, 'create_by_pengusulan'])->name('create-by-pengusulan');
         Route::get('/edit/pak', [DokumenPAKController::class, 'edit'])->name('edit');
         Route::post('/save', [DokumenPAKController::class, 'save'])->name('save');
-        Route::post('/save-and-submit', [DokumenPAKController::class, 'save_and_submit'])->name('save-and-submit'); //ini routenya
+        Route::post('/submit', [DokumenPAKController::class, 'submit'])->name('submit'); //ini routenya
     });
 
     // Pengajuan PAK(CRUD, Revisi, RESEBMIT, Cancel) //NOTE!! Urutan jangan diubah, resource harus paling bawah

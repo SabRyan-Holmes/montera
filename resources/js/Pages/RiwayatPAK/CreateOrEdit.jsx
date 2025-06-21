@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
 import {
     DetailPegawai,
+    InputLabel,
+    Modal,
     PrimaryButton,
     SecondaryButton,
     SuccessButton,
@@ -20,6 +22,7 @@ import { BsFillSendFill } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
 import UseAturanPenetapan from "./Partials/UseAturanPenetapan";
+import ModalCatatan from "@/Components/ModalCatatan";
 
 export default function Index({
     auth,
@@ -118,15 +121,18 @@ export default function Index({
 
     // Kalo dpt nilai pegawai stelah dipilih
     useEffect(() => {
+        const { findKoefisienPertahunValue } = rumusPenghitungan;
         if (!isEdit && pegawai) {
-            setData("pegawai", pegawai);
-            setPegawaiState(pegawai);
-        }
+            setData("pegawai", pegawai); // Set pegawai
+            setPegawaiState(pegawai); // opsional: state lokal
 
-        return () => {
-            // console.log('isi pegawai setelah dipilih pegawai')
-            // console.log(pegawaiState)
-        };
+            const akNormatifValue = findKoefisienPertahunValue(
+                pegawai["Jabatan/TMT"]
+            );
+
+            // console.log("🎯 SET ak_normatif dari Main:", akNormatifValue);
+            setData("ak_normatif", akNormatifValue); // langsung set di sini
+        }
     }, [pegawai]);
 
     // =============================================================Pop Up, Dialog SWAL==============================================
@@ -180,13 +186,13 @@ export default function Index({
 
     const submit = (e) => {
         e.preventDefault();
-
+        // alert('disubmit')
         const action = e.nativeEvent.submitter.value;
 
         const endpoints = {
             preview: "/pak/process",
             save: "/divisi-sdm/pak/save",
-            submit: "/divisi-sdm/pak/save-and-submit",
+            // submit: "/divisi-sdm/pak/submit",
         };
 
         const routeNames = {
@@ -200,7 +206,7 @@ export default function Index({
         // alert(action);
         // EDIT MODE
         if (isEdit) {
-            let idRiwayatPAK = data.id;
+
             // alert(idRiwayatPAK)
             router.patch(route(routeName, data.id), data, {
                 preserveScroll: true,
@@ -222,13 +228,35 @@ export default function Index({
                 onFinish: () => setIsLoading(false),
                 onError: (errors) => {
                     console.error("Error:", errors);
+                    alert("Submit gagal. Lihat console log.");
                 },
                 onSuccess: (page) => {
                     if (action === "preview") setShowIframe(true);
+                    setActiveModal(null);
                     // Tambah logic lain sesuai tombolnya
                 },
             });
         }
+    };
+
+    const submitModal = (e) => {
+        const action = e.target.value;
+        const routeNames = {
+            submit: route("divisi-sdm.pak.submit"),
+            "re-submit": route("divisi-sdm.pengajuan.ajukan-ulang", data.id), //TODO : syaaingin kalo ini jadi patch, bukan post
+        };
+        const routeName = routeNames[action];
+        if (!routeName) return alert(`Unknown action: ${action}`);
+        const method = action === "re-submit" ? "patch" : "post";
+        router[method](routeName, data, {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => setIsLoading(true),
+            onFinish: () => setIsLoading(false),
+            onSuccess: () => {
+                setActiveModal(null);
+            },
+        });
     };
 
     const [search, setSearch] = useState("");
@@ -254,13 +282,18 @@ export default function Index({
         );
     };
 
+    const [activeModal, setActiveModal] = useState(null);
+
     // CONSOLE
     // console.log("Isi Error");
     // console.log(errors);
-    // console.log("Isi Data");
-    // console.log(data);
+    console.log("Isi Data");
+    console.log(data);
     // console.log("data now", dataNow);
     // console.log('Is Pengusulan Data', isByPengusulan)
+    useEffect(() => {
+        console.log("📦 data form updated:", data);
+    }, [data]);
 
     return (
         <Authenticated
@@ -420,6 +453,8 @@ export default function Index({
                             <InputDataTable
                                 data={data}
                                 setData={setData}
+                                rumusPenghitungan={rumusPenghitungan}
+                                // ANCHOR
                                 // EDIT
                                 isEdit={isEdit}
                                 historyData={isEdit ? riwayat : {}}
@@ -431,6 +466,7 @@ export default function Index({
                             <KonversiTable
                                 data={data}
                                 setData={setData}
+                                rumusPenghitungan={rumusPenghitungan}
                                 isEdit={isEdit}
                                 isByPengusulan={isByPengusulan}
                                 aturanKonvTableProps={aturanKonvTableProps}
@@ -474,7 +510,54 @@ export default function Index({
                                 <FaFilePdf className="mx-1" />
                             </SecondaryButton>
 
-                            {!isRevisi && <></>}
+                            <Modal
+                                show={activeModal}
+                                onClose={() => setActiveModal(null)} // agar modal bisa ditutup dengan onClose
+                                maxWidth="md"
+                            >
+                                <section className="w-full max-w-md p-6 mx-auto rounded-lg ">
+                                    <InputLabel
+                                        value="Catatan Pengajuan(opsional)"
+                                        forName="catatan"
+                                        htmlFor="catatan"
+                                        className="mb-4 text-xl font-bold text-gray-800"
+                                    />
+                                    <fieldset className="relative laptop:w-full">
+                                        <textarea
+                                            id="catatan"
+                                            name="catatan"
+                                            className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
+                                            placeholder="Ketikkan catatan untuk penolakan pengusulan ini.."
+                                            maxLength={1000}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "catatan",
+                                                    e.target.value
+                                                )
+                                            }
+                                        ></textarea>
+                                    </fieldset>
+
+                                    <div className="flex justify-end mt-4 space-x-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveModal(null)}
+                                            className="px-4 py-2 text-sm font-medium text-gray-700 transition duration-200 bg-gray-100 rounded-md hover:bg-gray-200"
+                                        >
+                                            Batal
+                                        </button>
+                                        <button
+                                            type="button"
+                                            name="action"
+                                            value={isRevisi ? "re-submit" : "submit"}
+                                            onClick={submitModal}
+                                            className="px-4 py-2 text-sm font-medium text-white transition duration-200 rounded-md bg-sky-600 hover:bg-sky-700"
+                                        >
+                                            {isRevisi ? "Ajukan Ulang" : "Ajukan"}
+                                        </button>
+                                    </div>
+                                </section>
+                            </Modal>
                             {isEdit && !isRevisi ? (
                                 <>
                                     <SuccessButton
@@ -512,7 +595,7 @@ export default function Index({
 
                             {isRevisi ? (
                                 <PrimaryButton
-                                    type="submit"
+                                    type="button"
                                     name="action"
                                     value="re-submit"
                                     className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
@@ -522,9 +605,10 @@ export default function Index({
                                 </PrimaryButton>
                             ) : (
                                 <PrimaryButton
-                                    type="submit"
-                                    name="action"
-                                    value="submit"
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveModal(`ModalCatatan-${0}`)
+                                    }
                                     className="scale-110 hover:scale-[1.15] hover:bg-primary/80 "
                                 >
                                     Ajukan

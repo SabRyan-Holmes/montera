@@ -4,12 +4,10 @@ import React, { useEffect, useState } from "react";
 export default function KonversiTable({
     data,
     setData,
-    aturanKonvTableProps: {
-        koefisienPertahun,
-        predikatPresentase,
-    },
+    aturanKonvTableProps: { koefisienPertahun, predikatPresentase },
+    rumusPenghitungan: { useRumusAngkaKredit },
     isEdit = false,
-    isByPengusulan = false
+    isByPengusulan = false,
 }) {
     const handleKeyPress = (e) => {
         // Mengizinkan angka dan tanda koma atau titik
@@ -19,54 +17,31 @@ export default function KonversiTable({
     };
 
     useEffect(() => {
-        if (!isEdit && data.pegawai) {
-            const findkoefisienPertahunValue = (jabatan) => {
-                const key = Object.keys(koefisienPertahun).find((k) =>
-                    jabatan.includes(k)
-                );
-                return key ? koefisienPertahun[key] : null;
-            };
-            let koefisienPertahunValue = findkoefisienPertahunValue(
-                data.pegawai["Jabatan/TMT"]
-            );
-            setData("ak_normatif", koefisienPertahunValue);
-        }
-    }, [data.pegawai]); // Tambahkan pegawai sebagai dependency jika datanya bisa berubah
-
-    function hitungAk(periode, koefisienPertahun, presentase) {
-        const ak_kredit =
-            parseFloat(periode / 12) *
-            parseFloat(koefisienPertahun) *
-            parseFloat(presentase / 100);
-        const result = parseFloat(ak_kredit).toFixed(3);
-        return result;
-    }
+        // Panggil fungsi untuk cek perubahan jabatan
+        isJabatanChanged();
+    }, [data.pegawai]);
 
     // Logika Hitung AK dijalankan ketika ada perubahan
     useEffect(() => {
-        let koefisienPertahun = data.ak_normatif
-            ? data.ak_normatif
-            : data.ak_normatif_ops;
-        if (koefisienPertahun == null) {
-            // Ammbil dari inputan custom
-            koefisienPertahun = data.ak_normatif_ops;
-            data.ak_normatif = koefisienPertahun;
-        }
-        const akKreditValue = hitungAk(
-            data.angka_periode,
-            koefisienPertahun,
-            data.presentase
-        );
-        setData("angka_kredit", akKreditValue);
+        const akNormatif = data.ak_normatif ?? data.ak_normatif_ops;
+        console.log("🔥 MENGHITUNG ANGKA KREDIT");
+        console.log("ak_normatif:", data.ak_normatif);
+        console.log("angka_periode:", data.angka_periode);
+        console.log("presentase:", data.presentase);
 
-        if (data.angka_periode === 0 && data.angka_kredit === 0) {
-            setIsPeriodeExist(false);
-        } else {
-            setIsPeriodeExist(true);
+        if (data.angka_periode && data.presentase && akNormatif != null) {
+            const AKValue = useRumusAngkaKredit(
+                data.angka_periode,
+                akNormatif,
+                data.presentase
+            );
+            console.log("✅ angka_kredit dihitung:", AKValue);
+            setData("angka_kredit", AKValue);
+            setIsPeriodeExist(!(data.angka_periode === 0 && angka === 0));
         }
     }, [
-        data.angka_periode,
         data.ak_normatif,
+        data.angka_periode,
         data.predikat,
         data.presentase,
         data.ak_normatif_ops,
@@ -75,13 +50,6 @@ export default function KonversiTable({
     useEffect(() => {
         setData("predikat", predikatPresentase[data.presentase]);
     }, [data.presentase]);
-
-    useEffect(() => {
-        // Cek perubahan jabatan setiap kali data pegawai berubah
-        if (data.pegawai) {
-            isJabatanChanged();
-        }
-    }, [data.pegawai]);
 
     const [isPeriodeExist, setIsPeriodeExist] = useState(false);
     const [jabatanChanged, setJabatanChanged] = useState(false);
@@ -121,7 +89,7 @@ export default function KonversiTable({
         setData("ak_normatif_ops", null);
 
         // Hitung ulang angka kredit
-        const akKreditValue = hitungAk(
+        const akKreditValue = useRumusAngkaKredit(
             data.angka_periode,
             newValue,
             data.presentase
@@ -130,8 +98,6 @@ export default function KonversiTable({
         setJabatanChanged(false); // Kembalikan status ke false
     };
 
-
-    console.warn('Sesudah', data.tebusan1)
     return (
         <table className="table text-base table-bordered">
             {/* head */}
@@ -201,7 +167,6 @@ export default function KonversiTable({
                         </select>
                     </td>
                     <td className="border">
-
                         {!isEdit && data.ak_normatif && (
                             <span>{data.ak_normatif}</span>
                         )}
@@ -289,9 +254,20 @@ export default function KonversiTable({
                                                 id={`tebusan-${globalIndex}`} // Tambahkan ID                                                className="w-5 h-5 rounded-sm"
                                                 checked={item.checked}
                                                 onChange={() => {
-                                                    setData("tebusan1", data.tebusan1.map((item, i) =>
-                                                        i === globalIndex ? { ...item, checked: !item.checked } : item
-                                                      ));
+                                                    setData(
+                                                        "tebusan1",
+                                                        data.tebusan1.map(
+                                                            (item, i) =>
+                                                                i ===
+                                                                globalIndex
+                                                                    ? {
+                                                                          ...item,
+                                                                          checked:
+                                                                              !item.checked,
+                                                                      }
+                                                                    : item
+                                                        )
+                                                    );
 
                                                     // const updated = [
                                                     //     ...data.tebusan1,

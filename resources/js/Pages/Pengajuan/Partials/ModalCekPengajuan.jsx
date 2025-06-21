@@ -66,14 +66,17 @@ export default function ModalCekPengajuan({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route("pimpinan.pengajuan.cancel", pengajuan.id), {
-                    onSuccess: () => {
-                        //
-                    },
-                    onError: () => {
-                        console.log("Gagal Menghapus Data");
-                    },
-                });
+                router.post(
+                    route("pimpinan.pengajuan.undo-validate", pengajuan.id),
+                    {
+                        onSuccess: () => {
+                            //
+                        },
+                        onError: () => {
+                            console.log("Gagal Menghapus Data");
+                        },
+                    }
+                );
             }
         });
     };
@@ -162,6 +165,7 @@ export default function ModalCekPengajuan({
         }
     };
     const modalId = `ModalCekPengajuan-${pengajuan.id}`;
+    const isByPengusulan = pengajuan.riwayat_pak.pengusulan_pak_id ?? null;
 
     return (
         <Modal
@@ -225,21 +229,24 @@ export default function ModalCekPengajuan({
                         />
                     </div>
 
-                    <div
-                        className="px-2 overflow-x-auto"
-                        ref={pengusulanPAKRef}
-                    >
-                        <h1 className="mb-3 text-xl font-medium mt-7 ">
-                            Data Pengusulan Sebagai Sumber Penetapan Angka
-                            Kredit
-                        </h1>
-                        <PengusulanPAKTable
-                            collapse={false}
-                            data={pengusulanPAK}
-                            setLinkIframe={setLinkIframe}
-                            setShowIframe={setShowIframe}
-                        />
-                    </div>
+                    {pengusulanPAK && (
+                        <div
+                            className="px-2 overflow-x-auto"
+                            ref={pengusulanPAKRef}
+                        >
+                            <h1 className="mb-3 text-xl font-medium mt-7 ">
+                                Data Pengusulan Sebagai Sumber Penetapan Angka
+                                Kredit
+                            </h1>
+
+                            <PengusulanPAKTable
+                                collapse={false}
+                                data={pengusulanPAK}
+                                setLinkIframe={setLinkIframe}
+                                setShowIframe={setShowIframe}
+                            />
+                        </div>
+                    )}
 
                     <div className="px-2 overflow-x-auto">
                         <h1 className="mb-3 text-xl font-medium mt-7">
@@ -248,7 +255,7 @@ export default function ModalCekPengajuan({
                         <DetailPegawai pegawai={pegawai} />
                     </div>
 
-                    {pengajuan.status === "diproses" && (
+                    {pengajuan.status === "divalidasi" && (
                         <>
                             <div role="alert" className="mb-20 alert bg-hijau">
                                 <svg

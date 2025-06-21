@@ -22,7 +22,12 @@ return new class extends Migration
             $table->foreignId('catatan_validator_id')->nullable()->constrained('catatans')->onDelete('cascade');
             $table->string('validated_by', 18)->nullable();
             $table->foreign('validated_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
-            $table->enum('status', ['diajukan', 'divalidasi', 'ditolak'])->default('diajukan');
+            $table->enum('status', [
+                'diajukan',
+                'divalidasi',
+                'ditolak',
+                'direvisi',
+            ])->default('diajukan');
             $table->string("approved_pak_path")->nullable()->comment('penyimpanan dokumen sementara setelah di validasi/ditandatangani'); //for store validated/approved PAK
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_direvisi')->nullable();

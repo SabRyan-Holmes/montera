@@ -72,6 +72,12 @@ export default function PengusulanPAKTable({
                                 {moment(data.created_at).fromNow()})
                             </td>
                         </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td className="p-0 m-0 text-wrap">
+                                <StatusLabel status={data.status} />
+                            </td>
+                        </tr>
 
                         <tr>
                             <td>Tujuan Pengusulan </td>
@@ -158,12 +164,7 @@ export default function PengusulanPAKTable({
                                 )}
                             </td>
                         </tr>
-                        <tr>
-                            <td>Status</td>
-                            <td className="p-0 m-0 text-wrap">
-                                <StatusLabel status={data.status} />
-                            </td>
-                        </tr>
+
 
                         {data.status === "ditolak" && (
                             <tr>

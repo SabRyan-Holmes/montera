@@ -19,7 +19,7 @@ import moment from "moment/min/moment-with-locales";
 import { FaEdit } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import PopUpCatatan from "./Partials/PopUpCatatan";
-import { BsFillSendArrowUpFill, BsFillSendFill } from "react-icons/bs";
+import { BsFillSendFill } from "react-icons/bs";
 
 export default function Index({
     auth,
@@ -318,9 +318,7 @@ export default function Index({
                                                     setActiveModal={
                                                         setActiveModal
                                                     }
-                                                    activeModal={
-                                                        activeModal
-                                                    }
+                                                    activeModal={activeModal}
                                                     handleReject={handleReject}
                                                     isDivisiSDM={isDivisiSDM}
                                                     setPopUpData={setPopUpData}
@@ -371,8 +369,12 @@ export default function Index({
                                                                 )}
                                                                 className="transition-all scale-110 group/button action-btn border-hijau/20 hover:bg-hijau disabled:bg-accent/25 disabled:cursor-not-allowed "
                                                                 disabled={
-                                                                    data.status !==
-                                                                    "diproses"
+                                                                    ![
+                                                                        "diusulkan",
+                                                                        "direvisi",
+                                                                    ].includes(
+                                                                        data.status
+                                                                    )
                                                                 }
                                                                 method="post"
                                                                 data={{
@@ -433,8 +435,12 @@ export default function Index({
                                                                 <FaCheck
                                                                     className={
                                                                         "scale-125 group-hover/button:fill-white " +
-                                                                        (data.status !==
-                                                                        "diproses"
+                                                                        (![
+                                                                            "diusulkan",
+                                                                            "direvisi",
+                                                                        ].includes(
+                                                                            data.status
+                                                                        )
                                                                             ? "fill-accent"
                                                                             : "fill-hijau")
                                                                     }
@@ -449,8 +455,12 @@ export default function Index({
                                                         <div className="relative inline-flex group">
                                                             <button
                                                                 disabled={
-                                                                    data.status !==
-                                                                    "diproses"
+                                                                    ![
+                                                                        "diusulkan",
+                                                                        "direvisi",
+                                                                    ].includes(
+                                                                        data.status
+                                                                    )
                                                                 }
                                                                 onClick={() => {
                                                                     setPopUpData(
@@ -467,8 +477,12 @@ export default function Index({
                                                                 <IoClose
                                                                     className={
                                                                         "scale-125 group-hover/button:fill-white " +
-                                                                        (data.status !==
-                                                                        "diproses"
+                                                                        (![
+                                                                            "diusulkan",
+                                                                            "direvisi",
+                                                                        ].includes(
+                                                                            data.status
+                                                                        )
                                                                             ? "fill-accent"
                                                                             : "fill-warning")
                                                                     }
@@ -541,8 +555,12 @@ export default function Index({
                                                                     data.id
                                                                 )}
                                                                 disabled={
-                                                                    data.status !==
-                                                                    "diproses"
+                                                                    ![
+                                                                        "diusulkan",
+                                                                        "direvisi",
+                                                                    ].includes(
+                                                                        data.status
+                                                                    )
                                                                 }
                                                                 className="action-btn group/button action-btn-warning "
                                                             >
@@ -572,9 +590,9 @@ export default function Index({
                                         : "/divisi-sdm") + "/pengusulan-pak"
                                 }
                                 filters={{
-                                    filter1: byJabatanReq,
-                                    filter2: byStatusReq,
-                                    filterSearch: searchReq,
+                                    byJabatan: byJabatanReq,
+                                    byStatus: byStatusReq,
+                                    search: searchReq,
                                 }}
                             />
                         </>

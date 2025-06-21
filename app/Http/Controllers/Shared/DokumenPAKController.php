@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Models\AturanPAK;
+use App\Models\Catatan;
 use App\Models\Koefisien;
 use Inertia\Inertia;
 use App\Models\Pegawai;
@@ -146,26 +147,76 @@ class DokumenPAKController extends Controller
     }
 
 
-    public function save_and_submit(Request $request)
+    public function submit(Request $request)
     {
-        // Kalo si store ke database)
-        $dataForStore = $request->except('pegawai');
-        $pegawai_id = $request->input('pegawai.id');
-        $dataForStore['pegawai_id'] = $pegawai_id;
-        $newPAK = RiwayatPAK::create($dataForStore);
-        $validated = [
-            "riwayat_pak_id" => $newPAK->id,
-            "pegawai_id" => $newPAK->pegawai_id,
-            "user_nip" => $this->user->nip,
-        ];
-        if (!isset($request->id)) {
-            Pengajuan::create($validated);
+        // dd($request);
+        $request->validate([
+            'no_surat1' => 'required|string',
+            'pegawai.id' => 'required|exists:pegawais,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $dataForStore = $request->except(['pegawai', 'catatan']);
+            $dataForStore['pegawai_id'] = $request->input('pegawai.id');
+
+            AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
+            $newPAK = RiwayatPAK::create($dataForStore);
+
+            $catatan = null;
+            if ($request->filled('catatan')) {
+                $catatan = Catatan::create([
+                    'user_nip' => $this->user->nip,
+                    'tipe' => 'Pengajuan PAK-Divisi SDM',
+                    'isi' => $request->catatan,
+                ]);
+            }
+
+            if (!$request->filled('id')) {
+                Pengajuan::create([
+                    'riwayat_pak_id' => $newPAK->id,
+                    'pegawai_id' => $newPAK->pegawai_id,
+                    'user_nip' => $this->user->nip,
+                    'catatan_pengaju_id' => $catatan?->id,
+                ]);
+            }
+
+            DB::commit();
+            return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Dokumen PAK berhasil Diajukan!');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
-
-        // TODO: Taruh NO Surat PAK nanti di aturan PAK dan dijadiin default, dan di update setiap kali dilakukan penetapan
-
-        return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Dokumen PAK berhasil Diajukan! Silahkan menunggu untuk diproses.');
     }
+
+    // public function save_and_submit(Request $request)
+    // {
+    //     // Kalo si store ke database)
+    //     $dataForStore = $request->except(['pegawai', 'catatan']);
+    //     $pegawai_id = $request->input('pegawai.id');
+    //     $dataForStore['pegawai_id'] = $pegawai_id;
+    //     AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
+    //     $newPAK = RiwayatPAK::create($dataForStore);
+    //     $catatan = null;
+    //     if($request->catatan) {
+    //         $catatan = Catatan::create([
+    //             'user_nip' => $this->user->nip,
+    //             'tipe' => 'Pengajuan PAK-Divisi SDM',
+    //             'isi' => $request->catatan,
+    //         ]);
+    //     }
+    //     $validated = [
+    //         "riwayat_pak_id" => $newPAK->id,
+    //         "pegawai_id" => $newPAK->pegawai_id,
+    //         "user_nip" => $this->user->nip,
+    //         "catatan_pengaju_id" => $catatan?->id ?? null
+    //     ];
+    //     if (!isset($request->id)) {
+    //         Pengajuan::create($validated);
+    //     }
+
+    //     return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Dokumen PAK berhasil Diajukan! Silahkan menunggu untuk diproses.');
+    // }
 
 
     private function cleanData(&$item)
@@ -202,7 +253,4 @@ class DokumenPAKController extends Controller
 
         return redirect('storage/TEMPLATE_PAK.docx');
     }
-
-
-
 }

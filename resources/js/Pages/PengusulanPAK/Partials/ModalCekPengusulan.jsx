@@ -7,26 +7,18 @@ import {
 } from "@/Components";
 import { router, useForm } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
-import {
-    FaCheck,
-    FaEraser,
-    FaFileSignature,
-    FaRegCircleCheck,
-    FaTrash,
-} from "react-icons/fa6";
+import { FaFileSignature, FaRegCircleCheck } from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { usePage } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 import PengusulanPAKTable from "./DetailPengusulanPAKTable";
-import PopUpCatatan from "./PopUpCatatan";
 import { CgCloseO } from "react-icons/cg";
 export default function ModalCekPengusulan({
     pengusulanPAK,
     setActiveModal,
     activeModal,
-    setActiveModalId,
-    canValidate,
+    isDivisiSDM,
     setPopUpData,
     setIsPopUpOpen,
 }) {
@@ -124,6 +116,7 @@ export default function ModalCekPengusulan({
     };
 
     const { props } = usePage();
+    // alert(pengusulanPAK.status)
     const modalId = `ModalCekPengusulan-${pengusulanPAK.id}`;
     return (
         <Modal
@@ -153,8 +146,8 @@ export default function ModalCekPengusulan({
             )}
             {/*  CONTENT START */}
 
-            <main className="w-full mx-auto my-4 text-center ">
-            <section className="relative w-full max-w-4xl mx-auto modal-box">
+            <main className="relative w-full max-w-4xl mx-auto my-4 text-center modal-box">
+                <section className="mx-auto ">
                     <h3 className="mb-2 text-xl font-bold">
                         Detail Pengusulan PAK
                     </h3>
@@ -178,8 +171,8 @@ export default function ModalCekPengusulan({
                         <DetailPegawai pegawai={pengusulanPAK.pegawai} />
                     </div>
 
-                    {canValidate ? (
-                        <>
+                    {isDivisiSDM && (
+                        <div>
                             {/* IF Approved */}
                             {pengusulanPAK.status === "disetujui" && (
                                 <>
@@ -209,18 +202,18 @@ export default function ModalCekPengusulan({
                                     </div>
                                 </>
                             )}
-                        </>
-                    ) : (
-                        <></>
+                        </div>
                     )}
                 </section>
                 {/*  CONTENT START */}
 
-                {canValidate && (
+
+            </main>
+            {isDivisiSDM && (
                     <>
-                        {/* SECTION Floating Action Button DIPROSES */}
-                        {pengusulanPAK.status === "diproses" && (
-                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                        {/* SECTION Floating Action Button DIUSULKAN */}
+                        {pengusulanPAK.status === "diusulkan" && (
+                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
                                 {/* TODO: Harusny dialog catatan bisa muncul tanpa harus menutup dialogCek Pengusulan terlebih dahulu  */}
                                 <form method="dialog">
                                     <SecondaryButton
@@ -248,11 +241,11 @@ export default function ModalCekPengusulan({
                                 </SuccessButton>
                             </section>
                         )}
-                        {/* !SECTION Floating Action Button DIPROSES */}
+                        {/* !SECTION Floating Action Button DIUSULKAN */}
 
                         {/* SECTION Floating Action Button DITOLAK */}
                         {pengusulanPAK.status === "ditolak" && (
-                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
                                 <SecondaryButton
                                     onClick={() => handleCancel()}
                                     className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
@@ -266,7 +259,7 @@ export default function ModalCekPengusulan({
 
                         {/* SECTION Floating Action Button DISETUJUI */}
                         {pengusulanPAK.status === "disetujui" && (
-                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-12 left-1/2">
+                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
                                 <SuccessButton
                                     asLink
                                     href={route(
@@ -291,7 +284,6 @@ export default function ModalCekPengusulan({
                         {/* !SECTION Floating Action Button DISETUJUI */}
                     </>
                 )}
-            </main>
         </Modal>
     );
 }

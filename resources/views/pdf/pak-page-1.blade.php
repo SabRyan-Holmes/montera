@@ -224,6 +224,7 @@
                             {{ $data['angka_periode'] }}
                             /12
                         </th>
+                        {{-- FIXME --}}
                         <th>
                             {{ number_format($data['ak_normatif'] ?? 0, 3) }}
                         </th>

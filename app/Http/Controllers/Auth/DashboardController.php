@@ -52,7 +52,7 @@ class DashboardController extends Controller
             $arsip_dokumen_count = ArsipDokumen::where('user_nip', $user->nip)->count();
 
             $dataPengusulanGraph = [
-                'Diproses' => PengusulanPAK::where('status', 'diproses')->count(),
+                'Diusulkan' => PengusulanPAK::where('status', 'diusulkan')->count(),
                 'Disetujui' => PengusulanPAK::where('status', 'disetujui')->count(),
                 'Ditolak' => PengusulanPAK::where('status', 'ditolak')->count(),
             ];
@@ -94,7 +94,7 @@ class DashboardController extends Controller
             $arsip_dokumen_count = ArsipDokumen::where('user_nip', $nip)->count();
 
             $dataPengusulanPAKGraph = [
-                'Diproses' => PengusulanPAK::byPegawaiAndStatus($nip, 'diproses')->count(),
+                'Diusulkan' => PengusulanPAK::byPegawaiAndStatus($nip, 'diusulkan')->count(),
                 'Disetujui' => PengusulanPAK::byPegawaiAndStatus($nip, 'disetujui')->count(),
                 'Ditolak' => PengusulanPAK::byPegawaiAndStatus($nip, 'ditolak')->count(),
             ];

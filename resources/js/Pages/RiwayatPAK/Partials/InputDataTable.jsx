@@ -5,10 +5,12 @@ import Swal from "sweetalert2";
 export default function InputDataTable({
     data,
     setData,
+    rumusPenghitungan,
     isEdit = false,
     historyData,
     pengusulanData,
 }) {
+    const { useRumusAngkaPeriode } = rumusPenghitungan;
     const handleKeyPress = (e) => {
         // Mencegah karakter non-numeric
         if (!/[0-9]/.test(e.key)) {
@@ -22,10 +24,11 @@ export default function InputDataTable({
 
     // Convert jadi angka periode(untuk rumus perhitungan)
     useEffect(() => {
-        setData(
-            "angka_periode",
-            Math.abs(data.periode_berakhir - data.periode_mulai + 1)
+        const value = useRumusAngkaPeriode(
+            data.periode_berakhir,
+            data.periode_mulai
         );
+        setData("angka_periode", value);
     }, [data.periode_mulai, data.periode_berakhir]);
 
     useEffect(() => {
@@ -40,9 +43,12 @@ export default function InputDataTable({
                     historyData["periode_berakhir"]
                 ).padStart(2, "0")}`
             );
-        } if (pengusulanData) {
-            const [year, monthStart, day] = pengusulanData.periode_mulai?.split("-");
-            const [yearEnd, monthEnd, dayEnd] = pengusulanData.periode_mulai?.split("-");
+        }
+        if (pengusulanData) {
+            const [year, monthStart, day] =
+                pengusulanData.periode_mulai?.split("-");
+            const [yearEnd, monthEnd, dayEnd] =
+                pengusulanData.periode_mulai?.split("-");
 
             setdefaultPeriodeMulai(
                 pengusulanData.periode_mulai?.slice(0, 7) || ""
@@ -81,6 +87,7 @@ export default function InputDataTable({
                                 type="month"
                                 name="periode_mulai"
                                 id="periode_mulai"
+                                required
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                 defaultValue={defaultPeriodeMulai}
                                 onChange={(e) => {
@@ -109,6 +116,7 @@ export default function InputDataTable({
                                 type="month"
                                 name="periode_berakhir"
                                 id="periode_berakhir"
+                                required
                                 min={minPeriode}
                                 className="px-4 font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                 defaultValue={defaultPeriodeBerakhir}
@@ -132,9 +140,6 @@ export default function InputDataTable({
                                             confirmButtonText: "Oke",
                                             confirmButtonColor: "#2D95C9",
                                         });
-                                        // alert(
-                                        //     "Tahun periode berakhir harus sama dengan periode mulai!"
-                                        // );
                                         e.target.value = ""; // Reset input jika tidak sesuai
                                     } else {
                                         // Jika tahun sama, masukkan nilai bulan ke dalam state atau data

@@ -61,18 +61,21 @@ class Pengajuan extends Model
         $query->when(
             $filters['search'] ?? false,
             fn($query, $search) =>
-            $query->whereHas('pegawai', function ($q) use ($search) {
-                $q->where('Nama', 'like', '%' . $search . '%')
-                    ->orWhere('NIP', 'like', '%' . $search . '%');
+            $query->whereHas('riwayat_pak', function ($q) use ($search) {
+                $q->whereHas('pegawai', function ($subQ) use ($search) {
+                    $subQ->where('Nama', 'like', '%' . $search . '%')
+                        ->orWhere('NIP', 'like', '%' . $search . '%');
+                });
             })
         );
-
         // Berdasarkan Jabatan
         $query->when(
             $filters['byJabatan'] ?? false,
             fn($query, $byJabatan) =>
-            $query->whereHas('pegawai', function ($q) use ($byJabatan) {
-                $q->where('Jabatan/TMT', 'like', '%' . $byJabatan . '%');
+            $query->whereHas('riwayat_pak', function ($q) use ($byJabatan) {
+                $q->whereHas('pegawai', function ($subQ) use ($byJabatan) {
+                    $subQ->where('Jabatan/TMT', 'like', '%' . $byJabatan . '%');
+                });
             })
         );
 
@@ -87,7 +90,9 @@ class Pengajuan extends Model
         $query->when(
             $filters['byKesimpulan'] ?? false,
             fn($query, $byKesimpulan) =>
-            $query->where('kesimpulan', 'like', '%' . $byKesimpulan . '%')
+            $query->whereHas('riwayat_pak', function ($q) use ($byKesimpulan) {
+                $q->where('kesimpulan', 'like', '%' . $byKesimpulan . '%');
+            })
         );
     }
 

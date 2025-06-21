@@ -6,8 +6,8 @@ import { RiLoader2Fill } from "react-icons/ri";
 export default function StatusLabel({ status }) {
     // alert(status)
     return (
-        <div className=" group/item">
-            {(status === "diproses" || status === "diajukan" || status === "direvisi") && (
+        <div className="group/item">
+            {(status === "diusulkan" || status === "diajukan" || status === "direvisi") && (
                 <button
                     disabled
                     className="transition-all duration-150 label-base bg-accent/50 text-slate-500 group-hover/item:text-slate-100"

@@ -90,6 +90,13 @@ export default function UseAturanPenetapan(aturanPAK) {
                 "Belum Dapat untuk Kenaikan Pangkat Setingkat Lebih Tinggi",
         });
 
+    const findKoefisienPertahunValue = (jabatan) => {
+        const key = Object.keys(koefisienPertahun).find((k) =>
+            jabatan.includes(k)
+        );
+        return key ? koefisienPertahun[key] : null;
+    };
+
     function useRumusAngkaKredit(periode, koefisienPertahun, presentase) {
         const ak_kredit =
             parseFloat(periode / 12) *
@@ -123,8 +130,6 @@ export default function UseAturanPenetapan(aturanPAK) {
                     checked: config ? config.checked : false,
                 };
             });
-
-
 
         // 3. Predikat Presentase(PP)
         // Fungsi untuk mencari nilai dalam array berdasarkan id
@@ -258,6 +263,7 @@ export default function UseAturanPenetapan(aturanPAK) {
     };
 
     const rumusPenghitungan = {
+        findKoefisienPertahunValue,
         useRumusAngkaKredit,
         useRumusAngkaPeriode,
     };
