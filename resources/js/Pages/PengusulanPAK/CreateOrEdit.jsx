@@ -6,7 +6,7 @@ import {
     FileInput,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import { FaCheck, FaDatabase, FaPlus } from "react-icons/fa6";
 import { FaSave, FaUserPlus } from "react-icons/fa";
@@ -22,11 +22,10 @@ export default function Create({
     auth,
     pegawai,
     title,
-    flash,
     isEdit,
     pengusulanPAK = null,
 }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, patch, processing, errors, reset } = useForm({
         pegawai_nip: pegawai["NIP"],
         tujuan: "Evaluasi Kinerja Tahunan",
         periode_mulai: "",
@@ -37,7 +36,7 @@ export default function Create({
         // data pendukung(opsional)
         dokumen_utama_path: null,
         dokumen_pendukung_path: null,
-        catatan_pegawai: "",
+        catatan_pengusul: "",
     });
 
     const Toast = Swal.mixin({
@@ -52,24 +51,9 @@ export default function Create({
         },
     });
 
-    // useEffect(() => {
-    //     if (flash.message) {
-    //         Toast.fire({
-    //             icon: "success",
-    //             title: "Data Pegawai Berhasil Diupdate!!",
-    //         });
-    //         setTimeout(() => {
-    //             flash.message = null;
-    //         }, 3000);
-    //     }
-    // }, [flash.message]);
-
     useEffect(() => {
         if (errors && Object.values(errors).length > 0) {
-            // Ambil nilai pertama dari object errors
             const firstErrorMessage = Object.values(errors)[0];
-            // console.log("firstErrorMessage :");
-            // console.log(firstErrorMessage);
             Toast.fire({
                 icon: "warning",
                 iconColor: "#fb7185",
@@ -81,26 +65,75 @@ export default function Create({
             }, 3000);
         }
     }, [errors]);
-    const [_alert, set_Alert] = useState(false);
 
     useEffect(() => {
         if (isEdit && pengusulanPAK) {
+            const formatToMonth = (dateStr) => {
+                if (!dateStr) return "";
+                const [year, month] = dateStr.split("-");
+                return `${year}-${month}`;
+            };
+
             setData({
                 ...pengusulanPAK,
                 id: pengusulanPAK.id,
+                periode_mulai: formatToMonth(pengusulanPAK.periode_mulai),
+                periode_berakhir: formatToMonth(pengusulanPAK.periode_berakhir),
+                catatan_pengusul: pengusulanPAK.catatan_pengusul?.isi,
             });
+            const dokumenUtamaPath = pengusulanPAK.dokumen_utama_path;
+            const dokumenPendukungPath = pengusulanPAK.dokumen_pendukung_path;
+
+            if (dokumenUtamaPath) {
+                const fileName = dokumenUtamaPath.split("/").pop();
+                setUploadedFiles((prev) => ({
+                    ...prev,
+                    dokumen_utama_path: {
+                        name: fileName,
+                        size: null, // optional: ukuran default
+                        type: "application/pdf",
+                    },
+                }));
+                setPreviewUrls((prev) => ({
+                    ...prev,
+                    dokumen_utama_path: `/storage/${dokumenUtamaPath}`, // penting: tambahin /storage/
+                }));
+            }
+
+            if (dokumenPendukungPath) {
+                const fileName = dokumenPendukungPath.split("/").pop();
+                setUploadedFiles((prev) => ({
+                    ...prev,
+                    dokumen_pendukung_path: {
+                        name: fileName,
+                        size: null,
+                        type: "application/pdf",
+                    },
+                }));
+                setPreviewUrls((prev) => ({
+                    ...prev,
+                    dokumen_pendukung_path: `/storage/${dokumenPendukungPath}`,
+                }));
+            }
         }
-        // set_Alert(true);
     }, []);
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("pegawai.pengusulan-pak.store"), {
-            forceFormData: true,
-            onSuccess: () => {
-                console.log("berhasil");
-            },
-        });
+        console.log('isi data sebelum disubmit')
+        console.log(data)
+        if (isEdit) {
+            router.post(route("pegawai.pengusulan-pak.update", pengusulanPAK),  {_method: "patch", ...data}, {
+                forceFormData:true
+            });
+        } else {
+            post(route("pegawai.pengusulan-pak.store"), {
+                forceFormData: true,
+                onSuccess: () => {
+                    console.log("berhasil");
+                },
+            });
+        }
     };
 
     const [minPeriode, setMinPeriode] = useState("");
@@ -137,15 +170,8 @@ export default function Create({
                 [dataName]: url,
             }));
         }
-
         setData(dataName, file); // simpan ke form
     };
-
-    // Console.log
-    useEffect(() => {
-        console.log("data :");
-        console.log(data);
-    }, [data]);
 
     const [uploadedFiles, setUploadedFiles] = useState({
         dokumen_utama_path: null,
@@ -156,6 +182,12 @@ export default function Create({
         dokumen_utama_path: null,
         dokumen_pendukung_path: null,
     });
+
+    // Console.log
+    useEffect(() => {
+        console.log("data :");
+        console.log(data);
+    }, [data]);
 
     return (
         <Authenticated
@@ -196,7 +228,7 @@ export default function Create({
                 </div>
 
                 <div className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
-                    <form onSubmit={submit}>
+                    <form onSubmit={submit} encType="multipart/form-data">
                         <table className="table text-base table-bordered ">
                             <thead>
                                 <tr className="text-lg bg-primary/70">
@@ -332,6 +364,7 @@ export default function Create({
                                         <input
                                             type="month"
                                             name="periode_mulai"
+                                            value={data.periode_mulai}
                                             className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                             isFocused={true}
                                             onChange={(e) => {
@@ -347,6 +380,7 @@ export default function Create({
                                             type="month"
                                             name="periode_berakhir"
                                             id="periode_berakhir"
+                                            value={data.periode_berakhir}
                                             min={minPeriode}
                                             className="font-medium rounded-md w-fit border-gradient disabled:text-accent"
                                             onChange={(e) => {
@@ -581,10 +615,13 @@ export default function Create({
                                                     name="catatan_tambahan"
                                                     className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
                                                     placeholder="Masukkan Catatan Tambahan"
+                                                    value={
+                                                        data.catatan_pengusul
+                                                    }
                                                     maxLength={100}
                                                     onChange={(e) =>
                                                         setData(
-                                                            "catatan_pegawai",
+                                                            "catatan_pengusul",
                                                             e.target.value
                                                         )
                                                     }
@@ -598,49 +635,17 @@ export default function Create({
                                 </tr>
                             </tbody>
                         </table>
-
-                        {/* <Transition
-                            show={alert}
-                            enter="transition ease-in-out duration-700"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out duration-700"
-                            leaveTo="opacity-0"
-                        >
-                            <div
-                                role="alert"
-                                className="my-2 mt-4 rounded-md shadow-lg alert"
-                            >
-                                <PiSealWarning className="w-7 h-7 fill-secondary" />
-                                <div>
-                                    <h3 className="text-base font-bold text-secondary">
-                                        Catatan!
-                                    </h3>
-                                    <div className="text-sm text-red-950">
-                                        <span>
-                                            Nama, NIP/NRP, Alamat, Jenis Kelamin
-                                            tidak bisa diubah setelah sekali
-                                            ditambahkan, pastikan sudah mengisi
-                                            dengan benar!
-                                        </span>
-                                    </div>
-                                </div>
-                                <a
-                                    onClick={() => setAlert(false)}
-                                    className="group/btn inline text-xs cursor-pointer text-black action-btn hover:scale-[1.15] hover:text-emerald-700 border-hijau/80 bg-hijau/60"
-                                >
-                                    Saya Paham
-                                    <FaCheck className="inline w-4 h-4 ml-1 fill-emerald-900 group-hover/btn:fill-emerald-600" />
-                                </a>
-                            </div>
-                        </Transition> */}
-
                         <div className="my-1"></div>
                         <div className="flex justify-center w-full my-4 ">
                             <SuccessButton
                                 type="submit"
                                 className="gap-1 text-base border"
                             >
-                                <span>Ajukan Usulan</span>
+                                {isEdit ? (
+                                    <span>Ajukan Ulang</span>
+                                ) : (
+                                    <span>Ajukan Usulan</span>
+                                )}
                                 <BsFillSendFill className="w-4 h-4 fill-white" />
                             </SuccessButton>
                         </div>

@@ -54,12 +54,14 @@ class DashboardController extends Controller
             $dataPengusulanGraph = [
                 'Diusulkan' => PengusulanPAK::where('status', 'diusulkan')->count(),
                 'Disetujui' => PengusulanPAK::where('status', 'disetujui')->count(),
+                'Direvisi' => PengusulanPAK::where('status', 'direvisi')->count(),
                 'Ditolak' => PengusulanPAK::where('status', 'ditolak')->count(),
             ];
 
             $dataPengajuanPAKGraph = [
                 'Diajukan' => Pengajuan::where('status', 'diajukan')->count(),
                 'Divalidasi' => Pengajuan::where('status', 'divalidasi')->count(),
+                'Direvisi' => Pengajuan::where('status', 'direvisi')->count(),
                 'Ditolak' => Pengajuan::where('status', 'ditolak')->count(),
             ];
 
@@ -96,6 +98,7 @@ class DashboardController extends Controller
             $dataPengusulanPAKGraph = [
                 'Diusulkan' => PengusulanPAK::byPegawaiAndStatus($nip, 'diusulkan')->count(),
                 'Disetujui' => PengusulanPAK::byPegawaiAndStatus($nip, 'disetujui')->count(),
+                'Direvisi' => PengusulanPAK::byPegawaiAndStatus($nip, 'direvisi')->count(),
                 'Ditolak' => PengusulanPAK::byPegawaiAndStatus($nip, 'ditolak')->count(),
             ];
 

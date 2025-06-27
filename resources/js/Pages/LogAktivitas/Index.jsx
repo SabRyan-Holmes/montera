@@ -1,29 +1,19 @@
 import React, { useState } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { MdPersonSearch } from "react-icons/md";
-import { InputLabel, PrimaryButton } from "@/Components";
+import { FilterSearchCustom, InputLabel, PrimaryButton } from "@/Components";
 import moment from "moment/min/moment-with-locales";
 
 export default function Index({
     auth,
     logAktivitas,
     title,
-    flash,
-    searchReq: initialSearch,
-    byRoleReq: initialRole,
-    byJenisReq: initialJenis,
-    byKesimpulan: initialKesimpulan,
-    jenisList,
-    kesimpulanList,
+    searchReq,
+    byRoleReq,
+    byJenisReq,
+    aktivitasList,
 }) {
-    const [search, setSearch] = useState(initialSearch);
-    const [byRole, setByRole] = useState(initialRole);
-    const [byJenis, setByJenis] = useState(initialJenis);
-    const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on pengajuan.kesimpulan
     moment.locale("id");
-
-    console.warn(logAktivitas);
-
     const styleByRole = {
         "Divisi SDM": "badge-xs-primary",
         Pimpinan: "badge-xs-success",
@@ -32,101 +22,49 @@ export default function Index({
 
     function formatModel(modelPath) {
         if (!modelPath) return "";
-
         // Ambil kata terakhir setelah backslash
         const parts = modelPath.split("\\");
         const className = parts[parts.length - 1];
-
         // Pisahkan berdasarkan huruf kapital (kecuali huruf kapital berurutan)
         const readableName = className.replace(/([a-z])([A-Z])/g, "$1 $2");
-
         return readableName;
     }
 
-    // TODO:Filter& Search
-    // ANCHOR
+    const role = auth.user.role;
+    function formatRole(label) {
+        return label.trim().toLowerCase().replace(/\s+/g, "-");
+    }
+
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                <section>
-                    <form className="flex items-center justify-between w-full gap-3 my-3">
-                        <div className="flex items-center justify-start gap-3">
-                            <div className="flex-none laptop:w-64">
-                                <InputLabel
-                                    value="Jenis"
-                                    Htmlfor="byJenis"
-                                    className="max-w-sm ml-1 text-lg"
-                                />
-                                <select
-                                    className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
-                                    name="byJenis"
-                                    value={byJenis}
-                                    onChange={(e) => setByJenis(e.target.value)}
-                                >
-                                    <option value="">Semua Kategori</option>
-                                    {/* {jenisList.map((item) => (
-                                    <option className="capitalize">
-                                        {item}
-                                    </option>
-                                ))} */}
-                                </select>
-                            </div>
-                            <div className="flex-none laptop:w-64">
-                                <InputLabel
-                                    value="Role"
-                                    Htmlfor="byRole"
-                                    className="max-w-sm ml-1 text-lg"
-                                />
-
-                                <select
-                                    className="w-full max-w-xs text-sm border select border-gradient selection:text-primary disabled:text-accent"
-                                    name="byRole"
-                                    id="byRole"
-                                    value={byRole}
-                                    onChange={(e) => setByRole(e.target.value)}
-                                >
-                                    <option value="">Semua Kategori</option>
-                                    <option>Pegawai</option>
-                                    <option>Divisi SDM</option>
-                                    <option>Pimpinan</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="w-80">
-                            <InputLabel
-                                value="Keterangan Aktivitas"
-                                Htmlfor="search"
-                                className="max-w-sm ml-1 text-lg"
-                            />
-
-                            <label
-                                htmlFor="search"
-                                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                            >
-                                Search
-                            </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                    <MdPersonSearch className="w-6 h-6 fill-primary" />
-                                </div>
-                                <input
-                                    type="search"
-                                    id="search"
-                                    defaultValue={search}
-                                    onSubmit={(e) => setSearch(e.target.value)}
-                                    name="search"
-                                    className=" w-full p-4 py-[13px] pl-10 text-sm placeholder:text-accent text-gray-900 border border-gradient rounded-md"
-                                    placeholder="Cari Aktivitas.."
-                                />
-                                <PrimaryButton
-                                    type="submit"
-                                    className=" absolute end-2 bottom-[6px] "
-                                >
-                                    Search
-                                </PrimaryButton>
-                            </div>
-                        </div>
-                    </form>
+                <section className="flex items-center justify-between w-full">
+                    <FilterSearchCustom
+                        routeName={`/${formatRole(role)}/log-aktivitas`}
+                        initialFilters={{
+                            byJenis: byJenisReq,
+                            byRole: byRoleReq,
+                        }}
+                        filtersConfig={[
+                            // TODO: saya ingin filetJbaatan ini ada kalo !isPegawai doang
+                            {
+                                name: "byJenisAktivitas",
+                                label: "Jenis Aktivitas",
+                                options: aktivitasList,
+                            },
+                            {
+                                name: "byRole",
+                                label: "Role",
+                                options: ["Pegawai", "Divisi SDM", "Pimpinan"],
+                            },
+                        ]}
+                        searchConfig={{
+                            name: "search",
+                            label: "Keterangan Aktivitas",
+                            placeholder: "Ketik keterangan aktivitas..",
+                            initialValue: searchReq,
+                        }}
+                    />
                 </section>
 
                 <section className="mt-5">
@@ -142,7 +80,7 @@ export default function Index({
                                         No
                                     </th>
                                     <th scope="col" width="10%">
-                                        Waktu Aktivitas
+                                        Tanggal & Waktu
                                     </th>
                                     <th scope="col" width="20%" className="">
                                         Nama, NIP & Role
@@ -175,6 +113,7 @@ export default function Index({
                                         role="list"
                                         key={i}
                                         className="text-center group/item hover:bg-secondary/35"
+                                        onClick={""}
                                     >
                                         <td>{i + 1}</td>
                                         <td>
@@ -212,52 +151,17 @@ export default function Index({
                                         </td>
                                         <td>{data.aktivitas}</td>
                                         <td>
-                                                <span className="block">
-                                                    {formatModel(
-                                                        data.entity_type
-                                                    )}
-                                                </span>
-                                                <span className="block">
-                                                    {"(ID: #"} {data.entity_id}{" "}
-                                                    {")"}
-                                                </span>
+                                            <span className="block">
+                                                {formatModel(data.entity_type)}
+                                            </span>
+                                            <span className="block">
+                                                {"(ID: #"} {data.entity_id}{" "}
+                                                {")"}
+                                            </span>
                                         </td>
                                         <td className="text-left">
                                             {data.keterangan}
                                         </td>
-                                        {/* <td
-                                            className="relative group cursor-pointer max-w-[300px] text-xs"
-                                            onClick={() =>
-                                                setExpandedRows((prev) => ({
-                                                    ...prev,
-                                                    [logAktivitas.id]:
-                                                        !prev[logAktivitas.id],
-                                                }))
-                                            }
-                                        >
-                                            <span>
-                                                {expandedRows[logAktivitas.id]
-                                                    ? logAktivitas["keterangan"]
-                                                    : logAktivitas["keterangan"]
-                                                          .length > 50
-                                                    ? logAktivitas[
-                                                          "keterangan"
-                                                      ].slice(0, 50) + "..."
-                                                    : logAktivitas[
-                                                          "keterangan"
-                                                      ]}
-                                            </span>
-
-                                            {!expandedRows[logAktivitas.id] && (
-                                                <div
-                                                    className="absolute z-[999] w-20 px-3 py-1 mt-2 text-xs text-white transition-opacity duration-200
-                                                -translate-x-1/2 bg-accent rounded shadow-lg opacity-0 pointer-events-none left-1/2 top-full group-hover:opacity-100"
-                                                >
-                                                    Klik untuk tampilkan lengkap
-                                                    <div className="absolute w-2 h-2 rotate-45 -translate-x-1/2 bg-accent -top-1 left-1/2"></div>
-                                                </div>
-                                            )}
-                                        </td> */}
                                     </tr>
                                 ))}
                             </tbody>
@@ -265,7 +169,9 @@ export default function Index({
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
-                                Belum Ada Log Aktivitas Untuk Saat Ini
+                                {!subTitle
+                                    ? "Belum Ada Log Aktivitas Terbaru Untuk Saat Ini"
+                                    : "Tidak Ditemukan"}
                             </h2>
                         </div>
                     )}

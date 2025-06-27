@@ -177,7 +177,7 @@ class DokumenPAKController extends Controller
                     'riwayat_pak_id' => $newPAK->id,
                     'pegawai_id' => $newPAK->pegawai_id,
                     'user_nip' => $this->user->nip,
-                    'catatan_pengaju_id' => $catatan?->id,
+                    'catatan_pengaju_id' => $catatan?->id ?? null,
                 ]);
             }
 
@@ -241,6 +241,7 @@ class DokumenPAKController extends Controller
             }
         }
     }
+
 
 
     public function download_template()

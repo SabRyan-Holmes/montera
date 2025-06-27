@@ -7,6 +7,7 @@ use App\Models\AturanPAK;
 use App\Models\Koefisien;
 use App\Services\AturanPAKService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AturanPAKController extends Controller
@@ -126,45 +127,37 @@ class AturanPAKController extends Controller
 
     public function set_default_config(Request $request)
     {
-        // dd($request->all());
-        $request->validate([
-            'updateName' => 'required|string',
-            'value' => 'required'
-        ]);
-
-        // TODO buaat pengecekan dan logika lain jika updateName mengandung kata 'Tebusan'
-        // Handle khusus tebusan
         $aturan = AturanPAK::where('name', $request->updateName)->firstOrFail();
-        if (str_contains($request->updateName, 'Tebusan')) {
-            $input = json_decode($request->value, true);
-            $currentConfig = $aturan->default_config ?: [];
 
-            // Konversi ke array jika berupa JSON string
-            $currentConfig = is_array($currentConfig) ? $currentConfig : json_decode($currentConfig, true);
+        if ($request->isTebusan) {
+            $targetId = $request->target_id;
 
-            // Toggle status
-            $updatedConfig = array_map(function($item) use ($input) {
-                if ($item['id'] == $input['id']) {
+            $defaultConfig = $aturan->default_config ?: [];
+            if (!is_array($defaultConfig)) {
+                $defaultConfig = json_decode($defaultConfig, true);
+            }
+
+            $updatedConfig = array_map(function ($item) use ($targetId) {
+                if ($item['id'] == $targetId) {
                     $item['checked'] = !$item['checked'];
                 }
                 return $item;
-            }, $currentConfig);
+            }, $defaultConfig);
 
             $aturan->update(['default_config' => $updatedConfig]);
-            redirect()->back();
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'Status tebusan berhasil diupdate',
-            //     'data' => $updatedConfig
-            // ]);
-        } else
-            // Update database
+        } else {
             $aturan->update([
                 'default_config' => $request->value
             ]);
-            return redirect()->back()->with('message', 'Berhasil Mengupdate Default ' . $request->updateName . '!');
-        // } else return redirect()->back()->withErrors('Gagal ');
+        }
+
+        // 🧼 Return disatukan di bawah, DRY and clean
+        return redirect()->back()->with([
+            'toast' => "Berhasil Mengupdate Default {$request->updateName}.",
+            'toast_id' => uniqid(),
+        ]);
     }
+
 
     // public function set_default_config(Request $request)
     // {
@@ -277,8 +270,6 @@ class AturanPAKController extends Controller
         return redirect()->back()->with('message', 'Data Berhasil dihapus!');
     }
 
-
-
     public function store_or_update(Request $request)
     {
         if ($request->storeName) {
@@ -312,7 +303,65 @@ class AturanPAKController extends Controller
                 'value' => $mergedData
             ]);
         }
-
         return redirect()->back()->with('message', 'Berhasil Menyimpan Data');
+    }
+
+    public function setPenandaTangan(Request $request)
+    {
+        // dd($request);
+        $validated = $request->validate([
+            'id' => 'required|integer',
+            'nama' => 'required|string|max:150',
+            'nip' => 'required|string|max:150',
+            'ttd_validasi' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        // Ambil data AturanPAK dengan name 'Penanda Tangan'
+        $aturan = AturanPAK::where('name', 'Penanda Tangan')->first();
+
+        if (!$aturan) {
+            return back()->withErrors(['msg' => 'Konfigurasi penanda tangan tidak ditemukan.']);
+        }
+
+        $list = collect($aturan->value); // Ambil array value
+        $id = $validated['id'];
+
+        // Cari index elemen berdasarkan ID
+        $index = $list->search(fn($item) => $item['id'] == $id);
+
+        if ($index === false) {
+            return back()->withErrors(['id' => 'Penanda tangan tidak ditemukan.']);
+        }
+
+        // Ambil elemen lama
+        $penandaTangan = $list[$index];
+
+        // Hapus tanda tangan lama jika file baru diupload
+        if ($request->hasFile('signature_path') && !empty($penandaTangan['signature_path'])) {
+            Storage::disk('public')->delete($penandaTangan['signature_path']);
+        }
+
+        // Proses upload jika ada
+        if ($request->hasFile('signature_path')) {
+            $file = $request->file('signature_path');
+            $fileName = $validated['nip'] . '_ttd_' . now()->format('Ymd_His') . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('validasi_pimpinan', $fileName, 'public');
+            $penandaTangan['signature_path'] = $path;
+        }
+
+        // Update nama dan nip juga
+        $penandaTangan['nama'] = $validated['nama'];
+        $penandaTangan['nip'] = $validated['nip'];
+        $penandaTangan['updated_at'] = now()->toDateTimeString();
+
+        // Replace item lama dengan item baru di index yang sama
+        $list[$index] = $penandaTangan;
+
+        // Simpan perubahan
+        $aturan->update([
+            'value' => $list->toArray(),
+        ]);
+
+        return back()->with('message', 'Penanda tangan berhasil diperbarui.');
     }
 }

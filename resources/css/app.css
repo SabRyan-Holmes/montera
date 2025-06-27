@@ -149,6 +149,10 @@ input[type="number"] {
     @apply text-secondary border-secondary/20 hover:bg-secondary;
   }
 
+  .action-btn-bermuda {
+    @apply text-bermuda border-bermuda/20 hover:bg-bermuda;
+  }
+
 @layer components {
     .action-btn-variant {
         @apply text-white border hover:bg;

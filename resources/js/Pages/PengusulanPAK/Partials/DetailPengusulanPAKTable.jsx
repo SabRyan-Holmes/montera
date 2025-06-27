@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 import moment from "moment/min/moment-with-locales";
-import { RiLoader2Fill } from "react-icons/ri";
-import { IoClose, IoCloseOutline } from "react-icons/io5";
-import { FaCheck, FaFilePdf } from "react-icons/fa6";
 import { StatusLabel } from "@/Components";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaFilePdf } from "react-icons/fa6";
 
 export default function PengusulanPAKTable({
     data,
@@ -16,9 +13,6 @@ export default function PengusulanPAKTable({
     moment.locale("id");
 
     const [isCollapsed, setIsCollapsed] = useState(collapse);
-
-    const _penilaianKinerja = data["dokumen_utama_path"].split("/")[1];
-    const _penilaianPendidikan = data["dokumen_pendukung_path"].split("/")[1];
 
     const penilaianKinerja = `${formatNIP(
         data.pegawai["NIP"]
@@ -155,33 +149,28 @@ export default function PengusulanPAKTable({
                         </tr>
 
                         <tr>
-                            <td>Catatan Tambahan</td>
+                            <td>Catatan Pengusul</td>
                             <td className="text-wrap">
-                                {data["catatan_pegawai"] ? (
-                                    <p>{data["catatan_pegawai"]["isi"]}</p>
+                                {data["catatan_pengusul"] ? (
+                                    <p>{data["catatan_pengusul"]["isi"]}</p>
                                 ) : (
                                     "-"
                                 )}
                             </td>
                         </tr>
 
-
-                        {data.status === "ditolak" && (
-                            <tr>
-                                <td className="text-warning/80">
-                                    Catatan Perbaikan :
-                                </td>
-                                <td className="text-wrap">
-                                    {data["catatan_sdm"] ? (
-                                        <p className="block text-red-800">
-                                            {data["catatan_sdm"]["isi"]}
-                                        </p>
-                                    ) : (
-                                        "-"
-                                    )}
-                                </td>
-                            </tr>
-                        )}
+                        <tr>
+                            <td>Catatan Validator</td>
+                            <td className="text-wrap">
+                                {data["catatan_validator"] ? (
+                                    <p className="block ">
+                                        {data["catatan_validator"]["isi"]}
+                                    </p>
+                                ) : (
+                                    "-"
+                                )}
+                            </td>
+                        </tr>
                     </tbody>
                 )}
             </table>

@@ -13,6 +13,7 @@ export default function Modal({
     maxWidth = "2xl",
     closeable = true,
     onClose = () => {},
+    closeButton = true,
 }) {
     const close = () => {
         if (closeable) {
@@ -63,13 +64,14 @@ export default function Modal({
                     <DialogPanel
                         className={`relative mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass}`}
                     >
-                        {/* Tombol close */}
-                        <button
-                            onClick={close}
-                            className="absolute btn btn-md btn-circle btn-ghost right-2 top-2 hover:text-warning/80 hover:scale-105 hover:border hover:border-warning/40"
-                        >
-                            <IoCloseOutline className="w-10 h-10" />
-                        </button>
+                        {closeButton && (
+                            <button
+                                onClick={close}
+                                className="absolute btn btn-md btn-circle btn-ghost right-2 top-2 hover:text-warning/80 hover:scale-105 hover:border hover:border-warning/40"
+                            >
+                                <IoCloseOutline className="w-10 h-10" />
+                            </button>
+                        )}
 
                         {children}
                     </DialogPanel>

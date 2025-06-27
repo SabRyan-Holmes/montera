@@ -21,6 +21,7 @@ class AturanPAKService // Boleh pakai nama Helper
 
                 return collect($aturan->value)->map(function ($item, $i) use ($aturan) {
                     return [
+                        'id' => $item['id'],
                         'pihak_tebusan' => $item['pihak_tebusan'] ?? '',
                         'checked' => $aturan->default_config[$i]['checked'] ?? false,
                         'updated_at' => $item['updated_at'] ?? '',
@@ -44,5 +45,6 @@ class AturanPAKService // Boleh pakai nama Helper
             ];
         }
 
-        return $keys ? Arr::only($rules, (array) $keys) : $rules;    }
+        return $keys ? Arr::only($rules, (array) $keys) : $rules;
+    }
 }

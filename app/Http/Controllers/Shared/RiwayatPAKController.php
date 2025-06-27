@@ -34,19 +34,23 @@ class RiwayatPAKController extends Controller
 
         // Logika REQUEST FILTER dan Search
         $subTitle = GetSubtitle::getSubtitle(
-            request('byJabatan'),
-            request('byDaerah'),
-            request('search')
-        );
+            byJabatan: request('byJabatan'),
+            byDaerah: request('byDaerah'),
+            search: request('search')
 
-        $submitted = Pengajuan::where('status', "diajukan")->pluck('riwayat_pak_id')->toArray();
+        );
+        $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+        $submitted = Pengajuan::pluck('riwayat_pak_id')->toArray();
+        $kesimpulan_list = collect(AturanPAKService::get('kesimpulan')['kesimpulan']->value ?? [])->pluck('kesimpulan');
 
         return Inertia::render('RiwayatPAK/Index', [
             // "title" => "Riw$riwayatPAK " . $title,
             "title" => "Kelola Riwayat PAK",
             "subTitle" => $subTitle,
-            "riwayatPAK" => $riwayatPAK->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
+            "riwayatPAK" => $riwayatPAK->filter(request(['search', 'byJabatan', 'byKesimpulan', 'byStatus']))->paginate(10),
             'pengajuans' => $submitted,
+            'jabatanList' => collect($koefisien_per_tahun)->pluck('jabatan')->toArray(),
+            'kesimpulanList' => $kesimpulan_list,
             "searchReq" => request('search'),
             "byDaerahReq" => request('byDaerah'),
             "byJabatanReq" => request('byJabatan')

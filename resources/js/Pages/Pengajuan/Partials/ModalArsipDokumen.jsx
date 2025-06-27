@@ -1,28 +1,21 @@
 import {
-    DetailPAKTable,
-    DetailPegawai,
     InputError,
     InputLabel,
-    SecondaryButton,
-    SuccessButton,
+    Modal,
     TextInput,
 } from "@/Components";
 import { useForm, usePage } from "@inertiajs/react";
 import React, { useState } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa6";
-import { IoCloseOutline, IoDocument } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 
-export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
+export default function ModalArsipDokumen({ pengajuan, setActiveModal, activeModal }) {
     const { folderArsipList, auth } = usePage().props;
     const role = auth.user.role;
-
-    // Ambil File name dari path sebagi default title
     const fileName = pengajuan.approved_pak_path
     ?.split("/")
     .pop()
     .replace(".pdf", "");
-
-    // alert(pengajuan.riwayat_pak.pegawai['NIP'])
 
     const { data, setData, reset, post, processing, errors,  } =
         useForm({
@@ -76,25 +69,18 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
         setData("folder_name", newFolder);
         setSearch(newFolder);
     };
+    const modalId = `ModalArsipDokumen-${pengajuan.id}`;
 
-    // console.log(pengajuan);
     return (
-        <dialog
-            id={`ModalArsipDokumen-${pengajuan.id}`}
-            onClose={() => setActiveModal(null)}
-            className="modal z-[100]"
-        >
-            <section className="relative w-full space-y-7 max-w-screen-tablet modal-box">
-                <form method="dialog">
-                    <strong className="mb-2 text-xl font-bold">
-                        Arsipkan Dokumen
-                    </strong>
-                    <button className="absolute btn btn-md btn-circle btn-ghost right-2 top-2">
-                        <IoCloseOutline className="w-10 h-10 stroke-accent group-hover/item:fill-white" />
-                    </button>
-                </form>
-
-                <form onSubmit={handleSubmit} className="space-y-5 text-left">
+        <Modal
+        id={modalId} // agar Swal bisa target
+        show={activeModal === modalId}
+        onClose={() => setActiveModal(null)} // agar modal bisa ditutup dengan onClose
+        maxWidth="2xl"
+    >
+            <section className="content-between w-full mx-auto overflow-auto p-7 space-y-7">
+                <strong className="block text-xl text-center">Arsipkan Dokumen</strong>
+                <form onSubmit={handleSubmit} className="space-y-4 text-left">
                     <fieldset>
                         <div className="relative laptop:w-full">
                             <InputLabel
@@ -197,6 +183,6 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal }) {
                     </div>
                 </form>
             </section>
-        </dialog>
+            </Modal>
     );
 }

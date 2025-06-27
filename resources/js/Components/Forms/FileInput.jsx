@@ -32,7 +32,7 @@ export default function FileInput({
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2 p-4 text-center cursor-crosshair ">
                         {isPDF && (
                             <div className="flex flex-col items-center w-full gap-2">
                                 <iframe
@@ -51,12 +51,20 @@ export default function FileInput({
                             {file.name}
                         </a>
 
-                        <p className="text-xs text-gray-400">
-                            {(file.size / 1024).toFixed(1)} KB
-                        </p>
-                        <p className="text-xs font-semibold text-green-500">
-                            File berhasil dipilih
-                        </p>
+                        {file.size ? (
+                            <>
+                                <p className="text-xs text-gray-400">
+                                    {(file.size / 1024).toFixed(1)} KB
+                                </p>
+                                <p className="text-xs font-semibold text-green-500">
+                                    File berhasil dipilih
+                                </p>
+                            </>
+                        ) : (
+                            <p className="text-xs font-semibold text-green-500">
+                                File yang dipilih
+                            </p>
+                        )}
                     </div>
                 )}
                 <input

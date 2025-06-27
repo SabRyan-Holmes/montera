@@ -17,8 +17,10 @@ return new class extends Migration
             $table->enum('tipe', [
                 'PengusulanPAK',
                 'Pengusulan PAK-Pegawai',
+                'Revisi Pengusulan PAK-Pegawai',
                 'Pengusulan PAK-Divisi SDM',
                 'Pengajuan PAK-Divisi SDM',
+                'Revisi Pengajuan PAK-Divisi SDM',
                 'Pengajuan PAK-Pimpinan',
                 'Lainnya'
             ])->default('PengusulanPAK');

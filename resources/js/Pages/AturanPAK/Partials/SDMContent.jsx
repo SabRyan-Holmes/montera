@@ -13,7 +13,7 @@ import {
 } from "@/Components";
 import { FaSave, FaEdit } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
-import { router, useForm } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import PopUpForm from "./PopUpForm";
 import DynamicTableSection from "./DynamicTableSection";
@@ -31,6 +31,42 @@ export default function SDMContent({ aturanPAK }) {
         kesimpulan,
         rumus,
     } = aturanPAK;
+
+    const { flash } = usePage().props;
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    const shown = useRef(new Set());
+
+    useEffect(() => {
+        if (
+            flash.toast &&
+            flash.toast_id &&
+            !shown.current.has(flash.toast_id)
+        ) {
+            Toast.fire({
+                icon: "success",
+                title: flash.toast,
+            });
+
+            shown.current.add(flash.toast_id);
+
+            // Optional: reset biar bisa muncul lagi setelah beberapa detik
+            setTimeout(() => {
+                shown.current.delete(flash.toast_id);
+            }, 3000);
+        }
+    }, [flash.toast_id]);
 
     function handleDelete(id, name) {
         Swal.fire({
@@ -99,6 +135,8 @@ export default function SDMContent({ aturanPAK }) {
         if (aturanPAK) {
             setData("selectedPTId", penandaTangan.default_config);
         }
+        console.log("tebusanKonversi");
+        console.log(tebusanKonversi);
     }, [aturanPAK]);
 
     return (
@@ -209,8 +247,6 @@ export default function SDMContent({ aturanPAK }) {
                                 value="Nama dan NIP"
                                 className="text-xl"
                             />
-
-                            {/* ANCHOR */}
 
                             {penandaTangan.value.map((item, index) => (
                                 <div
@@ -382,7 +418,7 @@ export default function SDMContent({ aturanPAK }) {
                             field: "presentase",
                             width: "15%",
                             center: true,
-                            percent:true
+                            percent: true,
                         },
                     ]}
                     data={predikatPresentase.value}
@@ -541,7 +577,7 @@ export default function SDMContent({ aturanPAK }) {
                                 },
                             ]}
                             data={tebusanKonversi}
-                            defaultConfig={tebusanKonversi.default_config}
+                            // defaultConfig={tebusanKonversi.checked}
                             onAdd={() => {
                                 setPopUpData({
                                     title: "Tebusan Konversi",

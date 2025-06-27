@@ -1,19 +1,13 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { MdDelete, MdPersonSearch } from "react-icons/md";
-import { FaEye, FaFilePdf, FaPrint, FaTrash } from "react-icons/fa6";
+import { MdDelete } from "react-icons/md";
+import { FaEye, FaTrash } from "react-icons/fa6";
 import { Link, router } from "@inertiajs/react";
-import {
-    InputLabel,
-    Pagination,
-    TooltipHover,
-    useFilterSearch,
-} from "@/Components";
+import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
 import Swal from "sweetalert2";
 import { FaEdit } from "react-icons/fa";
-import { IoCloseOutline, IoDocument } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 import Show from "./Show";
-import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import { BsFillSendFill } from "react-icons/bs";
 import PopUpCatatan from "./Partials/PopUpCatatan";
 import moment from "moment/min/moment-with-locales";
@@ -25,14 +19,17 @@ export default function Index({
     title,
     subTitle,
     flash,
-    searchReq: initialSearch,
-    byDaerahReq: initialDaerah,
-    byJabatanReq: initialJabatan,
+    searchReq,
+    jabatanList,
+    kesimpulanList,
+    byJabatanReq,
+    byStatusReq,
+    byKesimpulanReq,
 }) {
     moment.locale("id");
 
     // ===========================================Handling Pop Up,Dialog & Message===========================================
-    console.log(pengajuans);
+
     useEffect(() => {
         if (flash.message) {
             Swal.fire({
@@ -79,19 +76,6 @@ export default function Index({
     }
 
     // ===========================================Handling Search & Filter===========================================
-    const {
-        search,
-        setSearch,
-        byDaerah,
-        setByDaerah,
-        byJabatan,
-        setByJabatan,
-    } = useFilterSearch({
-        initialSearch,
-        initialDaerah,
-        initialJabatan,
-        routeName: "/divisi-sdm/riwayat-pak", // bisa diganti tergantung endpoint-nya
-    });
 
     // ===========================================Logic Lain===========================================
     const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on riwayatPAK.kesimpulan
@@ -107,12 +91,19 @@ export default function Index({
         riwayat_pak_id: "",
         user_nip: auth.user.nip ?? null,
     });
-    // console.log("subtitle");
-    // console.log(subTitle);
+
+    function extractJabatan(jabatanTMT) {
+        for (const jabatan of jabatanList) {
+            if (jabatanTMT.includes(jabatan)) {
+                return jabatan;
+            }
+        }
+        return "Non Fungsional"; // kalau tidak ada yang cocok
+    }
+
     return (
         <Authenticated user={auth.user} title={title}>
             <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                {/* Preview PDF di iframe */}
                 {showIframe && (
                     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
                         <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
@@ -131,17 +122,47 @@ export default function Index({
                         </div>
                     </div>
                 )}
-                {/* Preview PDF di iframe */}
 
-                {/* FilterSearchPegawai */}
-                <FilterSearchPegawai
-                    byJabatan={byJabatan}
-                    setByJabatan={setByJabatan}
-                    byDaerah={byDaerah}
-                    setByDaerah={setByDaerah}
-                    search={search}
-                    setSearch={setSearch}
-                />
+                {isPopUpOpen && (
+                    <PopUpCatatan
+                        onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                        popUpData={popUpData}
+                    />
+                )}
+
+                <section className="flex items-center justify-between w-full">
+                    <FilterSearchCustom
+                        routeName={"/divisi-sdm/riwayat-pak"}
+                        initialFilters={{
+                            byJabatan: byJabatanReq,
+                            byStatus: byStatusReq,
+                            byKesimpulan: byKesimpulanReq,
+                        }}
+                        filtersConfig={[
+                            {
+                                name: "byJabatan",
+                                label: "Jabatan ",
+                                options: jabatanList,
+                            },
+                            {
+                                name: "byKesimpulan",
+                                label: "Kesimpulan ",
+                                options: kesimpulanList,
+                            },
+                            {
+                                name: "byStatus",
+                                label: "Status ",
+                                options: ["Belum Diajukan", "Sudah Diajukan"],
+                            },
+                        ]}
+                        searchConfig={{
+                            name: "search",
+                            label: "Nama/NIP Pegawai",
+                            placeholder: "Ketik Nama/NIP Pegawai..",
+                            initialValue: searchReq,
+                        }}
+                    />
+                </section>
 
                 <section className="pt-3 ">
                     {subTitle && (
@@ -209,15 +230,12 @@ export default function Index({
                                 </thead>
                                 <tbody>
                                     {riwayatPAK.data?.map((pak, i) => (
-                                        <tr
-                                            role="list"
-                                            key={i}
-                                        >
+                                        <tr role="list" key={i}>
                                             <td className="text-center">
                                                 {i + 1}
                                             </td>
                                             <td> {pak["no_surat3"]}</td>
-                                            <td>
+                                            <td className="relative group">
                                                 <span className="block">
                                                     {pak.pegawai["Nama"]}
                                                     {pak.pegawai[
@@ -226,6 +244,14 @@ export default function Index({
                                                 </span>
                                                 <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
                                                     {pak.pegawai["NIP"]}
+                                                </span>
+                                                {/* TODO: Benerin lagi nanti */}
+                                                <span className="badge-xs-secondary">
+                                                    {extractJabatan(
+                                                        pak.pegawai[
+                                                            "Jabatan/TMT"
+                                                        ]
+                                                    )}
                                                 </span>
                                             </td>
                                             {/* <td className="text-center">
@@ -264,8 +290,7 @@ export default function Index({
                                                           ].slice(0, 70) + "..."
                                                         : pak["kesimpulan"]}
                                                 </span>
-
-                                                {/* Tooltip bubble */}
+                                                ={" "}
                                                 {!expandedRows[pak.id] && (
                                                     <div
                                                         className="absolute z-[999] w-20 px-3 py-1 mt-2 text-xs text-white transition-opacity duration-200
@@ -311,18 +336,6 @@ export default function Index({
                                                     </div>
                                                 ) : (
                                                     <div className="relative inline-flex group">
-                                                        {isPopUpOpen && (
-                                                            <PopUpCatatan
-                                                                onClose={() =>
-                                                                    setIsPopUpOpen(
-                                                                        !isPopUpOpen
-                                                                    )
-                                                                }
-                                                                popUpData={
-                                                                    popUpData
-                                                                }
-                                                            />
-                                                        )}
                                                         <button
                                                             as="button"
                                                             onClick={() => {
@@ -353,7 +366,6 @@ export default function Index({
 
                                                 <span className="inline-block mx-1"></span>
 
-                                                {/* Dialog Show Modal */}
                                                 <div className="relative inline-flex group">
                                                     <button
                                                         onClick={() =>
@@ -381,7 +393,7 @@ export default function Index({
                                                         as="a"
                                                         href={route(
                                                             "divisi-sdm.riwayat-pak.edit",
-                                                             pak.id
+                                                            pak.id
                                                         )}
                                                         className="action-btn action-btn-secondary group"
                                                     >
@@ -413,6 +425,16 @@ export default function Index({
                                     ))}
                                 </tbody>
                             </table>
+                            <Pagination
+                                datas={riwayatPAK}
+                                urlRoute="/divisi-sdm/riwayat-pak"
+                                filters={{
+                                    byJabatan: byJabatanReq,
+                                    byStatus: byStatusReq,
+                                    byKesimpulan: byKesimpulanReq,
+                                    search: searchReq,
+                                }}
+                            />
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
@@ -424,19 +446,6 @@ export default function Index({
                         </div>
                     )}
                 </section>
-
-                {riwayatPAK.data.length > 0 && (
-                    // Pagination
-                    <Pagination
-                        datas={riwayatPAK}
-                        urlRoute={`/divisi-sdm/riwayat-pak`}
-                        filters={{
-                            filter1: byDaerah,
-                            filter2: byJabatan,
-                            filterSearch: search,
-                        }}
-                    />
-                )}
             </section>
         </Authenticated>
     );

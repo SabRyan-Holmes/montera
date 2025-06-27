@@ -10,7 +10,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaCheck, FaEraser, FaFileSignature, FaTrash } from "react-icons/fa6";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import SignatureCanvas from "react-signature-canvas";
 import { usePage } from "@inertiajs/react";
 import { PiSignature } from "react-icons/pi";
 import Swal from "sweetalert2";
@@ -531,7 +530,7 @@ export default function ModalCekValidasi({
                             className="border rounded shadow bg-warning/15 text-warning/80 hover:bg-warning/20 hover:border-warning/20 border-warning/20 hover:scale-105"
                         >
                             <MdCancel className="mr-2 scale-125 fill-warning " />
-                            Batalkan Validasi
+                            Reset Validasi
                         </SecondaryButton>
                     </div>
                 )}

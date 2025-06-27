@@ -28,7 +28,7 @@ return new class extends Migration
             // Data pendukung (opsional)
             $table->string('dokumen_utama_path'); // Dokumen penilaian kinerja
             $table->string('dokumen_pendukung_path')->nullable(); // Dokumen penilaian pendidikan (Ijazah Terbaru)
-            $table->foreignId('catatan_pegawai_id')->nullable()->constrained('catatans')->onDelete('cascade');
+            $table->foreignId('catatan_pengusul_id')->nullable()->constrained('catatans')->onDelete('cascade');
 
             // Status pengajuan
             $table->enum('status', [
@@ -39,9 +39,9 @@ return new class extends Migration
             ])->default('diusulkan');
 
             // Tracking proses
-            $table->foreignId('catatan_sdm_id')->nullable()->constrained('catatans')->onDelete('cascade');
+            $table->foreignId('catatan_validator_id')->nullable()->constrained('catatans')->onDelete('cascade');
             $table->datetime('tanggal_ditolak')->nullable();
-            $table->datetime('tanggal_diperbaiki')->nullable();
+            $table->datetime('tanggal_direvisi')->nullable();
             $table->datetime('tanggal_disetujui')->nullable();
 
             $table->timestamps();

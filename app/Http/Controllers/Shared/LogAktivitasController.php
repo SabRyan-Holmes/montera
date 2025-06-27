@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
+use function Laravel\Prompts\search;
+
 class LogAktivitasController extends Controller
 {
     /**
@@ -16,22 +18,21 @@ class LogAktivitasController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
         $logAktivitas = LogAktivitas::latest();
-        // dd($logAktivitas->paginate(10));
-
         $subTitle = GetSubtitle::getSubtitle(
-            request('byStatus'),
-            request('byJabatan'),
-            request('search')
+            byJenisAktivitas: request('byJenisAktivitas'),
+            byRole: request('byRole'),
+            search: request('search')
         );
+
         return Inertia::render('LogAktivitas/Index', [
             "title" => "Log Aktivitas ",
             "subTitle" => $subTitle,
-            "logAktivitas" => $logAktivitas->paginate(10),
+            "logAktivitas" => $logAktivitas->filter(request(['search', 'byJenisAktivitas', 'byRole']))->paginate(10),
             'byRoleReq' => request('byRole'),
-            'byJenisReq' => request('byJenis'),
+            'byJenisReq' => request('byJenisAktivitas'),
             'searchReq' => request('search'),
+            'aktivitasList' => LogAktivitas::distinct()->pluck('aktivitas')->toArray()
         ]);
     }
 

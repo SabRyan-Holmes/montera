@@ -38,14 +38,14 @@ class PengusulanPAKRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tujuan' => 'string|max:150',
+            'tujuan' => 'required|string|max:150',
             'periode_mulai' => 'required|date|date_format:Y-m-d',
             'periode_berakhir' => 'required|date|date_format:Y-m-d|after_or_equal:periode_mulai',
             'ak_terakhir' => 'required|decimal:0,5000',
             'ak_diajukan' => 'required|decimal:0,5000',
             'is_penilaian_pdd' => 'required|boolean',
             'dokumen_utama_path' => 'required|file|mimes:pdf|max:2048',
-            'dokumen_pendukung_path' => 'required_if:is_penilaian_pdd,true|file|mimes:pdf|max:2048',
+            'dokumen_pendukung_path' => 'nullable|required_if:is_penilaian_pdd,true|file|mimes:pdf|max:2048',
         ];
     }
 

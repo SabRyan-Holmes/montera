@@ -84,18 +84,28 @@ export default function Show({ riwayatPAK }) {
                     <h1 className="my-4 text-xl font-medium">
                         Data Riwayat dalam Penetapan Angka Kredit
                     </h1>
-                    <DetailPAKTable  collapse={false} data={riwayatPAK}  onScrollToPengusulanPAK={scrollToPengusulanPAK}/>
+                    <DetailPAKTable
+                        collapse={false}
+                        data={riwayatPAK}
+                        onScrollToPengusulanPAK={scrollToPengusulanPAK}
+                    />
                 </div>
 
-                <div
-                    className="px-2 my-10 mb-16 overflow-x-auto"
-                    ref={pengusulanPAKRef}
-                >
-                    <h1 className="my-4 text-xl font-medium">
-                        Data Pengusulan Sebagai Sumber Penetapan Angka Kredit
-                    </h1>
-                    <PengusulanPAKTable collapse={false} data={pengusulanPAK} />
-                </div>
+                {pengusulanPAK && (
+                    <div
+                        className="px-2 my-10 mb-16 overflow-x-auto"
+                        ref={pengusulanPAKRef}
+                    >
+                        <h1 className="my-4 text-xl font-medium">
+                            Data Pengusulan Sebagai Sumber Penetapan Angka
+                            Kredit
+                        </h1>
+                        <PengusulanPAKTable
+                            collapse={false}
+                            data={pengusulanPAK}
+                        />
+                    </div>
+                )}
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
                     <h1 className="my-4 text-xl font-medium">
@@ -117,9 +127,9 @@ export default function Show({ riwayatPAK }) {
                 </SecondaryButton>
 
                 <PrimaryButton
-                asLink
-                href={route('divisi-sdm.pak.edit', { id: riwayatPAK.id })}
-                 className="text-white bg-secondary"
+                    asLink
+                    href={route("divisi-sdm.pak.edit", { id: riwayatPAK.id })}
+                    className="text-white bg-secondary"
                 >
                     <FaEdit className="w-4 h-4 mr-1 " />
                     Edit Data

@@ -32,6 +32,11 @@ class RiwayatPAK extends Model
         return $this->belongsTo(Pegawai::class);
     }
 
+    public function pengajuan()
+    {
+        return $this->hasOne(Pengajuan::class, 'riwayat_pak_id');
+    }
+
     public function pengusulan_pak()
     {
         return $this->belongsTo(PengusulanPAK::class, 'pengusulan_pak_id');
@@ -60,11 +65,22 @@ class RiwayatPAK extends Model
 
         // Berdasarkan Daerah
         $query->when(
-            $filters['byDaerah'] ?? false,
-            fn($query, $byDaerah) =>
-            $query->whereHas('pegawai', function ($q) use ($byDaerah) {
-                $q->where('Daerah', $byDaerah);
-            })
+            $filters['byKesimpulan'] ?? false,
+            fn($query, $byKesimpulan) =>
+            $query->where('kesimpulan', $byKesimpulan)
+                ->orWhere('kesimpulan', 'like', '%' . $byKesimpulan . '%')
+        );
+
+        // TODO: gimana cara menampilan semua riwayat PAK berdasarkan sudah  diajukan/belum,(riwayat pak ini tidak punya field pengajuan_id, hanya pengajuan,yang punya riwayat_pak_id)
+        $query->when(
+            $filters['byStatus'] ?? false,
+            function ($query, $byStatus) {
+                if ($byStatus === 'Sudah Diajukan') {
+                    $query->whereHas('pengajuan'); // hanya yang punya pengajuan
+                } elseif ($byStatus === 'Belum Diajukan') {
+                    $query->doesntHave('pengajuan'); // hanya yang belum punya pengajuan
+                }
+            }
         );
     }
 

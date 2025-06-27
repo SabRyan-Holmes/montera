@@ -596,9 +596,10 @@ export default function Index({
                             {isRevisi ? (
                                 <PrimaryButton
                                     type="button"
-                                    name="action"
-                                    value="re-submit"
-                                    className="scale-110 hover:scale-[1.15] hover:bg-hijau/80 "
+                                    onClick={() =>
+                                        setActiveModal(`ModalCatatan-${0}`)
+                                    }
+                                    className="scale-110 hover:scale-[1.15]  hover:bg-primary/80 "
                                 >
                                     Ajukan Ulang
                                     <BsFillSendFill className="mx-1" />

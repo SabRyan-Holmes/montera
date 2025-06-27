@@ -209,7 +209,7 @@ class AturanPAKSeeder extends Seeder
                 ],
                 [
                     'id' => 3,
-                    'checked' => false
+                    'checked' => true
                 ],
                 [
                     'id' => 4,
@@ -217,7 +217,7 @@ class AturanPAKSeeder extends Seeder
                 ],
                 [
                     'id' => 5,
-                    'checked' => false
+                    'checked' => true
                 ],
                 [
                     'id' => 6,
@@ -239,7 +239,7 @@ class AturanPAKSeeder extends Seeder
             'default_config' => [
                 [
                     'id' => 1,
-                    'checked' => false
+                    'checked' => true
                 ],
                 [
                     'id' => 2,
@@ -251,7 +251,7 @@ class AturanPAKSeeder extends Seeder
                 ],
                 [
                     'id' => 4,
-                    'checked' => false
+                    'checked' => true
                 ],
                 [
                     'id' => 5,
@@ -289,15 +289,15 @@ class AturanPAKSeeder extends Seeder
                 ],
                 [
                     'id' => 4,
-                    'checked' => false
+                    'checked' => true
                 ],
                 [
                     'id' => 5,
-                    'checked' => false
+                    'checked' => true
                 ],
                 [
                     'id' => 6,
-                    'checked' => false
+                    'checked' => true
                 ],
             ]
         ]);

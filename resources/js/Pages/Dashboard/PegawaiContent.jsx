@@ -104,7 +104,7 @@ export default function PegawaiContent({ dataByRole }) {
                         <h3 className="text-sm tracking-wider">
                             Total Riwayat Karir
                         </h3>
-                        <p className="text-3xl">{pengusulanCount ?? 0}</p>
+                        <p className="text-3xl">{pengusulanPAKCount ?? 0}</p>
                     </div>
                 </div>
             </section>

@@ -13,7 +13,7 @@ class PengusulanPAK extends Model
 
     protected $table = 'pengusulan_pak';
     protected $guarded = ['id'];
-    protected $with = ['pegawai', 'catatan_pegawai', 'catatan_sdm'];
+    protected $with = ['pegawai', 'catatan_pengusul', 'catatan_validator'];
     protected $casts = [
         'periode_mulai' => 'date:Y-m',
         'periode_berakhir' => 'date:Y-m',
@@ -26,14 +26,14 @@ class PengusulanPAK extends Model
         return $this->belongsTo(Pegawai::class, 'pegawai_nip', 'NIP'); // Tambahkan parameter ketiga
     }
 
-    public function catatan_pegawai()
+    public function catatan_pengusul() //pegawai
     {
-        return $this->belongsTo(Catatan::class, 'catatan_pegawai_id',); // Tambahkan parameter ketiga
+        return $this->belongsTo(Catatan::class, 'catatan_pengusul_id'); // Tambahkan parameter ketiga
     }
 
-    public function catatan_sdm()
+    public function catatan_validator() //sdm
     {
-        return $this->belongsTo(Catatan::class, 'catatan_sdm_id',); // Tambahkan parameter ketiga
+        return $this->belongsTo(Catatan::class, 'catatan_validator_id'); // Tambahkan parameter ketiga
     }
 
     public static function byPegawai($nip)
@@ -90,17 +90,6 @@ class PengusulanPAK extends Model
             );
         });
 
-        static::updated(function ($model) {
-            ActivityLogger::log(
-                'Memperbarui Pengusulan PAK',
-                'Data dalam pengusulan PAK diperbarui',
-                get_class($model),
-                $model->id,
-                $model->pegawai_nip ?? null
-            );
-        });
-
-        // . class_basename($model)
         static::deleted(function ($model) {
             ActivityLogger::log(
                 'Membatalkan Pengusulan PAK ',

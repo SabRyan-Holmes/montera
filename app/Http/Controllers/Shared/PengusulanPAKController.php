@@ -10,12 +10,14 @@ use App\Models\Catatan;
 use App\Models\Pegawai;
 use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
+use App\Services\ActivityLogger;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 
@@ -63,9 +65,7 @@ class PengusulanPAKController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
@@ -75,20 +75,17 @@ class PengusulanPAKController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(PengusulanPAKRequest $request)
     {
-        $validated = $request->except(['catatan_pegawai']);
+        $validated = $request->except(['catatan_pengusul']);
 
-        if ($request->catatan_pegawai) {
+        if ($request->catatan_pengusul) {
             $new_catatan = Catatan::create([
                 'user_nip' => $request->pegawai_nip,
                 'tipe' => 'Pengusulan PAK-Pegawai',
-                'isi' => $request->catatan_pegawai,
+                'isi' => $request->catatan_pengusul,
             ]);
-            $validated['catatan_id'] = $new_catatan->id;
+            $validated['catatan_pengusul_id'] = $new_catatan->id;
         }
 
         $uploadMap = [
@@ -111,49 +108,100 @@ class PengusulanPAKController extends Controller
         return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan Penilaian PAK Berhasil!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(PengusulanPAK $pengusulan_pak)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PengusulanPAK $pengusulanPAK, Request $request)
+    public function edit(PengusulanPAK $pengusulanPAK)
     {
         $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
         return Inertia::render('PengusulanPAK/CreateOrEdit', [
             'title' => "Tambah Pengusulan PAK",
             'pegawai' => $pegawai,
-            'pengusulanPAK' => $pengusulanPAK
+            'pengusulanPAK' => $pengusulanPAK,
+            'isEdit' => true
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, PengusulanPAK $pengusulan_pak)
+
+    public function update(Request $request, PengusulanPAK $pengusulanPAK)
     {
-        //
+        $validated = $request->except(['catatan_pengusul']);
+        if ($request->filled('catatan_pengusul')) {
+            $currentCatatan = $pengusulanPAK->catatan_pengusul;
+
+            if ($currentCatatan) {
+                // Cek apakah isinya berubah
+                if ($currentCatatan->isi !== $request->catatan_pengusul) {
+                    $currentCatatan->update([
+                        'isi' => $request->catatan_pengusul,
+                    ]);
+                }
+                $validated['catatan_pengusul_id'] = $currentCatatan->id;
+            } else {
+                // Belum ada catatan sebelumnya, buat baru
+                $new_catatan = Catatan::create([
+                    'user_nip' => $request->pegawai_nip,
+                    'tipe' => 'Pengusulan PAK-Pegawai',
+                    'isi' => $request->catatan_pengusul,
+                ]);
+                $validated['catatan_pengusul_id'] = $new_catatan->id;
+            }
+        }
+
+        $uploadMap = [
+            'dokumen_utama_path' => '-Penilaian-Kinerja~',
+            'dokumen_pendukung_path' => '-Penilaian-Pendidikan~',
+        ];
+
+        foreach ($uploadMap as $field => $alias) {
+            if ($request->hasFile($field)) {
+                // hapus file lama kalo diupload ulang dokumen utama/pendukung
+                if ($pengusulanPAK->$field) {
+                    Storage::disk('public')->delete($pengusulanPAK->$field);
+                }
+
+                $file = $request->file($field);
+                $extension = $file->getClientOriginalExtension();
+                $timestamp = now()->format('Ymd_His');
+                $fileName = $request->pegawai_nip . $alias . $timestamp . '.' . $extension;
+                $path = $file->storeAs('dokumen_pengusulanPAK', $fileName, 'public');
+                $validated[$field] = $path;
+            }
+        }
+
+        $validated['status'] = 'direvisi';
+        $validated['tanggal_direvisi'] = now();
+
+        $pengusulanPAK->update($validated);
+        ActivityLogger::log(
+            pegawaiNip: $this->user->nip,
+            aktivitas: "Revisi Pengusulan PAK",
+            keterangan: "Pegawai dengan nama: {$this->user->name} merevisi pengusulan PAK dengan ID: #{$pengusulanPAK->id} ",
+            entityType: get_class($pengusulanPAK),
+            entityId: $pengusulanPAK->id
+        );
+        return redirect()->route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan PAK berhasil direvisi & diusulkan ulang');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PengusulanPAK $pengusulan_pak)
+    public function destroy(PengusulanPAK $pengusulanPAK)
     {
-        $pengusulan_pak->delete();
+        $pengusulanPAK->delete();
         return redirect()->back()->with('message', 'Berhasil Membatalkan Pengusulan PAK');
     }
 
-    public function approve(Request $request)
+    public function approve(PengusulanPAK $pengusulanPAK)
     {
-        PengusulanPAK::find($request->id)->update([
+        // dd($pengusulanPAK);
+        $pengusulanPAK->update([
             "status" => 'disetujui',
+            "tanggal_disetujui" => now()
         ]);
+        ActivityLogger::log(
+            aktivitas: "Setujui Pengusulan PAK",
+            keterangan: "{$this->user->name} ({$this->user->role} menyetujui pengusulan PAK dengan ID: #{$pengusulanPAK->id} ",
+            entityType: get_class($pengusulanPAK),
+            entityId: $pengusulanPAK->id
+        );
     }
 
     public function reject(Request $request)
@@ -163,28 +211,42 @@ class PengusulanPAKController extends Controller
             'catatan' => 'required|string|min:5|max:200',
         ];
         $request->validate($rules);
-        // dd($request->all());
-        // Store Catatan & The Relationship with Pengusulan & User
+
         $new_catatan = Catatan::create([
             'user_nip' => $this->user->nip,
             'isi' => $request->catatan,
             'tipe' => "Pengusulan PAK-Divisi SDM"
         ]);
-        PengusulanPAK::find($request->id)->update([
+        $pengusulanPAK = PengusulanPAK::find($request->id)->update([
             'status' => 'ditolak',
-            'catatan_sdm_id' => $new_catatan->id
+            'tanggal_ditolak' => now(),
+            'catatan_validator_id' => $new_catatan->id
         ]);
+        ActivityLogger::log(
+            aktivitas: "Tolak Pengusulan PAK",
+            keterangan: "{$this->user->name} menolak pengusulan PAK dengan ID: #{$pengusulanPAK->id} ",
+            entityType: get_class($pengusulanPAK),
+            entityId: $pengusulanPAK->id
+        );
 
         return redirect()->back()->with('message', 'Pengusulan PAK berhasil ditolak');
     }
 
-    public function undo_reject(Request $request)
+    public function undo_validate(Request $request)
     {
-        // dd($request->all());
-        PengusulanPAK::find($request->id)->update([
+        $pengusulanPAK = PengusulanPAK::find($request->id)->update([
             "status" => 'diproses',
+            'approved_by' => null,
+            'tanggal_ditolak' => null,
+            'tanggal_disetujui' => null,
+            'catatan_validator_id' => null,
         ]);
-        // Redirect kembali dengan pesan sukses
+        ActivityLogger::log(
+            aktivitas: "Reset Validasi Pengusulan PAK",
+            keterangan: "{$this->user->name} mereset validasi pengusulan PAK dengan ID: #{$pengusulanPAK->id} ",
+            entityType: get_class($pengusulanPAK),
+            entityId: $pengusulanPAK->id
+        );
         return redirect()->back()->with('message', 'Penolakan pengusulan berhasil dibatalkan');
     }
 }

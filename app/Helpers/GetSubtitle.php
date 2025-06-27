@@ -8,10 +8,12 @@ class GetSubtitle
         ?string $byJabatan = null,
         ?string $byDaerah = null,
         ?string $search = null,
-        ?string $byJenisPerubahan = null,
+        ?string $byJenisPerubahan = null, //perubahan di riwayatKarir
+        ?string $byJenisAktivitas = null, //perubahan di logAktivitas
         ?string $byStatus = null,
         ?string $searchLabel = "Cari pegawai dengan Nama/NIP : ",
-        ?string $byKesimpulan = null
+        ?string $byKesimpulan = null,
+        ?string $byRole = null
     ): string {
         $filters = [];
 
@@ -25,6 +27,10 @@ class GetSubtitle
 
         if ($byJenisPerubahan) {
             $filters[] = "Jenis Perubahan : $byJenisPerubahan";
+        }
+
+        if ($byJenisAktivitas) {
+            $filters[] = "Jenis Aktivitas : $byJenisAktivitas";
         }
 
         if ($byStatus) {

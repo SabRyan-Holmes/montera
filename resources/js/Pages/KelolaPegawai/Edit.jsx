@@ -69,10 +69,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
 
     useEffect(() => {
         if (errors && Object.values(errors).length > 0) {
-            // Ambil nilai pertama dari object errors
             const firstErrorMessage = Object.values(errors)[0];
-            // console.log("firstErrorMessage :");
-            // console.log(firstErrorMessage);
             Toast.fire({
                 icon: "warning",
                 iconColor: "#fb7185",

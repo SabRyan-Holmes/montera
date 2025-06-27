@@ -58,9 +58,9 @@ Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('div
 
     // Pengusulan PAK(R, Accept, Reject)
     Route::get('pengusulan-pak/', [PengusulanPAKController::class, 'index'])->name('pengusulan-pak.index');
-    Route::post('pengusulan-pak/approve', [PengusulanPAKController::class, 'approve'])->name('pengusulan-pak.approve');
+    Route::post('pengusulan-pak/approve/{pengusulanPAK}', [PengusulanPAKController::class, 'approve'])->name('pengusulan-pak.approve');
     Route::post('pengusulan-pak/reject', [PengusulanPAKController::class, 'reject'])->name('pengusulan-pak.reject');
-    Route::post('pengusulan-pak/undo-reject', [PengusulanPAKController::class, 'undo_reject'])->name('pengusulan-pak.undo-reject');
+    Route::post('pengusulan-pak/undo-validate', [PengusulanPAKController::class, 'undo_validate'])->name('pengusulan-pak.undo-validate');
 
     // Penetapan Angka Kredit(CRUD, Submit) => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
     Route::prefix('/pak')->name('pak.')->group(function () {
@@ -74,7 +74,6 @@ Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('div
     // Pengajuan PAK(CRUD, Revisi, RESEBMIT, Cancel) //NOTE!! Urutan jangan diubah, resource harus paling bawah
     Route::get('/pengajuan/revisi', [PengajuanController::class, 'revisi'])->name('pengajuan.revisi');
     Route::patch('/pengajuan/ajukan-ulang', [PengajuanController::class, 'ajukan_ulang'])->name('pengajuan.ajukan-ulang');
-    Route::post('/cancel/{pengajuan}', [PengajuanController::class, 'cancel_pengajuan'])->name('pengajuan.cancel');
     Route::resource('pengajuan', PengajuanController::class);
 
 
@@ -95,8 +94,8 @@ Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('div
     Route::resource('pegawai', PegawaiController::class);
 
     // Kelola Aturan PAK(CRUD)
-    Route::resource('aturan-pak', AturanPAKController::class);
     Route::post('/aturan-pak/set-default-config', [AturanPAKController::class, 'set_default_config'])->name('aturan-pak.set-default-config');
+    Route::resource('aturan-pak', AturanPAKController::class);
 
     // =================INFO=================
 
@@ -121,12 +120,13 @@ Route::middleware(['authOrSSO', 'pimpinan'])->prefix('pimpinan')->name('pimpinan
     Route::prefix('/pengajuan')->name('pengajuan.')->group(function () {
         Route::get('/', [PengajuanController::class, 'index'])->name('index');
         Route::post('/approve/{pengajuan}', [PengajuanController::class, 'approve'])->name('approve');
-        Route::post('/undo-validate/{pengajuan}', [PengajuanController::class, 'undo_validate'])->name('undo-validate');
         Route::post('/reject/{pengajuan}', [PengajuanController::class, 'reject'])->name('reject');
+        Route::post('/undo-validate/{pengajuan}', [PengajuanController::class, 'undo_validate'])->name('undo-validate');
     });
 
     // Aturan PAK(R)
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');
+    Route::post('/aturan-pak/set-pt', [AturanPAKController::class, 'setPenandaTangan'])->name('aturan-pak.set-pt');
 
     // Daftar Pegawai(R)
     Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai.index');
@@ -150,7 +150,7 @@ Route::middleware(['authOrSSO', 'pimpinan'])->prefix('pimpinan')->name('pimpinan
 // <============================================================ Pegawai ============================================================>
 Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(function () {
     // Pengusulan(CR)
-    Route::resource('pengusulan-pak', PengusulanPAKController::class)->parameters(['pengusulan-pak' => 'pengusulanPAK'])->only(['index','create', 'store', 'show', 'edit', 'update', 'destroy']);;
+    Route::resource('pengusulan-pak', PengusulanPAKController::class)->parameters(['pengusulan-pak' => 'pengusulanPAK']);
 
     //Status Proses PAK/Pengajuan(R)
     Route::get('/proses-pak/pengajuan', [PengajuanController::class, 'index'])->name('proses-pak.index');

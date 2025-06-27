@@ -17,11 +17,10 @@ export default function DynamicTableSection({
     addButtonText = "Tambah Data",
     sortField = "nilai",
     showHeader = true,
-    defaultConfig,
+    defaultConfig = false,
     withAction = true,
 }) {
     moment.locale("id");
-    // console.log('data')
 
     const [dataForm, setDataForm] = useState({
         updateName: title, // Langsung isi dengan title
@@ -30,15 +29,16 @@ export default function DynamicTableSection({
 
     // Cek apakah item aktif (untuk tebusan)
     const isTebusanActive = (itemId) => {
+        // ANCHOR
         // Saya ga ngerti kode diabwah, tapi kayny pengecekanny salah
-        // if (!title.includes("Tebusan")) return false;
-        // const tebusanConfig = data.find(
-        //     (d) => d.name === title
-        // )?.default_config;
-        // if (!tebusanConfig) return false;
-        // return tebusanConfig.some(
-        //     (config) => config.id === itemId && config.checked
-        // );
+        if (!isTebusan) return false;
+        const tebusanConfig = data.find(
+            (d) => d.name === title
+        )?.default_config;
+        if (!tebusanConfig) return false;
+        return tebusanConfig.some(
+            (config) => config.id === itemId && config.checked
+        );
     };
 
     // Cek default config (untuk non-tebusan)
@@ -50,46 +50,24 @@ export default function DynamicTableSection({
         if (!id) return;
 
         try {
-            const isTebusan = title.includes("Tebusan");
+            const tipePenetapan = "Tebusan " + title.trim().split(" ")[0];
             const payload = {
-                updateName: title,
-                value: isTebusan
-                    ? JSON.stringify({ id: id, toggle: true })
-                    : id,
-                _token: document.querySelector('meta[name="csrf-token"]')
-                    .content,
+                updateName: tipePenetapan, // contoh: "Tebusan Konversi"
+                isTebusan: true,
+                target_id: id, // ganti nama field biar gak ambigu
             };
 
-            // Membuat headers secara dinamis berdasarkan isTebusan
-            const headers = {
-                Accept: "application/json",
-            };
-
-            // Hanya tambahkan Content-Type jika isTebusan true
-            if (isTebusan) {
-                headers["Content-Type"] = "application/json";
-            }
-
-            const response = await router.post(
+            router.post(
                 route("divisi-sdm.aturan-pak.set-default-config"),
                 payload,
                 {
                     preserveState: true,
                     preserveScroll: true,
-                    headers: headers, // Gunakan headers yang sudah dibuat
+                    onError: (err) => alert("Gagal: " + JSON.stringify(err)),
                 }
             );
-
-            if (response?.data?.success) {
-                await refreshData();
-                Swal.fire("Berhasil!", response.data.message, "success");
-            }
         } catch (err) {
-            Swal.fire(
-                "Gagal!",
-                err.response?.data?.message || "Terjadi kesalahan",
-                "error"
-            );
+            Swal.fire("Error!", err.message || "Gagal toggle tebusan", "error");
         }
     };
 
@@ -109,7 +87,7 @@ export default function DynamicTableSection({
             // Update state dan langsung gunakan nilai baru
             setDataForm(formData);
 
-            const response = await router.post(
+            const response = router.post(
                 route("divisi-sdm.aturan-pak.set-default-config"),
                 formData, // Gunakan objek langsung, bukan dataForm
                 {
@@ -130,7 +108,11 @@ export default function DynamicTableSection({
             });
         }
     };
-    // console.log('data dynamic table section ', title,' : ' ,  data)
+
+    const isTebusan = ["Konversi", "Akumulasi", "Penetapan"].some((keyword) =>
+        title.includes(keyword)
+    );
+
     const CheckLastIdx = (idx, arr) => idx === arr.length - 1;
     return (
         <section className="flex flex-col flex-1">
@@ -208,53 +190,42 @@ export default function DynamicTableSection({
                                             onClick={() => {
                                                 if (!withAction) return;
 
-                                                if (
-                                                    item.id &&
-                                                    title.includes("Tebusan")
-                                                ) {
+                                                if (isTebusan) {
                                                     handleSetDefaultTebusan(
                                                         item.id
                                                     );
-                                                } else {
+                                                } else if (defaultConfig) {
                                                     handleSetDefault(item.id);
                                                 }
                                             }}
                                             key={idx}
                                             className={[
-                                                "cursor-pointer relative group",
+                                                "relative group",
                                                 "font-semibold",
                                                 col.center && "text-center",
                                                 withAction &&
-                                                    "hover:text-secondary hover:bg-secondary/15",
-                                                withAction &&
-                                                title.includes("Tebusan")
-                                                    ? isTebusanActive(item.id)
-                                                        ? "bg-blue-50"
-                                                        : "bg-slate-600"
-                                                    : withAction &&
-                                                      isDefault(item.id)
-                                                    ? "bg-green-50"
+                                                (defaultConfig || isTebusan)
+                                                    ? "cursor-pointer hover:text-secondary hover:bg-secondary/15"
                                                     : "",
                                             ]
                                                 .filter(Boolean)
                                                 .join(" ")}
                                         >
-                                            {/* Conditional rendering yang benar */}
-                                            {/* ANCHOR : TODO: Benerin lagi tampilan untuk tebusan dan bisa diatur defaultny*/}
+                                            {/* TODO: Benerin lagi tampilan untuk tebusan dan bisa diatur defaultny*/}
 
-                                            {title.includes("Tebusan") ? (
+                                            {isTebusan ? (
                                                 <div className="flex items-center gap-2">
                                                     <span>
                                                         {item.pihak_tebusan}{" "}
+                                                        {"id : "} {item.id}
                                                         {isTebusanActive(
                                                             item.id
                                                         )}
                                                     </span>
                                                     {withAction &&
-                                                        isTebusanActive(
-                                                            item.id
-                                                        ) && (
-                                                            <span className="text-white bg-green-500 badge">
+                                                        item.checked ===
+                                                            true && (
+                                                            <span className="badge-xs-primary">
                                                                 Aktif
                                                             </span>
                                                         )}
@@ -264,23 +235,23 @@ export default function DynamicTableSection({
                                                     {col.percent
                                                         ? `${item[col.field]}%`
                                                         : item[col.field]}
-
-                                                    {/* If Default Value Setted(Divisi SDM View) */}
-                                                    {(withAction &&
+                                                    {withAction &&
                                                         item.id ==
-                                                            defaultConfig) && (
-                                                            <span className="badge-optional">
+                                                            defaultConfig && (
+                                                            <span className="badge-xs-secondary">
                                                                 Default
                                                             </span>
                                                         )}
                                                 </span>
                                             )}
-                                            {withAction && (
-                                                <TooltipHover
-                                                    className="text-sm w-36"
-                                                    message="Atur sebagai default"
-                                                />
-                                            )}
+                                            {withAction &&
+                                                (defaultConfig ||
+                                                    isTebusan) && (
+                                                    <TooltipHover
+                                                        className="text-sm w-36"
+                                                        message="Atur sebagai default"
+                                                    />
+                                                )}
                                         </td>
                                     ))}
                                     <td className="text-sm text-center text-nowrap">

@@ -18,10 +18,10 @@ export default function ModalCekPengusulan({
     pengusulanPAK,
     setActiveModal,
     activeModal,
-    isDivisiSDM,
-    setPopUpData,
-    setIsPopUpOpen,
+    handleApprove,
+    handleReject
 }) {
+    const { isDivisiSDM } = usePage().props;
     const { data, setData, reset, post, processing, errors, clearErrors } =
         useForm({
             id: pengusulanPAK.id,
@@ -60,7 +60,7 @@ export default function ModalCekPengusulan({
             cancelButtonColor: "#9ca3af",
         }).then((result) => {
             if (result.isConfirmed) {
-                post(route("divisi-sdm.pengusulan-pak.undo-reject", data), {
+                post(route("divisi-sdm.pengusulan-pak.undo-validate", data), {
                     preserveState: false,
                     onSuccess: () => {},
                     onError: () => {},
@@ -75,48 +75,7 @@ export default function ModalCekPengusulan({
     const [showIframe, setShowIframe] = useState(false);
     const [linkIframe, setLinkIframe] = useState("");
 
-    const handleApprove = () => {
-        post(route("divisi-sdm.pengusulan-pak.approve", data), {
-            preserveScroll: true,
-            preserveState: true,
-            onError: (errors) => {
-                console.log("Error:", errors);
-            },
-            onSuccess: () => {
-                Swal.fire({
-                    target: `#DialogCekPengusulan-${pengusulanPAK.id}`,
-                    title: "Berhasil!",
-                    text: "Pengusulan PAK telah disetujui.",
-                    icon: "success",
-                    showCancelButton: true,
-                    confirmButtonText: "Proses PAK Sekarang?",
-                    cancelButtonText: "Nanti Saja",
-                    confirmButtonColor: "#2D95C9",
-                    cancelButtonColor: "#9ca3af",
-                    customClass: {
-                        actions: "my-actions",
-                        cancelButton: "order-1 right-gap",
-                        confirmButton: "order-2",
-                        denyButton: "order-3",
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        router.get(
-                            route(
-                                "divisi-sdm.pak.create-by-pengusulan",
-                                pengusulanPAK.id
-                            )
-                        );
-                        setShowIframe(false);
-                    }
-                });
-                // console.log("Sukses Menyetujui");
-            },
-        });
-    };
-
-    const { props } = usePage();
-    // alert(pengusulanPAK.status)
+    console.warn(pengusulanPAK)
     const modalId = `ModalCekPengusulan-${pengusulanPAK.id}`;
     return (
         <Modal
@@ -164,50 +123,14 @@ export default function ModalCekPengusulan({
                         />
                     </div>
 
-                    <div className="px-2 my-10 mb-16 overflow-x-auto">
+                    <div className="px-2 mb-16 overflow-x-auto">
                         <h1 className="my-4 text-xl font-medium">
                             Data Pegawai dalam Pengusulan
                         </h1>
                         <DetailPegawai pegawai={pengusulanPAK.pegawai} />
                     </div>
 
-                    {isDivisiSDM && (
-                        <div>
-                            {/* IF Approved */}
-                            {pengusulanPAK.status === "disetujui" && (
-                                <>
-                                    <div
-                                        role="alert"
-                                        className="mb-20 alert bg-hijau"
-                                    >
-                                        <FaRegCircleCheck className="w-5 h-5" />
-                                        <span className="text-base font-medium text-black">
-                                            Pengusulan PAK ini sudah disetujui!
-                                        </span>
-                                    </div>
-                                </>
-                            )}
-                            {/* IF Rejected */}
-                            {pengusulanPAK.status === "ditolak" && (
-                                <>
-                                    <div
-                                        role="alert"
-                                        className="mb-20 alert bg-warning"
-                                    >
-                                        <CgCloseO className="w-6 h-6" />
-                                        <span className="text-base font-medium text-black">
-                                            Pengusulan PAK ini sudah telah
-                                            ditolak!
-                                        </span>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    )}
                 </section>
-                {/*  CONTENT START */}
-
-
             </main>
             {isDivisiSDM && (
                     <>
@@ -277,7 +200,7 @@ export default function ModalCekPengusulan({
                                     className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
                                 >
                                     <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                    Batalkan Persetujuan
+                                    Reset Validasi
                                 </SecondaryButton>
                             </section>
                         )}
