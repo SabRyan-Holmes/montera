@@ -27,11 +27,11 @@ export default function Login({ status, canResetPassword }) {
     const submit = (e) => {
         e.preventDefault();
         const routeName = e.nativeEvent.submitter.value;
-        // alert(routeName)
-        post(route(routeName));
+        post(route(routeName), {
+            onError: (err) => alert(JSON.stringify(err))
+        });
     };
 
-    // console.log(errors);
 
     return (
         <GuestLayout>
@@ -126,24 +126,30 @@ export default function Login({ status, canResetPassword }) {
                         </label>
                     </div>
 
-                    <div className="flex items-center justify-end mt-4">
+                    <div className="flex items-center justify-end w-full mt-4">
                         {canResetPassword && (
                             <Link
+                                as="a"
                                 href={route("password.request")}
-                                className="text-sm text-gray-600 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                                className="-ml-5"
                             >
                                 Forgot your password?
                             </Link>
                         )}
                         <SecondaryButton
-                                asLink
-                                type="button"
-                                href={route("sso-login.form")}
-                                className="font-extrabold bg-secondary/5 text-nowrap hover:scale-105"
-                            >
-                                Login SSO
-                            </SecondaryButton>
-                        <PrimaryButton name="action" value="login" className="scale-105 hover:scale-[1.15] ms-3" disabled={processing}>
+                            asLink
+                            type="button"
+                            href={route("sso-login.form")}
+                            className="font-extrabold bg-secondary/5 text-nowrap hover:scale-105"
+                        >
+                            Login SSO
+                        </SecondaryButton>
+                        <PrimaryButton
+                            name="action"
+                            value="login"
+                            className="scale-105 hover:scale-[1.15] ms-3"
+                            disabled={processing}
+                        >
                             Masuk
                         </PrimaryButton>
                     </div>

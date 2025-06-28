@@ -1,52 +1,116 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { InputLabel, PrimaryButton, SecondaryButton, TooltipHover } from "@/Components";
+import {
+    InputLabel,
+    PrimaryButton,
+    SecondaryButton,
+    TooltipHover,
+} from "@/Components";
 import { RiArchive2Fill, RiArrowGoBackFill } from "react-icons/ri";
 import { FaDatabase, FaFolder, FaFileAlt, FaEdit } from "react-icons/fa";
 import { FaClockRotateLeft, FaEye, FaFilePdf, FaTrash } from "react-icons/fa6";
 import { HiDocumentSearch } from "react-icons/hi";
 import moment from "moment/min/moment-with-locales";
+import { IoCloseOutline } from "react-icons/io5";
+import Swal from "sweetalert2";
+import { router, usePage, useRemember } from "@inertiajs/react";
+import PopUpForm from "../AturanPAK/Partials/PopUpForm";
 
 export default function Index({
     auth,
     arsipDokumens,
     folderList,
     title,
+    subTitle,
     flash,
     searchReq: initialSearch,
 }) {
     moment.locale("id");
 
+    const [shownMessages, setShownMessages] = useRemember([]);
+    useEffect(() => {
+        if (flash.message) {
+            Swal.fire({
+                title: "Berhasil!",
+                text: `${flash.message}`,
+                icon: "success",
+                iconColor: "#50C878",
+                confirmButtonText: "Oke",
+                confirmButtonColor: "#2D95C9",
+            });
+            setShownMessages([...shownMessages, flash.message]);
+        }
+    }, [flash.message]);
     const [search, setSearch] = useState(initialSearch);
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
     const role = auth.user.role;
 
-    const folders = [
-        { name: "PAK 2024", count: 12 },
-        { name: "Kenaikan Pangkat", count: 7 },
-        { name: "SK Jabatan", count: 5 },
-    ];
-
-    const recentDocs = [
-        { name: "Surat Tugas.pdf", size: "1.2MB", uploadedAt: "2025-05-28" },
-        {
-            name: "Penilaian Kinerja.xlsx",
-            size: "560KB",
-            uploadedAt: "2025-05-27",
-        },
-        {
-            name: "SK Pengangkatan.docx",
-            size: "850KB",
-            uploadedAt: "2025-05-25",
-        },
-    ];
-
     function formatSize(sizeInBytes) {
         const sizeInMB = (sizeInBytes / 1024 / 1024).toFixed(2);
         return `${sizeInMB} MB`;
-      }
+    }
+
+    const handleViewDocument = (path) => {
+        const url = `/storage/${path}`;
+        setLinkIframe(url);
+        setShowIframe(true);
+    };
+
+    const handleEdit = (data) => {
+        setIsEdit(true);
+        setDataEdit(data);
+        setPopUpData({
+            title: "Arsip Dokumen",
+            fields: ["title", "folder_name"],
+            routeName: route(
+                `${formatRole(role)}.arsip-dokumen.update`,
+                data.id
+            ),
+        });
+        setIsPopUpOpen(!isPopUpOpen);
+    };
+
+    function handleDelete(id) {
+        Swal.fire({
+            icon: "warning",
+            text: "Anda yakin ingin menghapus arsip dokumen ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(
+                    route(`${formatRole(role)}.arsip-dokumen.destroy`, id),
+                    {
+                        onError: () => {
+                            alert("Gagal Menghapus Data");
+                        },
+                    }
+                );
+            }
+        });
+    }
+
+    const [showIframe, setShowIframe] = useState(false);
+    const [linkIframe, setLinkIframe] = useState("");
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [dataEdit, setDataEdit] = useState(null);
+    const [isEdit, setIsEdit] = useState(false);
+    const [popUpData, setPopUpData] = useState({
+        title: "",
+        fields: [],
+        routeName: "",
+    });
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -84,6 +148,33 @@ export default function Index({
                     </SecondaryButton>
                 </div>
 
+                {showIframe && (
+                    <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                        <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                            <button
+                                className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
+                                onClick={() => setShowIframe(false)}
+                            >
+                                <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
+                            </button>
+                            <iframe
+                                src={linkIframe}
+                                width="100%"
+                                height="100%"
+                                className="border-0"
+                            ></iframe>
+                        </div>
+                    </div>
+                )}
+
+                {isPopUpOpen && (
+                    <PopUpForm
+                        onClose={() => setIsPopUpOpen(!isPopUpOpen)}
+                        isEdit={isEdit}
+                        popUpData={popUpData}
+                        dataEdit={dataEdit}
+                    />
+                )}
                 <section>
                     <form className="w-full mx-auto">
                         <div className="flex items-center justify-between gap-3 my-3">
@@ -102,7 +193,7 @@ export default function Index({
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                        <HiDocumentSearch  className="w-6 h-6 fill-primary" />
+                                        <HiDocumentSearch className="w-6 h-6 fill-primary" />
                                     </div>
                                     <input
                                         type="search"
@@ -134,6 +225,8 @@ export default function Index({
                     </h2>
                     <div className="overflow-x-auto scrollbar-hide">
                         <div className="flex gap-4 px-1 w-max">
+
+                            {/* Saya ingin ini ditampilkan nama folder sesuai kecocokan nama folderny */}
                             {folderList.length === 0 ? (
                                 <p className="text-sm text-gray-500">
                                     Belum ada folder
@@ -166,49 +259,91 @@ export default function Index({
                         <strong className="">Terbaru</strong>
                     </h2>
                     <div className="p-4 overflow-x-auto bg-white shadow-md rounded-xl">
-                        <table className="table w-full">
-                            <thead>
-                                <tr className="text-sm text-gray-600">
-                                    <th width="40%" >Nama Dokumen</th>
-                                    <th>Ukuran</th>
-                                    <th>Diarsipkan</th>
-                                    <th>Divalidasi</th>
-                                    <th className="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {arsipDokumens.data.map((data, idx) => (
-                                    <tr
-                                        key={idx}
-                                        className="overflow-hidden cursor-pointer group/item hover:bg-primary/40"
-                                    >
-                                        <td className="flex items-center gap-2">
-                                            <FaFilePdf className="text-green-500" />
-                                            {data.title}
-                                        </td>
-                                        <td>{formatSize(data.size)}</td>
-                                        <td>{moment(data.created_at).fromNow()}</td>
-                                        <td>{moment(data.tanggal_divalidasi).fromNow()}</td>
-                                        {/* TODO: Logic Action Button */}
-                                        <td className="space-x-2 text-center text-nowrap ">
-                                            <button className="relative group action-btn action-btn-primary">
-                                                <FaEye className='scale-125 group-hover:fill-white' />
-                                                <TooltipHover message='Lihat Dokumen'/>
-                                            </button>
-                                            <button className="relative group action-btn action-btn-secondary">
-                                                <FaEdit className='scale-125 group-hover:fill-white' />
-                                                <TooltipHover message='Lihat Dokumen'/>
-                                            </button>
-                                            <button className="relative group action-btn action-btn-warning">
-                                                <FaTrash className='scale-125 group-hover:fill-white' />
-                                                <TooltipHover message='Lihat Dokumen'/>
-                                            </button>
+                                                    {/* Saya ingin ini ditampilkan nama dokumen ini sesuai kecocokan nama folderny saat */}
 
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        {arsipDokumens.data.length > 0 ? (
+                            <section>
+                                <table className="table w-full">
+                                    <thead>
+                                        <tr className="text-sm text-gray-600">
+                                            <th width="40%">Nama Dokumen</th>
+                                            <th>Ukuran</th>
+                                            <th>Diarsipkan</th>
+                                            <th>Divalidasi</th>
+                                            <th className="text-center">
+                                                Aksi
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {arsipDokumens.data.map((data, idx) => (
+                                            <tr
+                                                key={idx}
+                                                className="overflow-hidden cursor-pointer group/item hover:bg-primary/40"
+                                            >
+                                                <td className="flex items-center gap-2">
+                                                    <FaFilePdf className="text-green-500" />
+                                                    {data.title}
+                                                </td>
+                                                <td>{formatSize(data.size)}</td>
+                                                <td>
+                                                    {moment(
+                                                        data.created_at
+                                                    ).fromNow()}
+                                                </td>
+                                                <td>
+                                                    {moment(
+                                                        data.tanggal_divalidasi
+                                                    ).fromNow()}
+                                                </td>
+                                                {/* TODO: Logic Action Button */}
+                                                <td className="space-x-2 text-center text-nowrap ">
+                                                    <button
+                                                        onClick={(e) =>
+                                                            handleViewDocument(
+                                                                data.file_path
+                                                            )
+                                                        }
+                                                        className="relative group action-btn action-btn-primary"
+                                                    >
+                                                        <FaEye className="scale-125 group-hover:fill-white" />
+                                                        <TooltipHover message="Lihat Dokumen" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleEdit(data)
+                                                        }
+                                                        className="relative group action-btn action-btn-secondary"
+                                                    >
+                                                        <FaEdit className="scale-125 group-hover:fill-white" />
+                                                        <TooltipHover message="Edit Dokumen" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                data.id
+                                                            )
+                                                        }
+                                                        className="relative group action-btn action-btn-warning"
+                                                    >
+                                                        <FaTrash className="scale-125 group-hover:fill-white" />
+                                                        <TooltipHover message="Hapus Dokumen" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </section>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-56">
+                                <h2 className="text-2xl font-bold text-gray-600">
+                                    {!subTitle
+                                        ? "Belum Ada Arsip Dokumen Untuk Saat Ini"
+                                        : "Tidak Ditemukan"}
+                                </h2>
+                            </div>
+                        )}
                     </div>
                 </section>
             </main>

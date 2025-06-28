@@ -8,14 +8,10 @@ use App\Http\Requests\Pegawai\PengusulanPAKRequest;
 use App\Models\AturanPAK;
 use App\Models\Catatan;
 use App\Models\Pegawai;
-use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
+use App\Models\RiwayatPAK;
 use App\Services\ActivityLogger;
-use Carbon\Carbon;
-use DateTime;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -37,12 +33,20 @@ class PengusulanPAKController extends Controller
 
     public function index()
     {
-        $pengusulan_pak = PengusulanPAK::latest();
+        // TODO
+        $pengusulanPAK = PengusulanPAK::with([
+            'pegawai:id,NIP,Nama,Gelar Tambahan,Jabatan/TMT'
+        ])->latest();
+
 
         if ($this->user->role === "Pegawai") {
-            $pengusulan_pak = PengusulanPAK::where('pegawai_nip', $this->user->nip)->latest();
+            $pengusulanPAK = PengusulanPAK::with([
+                'pegawai:id,NIP,Nama,Gelar Tambahan,Jabatan/TMT'
+            ])->where('pegawai_nip', $this->user->nip)->latest();
         }
 
+        $filtered = $pengusulanPAK->filter(request(['search', 'byJabatan', 'byStatus']));
+        $data = $filtered->paginate(10)->withQueryString();
         $subTitle = GetSubtitle::getSubtitle(
             byJabatan: request('byJabatan'),
             byStatus: request('byStatus'),
@@ -56,12 +60,13 @@ class PengusulanPAKController extends Controller
         return Inertia::render('PengusulanPAK/Index', [
             "title" => "Pengusulan Penilaian PAK ",
             "subTitle" => $subTitle,
-            "pengusulanPAK" => $pengusulan_pak->filter(request(['search', 'byJabatan', 'byStatus']))->paginate(10),
+            "pengusulanPAK" => $data,
             'isDivisiSDM' => $this->user->role == 'Divisi SDM',
             "searchReq" => request('search') ?? "",
-            "byStatusReq" => request('byStatus') ?? "Semua Kategori",
-            "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",
-            "jabatanList" => $jabatan_list
+            "byStatusReq" => request('byStatus'),
+            "byJabatanReq" => request('byJabatan'),
+            "jabatanList" => $jabatan_list,
+            'processed' => RiwayatPAK::whereNotNull('pengusulan_pak_id')->pluck('pengusulan_pak_id')->toArray(),
         ]);
     }
 
@@ -74,6 +79,8 @@ class PengusulanPAKController extends Controller
             'pegawai' => $pegawai
         ]);
     }
+
+
 
     public function store(PengusulanPAKRequest $request)
     {
@@ -108,6 +115,18 @@ class PengusulanPAKController extends Controller
         return Redirect::route('pegawai.pengusulan-pak.index')->with('message', 'Pengusulan Penilaian PAK Berhasil!');
     }
 
+
+    public function show($id)
+    {
+        $data = PengusulanPAK::with([
+            'pegawai',
+            'catatan_pengusul',
+            'catatan_validator',
+        ])->findOrFail($id);
+
+        return response()->json($data);
+    }
+
     public function edit(PengusulanPAK $pengusulanPAK)
     {
         $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
@@ -120,8 +139,9 @@ class PengusulanPAKController extends Controller
     }
 
 
-    public function update(Request $request, PengusulanPAK $pengusulanPAK)
+    public function update(PengusulanPAKRequest $request, PengusulanPAK $pengusulanPAK)
     {
+        // dd($request);
         $validated = $request->except(['catatan_pengusul']);
         if ($request->filled('catatan_pengusul')) {
             $currentCatatan = $pengusulanPAK->catatan_pengusul;
@@ -168,7 +188,6 @@ class PengusulanPAKController extends Controller
 
         $validated['status'] = 'direvisi';
         $validated['tanggal_direvisi'] = now();
-
         $pengusulanPAK->update($validated);
         ActivityLogger::log(
             pegawaiNip: $this->user->nip,
@@ -191,7 +210,6 @@ class PengusulanPAKController extends Controller
 
     public function approve(PengusulanPAK $pengusulanPAK)
     {
-        // dd($pengusulanPAK);
         $pengusulanPAK->update([
             "status" => 'disetujui',
             "tanggal_disetujui" => now()
@@ -206,10 +224,12 @@ class PengusulanPAKController extends Controller
 
     public function reject(Request $request)
     {
+
         $rules = [
             'id' => 'required|integer',
             'catatan' => 'required|string|min:5|max:200',
         ];
+        $pengusulanPAK = PengusulanPAK::findOrFail($request->id);
         $request->validate($rules);
 
         $new_catatan = Catatan::create([
@@ -217,7 +237,7 @@ class PengusulanPAKController extends Controller
             'isi' => $request->catatan,
             'tipe' => "Pengusulan PAK-Divisi SDM"
         ]);
-        $pengusulanPAK = PengusulanPAK::find($request->id)->update([
+        $pengusulanPAK->update([
             'status' => 'ditolak',
             'tanggal_ditolak' => now(),
             'catatan_validator_id' => $new_catatan->id
@@ -232,9 +252,9 @@ class PengusulanPAKController extends Controller
         return redirect()->back()->with('message', 'Pengusulan PAK berhasil ditolak');
     }
 
-    public function undo_validate(Request $request)
+    public function undo_validate(PengusulanPAK $pengusulanPAK)
     {
-        $pengusulanPAK = PengusulanPAK::find($request->id)->update([
+        $pengusulanPAK->update([
             "status" => 'diproses',
             'approved_by' => null,
             'tanggal_ditolak' => null,

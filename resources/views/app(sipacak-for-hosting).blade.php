@@ -34,7 +34,7 @@
 
     <!-- Import CSS -->
     {{-- CHANGE THIS LATER!! --}}
-    <link rel="stylesheet" href="{{ asset('build/assets/app-D7tLP6eg.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-BZr28vA_.css') }}">
     <!----------------------------------------------- NOTE:  FOR HOSTING!! --------------------------------------------------->
 
 </head>

@@ -3,7 +3,7 @@ import { FaCheck } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { RiLoader2Fill } from "react-icons/ri";
 
-export default function StatusLabel({ status }) {
+export default function StatusLabel({ status, isDone = false }) {
     // alert(status)
     return (
         <div className="group/item">
@@ -22,7 +22,7 @@ export default function StatusLabel({ status }) {
                     disabled
                     className="inline-flex items-center transition-all duration-150 label-base bg-hijau/10 text-hijau/80 group-hover/item:text-hijau/60"
                 >
-                    {status}
+                     {!isDone ? status : "Selesai"}
                     <FaCheck className="ml-1 scale-125 fill-hijau/80 stroke-hijau/80 group-hover/item:fill-hijau" />
                 </button>
             )}

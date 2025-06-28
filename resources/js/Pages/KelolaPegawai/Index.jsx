@@ -90,7 +90,14 @@ export default function Index({
     }
 
     // ===========================================Other Logics===========================================
-
+    function extractJabatan(jabatanTMT) {
+        for (const jabatan of jabatanList) {
+            if (jabatanTMT.includes(jabatan)) {
+                return jabatan;
+            }
+        }
+        return "Non Fungsional"; // kalau tidak ada yang cocok
+    }
     return (
         <Authenticated
             user={auth.user}
@@ -161,7 +168,12 @@ export default function Index({
                                             <th
                                                 scope="col"
                                                 width="10%"
-                                                className="text-center cursor-pointer "
+                                                className={
+                                                    "text-center cursor-pointer " +
+                                                    (!showLastUpdated
+                                                        ? "rounded-tr-xl"
+                                                        : "")
+                                                }
                                             >
                                                 <div className="flex items-center justify-center gap-2">
                                                     {showLastUpdated ? (
@@ -231,12 +243,19 @@ export default function Index({
                                                     "";
                                                 const parts = jtmt.split("/");
                                                 return (
-                                                    <td className="text-center">
+                                                    <td className="relative text-center group">
                                                         <span className="block">
                                                             {parts[0] ?? "-"}
                                                         </span>
                                                         <span className="block">
                                                             {parts[1] ?? "-"}
+                                                        </span>
+                                                        <span className="badge-xs-secondary">
+                                                            {extractJabatan(
+                                                                pegawai[
+                                                                    "Jabatan/TMT"
+                                                                ]
+                                                            )}
                                                         </span>
                                                     </td>
                                                 );
@@ -371,7 +390,7 @@ export default function Index({
                                                 </td>
                                             ) : (
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                       <div className="relative inline-flex group">
+                                                    <div className="relative inline-flex group">
                                                         <button
                                                             as="button"
                                                             onClick={() => {
@@ -385,7 +404,10 @@ export default function Index({
                                                                     .showModal();
                                                             }}
                                                             className="action-btn group/button action-btn-success "
-                                                        ><span className="group-hover:text-white">Lihat</span>
+                                                        >
+                                                            <span className="group-hover:text-white">
+                                                                Lihat
+                                                            </span>
                                                             <FaEye className="ml-2 scale-125 group-hover/button:fill-white " />
                                                         </button>
                                                         <ShowModal
@@ -414,9 +436,9 @@ export default function Index({
                                 datas={pegawais}
                                 urlRoute={`/${formatRole(role)}/pegawai`} // atau `/${formatRole(role)}/pegawai` kalau dinamis
                                 filters={{
-                                    filter1: byDaerahReq,
-                                    filter2: byJabatanReq,
-                                    filterSearch: searchReq,
+                                    byDaerah: byDaerahReq,
+                                    byJabatan: byJabatanReq,
+                                    search: searchReq,
                                 }}
                             />
                         </>

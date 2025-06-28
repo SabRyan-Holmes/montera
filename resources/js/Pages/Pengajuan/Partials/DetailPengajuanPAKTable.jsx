@@ -153,7 +153,7 @@ export default function DetailDataTable({
                         <RowData
                             label="Tanggal Direvisi"
                             value={
-                                data.tanggal_ditolak
+                                data.tanggal_direvisi
                                     ? `${moment(data.tanggal_direvisi).format(
                                           "LL"
                                       )} (${moment(

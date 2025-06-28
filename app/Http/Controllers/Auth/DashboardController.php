@@ -21,19 +21,28 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class DashboardController extends Controller
 {
 
+    protected $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
     public function dashboard()
     {
-        $user = Auth::user();
         $session = session();
 
         // Inisialisasi role dan nip
-        $role = $user?->role ?? $session->get('role');
-        $nip = $user?->nip ?? $session->get('nip');
+        $role = $this->user->role;
+        $nip = $this->user->nip;
 
         $dataByRole = null;
         $dataGraph = null;
 
-        if ($user && ($role == "Divisi SDM" || $role == "Pimpinan")) {
+        if (($role == "Divisi SDM" || $role == "Pimpinan")) {
             $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
             $dataGraph = [];
             foreach ($koefisien_per_tahun as $koefisien) {
@@ -42,27 +51,35 @@ class DashboardController extends Controller
                 $dataGraph[$jabatan] = $count;
             }
 
-            $pegawai_fungsional = array_sum($dataGraph);
-            $pak_count = RiwayatPAK::all()->count();
-            $no_pak_terakhir = AturanPAK::where('name', 'No Surat Terakhir')->first()->value;
-            $user_count =  User::all()->count();
-            $pegawai_count =  Pegawai::all()->count();
-            $pengusulan_count = PengusulanPAK::all()->count();
-            $pengajuan_count = Pengajuan::all()->count();
-            $arsip_dokumen_count = ArsipDokumen::where('user_nip', $user->nip)->count();
 
+
+
+            $pegawai_fungsional = array_sum($dataGraph);
+            //Ini berhasil
+            // dd($dataGraph);
+            // dd(class_exists(\App\Models\RiwayatPAK::class)); //berhasil, true
+            // 2. Kalau true, tes query
+            // dd(RiwayatPAK::count()); // Berhasil = 407
+
+            $pak_count = RiwayatPAK::count();
+            $no_pak_terakhir = AturanPAK::where('name', 'No Surat Terakhir')->first()->value;
+            $user_count =  User::count();
+            $pegawai_count =  Pegawai::count();
+            $pengusulan_count = PengusulanPAK::count();
+            $pengajuan_count = Pengajuan::count();
+            $arsip_dokumen_count = ArsipDokumen::where('user_nip', $nip)->count();
             $dataPengusulanGraph = [
                 'Diusulkan' => PengusulanPAK::where('status', 'diusulkan')->count(),
-                'Disetujui' => PengusulanPAK::where('status', 'disetujui')->count(),
                 'Direvisi' => PengusulanPAK::where('status', 'direvisi')->count(),
                 'Ditolak' => PengusulanPAK::where('status', 'ditolak')->count(),
+                'Disetujui' => PengusulanPAK::where('status', 'disetujui')->count(),
             ];
 
             $dataPengajuanPAKGraph = [
                 'Diajukan' => Pengajuan::where('status', 'diajukan')->count(),
-                'Divalidasi' => Pengajuan::where('status', 'divalidasi')->count(),
                 'Direvisi' => Pengajuan::where('status', 'direvisi')->count(),
                 'Ditolak' => Pengajuan::where('status', 'ditolak')->count(),
+                'Divalidasi' => Pengajuan::where('status', 'divalidasi')->count(),
             ];
 
             $dataByRole = [

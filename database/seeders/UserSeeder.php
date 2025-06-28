@@ -50,5 +50,14 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
+
+        User::create([
+            'name' => 'Fadhlika Anggit Santoso Putro, S.Tr.Stat.',
+            'role' => "Pegawai",
+            'nip' => '199806012021041001',
+            'email' => 'fadhlika@gmail.com',
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ]);
     }
 }

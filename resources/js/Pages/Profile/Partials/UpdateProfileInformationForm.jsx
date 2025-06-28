@@ -40,6 +40,22 @@ export default function UpdateProfileInformation({
 
                 <form onSubmit={submit} className="w-full mt-6 space-y-6 ">
                     <div>
+                        <InputLabel htmlFor="email" value="NIP" />
+                        <TextInputSecondary
+                            id="nip"
+                            type="text"
+                            className="block w-full mt-1"
+                            defaultValue={data.nip}
+                            onChange={(e) => setData("nip", e.target.value)}
+                            disabled
+                            required
+                            autoComplete="nip"
+                        />
+
+                        <InputError className="mt-2" message={errors.nip} />
+                    </div>
+
+                    <div>
                         <InputLabel htmlFor="name" value="Nama" />
 
                         <TextInputSecondary
@@ -69,22 +85,6 @@ export default function UpdateProfileInformation({
                         />
 
                         <InputError className="mt-2" message={errors.email} />
-                    </div>
-
-                    <div>
-                        <InputLabel htmlFor="email" value="NIP" />
-
-                        <TextInputSecondary
-                            id="nip"
-                            type="text"
-                            className="block w-full mt-1"
-                            defaultValue={data.nip}
-                            onChange={(e) => setData("nip", e.target.value)}
-                            required
-                            autoComplete="nip"
-                        />
-
-                        <InputError className="mt-2" message={errors.nip} />
                     </div>
 
                     {mustVerifyEmail && user.email_verified_at === null && (

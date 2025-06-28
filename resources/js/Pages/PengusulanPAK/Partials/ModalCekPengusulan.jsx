@@ -14,43 +14,20 @@ import Swal from "sweetalert2";
 import { MdCancel } from "react-icons/md";
 import PengusulanPAKTable from "./DetailPengusulanPAKTable";
 import { CgCloseO } from "react-icons/cg";
+import axios from "axios";
 export default function ModalCekPengusulan({
-    pengusulanPAK,
-    setActiveModal,
-    activeModal,
+    id,
     handleApprove,
-    handleReject
+    handleReject,
+    onClose,
 }) {
     const { isDivisiSDM } = usePage().props;
-    const { data, setData, reset, post, processing, errors, clearErrors } =
-        useForm({
-            id: pengusulanPAK.id,
-            other: "",
-        });
 
     // =========================================================================SWAL POP UP=========================================================================
 
-    useEffect(() => {
-        if (errors && Object.values(errors).length > 0) {
-            const firstErrorMessage = Object.values(errors)[0];
-            Swal.fire({
-                target: `#DialogCekPengusulan-${pengusulanPAK.id}`,
-                title: "Ups!",
-                text: `${firstErrorMessage}`,
-                icon: "warning",
-                iconColor: "#fb7185",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                clearErrors();
-            }, 1000);
-        }
-    }, [errors]);
-
     const handleCancel = () => {
         Swal.fire({
-            target: `#DialogCekPengusulan-${pengusulanPAK.id}`,
+            target: `#DialogCekPengusulan-${id}`,
             icon: "warning",
             text: "Anda yakin ingin membatalkan penolakan?",
             showCancelButton: true,
@@ -60,7 +37,7 @@ export default function ModalCekPengusulan({
             cancelButtonColor: "#9ca3af",
         }).then((result) => {
             if (result.isConfirmed) {
-                post(route("divisi-sdm.pengusulan-pak.undo-validate", data), {
+                post(route("divisi-sdm.pengusulan-pak.undo-validate", id), {
                     preserveState: false,
                     onSuccess: () => {},
                     onError: () => {},
@@ -70,18 +47,41 @@ export default function ModalCekPengusulan({
     };
 
     // =========================================================================ANOTHER LOGIC, ETC=========================================================================
-
     // Handle View PDF
     const [showIframe, setShowIframe] = useState(false);
     const [linkIframe, setLinkIframe] = useState("");
 
-    console.warn(pengusulanPAK)
-    const modalId = `ModalCekPengusulan-${pengusulanPAK.id}`;
+    const [data, setData] = useState(null);
+    useEffect(() => {
+        if (id) {
+            axios
+                .get(route("pengusulan-pak.show", id))
+                .then((res) => setData(res.data))
+                .catch((err) => console.error(err));
+        }
+        return () => {
+            setData(null); // Bersihkan data saat modal ditutup
+        };
+    }, [id]);
+
+    if (!data) {
+        return (
+            <dialog id={`Loading-${id}`} className="modal">
+                <div className="text-center modal-box">
+                    <span className="loading loading-spinner loading-lg"></span>
+                    <p className="mt-4 text-gray-600">Memuat data detail...</p>
+                </div>
+            </dialog>
+        );
+    }
+
+    const onProcess = data && ["diusulkan", "direvisi"].includes(data?.status);
+    const isValidated = data && ["ditolak", "disetujui"].includes(data?.status);
     return (
         <Modal
-            id={`ModalCekPengusulan-${pengusulanPAK.id}`}
-            show={activeModal === modalId}
-            onClose={() => setActiveModal(null)}
+            id={`ModalCekPengusulan-${id}`}
+            show={true}
+            onClose={onClose}
             maxWidth="4xl"
         >
             {showIframe && (
@@ -103,7 +103,6 @@ export default function ModalCekPengusulan({
                     </div>
                 </div>
             )}
-            {/*  CONTENT START */}
 
             <main className="relative w-full max-w-4xl mx-auto my-4 text-center modal-box">
                 <section className="mx-auto ">
@@ -116,7 +115,7 @@ export default function ModalCekPengusulan({
                             Data Ringkasan dalam Pengusulan PAK
                         </h1>
                         <PengusulanPAKTable
-                            data={pengusulanPAK}
+                            data={data}
                             collapse={false}
                             setLinkIframe={setLinkIframe}
                             setShowIframe={setShowIframe}
@@ -127,86 +126,57 @@ export default function ModalCekPengusulan({
                         <h1 className="my-4 text-xl font-medium">
                             Data Pegawai dalam Pengusulan
                         </h1>
-                        <DetailPegawai pegawai={pengusulanPAK.pegawai} />
+                        <DetailPegawai pegawai={data.pegawai} />
                     </div>
-
                 </section>
             </main>
             {isDivisiSDM && (
-                    <>
-                        {/* SECTION Floating Action Button DIUSULKAN */}
-                        {pengusulanPAK.status === "diusulkan" && (
-                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
-                                {/* TODO: Harusny dialog catatan bisa muncul tanpa harus menutup dialogCek Pengusulan terlebih dahulu  */}
-                                <form method="dialog">
-                                    <SecondaryButton
-                                        type="submit"
-                                        onClick={() => {
-                                            setPopUpData({
-                                                id: pengusulanPAK.id,
-                                            });
-                                            setIsPopUpOpen(true); //saya ingin ini dijalankan  setelah modal penguisulan tersebut ditututup
-                                        }}
-                                        className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                                    >
-                                        <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                        Tolak Pengusulan
-                                    </SecondaryButton>
-                                </form>
+                <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
+                    {onProcess && (
+                        <>
+                            <SuccessButton
+                                onClick={() => handleApprove(data.id)}
+                                className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
+                            >
+                                <FaFileSignature className="w-4 h-4 fill-white " />
+                                Setujui Pengusulan
+                            </SuccessButton>
+                            <SecondaryButton
+                                type="submit"
+                                onClick={handleReject}
+                                className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                            >
+                                <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                                Tolak Pengusulan
+                            </SecondaryButton>
+                        </>
+                    )}
 
-                                <SuccessButton
-                                    onClick={handleApprove}
-                                    disabled={processing}
-                                    className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
-                                >
-                                    <FaFileSignature className="w-4 h-4 fill-white " />
-                                    Setujui Pengusulan
-                                </SuccessButton>
-                            </section>
-                        )}
-                        {/* !SECTION Floating Action Button DIUSULKAN */}
+                    {data?.status === "disetujui" && (
+                        <SuccessButton
+                            asLink
+                            href={route(
+                                "divisi-sdm.pak.create-by-pengusulan",
+                                data.id
+                            )}
+                            className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
+                        >
+                            <FaFileSignature className="w-4 h-4 fill-white " />
+                            Proses PAK
+                        </SuccessButton>
+                    )}
 
-                        {/* SECTION Floating Action Button DITOLAK */}
-                        {pengusulanPAK.status === "ditolak" && (
-                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
-                                <SecondaryButton
-                                    onClick={() => handleCancel()}
-                                    className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                                >
-                                    <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                    Batalkan Penolakan
-                                </SecondaryButton>
-                            </section>
-                        )}
-                        {/* !SECTION Floating Action Button DITOLAK */}
-
-                        {/* SECTION Floating Action Button DISETUJUI */}
-                        {pengusulanPAK.status === "disetujui" && (
-                            <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-4 left-1/2">
-                                <SuccessButton
-                                    asLink
-                                    href={route(
-                                        "divisi-sdm.pak.create-by-pengusulan",
-                                        data.id
-                                    )}
-                                    disabled={processing}
-                                    className="gap-1 hover:scale-105 hover:bg-hijau/80 text-hijau/75"
-                                >
-                                    <FaFileSignature className="w-4 h-4 fill-white " />
-                                    Proses PAK
-                                </SuccessButton>
-                                <SecondaryButton
-                                    onClick={() => handleCancel()}
-                                    className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
-                                >
-                                    <MdCancel className="mr-2 scale-125 fill-red-500 " />
-                                    Reset Validasi
-                                </SecondaryButton>
-                            </section>
-                        )}
-                        {/* !SECTION Floating Action Button DISETUJUI */}
-                    </>
-                )}
+                    {isValidated && (
+                        <SecondaryButton
+                            onClick={() => handleCancel()}
+                            className="bg-red-100 border border-red-300 rounded shadow hover:scale-105"
+                        >
+                            <MdCancel className="mr-2 scale-125 fill-red-500 " />
+                            Reset Validasi
+                        </SecondaryButton>
+                    )}
+                </section>
+            )}
         </Modal>
     );
 }

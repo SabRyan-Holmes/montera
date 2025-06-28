@@ -35,16 +35,16 @@ class PegawaiController extends Controller
         $subTitle = "";
 
         $subTitle = GetSubtitle::getSubtitle(
-            request('byJabatan'),
-            request('byDaerah'),
-            request('search')
+            byJabatan: request('byJabatan'),
+            byDaerah: request('byDaerah'),
+            search: request('search')
         );
 
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
         // $koefisien_per_tahun = AturanPAKService::get(['koefisienPertahun']);
 
         return Inertia::render('KelolaPegawai/Index', [
-            "title" => "Data Pegawai ",
+            "title" => "Data Pegawai",
             "subTitle" => $subTitle,
             "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
             "searchReq" => request('search') ?? "",

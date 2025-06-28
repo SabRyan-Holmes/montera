@@ -28,7 +28,7 @@ export default function RadialChart({ title, data, chartId }) {
         return {
             series: seriesData,
             labels: labels,
-            colors: ["#2D95C9", "#22c55e", "oklch(64.5% 0.246 16.439)"], // Biru, Hijau, Warning
+            colors: ["#2D95C9", "#16BDCA",  "oklch(64.5% 0.246 16.439)","#22c55e"],
             chart: {
                 height: "350px",
                 width: "100%",
@@ -159,29 +159,38 @@ export default function RadialChart({ title, data, chartId }) {
             </div>
 
             <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                <div className="grid grid-cols-3 gap-3 mb-2">
+                <div className="grid grid-cols-4 gap-3 mb-2">
                     <dl className="bg-primary/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
                         <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-primary/10 text-primary dark:bg-gray-500 dark:text-orange-300">
                             {seriesData[0]}
                         </dt>
-                        <dd className="text-sm font-medium text-primary dark:text-orange-300">
+                        <dd className="text-sm font-medium text-primary/80 dark:text-orange-300">
                             {labels[0]}
                         </dd>
                     </dl>
-                    <dl className="bg-hijau/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
-                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-hijau/10 text-hijau/80 dark:bg-gray-500 dark:text-teal-300">
+                    <dl className="bg-bermuda/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
+                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-bermuda/20 text-bermuda dark:bg-gray-500 dark:text-orange-300">
                             {seriesData[1]}
                         </dt>
-                        <dd className="text-sm font-medium text-hijau/80 dark:text-teal-300">
+                        <dd className="text-sm font-medium text-bermuda dark:text-orange-300">
                             {labels[1]}
                         </dd>
                     </dl>
+
                     <dl className="bg-warning/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
                         <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-warning/10 text-warning/80 dark:bg-gray-500 dark:text-blue-300">
                             {seriesData[2]}
                         </dt>
                         <dd className="text-sm font-medium text-warning/80 dark:text-blue-300">
                             {labels[2]}
+                        </dd>
+                    </dl>
+                    <dl className="bg-hijau/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
+                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-hijau/10 text-hijau/80 dark:bg-gray-500 dark:text-teal-300">
+                            {seriesData[3]}
+                        </dt>
+                        <dd className="text-sm font-medium text-hijau/80 dark:text-teal-300">
+                            {labels[3]}
                         </dd>
                     </dl>
                 </div>

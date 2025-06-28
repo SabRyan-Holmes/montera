@@ -12,7 +12,8 @@ class Pengajuan extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['pengaju', 'validator', 'riwayat_pak', 'catatan_pengaju', 'catatan_validator'];
+    // protected $with = ['pengaju', 'validator', 'riwayat_pak', 'catatan_pengaju', 'catatan_validator'];
+    protected $with = ['pengaju', 'validator'];
 
 
 
@@ -41,10 +42,10 @@ class Pengajuan extends Model
         return $this->belongsTo(Catatan::class, 'catatan_validator_id');
     }
 
-    public static function byPegawaiId($pegawaiId)
+    public function scopeByPegawaiId($query, $pegawaiId)
     {
-        return static::whereHas('riwayat_pak', function ($query) use ($pegawaiId) {
-            $query->where('pegawai_id', $pegawaiId);
+        return $query->whereHas('riwayat_pak', function ($q) use ($pegawaiId) {
+            $q->where('pegawai_id', $pegawaiId);
         });
     }
 

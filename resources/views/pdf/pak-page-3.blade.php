@@ -409,7 +409,7 @@
 
                 @if (!empty($signature))
                     <div style="margin-top: 0px; margin-bottom: 0px;">
-                        <img src="{{ $signature }}" style="width: 60px; height: 60px;" alt="Tanda Tangan">
+                        <img src="{{ $signature }}" style="width: 140px; height: 80px;" alt="Tanda Tangan">
                     </div>
                 @else
                     <div style="height: 70px;"></div>

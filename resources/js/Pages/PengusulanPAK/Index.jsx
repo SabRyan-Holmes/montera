@@ -29,6 +29,7 @@ export default function Index({
     byStatusReq,
     byJabatanReq,
     jabatanList,
+    processed,
 }) {
     moment.locale("id");
     const [shownMessages, setShownMessages] = useRemember([]);
@@ -88,6 +89,8 @@ export default function Index({
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
 
+    const [showDetail, setShowDetail] = useState(null);
+
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
@@ -96,6 +99,18 @@ export default function Index({
                     setActiveModal={setActiveModal}
                     routeName={"divisi-sdm.pengusulan-pak.reject"}
                 />
+
+                {showDetail && (
+                    <ModalCekPengusulan
+                        id={showDetail}
+                        onClose={() => setShowDetail(null)}
+                        handleApprove={handleApprove}
+                        handleReject={() =>
+                            setActiveModal(`ModalCatatan-${showDetail}`)
+                        }
+                    />
+                )}
+
                 <section className="flex items-center justify-between w-full">
                     <FilterSearchCustom
                         routeName={`/${formatRole(role)}/pengusulan-pak`}
@@ -226,16 +241,19 @@ export default function Index({
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {/* TODO: Buat Indikator mana pengusulan PAK yang sudah disetujui tapi belum diproses */}
                                     {pengusulanPAK.data?.map((data, i) => {
                                         const isValidated = [
                                             "ditolak",
                                             "disetujui",
                                         ].includes(data.status);
+                                        const isProcessed = processed.includes(
+                                            data.id
+                                        );
                                         return (
                                             <tr className="font-semibold text-center">
                                                 <td>{i + 1}</td>
                                                 <td className="">
-                                                    {/* TODO: Bikin bisa expanded nanti */}
                                                     <span className="block text-ellipsis">
                                                         {data.pegawai["Nama"]}{" "}
                                                         {data.pegawai[
@@ -270,16 +288,15 @@ export default function Index({
                                                         {data.ak_diajukan}
                                                     </span>
                                                 </td>
-                                                <td className="text-sm font-normal">
+                                                <td className="relative text-sm font-normal group">
                                                     {data.dokumen_pendukung_path
                                                         ? "Ada"
                                                         : "Tidak Ada"}
                                                 </td>
                                                 <td className="p-0 m-0">
                                                     <StatusLabel
-                                                        status={data.status}
+                                                        status={data.status} isDone={isProcessed}
                                                     />
-                                                    {/* ANCHOR */}
                                                     <div className="mt-2 font-normal">
                                                         <span className="block">
                                                             {moment(
@@ -294,27 +311,14 @@ export default function Index({
                                                     </div>
                                                 </td>
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                    <ModalCekPengusulan
-                                                        pengusulanPAK={data}
-                                                        setActiveModal={
-                                                            setActiveModal
-                                                        }
-                                                        activeModal={
-                                                            activeModal
-                                                        }
-                                                        handleApprove={
-                                                            handleApprove
-                                                        }
-                                                    />
-
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             className="transition-all scale-110 group action-btn border-primary/20 hover:bg-primary"
-                                                            onClick={() => {
-                                                                setActiveModal(
-                                                                    `ModalCekPengusulan-${data.id}`
-                                                                );
-                                                            }}
+                                                            onClick={() =>
+                                                                setShowDetail(
+                                                                    data.id
+                                                                )
+                                                            }
                                                         >
                                                             <FaEye className="scale-125 fill-primary stroke-primary group-hover:fill-white" />
                                                         </button>
@@ -430,16 +434,11 @@ export default function Index({
                                     })}
                                 </tbody>
                             </table>
-                            {/* Pagination */}
 
-                            {/* ANCHOR */}
+                            {/* Pagination */}
                             <Pagination
                                 datas={pengusulanPAK}
-                                urlRoute={
-                                    (!isDivisiSDM
-                                        ? "/pegawai"
-                                        : "/divisi-sdm") + "/pengusulan-pak"
-                                }
+                                urlRoute={`/${formatRole(role)}/pengusulan-pak`}
                                 filters={{
                                     byJabatan: byJabatanReq,
                                     byStatus: byStatusReq,

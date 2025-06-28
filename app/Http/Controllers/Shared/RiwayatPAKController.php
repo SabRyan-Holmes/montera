@@ -30,7 +30,13 @@ class RiwayatPAKController extends Controller
     //  Ini Pilih berdasarkan pegawai nanti
     public function index()
     {
-        $riwayatPAK = RiwayatPAK::latest();
+        $riwayatPAK = RiwayatPAK::select('id', 'no_surat3', 'kesimpulan', 'jakk', 'updated_at', 'pegawai_id')
+            ->with([
+                'pegawai:id,NIP,Nama,Gelar Tambahan,Jabatan/TMT'
+            ])->latest();
+
+        $filtered = $riwayatPAK->filter(request(['search', 'byJabatan', 'byKesimpulan', 'byStatus']));
+        $data = $filtered->paginate(10)->withQueryString(); // disini masih sangat berat, ada saran ga
 
         // Logika REQUEST FILTER dan Search
         $subTitle = GetSubtitle::getSubtitle(
@@ -39,19 +45,24 @@ class RiwayatPAKController extends Controller
             search: request('search')
 
         );
-        $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
-        $submitted = Pengajuan::pluck('riwayat_pak_id')->toArray();
-        $kesimpulan_list = collect(AturanPAKService::get('kesimpulan')['kesimpulan']->value ?? [])->pluck('kesimpulan');
+        $koefisien_per_tahun = cache()->remember('koefisien_per_tahun', 60, function () {
+            return AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
+        });
+
+        $submitted = Pengajuan::whereNotNull('riwayat_pak_id')->pluck('riwayat_pak_id')->toArray();
+        $kesimpulan_list = cache()->remember('kesimpulan_list', 60, function () {
+            $data = AturanPAKService::get('kesimpulan')['kesimpulan']->value ?? [];
+            return collect($data)->pluck('kesimpulan');
+        });
 
         return Inertia::render('RiwayatPAK/Index', [
-            // "title" => "Riw$riwayatPAK " . $title,
             "title" => "Kelola Riwayat PAK",
             "subTitle" => $subTitle,
-            "riwayatPAK" => $riwayatPAK->filter(request(['search', 'byJabatan', 'byKesimpulan', 'byStatus']))->paginate(10),
+            "riwayatPAK" => $data,
             'pengajuans' => $submitted,
             'jabatanList' => collect($koefisien_per_tahun)->pluck('jabatan')->toArray(),
             'kesimpulanList' => $kesimpulan_list,
-            "searchReq" => request('search'),
+            "searchReq" => request('search') ?? "",
             "byDaerahReq" => request('byDaerah'),
             "byJabatanReq" => request('byJabatan')
         ]);
@@ -80,13 +91,25 @@ class RiwayatPAKController extends Controller
      */
 
 
+    // unused
+    // public function show(RiwayatPAK $riwayat)
+    // {
+    //     return Inertia::render('RiwayatPAK/Show', [
+    //         'title' => 'Edit Riwayat Pencetakan Dokumen PAK',
+    //         'riwayat' => $riwayat
+    //     ]);
+    // }
 
-    public function show(RiwayatPAK $riwayat)
+    public function show_detail($id)
     {
-        return Inertia::render('RiwayatPAK/Show', [
-            'title' => 'Edit Riwayat Pencetakan Dokumen PAK',
-            'riwayat' => $riwayat
-        ]);
+        $data = RiwayatPAK::with([
+            'pegawai',
+            'pengusulan_pak:id,created_at,status,tujuan,periode_mulai,periode_berakhir,ak_terakhir,ak_diajukan,dokumen_utama_path,dokumen_pendukung_path,catatan_pengusul_id,catatan_validator_id',
+            'pengusulan_pak.catatan_pengusul:id,isi',
+            'pengusulan_pak.catatan_validator:id,isi',
+        ])->findOrFail($id);
+
+        return response()->json($data);
     }
 
 
@@ -98,7 +121,7 @@ class RiwayatPAKController extends Controller
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Edit Penetapan Angka Kredit',
             'isEdit' => true,
-            'riwayat' => RiwayatPAK::findOrFail($riwayat->id),
+            'riwayat' => $riwayat->load('pegawai'),
             'aturanPAK' => AturanPAKService::get(),
         ]);
     }
@@ -109,19 +132,17 @@ class RiwayatPAKController extends Controller
     public function update(Request $request, RiwayatPAK $riwayat)
     {
         // Update data berdasarkan ID
-        // dd($riwayat);
         if (!$riwayat) {
             return back()->withErrors('Data yang ingin diupdate tidak ditemukan.');
         }
 
-
         $riwayat->update($request->all());
         $no_surat =  AturanPAK::extractNoSurat($riwayat['no_surat3']);
         ActivityLogger::log(
-            'Update Data',
-            Auth::user()->name . ' (' . Auth::user()->role  . ') memperbarui data riwayat PAK dengan no PAK ' . $no_surat,
-            get_class($riwayat),
-            $riwayat->id,
+            aktivitas: 'Update Data',
+            keterangan: Auth::user()->name . ' (' . Auth::user()->role  . ') memperbarui data riwayat PAK dengan no PAK ' . $no_surat,
+            entityType: get_class($riwayat),
+            entityId: $riwayat->id,
         );
 
         // return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Riwayat Berhasil Diupdate!');
@@ -133,32 +154,12 @@ class RiwayatPAKController extends Controller
      */
     public function destroy(RiwayatPAK $riwayat)
     {
-        // dd($riwayat);
         $riwayat->delete();
-        return redirect()->back()->with('message', 'Data Riwayat Berhasil DiHapus!');
+        return redirect()->back()->with('message', 'Data Riwayat PAK Berhasil Dihapus!');
     }
 
 
-    public function pegawai(Pegawai $pegawai)
-    {
-        $pegawai = Pegawai::latest();
-        $subTitle = "";
 
-        if (request('byDaerah')) {
-            // $category = Pegawai::firstWhere('Daerah', request('byDaerah'));
-            $subTitle = 'Berdasarkan Daerah : ' . request('byDaerah');
-        }
-
-        return Inertia::render('RiwayatPAK/PegawaiList', [
-            // "title" => "Pegawai " . $title,
-            "title" => "Kelola Riwayat PAK",
-            "subTitle" => $subTitle,
-            "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
-            "searchReq" => request('search'),
-            "byDaerahReq" => request('byDaerah'),
-            "byJabatanReq" => request('byJabatan')
-        ]);
-    }
 
     // Ini untuk show all pak by pegawai nanti
     public function index_show(Pegawai $pegawai)

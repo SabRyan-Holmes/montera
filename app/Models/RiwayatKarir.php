@@ -27,13 +27,11 @@ class RiwayatKarir extends Model
     {
         // Search By Jenis Perubahan
         $query->when(
-            $filters['jenisPerubahan'] ?? false,
+            $filters['byJenisPerubahan'] ?? false,
             fn($query, $byJenisPerubahan) =>
             $query->where('jenis_perubahan', 'like', '%' . $byJenisPerubahan . '%')
-            // ->orWhere('NIP', 'like', '%' . $search . '%')
+            ->orWhere('jenis_perubahan', $byJenisPerubahan)
         );
-
-
 
         // Berdasarkan Jabatan
         $query->when(

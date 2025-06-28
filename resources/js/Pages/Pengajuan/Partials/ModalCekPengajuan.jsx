@@ -18,15 +18,19 @@ import DetailPengajuan from "./DetailPengajuanPAKTable";
 import { FaEdit } from "react-icons/fa";
 import { BiSolidArchiveIn } from "react-icons/bi";
 import ModalArsipDokumen from "./ModalArsipDokumen";
+import axios from "axios";
 
 export default function ModalCekPengajuan({
-    pengajuan,
-    setActiveModal,
-    activeModal,
+    id,
+    onClose,
+    handleCancel,
+    handleViewDocument,
 }) {
     // =========================================================================SWAL POP UP=========================================================================
+    const [data, setData] = useState(null);
+
     const handleApprove = () => {
-        router.post(route("pimpinan.pengajuan.approve", pengajuan.id), {
+        router.post(route("pimpinan.pengajuan.approve", id), {
             preserveScroll: true,
             preserveState: true,
             onError: (errors) => {
@@ -35,7 +39,7 @@ export default function ModalCekPengajuan({
             },
             onSuccess: () => {
                 Swal.fire({
-                    target: `#ModalCekPengajuan-${pengajuan.id}`,
+                    target: `#ModalCekPengajuan-${id}`,
                     title: "Berhasil!",
                     text: "Dokumen berhasil divalidasi.",
                     icon: "success",
@@ -52,7 +56,7 @@ export default function ModalCekPengajuan({
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const url = `/storage/${pengajuan.approved_pak_path}`; // Sesuaikan dengan path yang ada di pengajuan
+                        const url = `/storage/${data?.approved_pak_path}`; // Sesuaikan dengan path yang ada di pengajuan
                         setLinkIframe(url);
                         setShowIframe(true);
                     }
@@ -64,8 +68,10 @@ export default function ModalCekPengajuan({
     };
 
     const undoValidate = () => {
+        // alertny jalan, tp kenapa routeny kayak ga jelan samsek, didd ga ada, di console error jg ga ada
+        // alert(id)
         Swal.fire({
-            target: `#ModalCekPengajuan-${pengajuan.id}`,
+            target: `#ModalCekPengajuan-${id}`,
             icon: "warning",
             text: "Anda yakin ingin mereset validasi PAK ini?",
             showCancelButton: true,
@@ -81,34 +87,10 @@ export default function ModalCekPengajuan({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(
-                    route("pimpinan.pengajuan.undo-validate", pengajuan.id)
-                );
-            }
-        });
-    };
-
-    const undoSubmit = () => {
-        Swal.fire({
-            target: `#ModalCekPengajuan-${pengajuan.id}`,
-            icon: "warning",
-            text: "Anda yakin ingin mereset validasi PAK ini?",
-            showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: "Tidak",
-            confirmButtonColor: "#2D95C9",
-            cancelButtonColor: "#9ca3af",
-            customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
-                confirmButton: "order-2",
-                denyButton: "order-3",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.post(
-                    route("divisi-sdm.pengajuan.destroy", pengajuan.id)
-                );
+                router.post(route("pimpinan.pengajuan.undo-validate", id), {}, {
+                    onStart: () => alert('Tes'),
+                    onError: (err) => alert(JSON.stringify(err)),
+                });
             }
         });
     };
@@ -119,33 +101,11 @@ export default function ModalCekPengajuan({
     const [showIframe, setShowIframe] = useState(false);
     const [linkIframe, setLinkIframe] = useState("");
 
-    const handleViewPdf = async (pengajuan) => {
-        if (pengajuan.status === "divalidasi") {
-            const url = `/storage/${pengajuan.approved_pak_path}`;
-            setLinkIframe(url);
-            setShowIframe(true);
-        } else {
-            router.post("/pak/process", pengajuan.riwayat_pak, {
-                preserveScroll: true,
-                preserveState: true,
-                onStart: () => setLoading(true),
-                onFinish: () => setLoading(false),
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                },
-                onSuccess: () => {
-                    setLinkIframe(route("pak.preview"));
-                    setShowIframe(true); // Munculkan iframe setelah data dikirim
-                },
-            });
-        }
-    };
-
     const [loading, setLoading] = useState(false);
 
     const { isDivisiSDM, isPimpinan } = usePage().props;
-    const pegawai = pengajuan.riwayat_pak.pegawai;
-    const pengusulanPAK = pengajuan.riwayat_pak.pengusulan_pak;
+    const pegawai = data?.riwayat_pak.pegawai;
+    const pengusulanPAK = data?.riwayat_pak.pengusulan_pak;
     const pengusulanPAKRef = useRef(null);
     const scrollToPengusulanPAK = () => {
         if (pengusulanPAKRef.current) {
@@ -156,13 +116,35 @@ export default function ModalCekPengajuan({
             });
         }
     };
-    const modalId = `ModalCekPengajuan-${pengajuan.id}`;
+
+    useEffect(() => {
+        if (id) {
+            axios
+                .get(route("pengajuan.show", id))
+                .then((res) => setData(res.data))
+                .catch((err) => console.error(err));
+        }
+        return () => {
+            setData(null); // Bersihkan data saat modal ditutup
+        };
+    }, [id]);
+
+    if (!data) {
+        return (
+            <dialog id={`Loading-${id}`} className="modal">
+                <div className="text-center modal-box">
+                    <span className="loading loading-spinner loading-lg"></span>
+                    <p className="mt-4 text-gray-600">Memuat data detail...</p>
+                </div>
+            </dialog>
+        );
+    }
 
     return (
         <Modal
-            id={`ModalCekPengajuan-${pengajuan.id}`}
-            show={activeModal === modalId}
-            onClose={() => setActiveModal(null)}
+            id={`ModalCekPengajuan-${id}`}
+            show={true}
+            onClose={onClose}
             maxWidth="4xl"
         >
             {showIframe && (
@@ -205,7 +187,7 @@ export default function ModalCekPengajuan({
                     <div className="px-2 overflow-x-auto">
                         <DetailPengajuan
                             collapse={false}
-                            data={pengajuan}
+                            data={data}
                             setLinkIframe={setLinkIframe}
                             setShowIframe={setShowIframe}
                         />
@@ -215,7 +197,7 @@ export default function ModalCekPengajuan({
                             Data Penetapan Angka Kredit dalam Pengajuan
                         </h1>
                         <DetailPAKTable
-                            data={pengajuan.riwayat_pak}
+                            data={data.riwayat_pak}
                             collapse={false}
                             onScrollToPengusulanPAK={scrollToPengusulanPAK}
                         />
@@ -252,11 +234,11 @@ export default function ModalCekPengajuan({
                 <section className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 text-nowrap bottom-3 left-1/2">
                     {/* Tombol lihat/pratinjau dokumen */}
                     <SecondaryButton
-                        onClick={() => handleViewPdf(pengajuan)}
+                        onClick={() => handleViewDocument(data)}
                         type="submit"
                     >
                         <FaRegFilePdf className="w-4 h-4 mr-1 fill-secondary" />
-                        {pengajuan.status === "divalidasi"
+                        {data.status === "divalidasi"
                             ? "Lihat"
                             : "Pratinjau"}{" "}
                         Dokumen
@@ -265,9 +247,7 @@ export default function ModalCekPengajuan({
                     {/* Untuk Pimpinan */}
                     {isPimpinan ? (
                         <>
-                            {["diajukan", "direvisi"].includes(
-                                pengajuan.status
-                            ) && (
+                            {["diajukan", "direvisi"].includes(data.status) && (
                                 <>
                                     <SuccessButton
                                         onClick={handleApprove}
@@ -280,7 +260,7 @@ export default function ModalCekPengajuan({
                                         type="button"
                                         onClick={() =>
                                             setActiveModal(
-                                                `ModalCatatan-${pengajuan.id}`
+                                                `ModalCatatan-${data.id}`
                                             )
                                         }
                                         className="text-white bg-error/80 hover:scale-105"
@@ -292,7 +272,7 @@ export default function ModalCekPengajuan({
                             )}
 
                             {["ditolak", "divalidasi"].includes(
-                                pengajuan.status
+                                data.status
                             ) && (
                                 <SecondaryButton
                                     onClick={undoValidate}
@@ -305,13 +285,13 @@ export default function ModalCekPengajuan({
                         </>
                     ) : (
                         <>
-                            {isDivisiSDM && pengajuan.status === "ditolak" && (
+                            {isDivisiSDM && data.status === "ditolak" && (
                                 <SecondaryButton
                                     asLink
                                     href={route("divisi-sdm.pengajuan.revisi", {
-                                        pakId: pengajuan.riwayat_pak.id,
+                                        pakId: data.riwayat_pak.id,
                                         isRevisi: true,
-                                        pengajuanId: pengajuan.id,
+                                        pengajuanId: data.id,
                                     })}
                                     className="text-white border rounded shadow bg-secondary hover:scale-105"
                                 >
@@ -320,23 +300,22 @@ export default function ModalCekPengajuan({
                                 </SecondaryButton>
                             )}
 
-                            {isDivisiSDM &&
-                                pengajuan.status !== "divalidasi" && (
-                                    <SecondaryButton
-                                        onClick={undoSubmit}
-                                        className="text-white border rounded shadow bg-error/80 hover:scale-105"
-                                    >
-                                        <MdCancel className="mr-2 scale-125" />
-                                        Batalkan Pengajuan
-                                    </SecondaryButton>
-                                )}
+                            {isDivisiSDM && data.status !== "divalidasi" && (
+                                <SecondaryButton
+                                    onClick={handleCancel}
+                                    className="text-white border rounded shadow bg-error/80 hover:scale-105"
+                                >
+                                    <MdCancel className="mr-2 scale-125" />
+                                    Batalkan Pengajuan
+                                </SecondaryButton>
+                            )}
 
-                            {pengajuan.status === "divalidasi" && (
+                            {data.status === "divalidasi" && (
                                 <>
                                     <SecondaryButton
                                         onClick={() => {
                                             setActiveModal(
-                                                `ModalArsipDokumen-${pengajuan.id}`
+                                                `ModalArsipDokumen-${data.id}`
                                             );
                                         }}
                                         className="text-white border rounded shadow bg-hijau hover:border-hijau hover:scale-105"
@@ -345,7 +324,7 @@ export default function ModalCekPengajuan({
                                         Arsipkan
                                     </SecondaryButton>
                                     <ModalArsipDokumen
-                                        pengajuan={pengajuan}
+                                        pengajuan={data}
                                         setActiveModal={setActiveModal}
                                     />
                                 </>

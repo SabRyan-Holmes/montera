@@ -31,8 +31,6 @@ export default function PengusulanPAKTable({
         return `${part1} ${part2} ${part3} ${part4}`;
     }
 
-    // console.log(setLinkIframe)
-
     return (
         <section className="mb-4">
             <table className="table w-full text-base table-bordered">

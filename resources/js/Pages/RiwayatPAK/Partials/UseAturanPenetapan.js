@@ -6,7 +6,7 @@ export default function UseAturanPenetapan(aturanPAK) {
     console.warn(aturanPAK.tebusanKonversi);
     const { auth, isByPengusulan, pengusulan } = usePage().props;
     const [initialized, setInitialized] = useState(false);
-    const { data, setData, post, processing, errors, reset, setDefaults } =
+    const { data, setData, post, patch, processing, errors, reset, setDefaults } =
         useForm({
             created_by: auth.user.nip,
             pengusulan_pak_id: isByPengusulan ? pengusulan.id : null,
@@ -113,7 +113,6 @@ export default function UseAturanPenetapan(aturanPAK) {
 
     // FIRST MOUNTED/RENDER
     useEffect(() => {
-        // TODO: SET Default dari default aturan PAK
         // 1. Penanda Tangan
         let defaultConfigPT = aturanPAK.penandaTangan.default_config;
         let defaultPenandaTangan =
@@ -283,6 +282,7 @@ export default function UseAturanPenetapan(aturanPAK) {
         data,
         setData,
         post,
+        patch,
         processing,
         errors,
         reset,

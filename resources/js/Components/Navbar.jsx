@@ -1,7 +1,8 @@
 import { Link } from "@inertiajs/react";
 import { BiSolidDownArrowAlt } from "react-icons/bi";
 import { IoIosArrowDown, IoMdArrowDropdown } from "react-icons/io";
-import { ProfileImage } from ".";
+import { ProfileImage, TooltipHover } from ".";
+import { CgArrowsExchangeAltV } from "react-icons/cg";
 
 const Navbar = ({ user, title }) => {
     let admin = false;
@@ -21,14 +22,30 @@ const Navbar = ({ user, title }) => {
     const second = nameParts[1];
     const fullName = first + " " + second;
 
-    const styleByRole= {
-        'Divisi SDM' : 'text-primary',
-        'Pimpinan' : 'text-hijau',
-        'Pegawai' : 'text-secondary',
-    }
+    const styleByRole = {
+        "Divisi SDM": "text-primary",
+        Pimpinan: "text-hijau",
+        Pegawai: "text-secondary",
+    };
+
+    const isDivisiSDM = user?.role === "Divisi SDM";
+    const isRiwayatKarir = title?.trim() === "Riwayat Karir Pegawai";
+    const isKelolaPegawai = title?.trim() === "Kelola Data Pegawai";
+    const showToggleLink = isDivisiSDM && (isRiwayatKarir || isKelolaPegawai);
+
+    // Info untuk toggle
+    const toggleTarget = isRiwayatKarir
+        ? {
+              route: route("divisi-sdm.pegawai.index"),
+              tooltip: "Lihat Pegawai",
+          }
+        : {
+              route: route("divisi-sdm.riwayat-karir.index"),
+              tooltip: "Lihat Riwayat Karir",
+          };
 
     return (
-        <div className="">
+        <nav>
             <hr className="h-1 bg-base" />
             <div className="navbar bg-neutral text-neutral-content">
                 <div className="flex-none">
@@ -52,10 +69,32 @@ const Navbar = ({ user, title }) => {
                     </label>
                 </div>
                 <div className="navbar-start">
-                    <a className="-ml-2 text-xl normal-case btn btn-ghost">
-                        {title}
-                    </a>
+                    {showToggleLink ? (
+                        <div>
+                            <a className="inline-flex ml-6 text-xl font-semibold normal-case ">
+                                {title}
+                                <Link
+                                    as="button"
+                                    href={toggleTarget.route}
+                                    className="relative inline-flex w-24 cursor-pointer group text-secondary hover:text-primary"
+                                >
+                                    <CgArrowsExchangeAltV className="scale-110" />
+                                    <div className="tooltip">
+                                        <small className="font-semibold">
+                                            {toggleTarget.tooltip}
+                                        </small>
+                                        <div className="triangle"></div>
+                                    </div>
+                                </Link>
+                            </a>
+                        </div>
+                    ) : (
+                        <a className="ml-6 text-xl font-semibold normal-case ">
+                            {title}
+                        </a>
+                    )}
                 </div>
+
                 <div className="navbar-end">
                     <div className="dropdown dropdown-end">
                         <label tabIndex={0} className="">
@@ -72,7 +111,7 @@ const Navbar = ({ user, title }) => {
                                         <span
                                             className={
                                                 "block text-xs text-right " +
-                                                (styleByRole[user.role])
+                                                styleByRole[user.role]
                                             }
                                         >
                                             {user.role}
@@ -101,7 +140,7 @@ const Navbar = ({ user, title }) => {
                                 </li>
                                 <li>
                                     <Link href={route("profile.edit")}>
-                                        Edit Profil
+                                        Update Profil & Akun
                                     </Link>
                                 </li>
                                 <li>
@@ -119,7 +158,7 @@ const Navbar = ({ user, title }) => {
                 </div>
             </div>
             <hr className="h-1 bg-base" />
-        </div>
+        </nav>
     );
 };
 

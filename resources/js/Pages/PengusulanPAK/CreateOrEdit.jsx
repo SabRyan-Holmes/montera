@@ -124,7 +124,8 @@ export default function Create({
         console.log(data)
         if (isEdit) {
             router.post(route("pegawai.pengusulan-pak.update", pengusulanPAK),  {_method: "patch", ...data}, {
-                forceFormData:true
+                forceFormData:true,
+                onError: (err) => alert(JSON.stringify(err))
             });
         } else {
             post(route("pegawai.pengusulan-pak.store"), {
@@ -195,8 +196,8 @@ export default function Create({
             title={title}
             current={route().current()}
         >
-            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                <div className="flex justify-between">
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+                <section className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
                         <ul>
                             <li>
@@ -225,9 +226,9 @@ export default function Create({
                         <span>Kembali</span>
                         <RiArrowGoBackFill className="w-3 h-3 ml-2 fill-secondary" />
                     </SecondaryButton>
-                </div>
+                </section>
 
-                <div className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
+                <section className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
                     <form onSubmit={submit} encType="multipart/form-data">
                         <table className="table text-base table-bordered ">
                             <thead>
@@ -642,7 +643,7 @@ export default function Create({
                                 className="gap-1 text-base border"
                             >
                                 {isEdit ? (
-                                    <span>Ajukan Ulang</span>
+                                    <span>Usulkan Ulang</span>
                                 ) : (
                                     <span>Ajukan Usulan</span>
                                 )}
@@ -650,10 +651,9 @@ export default function Create({
                             </SuccessButton>
                         </div>
 
-                        {/* TODO: Tambah tombol "Usulkan Ulang" untuk revisi pengusulan nanti */}
                     </form>
-                </div>
-            </section>
+                </section>
+            </main>
         </Authenticated>
     );
 }

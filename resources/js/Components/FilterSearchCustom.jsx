@@ -69,14 +69,14 @@ export default function FilterSearchCustom({
             <section className="flex items-center justify-between w-full gap-3 my-3 ">
             <div className="flex flex-wrap items-center gap-3">
                     {filtersConfig.map(({ name, label, options }) => (
-                        <div key={name} className="flex-none w-fit">
+                        <div key={name} className="flex-none capitalize w-fit">
                             <InputLabel
                                 value={label}
                                 Htmlfor={name}
                                 className="max-w-sm ml-1 text-lg"
                             />
                             <select
-                                className="w-full max-w-xs text-sm border select border-gradient"
+                                className="w-full max-w-xs text-sm capitalize border selection:capitalize select border-gradient"
                                 name={name}
                                 id={name}
                                 value={filters[name]}

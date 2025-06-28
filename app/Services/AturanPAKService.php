@@ -35,7 +35,6 @@ class AturanPAKService // Boleh pakai nama Helper
                 'predikatPresentase' => AturanPAK::where('name', 'Predikat & Presentase')->first(['value', 'default_config']),
                 'pangkat' => AturanPAK::where('name', 'Angka Minimal Pangkat')->first(['value', 'default_config']),
                 'jabatan' => AturanPAK::where('name', 'Angka Minimal Jabatan')->first(['value', 'default_config']),
-                // TODO: Tambah logic untuk default
                 'tebusanKonversi' => $mergeTebusanDefault('Tebusan Konversi'),
                 'tebusanAkumulasi' => $mergeTebusanDefault('Tebusan Akumulasi'),
                 'tebusanPenetapan' => $mergeTebusanDefault('Tebusan Penetapan'),

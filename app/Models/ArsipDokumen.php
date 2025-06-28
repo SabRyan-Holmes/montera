@@ -19,14 +19,15 @@ class ArsipDokumen extends Model
 
     public function scopeFilter(Builder $query, array $filters): void
     {
-        // Search By Nama & NIP
-        $query->when(
-            $filters['search'] ?? false,
-            fn($query, $search) =>
-            $query->where('title', 'like', '%' . $search . '%')
-                ->orWhere('folder_name', 'like', '%' . $search . '%')
-        );
+        // Search By Title or Folder Name
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('folder_name', 'like', '%' . $search . '%');
+            });
+        });
     }
+
 
     public static function byUser($user)
     {

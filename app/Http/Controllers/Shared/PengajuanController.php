@@ -38,40 +38,45 @@ class PengajuanController extends Controller
         });
     }
 
-
     public function index()
     {
-        $pengajuan = Pengajuan::latest();
-        // Kalo pegawai tampilkan proses PAK unutk pegawai itu saja
+        $pengajuan = Pengajuan::with([
+            'riwayat_pak.pegawai:id,NIP,Nama,Gelar Tambahan,Jabatan/TMT'
+        ])->latest();
+
         $pegawai = Pegawai::byNIP($this->user->nip)->first();
-        // dd($pegawai);
+        // dd($pegawai->id);
         if ($this->user->role === 'Pegawai') {
-            $pengajuan = Pengajuan::byPegawaiId($pegawai->id ?? $this->user->id)->latest();
+            $pengajuan = Pengajuan::with([
+                'riwayat_pak',
+                'riwayat_pak.pegawai:id,NIP,Nama,Gelar Tambahan,Jabatan/TMT'
+            ])->byPegawaiId($pegawai->id)->latest();
         }
 
+        $filtered = $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']));
+        $data = $filtered->paginate(10)->withQueryString();
+
         $subTitle = GetSubtitle::getSubtitle(
-            request('byJabatan'),
-            request('byDaerah'),
-            request('search')
+            byJabatan: request('byJabatan'),
+            byDaerah: request('byDaerah'),
+            search: request('search')
         );
 
-        // TODO: LOGIKA Filter by PAK field nanti
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
         $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
         $kesimpulan_list = collect(AturanPAKService::get('kesimpulan')['kesimpulan']->value ?? [])->pluck('kesimpulan');
 
-        // Dapatkan foldername arsip dari user yg login
-
+        // Dapatkan foldername & file arsip dari user yg login
         $arsipDokumenByUser = ArsipDokumen::byUser($this->user);
 
         return Inertia::render('Pengajuan/Index', [
             "title" => "Proses Pengajuan PAK",
             "subTitle" => $subTitle,
-            "pengajuans" => $pengajuan->filter(request(['search', 'byStatus', 'byJabatan', 'byKesimpulan']))->paginate(10),
+            "pengajuans" => $data,
             'isPimpinan' => $this->user->role === 'Pimpinan',
             'isDivisiSDM' => $this->user->role === 'Divisi SDM',
             'isPegawai' => $this->user->role === 'Pegawai',
-            "searchReq" => request('search'),
+            "searchReq" => request('search') ?? "",
             "byStatusReq" => request('byStatus'),
             "byJabatanReq" => request('byJabatan'),
             "byKesimpulanReq" => request('byKesimpulan'),
@@ -105,6 +110,19 @@ class PengajuanController extends Controller
         // return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
     }
 
+    public function show($id)
+    {
+        $data = Pengajuan::with([
+            'riwayat_pak',
+            'riwayat_pak.pegawai',
+            'pengaju',
+            'validator',
+            'catatan_pengaju',
+            'catatan_validator',
+        ])->findOrFail($id);
+
+        return response()->json($data);
+    }
 
     // ===========================================================================================================================================
     public function approve(Pengajuan $pengajuan)
@@ -112,9 +130,20 @@ class PengajuanController extends Controller
 
         // 1.Ambil Pengajuan dan Pegawai
         $pegawai = $pengajuan->riwayat_pak->pegawai;
-        // 2. Ambil ttd
-        // TODO: nanti ubah ini sesuai yang ada diaturan PAK, dinamis dari pimpinan, cocokkab sesuai nip user pimpinan deeengan aturan PAK penandatangan
+
+        // 2. Ambil signature path dari AturanPAK berdasarkan NIP user
         $signaturePath = public_path('storage/validasi_pimpinan/default.png');
+
+        $aturan = AturanPAK::where('name', 'Penanda Tangan')->first();
+
+        if ($aturan && is_array($aturan->value)) {
+            foreach ($aturan->value as $ttd) {
+                if ($ttd['nip'] === $this->user->nip && !empty($ttd['signature_path'])) {
+                    $signaturePath = public_path('storage/' . $ttd['signature_path']);
+                    break;
+                }
+            }
+        }
 
         if (!file_exists($signaturePath)) {
             return back()->withErrors(['signature' => 'File tanda tangan default tidak ditemukan.']);
@@ -164,7 +193,7 @@ class PengajuanController extends Controller
 
     public function reject(Pengajuan $pengajuan, Request $request)
     {
-        // dd($request);
+        // dd($request->all());
         $new_catatan = null;
         // TODO? : Mungkin sebaikny tambhakn tipe kek penolakan dari validator/pimpinan?
         if ($request->catatan) {
@@ -203,35 +232,47 @@ class PengajuanController extends Controller
 
     public function undo_validate(Pengajuan $pengajuan)
     {
-        DB::transaction(function () use ($pengajuan) {
-            // Hapus file jika ada
-            Storage::disk('public')->delete($pengajuan->approved_pak_path ?? '');
+        $pengajuan->load(['riwayat_pak', 'catatan_validator']);
+        dd($pengajuan);
+        try {
+            DB::transaction(function () use ($pengajuan) {
+                // Hapus file jika ada
+                if ($pengajuan->approved_pak_path) {
+                    Storage::disk('public')->delete($pengajuan->approved_pak_path);
+                }
 
-            // Hapus catatan validator jika ada
-            optional($pengajuan->catatan_validator)->delete();
+                // Hapus catatan validator jika ada
+                if ($pengajuan->catatan_validator) {
+                    $pengajuan->catatan_validator->delete();
+                }
 
-            // Reset pengajuan
-            $pengajuan->update([
-                'status' => 'diajukan',
-                'validated_by' => null,
-                'tanggal_ditolak' => null,
-                'tanggal_divalidasi' => null,
-                'approved_pak_path' => null,
-                'catatan_validator_id' => null,
-            ]);
+                // Reset pengajuan
+                $pengajuan->update([
+                    'status' => 'diajukan',
+                    'validated_by' => null,
+                    'tanggal_ditolak' => null,
+                    'tanggal_divalidasi' => null,
+                    'approved_pak_path' => null,
+                    'catatan_validator_id' => null,
+                ]);
 
-            $no_surat = AturanPAK::extractNoSurat(optional($pengajuan->riwayat_pak)['no_surat3'] ?? '-');
+                $no_surat = AturanPAK::extractNoSurat(optional($pengajuan->riwayat_pak)['no_surat3'] ?? '-');
 
-            ActivityLogger::log(
-                'Reset Validasi Pengajuan PAK',
-                "{$this->user->name} ({$this->user->role}) mereset validasi pengajuan PAK dengan NO PAK: {$no_surat}",
-                Pengajuan::class,
-                $pengajuan->id
-            );
-        });
+                ActivityLogger::log(
+                    aktivitas: 'Reset Validasi Pengajuan PAK',
+                    keterangan: $this->user->name . " (" . $this->user->role . ") mereset validasi pengajuan PAK dengan NO PAK: {$no_surat}",
+                    entityType: Pengajuan::class,
+                    entityId: $pengajuan->id
+                );
+            });
 
-        return redirect()->back()->with('message', 'Validasi pengajuan berhasil dibatalkan');
+            return redirect()->back()->with('message', 'Validasi pengajuan berhasil Direset');
+        } catch (\Exception $e) {
+            Log::error('Undo validate error: ' . $e->getMessage());
+            return redirect()->back()->withErrors('Terjadi kesalahan saat membatalkan validasi.');
+        }
     }
+
 
 
     public function approved_show()

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
+use function Laravel\Prompts\search;
+
 class ArsipDokumenController extends Controller
 {
     /**
@@ -30,20 +32,15 @@ class ArsipDokumenController extends Controller
 
     public function index()
     {
-        // Untuk sementara ini abaikan dulu
-        // $subTitle = GetSubtitle::getSubtitle(
-        //     request('byStatus'),
-        //     request('byJabatan'),
-        //     request('search')
-        // );
-
         $arsipDokumen = ArsipDokumen::byUser($this->user)->latest();
         $folderList = ArsipDokumen::folderListByUser($this->user);
 
         return Inertia::render('ArsipDokumen/Index', [
             'title' => 'Arsip Dokumen',
-            'subtitle' => '',
-            'arsipDokumens' => $arsipDokumen ->filter(request()->only('search'))->paginate(10),
+            'subTitle' => GetSubtitle::getSubtitle(
+                search: request('search')
+            ),
+            'arsipDokumens' => $arsipDokumen->filter(request()->only('search'))->paginate(10),
             'folderList' => $folderList,
             "searchReq" => request('search'),
 
@@ -106,7 +103,21 @@ class ArsipDokumenController extends Controller
      */
     public function update(Request $request, ArsipDokumen $arsipDokumen)
     {
-        //
+        // Validasi nested data
+        $rules = [
+            'datas.title' => 'required|string',
+            'datas.folder_name' => 'required|string',
+        ];
+
+        $validated = $request->validate($rules);
+
+        // Ambil data yang sudah tervalidasi dari 'datas'
+        $data = $validated['datas'];
+
+        // Update arsip dokumen
+        $arsipDokumen->update($data);
+
+        return redirect()->back()->with('message', 'Berhasil Mengupdate Arsip Dokumen!');
     }
 
     /**
@@ -114,6 +125,7 @@ class ArsipDokumenController extends Controller
      */
     public function destroy(ArsipDokumen $arsipDokumen)
     {
-        //
+        $arsipDokumen->delete();
+        return redirect()->back()->with('message', 'Arsip Dokumen Berhasil Dihapus!');
     }
 }

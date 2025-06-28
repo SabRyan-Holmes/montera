@@ -10,7 +10,6 @@ import {
     SecondaryButton,
 } from "@/Components";
 import GuestLayout from "@/Layouts/GuestLayout";
-import ReCAPTCHA from "react-google-recaptcha";
 
 export default function SSOLogin({ status, canAddPegawai }) {
     const { data, setData, post, processing, errors, reset } = useForm({

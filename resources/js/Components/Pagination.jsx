@@ -6,15 +6,22 @@ import {
 import { TiArrowRight } from "react-icons/ti";
 import ReactPaginate from "react-paginate";
 
+const DEFAULT_CATEGORY = "Semua Kategori";
 export default function Paginations({ datas, urlRoute, filters }) {
     const handlePageClick = (event) => {
         const selectedPage = event.selected + 1;
+
+        const filteredQuery = Object.fromEntries(
+            Object.entries(filters).filter(
+                ([_, value]) => value && value !== DEFAULT_CATEGORY
+            )
+        );
 
         router.get(
             urlRoute,
             {
                 page: selectedPage,
-                ...filters, // 🧠 ini penting: langsung spread semua filter apapun namanya
+                ...filteredQuery,
             },
             {
                 replace: true,
@@ -22,7 +29,6 @@ export default function Paginations({ datas, urlRoute, filters }) {
             }
         );
     };
-
 
     return (
         <div className="mb-8 text-sm box-footer">

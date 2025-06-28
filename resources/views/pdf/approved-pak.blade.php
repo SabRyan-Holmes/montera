@@ -34,9 +34,6 @@
 --}}
 <body>
     <main>
-        {{-- @dd($signature) --}}
-
-
         {{-- Page 1 --}}
         @include('pdf.pak-page-1', ['signature' => $signature ?? null ])
 

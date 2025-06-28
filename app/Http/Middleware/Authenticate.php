@@ -40,9 +40,6 @@ class Authenticate
                 return $next($request);
             }
 
-            // TODO : Aku ingin ditambahkan logic untuk login via sso
-            // Jalur login Pegawai via SSO (tanpa tabel User) nanti dibikin
-            // Untuk role 'pegawai', pastikan data ada di tabel pegawai
             $pegawai = Pegawai::where('NIP', $user['nip'])->first();
 
             if (!$pegawai) {

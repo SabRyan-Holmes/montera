@@ -126,7 +126,6 @@ export default function UpdatePasswordForm({ className = "" }) {
                     <SuccessButton
                         type="submit"
                         disabled={processing}
-                        className=""
                     >
                         Simpan
                     </SuccessButton>

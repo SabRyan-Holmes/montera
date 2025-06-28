@@ -45,7 +45,6 @@ class DokumenPAKController extends Controller
         }
 
         return Inertia::render('RiwayatPAK/Index', [
-            // "title" => "Pegawai " . $title,
             "title" => "Pencetakan Dokumen PAK ",
             "subTitle" => $subTitle,
             "pegawais" => $pegawai->filter(request(['search', 'byDaerah', 'byJabatan']))->paginate(10),
@@ -100,14 +99,18 @@ class DokumenPAKController extends Controller
 
     public function process(Request $request)
     {
-        // dd($request->all());
-        Session::put('data', $request->all());
-        // Kalo dibuka dr history(tanpa restore ke database)
-        if (!isset($request->id)) {
-            $dataForStore = $request->except('pegawai');
-            $pegawai_id = $request->input('pegawai.id');
-            $dataForStore['pegawai_id'] = $pegawai_id;
+        // Ambil data dari model jika ada riwayat_pak_id, atau gunakan semua data dari request
+        $data = null;
+        if ($request->filled('riwayat_pak_id')) {
+            // Ambil RiwayatPAK beserta relasi pegawai
+            $data = RiwayatPAK::with('pegawai')->findOrFail($request->riwayat_pak_id);
+        } else {
+            // Gunakan data dari request (array)
+            $data = $request->all();
         }
+
+        // Simpan data ke session
+        Session::put('data', $data);
     }
 
     public function preview()
@@ -143,7 +146,7 @@ class DokumenPAKController extends Controller
         RiwayatPAK::create($dataForStore);
         // Update no surat
         AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
-        return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan ke dalam Database');
+        return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan sebagai Riwayat PAK');
     }
 
 

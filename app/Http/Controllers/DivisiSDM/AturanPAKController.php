@@ -151,7 +151,6 @@ class AturanPAKController extends Controller
             ]);
         }
 
-        // 🧼 Return disatukan di bawah, DRY and clean
         return redirect()->back()->with([
             'toast' => "Berhasil Mengupdate Default {$request->updateName}.",
             'toast_id' => uniqid(),
@@ -159,92 +158,7 @@ class AturanPAKController extends Controller
     }
 
 
-    // public function set_default_config(Request $request)
-    // {
-    //     $request->validate([
-    //         'updateName' => 'required|string',
-    //         'value' => 'required'
-    //     ]);
 
-    //     $aturan = AturanPAK::where('name', $request->updateName)->firstOrFail();
-
-    //     // Handle khusus tebusan
-    //     if (str_contains($request->updateName, 'Tebusan')) {
-    //         $input = json_decode($request->value, true);
-    //         $currentConfig = $aturan->default_config ?: [];
-
-    //         // Konversi ke array jika berupa JSON string
-    //         $currentConfig = is_array($currentConfig) ? $currentConfig : json_decode($currentConfig, true);
-
-    //         // Toggle status
-    //         $updatedConfig = array_map(function($item) use ($input) {
-    //             if ($item['id'] == $input['id']) {
-    //                 $item['checked'] = !$item['checked'];
-    //             }
-    //             return $item;
-    //         }, $currentConfig);
-
-    //         $aturan->update(['default_config' => $updatedConfig]);
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Status tebusan berhasil diupdate',
-    //             'data' => $updatedConfig
-    //         ]);
-    //     }
-
-    //     // Handle normal (integer)
-    //     $aturan->update([
-    //         'default_config' => $request->value
-    //     ]);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Default config berhasil diupdate'
-    //     ]);
-    // }
-
-    protected function handleTebusanConfig($currentConfig, $selectedId, $aturanPAK)
-    {
-        // Convert to array jika berupa JSON string
-        $config = is_array($currentConfig) ? $currentConfig : json_decode($currentConfig, true);
-
-        // Dapatkan semua id yang valid dari value AturanPAK
-        $validIds = collect($aturanPAK->value)->pluck('id')->toArray();
-
-        // Inisialisasi config jika kosong atau tidak sesuai
-        if (empty($config) || count($config) !== count($validIds)) {
-            $config = array_map(function ($id) {
-                return ['id' => $id, 'checked' => false];
-            }, $validIds);
-        }
-        // Toggle status checked untuk id yang dipilih
-
-        // Toggle status checked untuk id yang dipilih
-        foreach ($config as &$item) {
-            if ($item['id'] == $selectedId) {
-                $item['checked'] = !$item['checked'];
-                break;
-            }
-        }
-        // $updated = false;
-        // foreach ($config as &$item) {
-        //     if ($item['id'] == $selectedId) {
-        //         $item['checked'] = !$item['checked']; // Toggle true/false
-        //         $updated = true;
-        //     }
-        // }
-
-        // // Jika ID baru, tambahkan entry
-        // if (!$updated) {
-        //     $config[] = [
-        //         'id' => $selectedId,
-        //         'checked' => true
-        //     ];
-        // }
-
-        return $config;
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -308,7 +222,6 @@ class AturanPAKController extends Controller
 
     public function setPenandaTangan(Request $request)
     {
-        // dd($request);
         $validated = $request->validate([
             'id' => 'required|integer',
             'nama' => 'required|string|max:150',
@@ -336,10 +249,15 @@ class AturanPAKController extends Controller
         // Ambil elemen lama
         $penandaTangan = $list[$index];
 
-        // Hapus tanda tangan lama jika file baru diupload
-        if ($request->hasFile('signature_path') && !empty($penandaTangan['signature_path'])) {
+        // Hapus tanda tangan lama jika file baru diupload kecuali default.png
+        if (
+            $request->hasFile('signature_path') &&
+            !empty($penandaTangan['signature_path']) &&
+            basename($penandaTangan['signature_path']) !== 'default.png'
+        ) {
             Storage::disk('public')->delete($penandaTangan['signature_path']);
         }
+
 
         // Proses upload jika ada
         if ($request->hasFile('signature_path')) {

@@ -121,23 +121,11 @@ export default function SDMContent({ aturanPAK }) {
     });
     const [isEdit, setIsEdit] = useState(false);
     const [dataEdit, setDataEdit] = useState(null);
+    const [selectedPTId, setSelectedPTId] = useState(
+        penandaTangan.default_config
+    );
 
-    // ANCHOR : Logic & Function Here!
-
-    // Handle Default Penanda Tangan(change config)
-    const { data, setData, post, processing, errors, reset } = useForm({
-        updateName: "", // Tambahkan field untuk selected ID
-        selectedPTId: null, // Tambahkan field untuk selected ID
-    });
-
-    useEffect(() => {
-        // Penanda Tangan
-        if (aturanPAK) {
-            setData("selectedPTId", penandaTangan.default_config);
-        }
-        console.log("tebusanKonversi");
-        console.log(tebusanKonversi);
-    }, [aturanPAK]);
+    const isPTChanged = selectedPTId === penandaTangan.default_config;
 
     return (
         <main className="grid items-stretch w-full h-full grid-flow-row grid-cols-2 gap-12 mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop content-normal justify-items-center text-slate-600 px-7">
@@ -258,20 +246,11 @@ export default function SDMContent({ aturanPAK }) {
                                         radioValue={item.id}
                                         value={`${item.nama} - ${item.nip}`}
                                         onChange={(e) =>
-                                            setData(
-                                                "selectedPTId",
+                                            setSelectedPTId(
                                                 parseInt(e.target.value)
                                             )
                                         }
-                                        defaultChecked={
-                                            item.id ==
-                                            penandaTangan.default_config
-                                                ? true
-                                                : false
-                                        }
-                                        // checked={
-                                        //     data.selectedPTId == penandaTangan.default_config ? true : false
-                                        // }
+                                        defaultChecked={item.id == selectedPTId}
                                     />
                                     <div className="inline-flex gap-3">
                                         <button
@@ -340,11 +319,11 @@ export default function SDMContent({ aturanPAK }) {
                                 )}
                                 data={{
                                     updateName: "Penanda Tangan",
-                                    value: data.selectedPTId,
+                                    value: selectedPTId,
                                 }}
                                 method="post"
                                 className="inline-flex justify-end py-3 normal-case "
-                                // disabled={processing}
+                                disabled={isPTChanged}
                             >
                                 Simpan
                                 <FaSave className="mx-1" />

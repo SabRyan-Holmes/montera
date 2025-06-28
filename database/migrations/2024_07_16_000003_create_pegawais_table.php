@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('Unit Kerja');
             $table->string('Daerah');
             $table->string('Gelar Tambahan')->nullable();
-
             $table->timestamps();
         });
     }

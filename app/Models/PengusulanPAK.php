@@ -13,7 +13,7 @@ class PengusulanPAK extends Model
 
     protected $table = 'pengusulan_pak';
     protected $guarded = ['id'];
-    protected $with = ['pegawai', 'catatan_pengusul', 'catatan_validator'];
+    // protected $with = ['catatan_pengusul', 'catatan_validator'];
     protected $casts = [
         'periode_mulai' => 'date:Y-m',
         'periode_berakhir' => 'date:Y-m',

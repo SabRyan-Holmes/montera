@@ -510,7 +510,6 @@ export default function PAKTable({
                             name="pangkat"
                             id="pangkat"
                             className="w-20 text-center rounded-md border-gradient"
-                            // TODO: ubah ini nanti sesuai default_config
                             value={data.pangkat}
                             onChange={(e) => {
                                 setData("pangkat", parseInt(e.target.value));
@@ -526,7 +525,6 @@ export default function PAKTable({
                             name="jabatan"
                             id="jabatan"
                             className="w-20 text-center rounded-md border-gradient"
-                            // TODO: ubah ini nanti sesuai default_config
                             value={data.jabatan}
                             onChange={(e) => {
                                 setData("jabatan", parseInt(e.target.value));

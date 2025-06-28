@@ -13,7 +13,7 @@ class RiwayatPAK extends Model
     use HasFactory;
     protected $table = 'riwayat_pak';
     protected $guarded = ['id'];
-    protected $with = ['pegawai', 'pengusulan_pak'];
+    // protected $with = ['pegawai', 'pengusulan_pak'];
     protected $casts = [
         'tebusan1' => 'array',
         'tebusan2' => 'array',
@@ -71,7 +71,6 @@ class RiwayatPAK extends Model
                 ->orWhere('kesimpulan', 'like', '%' . $byKesimpulan . '%')
         );
 
-        // TODO: gimana cara menampilan semua riwayat PAK berdasarkan sudah  diajukan/belum,(riwayat pak ini tidak punya field pengajuan_id, hanya pengajuan,yang punya riwayat_pak_id)
         $query->when(
             $filters['byStatus'] ?? false,
             function ($query, $byStatus) {

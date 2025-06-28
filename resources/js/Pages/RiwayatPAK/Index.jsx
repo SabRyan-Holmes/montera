@@ -78,7 +78,7 @@ export default function Index({
     // ===========================================Handling Search & Filter===========================================
 
     // ===========================================Logic Lain===========================================
-    const [expandedRows, setExpandedRows] = useState({}); //Handling wrapped text on riwayatPAK.kesimpulan
+    const [expandedRows, setExpandedRows] = useState({});
     const [showIframe, setShowIframe] = useState(false);
 
     // SWAL POP UP
@@ -98,8 +98,10 @@ export default function Index({
                 return jabatan;
             }
         }
-        return "Non Fungsional"; // kalau tidak ada yang cocok
+        return "Non Fungsional";
     }
+
+    const [showDetail, setShowDetail] = useState(null);
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -127,6 +129,13 @@ export default function Index({
                     <PopUpCatatan
                         onClose={() => setIsPopUpOpen(!isPopUpOpen)}
                         popUpData={popUpData}
+                    />
+                )}
+
+                {showDetail && (
+                    <Show
+                        riwayatPAK={showDetail}
+                        onClose={() => setShowDetail(null)}
                     />
                 )}
 
@@ -194,16 +203,6 @@ export default function Index({
                                         >
                                             Nama & NIP
                                         </th>
-                                        {/* <th
-                                            scope="col"
-                                            width="7%"
-                                            className="w-16 p-1 text-xs"
-                                        >
-                                            <span>AK Terakhir </span>
-                                            <span className="block">
-                                                AK Terbaru
-                                            </span>
-                                        </th> */}
                                         <th
                                             scope="col"
                                             width="7%"
@@ -229,115 +228,118 @@ export default function Index({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {riwayatPAK.data?.map((pak, i) => (
-                                        <tr role="list" key={i}>
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-                                            <td> {pak["no_surat3"]}</td>
-                                            <td className="relative group">
-                                                <span className="block">
-                                                    {pak.pegawai["Nama"]}
-                                                    {pak.pegawai[
-                                                        "Gelar Tambahan"
-                                                    ] ?? ""}
-                                                </span>
-                                                <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
-                                                    {pak.pegawai["NIP"]}
-                                                </span>
-                                                {/* TODO: Benerin lagi nanti */}
-                                                <span className="badge-xs-secondary">
-                                                    {extractJabatan(
-                                                        pak.pegawai[
-                                                            "Jabatan/TMT"
-                                                        ]
-                                                    )}
-                                                </span>
-                                            </td>
-                                            {/* <td className="text-center">
-                                                <span className="block">
-                                                    {pak["ak_terakhir"] } {'/'}
-                                                </span>
-
-                                                <span className="block p-1 mt-1 font-medium ">
-                                                    {pak["angka_kredit"] ?? ""}
-                                                </span>
-                                            </td> */}
-
-                                            <td className="text-center">
-                                                {parseFloat(
-                                                    pak["jakk"]["jumlah"]
-                                                ).toFixed(3)}
-                                            </td>
-
-                                            <td
-                                                className="relative group cursor-pointer max-w-[300px] text-xs"
-                                                onClick={() =>
-                                                    setExpandedRows((prev) => ({
-                                                        ...prev,
-                                                        [pak.id]: !prev[pak.id],
-                                                    }))
-                                                }
-                                            >
-                                                {/* Konten teks */}
-                                                <span>
-                                                    {expandedRows[pak.id]
-                                                        ? pak["kesimpulan"]
-                                                        : pak["kesimpulan"]
-                                                              .length > 70
-                                                        ? pak[
-                                                              "kesimpulan"
-                                                          ].slice(0, 70) + "..."
-                                                        : pak["kesimpulan"]}
-                                                </span>
-                                                ={" "}
-                                                {!expandedRows[pak.id] && (
-                                                    <div
-                                                        className="absolute z-[999] w-20 px-3 py-1 mt-2 text-xs text-white transition-opacity duration-200
-                                                -translate-x-1/2 bg-accent rounded shadow-lg opacity-0 pointer-events-none left-1/2 top-full group-hover:opacity-100"
-                                                    >
-                                                        Klik untuk tampilkan
-                                                        lengkap
-                                                        {/* Segitiga bawah tooltip */}
-                                                        <div className="absolute w-2 h-2 rotate-45 -translate-x-1/2 bg-accent -top-1 left-1/2"></div>
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td className="text-center">
-                                                <div className="mt-2">
+                                    {riwayatPAK.data?.map((pak, i) => {
+                                        const isSubmitted = pengajuans.includes(
+                                            pak.id
+                                        );
+                                        return (
+                                            <tr role="list" key={i}>
+                                                <td className="text-center">
+                                                    {i + 1}
+                                                </td>
+                                                <td> {pak["no_surat3"]}</td>
+                                                <td className="relative group">
                                                     <span className="block">
-                                                        {moment(
-                                                            pak.updated_at
-                                                        ).format("LL")}
+                                                        {pak.pegawai["Nama"]}
+                                                        {pak.pegawai[
+                                                            "Gelar Tambahan"
+                                                        ] ?? ""}
                                                     </span>
-                                                    <span className="block text-[12px]">
-                                                        {moment(
-                                                            pak.updated_at
-                                                        ).fromNow()}
+                                                    <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                                        {pak.pegawai["NIP"]}
                                                     </span>
-                                                </div>
-                                            </td>
-                                            <td className="text-center whitespace-nowrap text-nowrap">
-                                                {/* CEK SUDAH DIAJUKAN ATAU BELUM */}
-                                                {pengajuans.includes(pak.id) ? (
+                                                    <span className="badge-xs-secondary">
+                                                        {extractJabatan(
+                                                            pak.pegawai[
+                                                                "Jabatan/TMT"
+                                                            ]
+                                                        )}
+                                                    </span>
+                                                </td>
+
+                                                <td className="text-center">
+                                                    {parseFloat(
+                                                        pak["jakk"]["jumlah"]
+                                                    ).toFixed(3)}
+                                                </td>
+
+                                                <td
+                                                    className="relative group cursor-pointer max-w-[300px] text-xs"
+                                                    onClick={() =>
+                                                        setExpandedRows(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                [pak.id]:
+                                                                    !prev[
+                                                                        pak.id
+                                                                    ],
+                                                            })
+                                                        )
+                                                    }
+                                                >
+                                                    <span>
+                                                        {expandedRows[pak.id]
+                                                            ? pak["kesimpulan"]
+                                                            : pak["kesimpulan"]
+                                                                  .length > 70
+                                                            ? pak[
+                                                                  "kesimpulan"
+                                                              ].slice(0, 70) +
+                                                              "..."
+                                                            : pak["kesimpulan"]}
+                                                    </span>{" "}
+                                                    {!expandedRows[pak.id] && (
+                                                        <div
+                                                            className="absolute z-[999] w-20 px-3 py-1 mt-2 text-xs text-white transition-opacity duration-200
+                                                -translate-x-1/2 bg-accent rounded shadow-lg opacity-0 pointer-events-none left-1/2 top-full group-hover:opacity-100"
+                                                        >
+                                                            Klik untuk tampilkan
+                                                            lengkap
+                                                            <div className="absolute w-2 h-2 rotate-45 -translate-x-1/2 bg-accent -top-1 left-1/2"></div>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="text-center">
+                                                    <div className="mt-2">
+                                                        <span className="block">
+                                                            {moment(
+                                                                pak.updated_at
+                                                            ).format("LL")}
+                                                        </span>
+                                                        <span className="block text-[12px]">
+                                                            {moment(
+                                                                pak.updated_at
+                                                            ).fromNow()}
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                <td className="space-x-2 text-center text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
-                                                            disabled
-                                                            className="action-btn group action-btn-primary"
+                                                            onClick={() => {
+                                                                setShowDetail(
+                                                                    pak
+                                                                );
+                                                            }}
+                                                            className="action-btn group/button action-btn-success"
                                                         >
-                                                            <BsFillSendFill className="scale-125 group-hover:fill-white" />
+                                                            <FaEye className="scale-125 group-hover:fill-white" />
                                                         </button>
-
                                                         <TooltipHover
                                                             message={
-                                                                "Sudah Diajukan ke Pimpinan"
+                                                                "Lihat Data"
                                                             }
                                                         />
                                                     </div>
-                                                ) : (
+                                                    {/* CEK SUDAH DIAJUKAN ATAU BELUM */}
+
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             as="button"
+                                                            disabled={
+                                                                isSubmitted
+                                                            }
                                                             onClick={() => {
                                                                 setPopUpData({
                                                                     type: "Catatan Pengajuan Divisi SDM",
@@ -358,71 +360,62 @@ export default function Index({
                                                         </button>
                                                         <TooltipHover
                                                             message={
-                                                                "Ajukan ke Pimpinan"
+                                                                isSubmitted
+                                                                    ? "Sudah Diajukan ke Pimpinan"
+                                                                    : "Ajukan ke Pimpinan"
                                                             }
                                                         />
                                                     </div>
-                                                )}
 
-                                                <span className="inline-block mx-1"></span>
+                                                    {/* EDIT */}
+                                                    <div className="relative inline-flex group">
+                                                        <Link
+                                                            as="button"
+                                                            disabled={
+                                                                isSubmitted
+                                                            }
+                                                            href={route(
+                                                                "divisi-sdm.riwayat-pak.edit",
+                                                                pak.id
+                                                            )}
+                                                            className="action-btn action-btn-secondary group"
+                                                        >
+                                                            <FaEdit className="scale-125 group-hover:fill-white" />
+                                                        </Link>
 
-                                                <div className="relative inline-flex group">
-                                                    <button
-                                                        onClick={() =>
-                                                            document
-                                                                .getElementById(
-                                                                    `Show-${pak.id}`
+                                                        <TooltipHover
+                                                            message={
+                                                                "Edit Data"
+                                                            }
+                                                        />
+                                                    </div>
+                                                    {/* DELETE */}
+
+                                                    <div className="relative inline-flex group">
+                                                        <button
+                                                            as="button"
+                                                            disabled={
+                                                                isSubmitted
+                                                            }
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    pak.id
                                                                 )
-                                                                .showModal()
-                                                        }
-                                                        className="action-btn group/button action-btn-success"
-                                                    >
-                                                        <FaEye className="scale-125 group-hover:fill-white" />
-                                                    </button>
-                                                    <TooltipHover
-                                                        message={"Lihat Data"}
-                                                    />
-                                                    <Show riwayatPAK={pak} />
-                                                </div>
-
-                                                <span className="inline-block mx-1"></span>
-
-                                                {/* EDIT */}
-                                                <div className="relative inline-flex group">
-                                                    <Link
-                                                        as="a"
-                                                        href={route(
-                                                            "divisi-sdm.riwayat-pak.edit",
-                                                            pak.id
-                                                        )}
-                                                        className="action-btn action-btn-secondary group"
-                                                    >
-                                                        <FaEdit className="scale-125 group-hover:fill-white" />
-                                                    </Link>
-
-                                                    <TooltipHover
-                                                        message={"Edit Data"}
-                                                    />
-                                                </div>
-                                                {/* DELETE */}
-                                                <span className="inline-block mx-1"></span>
-
-                                                <div className="relative inline-flex group">
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(pak.id)
-                                                        }
-                                                        className="action-btn action-btn-warning group"
-                                                    >
-                                                        <FaTrash className="scale-125 group-hover:fill-white" />
-                                                    </button>
-                                                    <TooltipHover
-                                                        message={"Hapus Data"}
-                                                    />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                            }
+                                                            className="action-btn action-btn-warning group"
+                                                        >
+                                                            <FaTrash className="scale-125 group-hover:fill-white" />
+                                                        </button>
+                                                        <TooltipHover
+                                                            message={
+                                                                "Hapus Data"
+                                                            }
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                             <Pagination

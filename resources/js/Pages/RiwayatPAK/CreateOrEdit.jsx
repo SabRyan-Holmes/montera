@@ -47,6 +47,7 @@ export default function Index({
         data,
         setData,
         post,
+        patch,
         processing,
         errors,
         reset,
@@ -55,12 +56,12 @@ export default function Index({
         aturanAkmTableProps,
         aturanPAKTableProps,
     } = UseAturanPenetapan((aturanPAK = aturanPAK));
-    // ANCHOR
 
     const [pegawaiState, setPegawaiState] = useState(null);
     // IF EDIT
     useEffect(() => {
-        // Kalo Edit
+        const { findKoefisienPertahunValue } = rumusPenghitungan;
+        console.warn(riwayat);
         if (isEdit && riwayat) {
             setData({
                 ...riwayat,
@@ -69,17 +70,9 @@ export default function Index({
                 //forRevisiPengajuanPAK
                 ...(pengajuanId && { pengajuanId: pengajuanId }),
             });
-            // g("", riwayat);
             setPegawaiState(riwayat.pegawai);
         } else if (isByPengusulan && pegawai) {
-            const { koefisienPertahun } = aturanKonvTableProps;
-            const findkoefisienPertahunValue = (jabatan) => {
-                const key = Object.keys(koefisienPertahun).find((k) =>
-                    jabatan.includes(k)
-                );
-                return key ? koefisienPertahun[key] : null;
-            };
-            let koefisienPertahunValue = findkoefisienPertahunValue(
+            let koefisienPertahunValue = findKoefisienPertahunValue(
                 pegawai["Jabatan/TMT"]
             );
 
@@ -103,7 +96,6 @@ export default function Index({
                 data.presentase
             );
             const today = new Date().toISOString().split("T")[0];
-            // alert(angkaPeriodeMulai)
             setData((prev) => ({
                 ...prev,
                 tgl_ditetapkan: today,
@@ -114,23 +106,20 @@ export default function Index({
                 angka_kredit: angkaKreditValue,
                 tahun_periode: yearStart,
             }));
-            // console.log("first Mounted");
         }
-        // alert(isRevisi)
     }, [initialized]);
 
     // Kalo dpt nilai pegawai stelah dipilih
     useEffect(() => {
         const { findKoefisienPertahunValue } = rumusPenghitungan;
         if (!isEdit && pegawai) {
-            setData("pegawai", pegawai); // Set pegawai
-            setPegawaiState(pegawai); // opsional: state lokal
+            setData("pegawai", pegawai);
+            setPegawaiState(pegawai);
 
             const akNormatifValue = findKoefisienPertahunValue(
                 pegawai["Jabatan/TMT"]
             );
-
-            // console.log("🎯 SET ak_normatif dari Main:", akNormatifValue);
+            // alert(akNormatifValue)
             setData("ak_normatif", akNormatifValue); // langsung set di sini
         }
     }, [pegawai]);
@@ -150,10 +139,7 @@ export default function Index({
 
     useEffect(() => {
         if (errors && Object.values(errors).length > 0) {
-            // Ambil nilai pertama dari object errors
             const firstErrorMessage = Object.values(errors)[0];
-            // console.log("firstErrorMessage :");
-            // console.log(firstErrorMessage);
             Toast.fire({
                 icon: "warning",
                 iconColor: "#fb7185",
@@ -182,68 +168,55 @@ export default function Index({
     // =============================================================Logic Lainny==============================================
     const [showIframe, setShowIframe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { props } = usePage();
 
     const submit = (e) => {
         e.preventDefault();
-        // alert('disubmit')
         const action = e.nativeEvent.submitter.value;
-
-        const endpoints = {
-            preview: "/pak/process",
-            save: "/divisi-sdm/pak/save",
-            // submit: "/divisi-sdm/pak/submit",
-        };
-
+        // alert(action)
         const routeNames = {
-            update: "divisi-sdm.riwayat-pak.update",
-            "re-submit": "divisi-sdm.pengajuan.ajukan-ulang",
+            submit: route("divisi-sdm.pak.submit"),
+            save: route("divisi-sdm.pak.save"),
+            preview: route("pak.process"),
         };
 
-        let endpoint = endpoints[action] ?? "";
-        let routeName = routeNames[action] ?? "";
-
-        // alert(action);
-        // EDIT MODE
-        if (isEdit) {
-
-            // alert(idRiwayatPAK)
-            router.patch(route(routeName, data.id), data, {
-                preserveScroll: true,
-                preserveState: true,
-                onStart: () => setIsLoading(true),
-                onFinish: () => setIsLoading(false),
-                onError: (errors) => {
-                    alert("Error:", errors);
-                },
-                onSuccess: (page) => {
-                    // Tambah logic lain sesuai tombolnya
-                },
-            });
-        } else {
-            router.post(endpoint, data, {
-                preserveScroll: true,
-                preserveState: true,
-                onStart: () => setIsLoading(true),
-                onFinish: () => setIsLoading(false),
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                    alert("Submit gagal. Lihat console log.");
-                },
-                onSuccess: (page) => {
-                    if (action === "preview") setShowIframe(true);
-                    setActiveModal(null);
-                    // Tambah logic lain sesuai tombolnya
-                },
-            });
+        if (isEdit && data?.id) {
+            routeNames["update"] = route(
+                "divisi-sdm.riwayat-pak.update",
+                data.id
+            );
+            routeNames["re-submit"] = route(
+                "divisi-sdm.pengajuan.ajukan-ulang",
+                data.id
+            );
         }
+
+        const url = routeNames[action];
+        if (!url) return alert(`Unknown action: ${action}`);
+
+        const isPost = action === "preview" || action === "save" || !isEdit;
+        const method = isPost ? post : patch;
+
+        method(url, {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => setIsLoading(true),
+            onFinish: () => setIsLoading(false),
+            onError: (errors) => {
+                console.error("Error:", errors);
+                alert("Submit gagal. Lihat console log.");
+            },
+            onSuccess: () => {
+                if (action === "preview") setShowIframe(true);
+                setActiveModal(null);
+            },
+        });
     };
 
     const submitModal = (e) => {
         const action = e.target.value;
         const routeNames = {
             submit: route("divisi-sdm.pak.submit"),
-            "re-submit": route("divisi-sdm.pengajuan.ajukan-ulang", data.id), //TODO : syaaingin kalo ini jadi patch, bukan post
+            "re-submit": route("divisi-sdm.pengajuan.ajukan-ulang", data.id),
         };
         const routeName = routeNames[action];
         if (!routeName) return alert(`Unknown action: ${action}`);
@@ -265,9 +238,7 @@ export default function Index({
     );
 
     const onSelect = (p) => {
-        // Set input search agar berubah
         setSearch(`${p.Nama} (${p.NIP})`);
-        // Lanjut redirect ke route dengan query string
         router.get(
             route("divisi-sdm.pak.create"),
             { NIP: p.NIP },
@@ -283,17 +254,6 @@ export default function Index({
     };
 
     const [activeModal, setActiveModal] = useState(null);
-
-    // CONSOLE
-    // console.log("Isi Error");
-    // console.log(errors);
-    console.log("Isi Data");
-    console.log(data);
-    // console.log("data now", dataNow);
-    // console.log('Is Pengusulan Data', isByPengusulan)
-    useEffect(() => {
-        console.log("📦 data form updated:", data);
-    }, [data]);
 
     return (
         <Authenticated
@@ -454,8 +414,6 @@ export default function Index({
                                 data={data}
                                 setData={setData}
                                 rumusPenghitungan={rumusPenghitungan}
-                                // ANCHOR
-                                // EDIT
                                 isEdit={isEdit}
                                 historyData={isEdit ? riwayat : {}}
                                 pengusulanData={isByPengusulan && pengusulan}
@@ -527,7 +485,7 @@ export default function Index({
                                             id="catatan"
                                             name="catatan"
                                             className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
-                                            placeholder="Ketikkan catatan untuk penolakan pengusulan ini.."
+                                            placeholder="Ketikkan catatan tambahan untuk pengajuan  ini.."
                                             maxLength={1000}
                                             onChange={(e) =>
                                                 setData(
@@ -549,11 +507,17 @@ export default function Index({
                                         <button
                                             type="button"
                                             name="action"
-                                            value={isRevisi ? "re-submit" : "submit"}
+                                            value={
+                                                isRevisi
+                                                    ? "re-submit"
+                                                    : "submit"
+                                            }
                                             onClick={submitModal}
                                             className="px-4 py-2 text-sm font-medium text-white transition duration-200 rounded-md bg-sky-600 hover:bg-sky-700"
                                         >
-                                            {isRevisi ? "Ajukan Ulang" : "Ajukan"}
+                                            {isRevisi
+                                                ? "Ajukan Ulang"
+                                                : "Ajukan"}
                                         </button>
                                     </div>
                                 </section>

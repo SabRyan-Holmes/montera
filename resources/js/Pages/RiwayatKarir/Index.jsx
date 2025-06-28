@@ -4,7 +4,15 @@ import useFilterSearch from "@/Components/UseFilterSearchCustom";
 import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
 import moment from "moment/min/moment-with-locales";
 import { router } from "@inertiajs/react";
-import { DetailPegawai, InputLabel, Modal, PrimaryButton, SecondaryButton } from "@/Components";
+import {
+    DetailPegawai,
+    FilterSearchCustom,
+    InputLabel,
+    Modal,
+    Pagination,
+    PrimaryButton,
+    SecondaryButton,
+} from "@/Components";
 import { MdPersonSearch } from "react-icons/md";
 import { FaUserTie } from "react-icons/fa6";
 import ModalShowPegawai from "./Partials/ModalShowPegawai";
@@ -16,199 +24,69 @@ export default function Index({
     title,
     subTitle,
     flash,
-    searchReq: initialSearch,
-    byJabatanReq: initialJabatan,
-    byJenisPerubahanReq: initialJenisPerubahan,
+    searchReq,
+    byJabatanReq,
+    byJenisPerubahanReq,
     jabatanList = [],
+    fieldList = [],
     isPegawai = false,
     pegawai,
 }) {
     // ===========================================Handling Search & Filter===========================================
-    const [searchInput, setSearchInput] = useState(initialSearch);
-    const [submittedSearch, setSubmittedSearch] = useState(initialSearch);
-    const [byJabatan, setByJabatan] = useState(initialJabatan);
-    const [byJenisPerubahan, setByJenisPerubahan] = useState(
-        initialJenisPerubahan
-    );
+
+    moment.locale("id");
 
     const role = auth.user.role;
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
-    const routeName = `/${formatRole(role)}/riwayat-karir`;
-    // Kirim ke server saat filter/search berubah
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
 
-        const currentSearch = urlParams.get("search") || "";
-        const currentJabatan = urlParams.get("byJabatan") || DEFAULT_CATEGORY;
-        const currentJenisPerubahan =
-            urlParams.get("byJenisPerubahan") || DEFAULT_CATEGORY;
-
-        const isSame =
-            (submittedSearch || "") === currentSearch &&
-            byJenisPerubahan === currentJenisPerubahan &&
-            byJabatan === currentJabatan;
-
-        const query = {};
-
-        const trimmedSearch = (submittedSearch || "").trim();
-        if (trimmedSearch) query.search = trimmedSearch;
-        if (byJenisPerubahan && byJenisPerubahan !== DEFAULT_CATEGORY)
-            query.byJenisPerubahan = byJenisPerubahan;
-        if (byJabatan && byJabatan !== DEFAULT_CATEGORY)
-            query.byJabatan = byJabatan;
-
-        if (!isSame) {
-            router.get(routeName, query, {
-                replace: true,
-                preserveState: true,
-            });
-        }
-    }, [submittedSearch, byJenisPerubahan, byJabatan]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setSubmittedSearch(searchInput);
-    };
-
-    moment.locale("id");
     const [showPegawai, setShowPegawai] = useState(false);
     const closeModal = () => {
         setShowPegawai(false);
     };
+    function extractJabatan(jabatanTMT) {
+        for (const jabatan of jabatanList) {
+            if (jabatanTMT.includes(jabatan)) {
+                return jabatan;
+            }
+        }
+        return "Non Fungsional"; // kalau tidak ada yang cocok
+    }
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                <section className="w-full">
-                    <form onSubmit={handleSubmit}>
-                        <div className="flex items-center justify-between gap-3 my-3">
-                            <div className="flex items-center justify-start gap-3">
-                                {/* JABATAN */}
-                                <div className="flex-none w-60">
-                                    <InputLabel
-                                        value="Jabatan"
-                                        Htmlfor="Jabatan"
-                                        className="max-w-sm ml-1 text-lg"
-                                    />
-                                    <select
-                                        className="w-full max-w-xs text-sm border select border-gradient"
-                                        name="byJabatan"
-                                        value={byJabatan}
-                                        onChange={(e) =>
-                                            setByJabatan(e.target.value)
-                                        }
-                                    >
-                                        <option>{DEFAULT_CATEGORY}</option>
-                                        {jabatanList.map((item) => (
-                                            <option value={item}>
-                                                Ahli {item}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {/* JENIS PERUBAHAN */}
-                                <div className="flex-none w-fit">
-                                    <InputLabel
-                                        value="Jenis Perubahan"
-                                        htmlFor="JenisPerubahan"
-                                        className="max-w-sm ml-1 text-lg"
-                                    />
-                                    <select
-                                        className="w-full max-w-xs text-sm border select border-gradient"
-                                        name="byJenisPerubahan"
-                                        value={byJenisPerubahan}
-                                        onChange={(e) =>
-                                            setByJenisPerubahan(e.target.value)
-                                        }
-                                    >
-                                        <option>{DEFAULT_CATEGORY}</option>
-                                        <option>Nama</option>
-                                        <option>NIP</option>
-                                        <option>Nomor Seri Karpeg</option>
-                                        <option>
-                                            Pangkat/Golongan Ruangan/TMT
-                                        </option>
-                                        <option>Tempat/Tanggal Lahir</option>
-                                        <option>Jenis Kelamin</option>
-                                        <option>TANJUNG JABUNG BARAT</option>
-                                        <option>Pendidikan</option>
-                                        <option>Jabatan/TMT</option>
-                                        <option>Masa Kerja Golonga</option>
-                                        <option>Daerah</option>
-                                        <option>Gelar Tambahan</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* SEARCH */}
-                            {isPegawai ? (
-                                <div className=" w-80">
-                                    <InputLabel
-                                        value="Data Lama/Data Baru"
-                                        Htmlfor="search"
-                                        className="max-w-sm ml-1 text-lg"
-                                    />
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                            <MdPersonSearch className="w-6 h-6 fill-primary" />
-                                        </div>
-                                        <input
-                                            type="search"
-                                            id="search"
-                                            name="search"
-                                            value={searchInput}
-                                            onChange={(e) =>
-                                                setSearchInput(e.target.value)
-                                            }
-                                            className="w-full p-4 py-[13px] pl-10 text-sm text-gray-900 border border-gradient rounded-md"
-                                            placeholder="Cari Data Lama/Data Baru.."
-                                        />
-                                        <PrimaryButton
-                                            type="submit"
-                                            className="absolute end-2 bottom-[6px]"
-                                        >
-                                            Search
-                                        </PrimaryButton>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex-none w-80">
-                                    <InputLabel
-                                        value="Nama/NIP"
-                                        Htmlfor="search"
-                                        className="max-w-sm ml-1 text-lg"
-                                    />
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                            <MdPersonSearch className="w-6 h-6 fill-primary" />
-                                        </div>
-                                        <input
-                                            type="search"
-                                            id="search"
-                                            name="search"
-                                            value={searchInput}
-                                            onChange={(e) =>
-                                                setSearchInput(e.target.value)
-                                            }
-                                            className="w-full p-4 py-[13px] pl-10 text-sm text-gray-900 border border-gradient rounded-md"
-                                            placeholder="Cari Nama Pegawai/NIP.."
-                                        />
-                                        <PrimaryButton
-                                            type="submit"
-                                            className="absolute end-2 bottom-[6px]"
-                                        >
-                                            Search
-                                        </PrimaryButton>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </form>
+                <section className="flex items-center justify-between w-full">
+                    <FilterSearchCustom
+                        routeName={`/${formatRole(role)}/riwayat-karir`}
+                        initialFilters={{
+                            byJabatan: byJabatanReq,
+                            byJenisPerubahan: byJenisPerubahanReq,
+                        }}
+                        filtersConfig={[
+                            {
+                                name: "byJabatan",
+                                label: "Jabatan",
+                                options: jabatanList,
+                            },
+                            {
+                                name: "byJenisPerubahan",
+                                label: "Jenis Perubahan ",
+                                options: fieldList,
+                            },
+                        ]}
+                        searchConfig={
+                            !isPegawai && {
+                                name: "search",
+                                label: "Nama/NIP Pegawai",
+                                placeholder: "Ketik Nama/NIP Pegawai..",
+                                initialValue: searchReq,
+                            }
+                        }
+                    />
                 </section>
 
-                <section>
+                <section className="pt-3">
                     {role === "Pegawai" && (
                         <div className="flex items-center justify-between my-3">
                             <strong className="block text-2xl">
@@ -223,7 +101,10 @@ export default function Index({
                                     <h1 className="my-4 text-xl font-medium">
                                         Detail Pegawai Saya (Di Sistem Terkini )
                                     </h1>
-                                    <DetailPegawai collapse={false} pegawai={pegawai} />
+                                    <DetailPegawai
+                                        collapse={false}
+                                        pegawai={pegawai}
+                                    />
                                 </div>
                             </Modal>
 
@@ -236,6 +117,7 @@ export default function Index({
                             </SecondaryButton>
                         </div>
                     )}
+
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -245,75 +127,162 @@ export default function Index({
                     )}
 
                     {riwayatKarir.data.length > 0 ? (
-                        <table className="table text-xs table-bordered">
-                            <thead className="text-sm font-medium text-center text-white bg-primary ">
-                                <tr>
-                                    <th
-                                        scope="col"
-                                        dir="rtl"
-                                        className="rounded-tl-xl"
-                                    >
-                                        No
-                                    </th>
-                                    <th scope="col" width="10%">
-                                        Tanggal & Waktu
-                                    </th>
-                                    <th scope="col" width="20%" className="">
-                                        Diperbarui Oleh
-                                    </th>
-                                    <th scope="col" width="10%">
-                                        <span>Jenis</span>
-                                        <span className="block">Perubahan</span>
-                                    </th>
-                                    <th scope="col" width="10%" className="">
-                                        Data Lama
-                                    </th>
-                                    <th scope="col" width="10%" className="">
-                                        Data Baru
-                                    </th>
+                        <>
+                            <section className="overflow-auto">
+                                <table className="table overflow-auto text-xs table-bordered">
+                                    <thead className="text-sm font-medium text-center text-white bg-primary ">
+                                        <tr>
+                                            <th
+                                                scope="col"
+                                                dir="rtl"
+                                                className="rounded-tl-xl"
+                                            >
+                                                No
+                                            </th>
+                                            {!isPegawai && (
+                                                <th
+                                                    scope="col"
+                                                    width="20%"
+                                                    className=""
+                                                >
+                                                    Nama & NIP Pegawai
+                                                </th>
+                                            )}
 
-                                    <th scope="col" width="60%">
-                                        Keterangan Aktivitas
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {riwayatKarir.data?.map((data, i) => (
-                                    <tr role="list" key={i}>
-                                        <td className="text-center">1</td>
-                                        <td>
-                                            <span>
-                                                {moment(data.created_at).format(
-                                                    "LL"
+                                            <th scope="col" width="7%">
+                                                Tanggal & Waktu
+                                            </th>
+
+                                            {isPegawai && (
+                                                <th
+                                                    scope="col"
+                                                    width="20%"
+                                                    className=""
+                                                >
+                                                    Diperbarui Oleh
+                                                </th>
+                                            )}
+
+                                            <th scope="col" width="10%">
+                                                <span>Jenis</span>
+                                                <span className="block">
+                                                    Perubahan
+                                                </span>
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                width="10%"
+                                                className=""
+                                            >
+                                                Data Lama
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                width="10%"
+                                                className=""
+                                            >
+                                                Data Baru
+                                            </th>
+
+                                            <th
+                                                scope="col"
+                                                width="60%"
+                                                className="rounded-tr-xl"
+                                            >
+                                                Keterangan Aktivitas
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-center">
+                                        {riwayatKarir.data?.map((data, i) => (
+                                            <tr role="list" key={i}>
+                                                <td className="text-center">
+                                                    {i + 1}
+                                                </td>
+                                                {!isPegawai && (
+                                                    <td className="relative group">
+                                                        <span className="block">
+                                                            {
+                                                                data.pegawai[
+                                                                    "Nama"
+                                                                ]
+                                                            }
+                                                        </span>
+                                                        <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                                            {
+                                                                data.pegawai[
+                                                                    "NIP"
+                                                                ]
+                                                            }
+                                                        </span>
+                                                        <span className="badge-xs-secondary">
+                                                            {extractJabatan(
+                                                                data.pegawai[
+                                                                    "Jabatan/TMT"
+                                                                ]
+                                                            )}
+                                                        </span>
+                                                    </td>
                                                 )}
-                                            </span>
-                                            <span className="block text-xs">
-                                                {moment(
-                                                    data.created_at
-                                                ).fromNow()}
-                                            </span>
-                                        </td>
-                                        <td className="relative group">
-                                            <span className="block">
-                                                {data.updated_by.name}
-                                            </span>
-                                            <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
-                                                {data.updated_by.nip}
-                                            </span>
-                                            <span className="badge-base">
-                                                {data.updated_by.role}
-                                            </span>
-                                        </td>
-                                        <td>{data.jenis_perubahan}</td>
-                                        <td>{data.nilai_lama}</td>
-                                        <td>{data.nilai_baru}</td>
-                                        <td>
-                                            <p>{data.keterangan}</p>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                                <td>
+                                                    <span>
+                                                        {moment(
+                                                            data.created_at
+                                                        ).format("LL")}
+                                                    </span>
+                                                    <span className="block text-xs">
+                                                        {moment(
+                                                            data.created_at
+                                                        ).fromNow()}
+                                                    </span>
+                                                </td>
+                                                {isPegawai && (
+                                                    <td className="relative group">
+                                                        <span className="block">
+                                                            {
+                                                                data.updated_by
+                                                                    .name
+                                                            }
+                                                        </span>
+                                                        <span className="block p-1 mt-1 font-medium rounded-md bg-primary/10">
+                                                            {
+                                                                data.updated_by
+                                                                    .nip
+                                                            }
+                                                        </span>
+                                                        <span className="badge-base">
+                                                            {
+                                                                data.updated_by
+                                                                    .role
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                )}
+
+                                                <td>{data.jenis_perubahan}</td>
+                                                <td>
+                                                    {data.nilai_lama ?? "-"}
+                                                </td>
+                                                <td>{data.nilai_baru}</td>
+                                                <td className="text-left">
+                                                    <p>{data.keterangan}</p>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </section>
+
+                            <Pagination
+                                datas={riwayatKarir}
+                                urlRoute={`/${formatRole(role)}/riwayat-karir`}
+                                filters={{
+                                    byJabatan: byJabatanReq,
+                                    byJenisPerubahan: byJenisPerubahanReq,
+                                    search: searchReq,
+                                }}
+                            />
+                        </>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">

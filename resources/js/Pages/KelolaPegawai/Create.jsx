@@ -57,14 +57,13 @@ export default function Create({ auth, pegawai, title, flash }) {
                                     className="inline-flex items-center gap-2 "
                                 >
                                     <FaUserTie className="w-4 h-4 stroke-current" />
-                                    <span>Kelola Data</span>
+                                    <span>Kelola Data Pegawai</span>
                                 </a>
                             </li>
 
                             <li>
                                 <span className="inline-flex items-center gap-2">
                                     <FaUserPlus className="w-4 h-4 stroke-current" />
-
                                     {title}
                                 </span>
                             </li>
@@ -79,10 +78,9 @@ export default function Create({ auth, pegawai, title, flash }) {
                     </SecondaryButton>
                 </section>
 
-                <section className="m-10 mx-auto overflow-x-auto max-w-screen-laptop">
+                <section className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-bordered ">
-                            {/* head */}
                             <thead>
                                 <tr className="text-lg bg-primary/70">
                                     <th colSpan={2}>Detail Pegawai</th>

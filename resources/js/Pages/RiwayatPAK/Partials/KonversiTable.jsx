@@ -171,6 +171,13 @@ export default function KonversiTable({
                             <span>{data.ak_normatif}</span>
                         )}
 
+                        {!data.ak_normatif && (
+                            <small className="block text-xs rounded-lg text-warning bg-warning/10">
+                                Pegawai ini tidak termasuk dalam kategori
+                                pegawai fungsional!
+                            </small>
+                        )}
+
                         {isEdit && jabatanChanged ? (
                             <div className="flex flex-col justify-center gap-1">
                                 <small className="block text-xs rounded-lg text-warning bg-warning/10">

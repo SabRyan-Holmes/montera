@@ -29,6 +29,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/sso-login', [SSOController::class, 'login'])->name('sso-login');
 });
 
+// GetData
+Route::middleware(['authOrSSO'])->group(function () {
+    Route::get('/pengusulan-pak/show/{id}', [PengusulanPAKController::class, 'show'])->name('pengusulan-pak.show');
+    Route::get('/pengajuan/show/{id}', [PengajuanController::class, 'show'])->name('pengajuan.show');
+});
+
 // <============================================================ All Actor ============================================================>
 
 Route::middleware('auth')->group(function () {
@@ -78,20 +84,21 @@ Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('div
 
 
     // Arsip Dokumen(CRUD)
-    Route::resource('arsip-dokumen', ArsipDokumenController::class);
+    Route::resource('arsip-dokumen', ArsipDokumenController::class)->parameters(['arsip-dokumen' => 'arsipDokumen']);
 
 
     // ===============Data Master================
 
     // Kelola Riwayat PAK(CRUD)
+    // routes/web.php
+    Route::get('/riwayat-pak/detail/{id}', [RiwayatPAKController::class, 'show_detail'])->name('riwayat-pak.show-detail');
     Route::resource('riwayat-pak', RiwayatPAKController::class)
         ->parameters(['riwayat-pak' => 'riwayat'])->only(['index', 'show', 'edit', 'update', 'destroy']);
-    // Alternatif
-    // Route::get('/pegawai', [RiwayatPAKController::class, 'pegawai'])->name('pegawai'); //Pilih dulu pegawai mana yang mau dilihat dokumen PAK nya
-    // Route::get('/show/{pegawai:NIP}', [RiwayatPAKController::class, 'show'])->name('show');
 
-    // Kelola Pegawai(CRUD)
+
+    // Kelola Pegawai(CRUD) & Riwayat Karir(Log Perubahan Pegawai)
     Route::resource('pegawai', PegawaiController::class);
+    Route::get('/riwayat-karir', [RiwayatKarirController::class, 'index'])->name('riwayat-karir.index');
 
     // Kelola Aturan PAK(CRUD)
     Route::post('/aturan-pak/set-default-config', [AturanPAKController::class, 'set_default_config'])->name('aturan-pak.set-default-config');
@@ -184,3 +191,6 @@ require __DIR__ . '/auth.php';
 // Route::resource('riwayat-pak', RiwayatPAKController::class)
 // ->except(['index', 'preview']) //Resource kecuali index karna beda parameter
 // ->parameters(['riwayat' => 'riwayat']); // kasih parameter riwat semua biar URL pakai {riwayat}
+  // Alternatif
+    // Route::get('/pegawai', [RiwayatPAKController::class, 'pegawai'])->name('pegawai'); //Pilih dulu pegawai mana yang mau dilihat dokumen PAK nya
+    // Route::get('/show/{pegawai:NIP}', [RiwayatPAKController::class, 'show'])->name('show');

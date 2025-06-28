@@ -255,6 +255,7 @@ const Sidebar = ({ role }) => {
                                             "divisi-sdm.pegawai.create",
                                             "divisi-sdm.pegawai.edit",
                                             "divisi-sdm.pegawai.show",
+                                            "divisi-sdm.riwayat-karir.index",
                                         ],
                                     },
                                     {

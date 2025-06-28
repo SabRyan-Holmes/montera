@@ -13,7 +13,7 @@ export default function SuccessButton({
         font-semibold text-xs text-white uppercase tracking-widest
         hover:hijau/80 focus:hijau/80 active:bg-hijau/90 focus:outline-none
         focus:ring-2 focus:ring-hijau focus:ring-offset-2 transition ease-in-out duration-150
-        hover:scale-105 hover:bg-hijau/80
+        hover:scale-105 hover:bg-hijau/80 disabled:hover:scale-100
     `;
 
     const finalClass = `

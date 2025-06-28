@@ -5,6 +5,7 @@ import { TooltipHover } from "@/Components";
 import moment from "moment/min/moment-with-locales";
 import { router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import { FaCheck } from "react-icons/fa6";
 
 export default function DynamicTableSection({
     title,
@@ -211,22 +212,17 @@ export default function DynamicTableSection({
                                                 .filter(Boolean)
                                                 .join(" ")}
                                         >
-                                            {/* TODO: Benerin lagi tampilan untuk tebusan dan bisa diatur defaultny*/}
 
                                             {isTebusan ? (
                                                 <div className="flex items-center gap-2">
                                                     <span>
-                                                        {item.pihak_tebusan}{" "}
-                                                        {"id : "} {item.id}
-                                                        {isTebusanActive(
-                                                            item.id
-                                                        )}
+                                                        {item.pihak_tebusan}
                                                     </span>
                                                     {withAction &&
                                                         item.checked ===
                                                             true && (
-                                                            <span className="badge-xs-primary">
-                                                                Aktif
+                                                            <span className="badge-xs-success">
+                                                                <FaCheck />
                                                             </span>
                                                         )}
                                                 </div>

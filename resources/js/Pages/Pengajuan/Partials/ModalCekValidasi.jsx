@@ -248,7 +248,6 @@ export default function ModalCekValidasi({
 
     const { props } = usePage();
 
-    // TODO ? Mungkin sebaiknya tamabhakna juga Catatan Evaluasi/Review Dari Pimpinan
     const pegawai = pengajuan.riwayat_pak.pegawai;
     const pengusulanPAK = pengajuan.riwayat_pak.pengusulan_pak;
     const pengusulanPAKRef = useRef(null); // <-- buat ref

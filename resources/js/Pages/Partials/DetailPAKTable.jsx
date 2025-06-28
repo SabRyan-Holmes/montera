@@ -28,9 +28,6 @@ export default function DetailData({
         return bulan[angka];
     }
 
-    console.log("data detail PAK");
-    console.log(data);
-
     return (
         <section className="mb-4">
             <table className="table w-full text-base table-bordered">

@@ -27,6 +27,17 @@ class PengusulanPAKRequest extends FormRequest
                 'periode_berakhir' => $this->periode_berakhir . '-01',
             ]);
         }
+
+
+        // Jika bukan file upload dan bernilai string (misal path lama), maka tetap biarkan
+        foreach (['dokumen_utama_path', 'dokumen_pendukung_path'] as $key) {
+            if ($this->has($key) && is_string($this->$key)) {
+                // Pastikan path terlihat valid (optional, hanya jika kamu mau ketat)
+                if (!str_contains($this->$key, '/') || !str_ends_with($this->$key, '.pdf')) {
+                    $this->merge([$key => null]); // Kosongkan jika tidak valid
+                }
+            }
+        }
     }
 
 
@@ -46,6 +57,29 @@ class PengusulanPAKRequest extends FormRequest
             'is_penilaian_pdd' => 'required|boolean',
             'dokumen_utama_path' => 'required|file|mimes:pdf|max:2048',
             'dokumen_pendukung_path' => 'nullable|required_if:is_penilaian_pdd,true|file|mimes:pdf|max:2048',
+            // Support file OR path string
+            'dokumen_utama_path' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!($value instanceof \Illuminate\Http\UploadedFile)) {
+                        if (!is_string($value) || !str_contains($value, '/') || !str_ends_with($value, '.pdf')) {
+                            $fail("File utama tidak valid.");
+                        }
+                    }
+                },
+            ],
+
+            'dokumen_pendukung_path' => [
+                'nullable',
+                'required_if:is_penilaian_pdd,true',
+                function ($attribute, $value, $fail) {
+                    if (!is_null($value) && !($value instanceof \Illuminate\Http\UploadedFile)) {
+                        if (!is_string($value) || !str_contains($value, '/') || !str_ends_with($value, '.pdf')) {
+                            $fail("File pendukung tidak valid.");
+                        }
+                    }
+                },
+            ],
         ];
     }
 

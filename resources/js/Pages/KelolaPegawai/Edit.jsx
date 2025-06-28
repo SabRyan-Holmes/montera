@@ -1,14 +1,6 @@
-import {
-    TextInput,
-    InputError,
-    SecondaryButton,
-    InputLabel,
-    PrimaryButton,
-    SuccessButton,
-    DetailPegawai,
-} from "@/Components";
+import { TextInput, InputError, SecondaryButton } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { router, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import React, { useEffect } from "react";
 import { FaDatabase } from "react-icons/fa6";
 import { FaSave, FaUserEdit } from "react-icons/fa";
@@ -100,15 +92,8 @@ export default function Edit({ auth, pegawai, title, flash }) {
         }).then((result) => {
             if (result.isConfirmed) {
                 destroy(route("divisi-sdm.pegawai.destroy", id), {
-                    onSuccess: () => {
-                        // console.log(
-                        //     "data pegawai dengan id ",
-                        //     id,
-                        //     "berhasil di delete!"
-                        // );
-                    },
                     onError: () => {
-                        console.log("Gagal Menghapus Data");
+                        alert("Gagal Menghapus Data");
                     },
                 });
             }
@@ -139,7 +124,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                     className="gap-2"
                                 >
                                     <FaDatabase className="w-4 h-4 stroke-current" />
-                                    <span>Kelola Data</span>
+                                    <span>Kelola Data Pegawai</span>
                                 </a>
                             </li>
 
@@ -167,16 +152,13 @@ export default function Edit({ auth, pegawai, title, flash }) {
                     </SecondaryButton>
                 </section>
 
-                <section className="m-10 mx-auto overflow-x-auto max-w-screen-laptop">
+                <section className="m-12 mx-auto overflow-x-auto laptop:w-4/5 max-w-screen-laptop">
                     <form onSubmit={submit}>
                         <table className="table text-base table-auto ">
                             {/* head */}
                             <thead>
                                 <tr className="text-lg bg-primary/70">
                                     <th colSpan={2}>Detail Pegawai</th>
-                                    {/* <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -335,7 +317,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                     </td>
                                 </tr>
 
-                                {/* MASA KERJA GA USAH DITAMPILITN */}
+                                {/* MASA KERJA GA USAH DITAMPILITN alias nullable */}
                                 {/* <tr className="border">
                                     <td className="">MASA KERJA GOLONGAN</td>
                                     <td className="flex border-x">
@@ -381,7 +363,7 @@ export default function Edit({ auth, pegawai, title, flash }) {
                                         <select
                                             className="w-full text-sm border select border-gradient selection:text-accent disabled:text-accent"
                                             name="Daerah"
-                                            defaultValue={data['Daerah']}
+                                            defaultValue={data["Daerah"]}
                                             onChange={(e) =>
                                                 setData(
                                                     "Daerah",

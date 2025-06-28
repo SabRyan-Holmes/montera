@@ -9,6 +9,7 @@ use App\Models\Pegawai;
 use App\Models\RiwayatKarir;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 
 class RiwayatKarirController extends Controller
@@ -29,7 +30,7 @@ class RiwayatKarirController extends Controller
 
     public function index()
     {
-        // $pegawai = Pegawai::where('NIP', $this->user->nip)->first();
+
         $riwayatKarir = null;
         $pegawai = null;
         $title = '';
@@ -43,32 +44,30 @@ class RiwayatKarirController extends Controller
             $title = "Riwayat Karir Pegawai";
         }
 
-
-
         $subTitle = GetSubtitle::getSubtitle(
             byJabatan: request('byJabatan'),
-            search: request('search'),
-            byJenisPerubahan: request('search')
+            byJenisPerubahan: request('byJenisPerubahan'),
+            search: request('search')
         );
 
-
         $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
-        $jabatan_list = collect($koefisien_per_tahun)->pluck('jabatan')->toArray();
-
-
-
+        $fieldList = collect(Schema::getColumnListing('pegawais'))
+            ->reject(fn($field) => in_array($field, ['id', 'created_at', 'updated_at']))
+            ->values()
+            ->toArray();
 
         return Inertia::render('RiwayatKarir/Index', [
             "title" => $title,
             "subTitle" => $subTitle,
-            'riwayatKarir' => $riwayatKarir->filter(request(['byJenisPerubahan', 'byJabatan', 'search']))->paginate(10), //TODO
+            'riwayatKarir' => $riwayatKarir->filter(request(['byJenisPerubahan', 'byJabatan', 'search']))->paginate(10),
             'canValidate' => $this->user->role == 'Divisi SDM',
             'isPegawai' => $this->user->role == 'Pegawai',
             'pegawai' => $pegawai,
             "searchReq" => request('search') ?? "",
-            "byJenisPerubahanReq" => request('byJenisPerubahan') ?? "Semua Kategori",
-            "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",
-            "jabatanList" => $jabatan_list
+            "byJenisPerubahanReq" => request('byJenisPerubahan'),
+            "byJabatanReq" => request('byJabatan'),
+            "jabatanList" => collect($koefisien_per_tahun)->pluck('jabatan')->toArray(),
+            "fieldList" => $fieldList
         ]);
     }
 

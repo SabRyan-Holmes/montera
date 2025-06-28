@@ -36,6 +36,10 @@ export default function Index({ auth, title, flash, aturanPAK }) {
         }
     }, [flash.message]);
 
+
+
+
+
     const role = auth.user.role
     return (
         <Authenticated user={auth.user} title={role === "Divisi SDM" ? `Kelola ${title}` : `Monitoring ${title}`}>

@@ -38,7 +38,7 @@ export default function ShowModal({
 
             {/* Floating Action Button */}
             {canManage && (
-                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-28 left-1/2">
+                <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-14 left-1/2">
                     <SecondaryButton
                         asLink
                         href={route("divisi-sdm.pegawai.edit", pegawai["NIP"])}

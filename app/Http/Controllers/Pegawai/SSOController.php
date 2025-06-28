@@ -51,7 +51,7 @@ class SSOController extends Controller
         // }
 
         // Step 1: Login ke SSO (pakai username & password)
-        // TODO: Uncomment nanti!
+        // TODO: Finsihing Login by SSO Nanti!
         $token = $this->getSSOToken($request->username, $request->password);
 
         if (!$token) {
