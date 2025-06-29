@@ -86,7 +86,6 @@ export default function Index({
     const [popUpData, setPopUpData] = useState({
         type: "",
         id: "",
-        type: "",
         // Kalo Dari SDM
         riwayat_pak_id: "",
         user_nip: auth.user.nip ?? null,

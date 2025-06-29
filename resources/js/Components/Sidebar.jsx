@@ -153,11 +153,9 @@ const Sidebar = ({ role }) => {
                 {/* !SECTION - DIVISI SDM - Iterasi Awal */}
 
                 {/* SECTION - DIVISI SDM - Iterasi Akhir */}
-
                 {role === "Divisi SDM" && (
                     <>
                         <section className="scale-105 menu">
-                            {/* Link Dashboard */}
                             <SidebarLink
                                 href={route("dashboard")}
                                 active={route().current("dashboard")}
@@ -208,7 +206,7 @@ const Sidebar = ({ role }) => {
                                 ]}
                             >
                                 <span className="flex items-center">
-                                    <RiAppsFill className="mr-2 scale-105" />{" "}
+                                    <RiAppsFill className="mr-2 scale-105" />
                                     Proses PAK
                                 </span>
                             </SidebarLinkCollapse>
@@ -324,7 +322,6 @@ const Sidebar = ({ role }) => {
                         </section>
                     </>
                 )}
-
                 {/* !SECTION - DIVISI SDM - Iterasi Akhir */}
 
                 {/* SECTION - PIMPINAN - Iterasi 2 */}
@@ -446,8 +443,8 @@ const Sidebar = ({ role }) => {
                             </SidebarLink>
 
                             <SidebarLink
-                                href={route("pegawai.proses-pak.index")}
-                                actives={["pegawai.proses-pak.index"]}
+                                href={route("pegawai.pengajuan.index")}
+                                actives={["pegawai.pengajuan.index"]}
                                 className="z-20 mx-[18px] -mb-1"
                             >
                                 <BsFillSendArrowUpFill />

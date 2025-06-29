@@ -1,31 +1,25 @@
-import {
-    InputError,
-    InputLabel,
-    Modal,
-    TextInput,
-} from "@/Components";
+import { InputError, InputLabel, Modal, TextInput } from "@/Components";
 import { useForm, usePage } from "@inertiajs/react";
 import React, { useState } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa6";
 import { IoCloseOutline } from "react-icons/io5";
 
-export default function ModalArsipDokumen({ pengajuan, setActiveModal, activeModal }) {
+export default function ModalArsipDokumen({ pengajuan, activeModal, onClose }) {
     const { folderArsipList, auth } = usePage().props;
     const role = auth.user.role;
     const fileName = pengajuan.approved_pak_path
-    ?.split("/")
-    .pop()
-    .replace(".pdf", "");
+        ?.split("/")
+        .pop()
+        .replace(".pdf", "");
 
-    const { data, setData, reset, post, processing, errors,  } =
-        useForm({
-            user_nip: auth.user.nip ?? null,
-            nip_pak: pengajuan.riwayat_pak.pegawai['NIP'],
-            folder_name: '',
-            title: fileName, //default nama PAK
-            approved_pak_path: pengajuan.approved_pak_path,
-            tanggal_divalidasi: pengajuan.tanggal_divalidasi, //default nama PAK
-        });
+    const { data, setData, reset, post, processing, errors } = useForm({
+        pengajuan_pak_id: pengajuan.id,
+        user_nip: auth.user.nip ?? null,
+        folder_name: "",
+        title: fileName,
+        approved_pak_path: pengajuan.approved_pak_path,
+        tanggal_divalidasi: pengajuan.tanggal_divalidasi,
+    });
 
     function formatRoleToRoute(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
@@ -73,13 +67,15 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal, activeMod
 
     return (
         <Modal
-        id={modalId} // agar Swal bisa target
-        show={activeModal === modalId}
-        onClose={() => setActiveModal(null)} // agar modal bisa ditutup dengan onClose
-        maxWidth="2xl"
-    >
+            id={modalId} // agar Swal bisa target
+            show={activeModal === modalId}
+            onClose={onClose} // agar modal bisa ditutup dengan onClose
+            maxWidth="2xl"
+        >
             <section className="content-between w-full mx-auto overflow-auto p-7 space-y-7">
-                <strong className="block text-xl text-center">Arsipkan Dokumen</strong>
+                <strong className="block text-xl text-center">
+                    Arsipkan Dokumen
+                </strong>
                 <form onSubmit={handleSubmit} className="space-y-4 text-left">
                     <fieldset>
                         <div className="relative laptop:w-full">
@@ -151,7 +147,7 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal, activeMod
                     </fieldset>
                     <fieldset>
                         <div className="relative laptop:w-full">
-                            <InputLabel forName="title" value="Judul Dokumen" />
+                            <InputLabel forName="title" value="Nama Dokumen" />
                             <TextInput
                                 id="title"
                                 type="text"
@@ -183,6 +179,6 @@ export default function ModalArsipDokumen({ pengajuan, setActiveModal, activeMod
                     </div>
                 </form>
             </section>
-            </Modal>
+        </Modal>
     );
 }

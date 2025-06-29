@@ -1,8 +1,11 @@
 import { Graph, RadialChart } from "@/Components";
 import React from "react";
 import { IconContext } from "react-icons";
+import { BsFillSendArrowUpFill } from "react-icons/bs";
 import { FaUserLarge, FaUsers, FaUserTie } from "react-icons/fa6";
 import { HiDocumentDuplicate } from "react-icons/hi2";
+import { MdOutlineAssignmentInd, MdWorkHistory } from "react-icons/md";
+import { RiArchive2Fill } from "react-icons/ri";
 
 export default function PegawaiContent({ dataByRole }) {
     const { PAKCount, pengusulanPAKCount, prosesPAKCount, arsipDokumenCount } =
@@ -10,25 +13,9 @@ export default function PegawaiContent({ dataByRole }) {
     return (
         <main className="w-full mx-auto px-7 ">
             {/* Grid */}
-            <section className="grid items-center justify-center grid-cols-3 gap-5 px-24 my-auto gap-x-20 ">
+            <section className="grid items-center justify-center grid-cols-3 gap-5 px-24 my-auto gap-x-7 ">
                 {/* NOTE: Di iterasi awal ini belum ada */}
-                {/* <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-primary">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <HiDocumentDuplicate className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total Pengusulan Pernah Diajukan
-                        </h3>
-                        <p className="text-3xl">{pengusulanPAKCount}</p>
-                    </div>
-                </div> */}
-
-                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
+                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                     <div className="p-4 bg-secondary">
                         <IconContext.Provider
                             value={{ color: "white", size: "50px" }}
@@ -37,74 +24,78 @@ export default function PegawaiContent({ dataByRole }) {
                         </IconContext.Provider>
                     </div>
                     <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total PAK Pernah Diproses
-                        </h3>
-                        <p className="text-3xl">{prosesPAKCount}</p>
+                        <h3 className="text-sm tracking-wider">Riwayat PAK</h3>
+                        <p className="text-3xl">{dataByRole["PAKCount"]}</p>
                     </div>
                 </div>
-                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
+
+                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
                     <div className="p-4 bg-hijau">
                         <IconContext.Provider
                             value={{ color: "white", size: "50px" }}
                         >
-                            <HiDocumentDuplicate className="w-12 h-full" />
+                            <MdOutlineAssignmentInd className="w-12 h-full" />
                         </IconContext.Provider>
                     </div>
                     <div className="px-4 text-gray-700">
                         <h3 className="text-sm tracking-wider">
-                            Total Dokumen PAK Selesai
+                            Pengusulan PAK
                         </h3>
-                        <p className="text-3xl">{PAKCount}</p>
+                        <p className="text-3xl">
+                            {dataByRole["pengusulanPAKCount"]}
+                        </p>
                     </div>
                 </div>
 
-                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
+                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                    <div className="p-4 bg-hijau/75">
                         <IconContext.Provider
                             value={{ color: "white", size: "50px" }}
                         >
-                            <FaUserTie className="w-12 h-full" />
+                            <BsFillSendArrowUpFill className="w-12 h-full" />
+                        </IconContext.Provider>
+                    </div>
+                    <div className="px-4 text-gray-700">
+                        <h3 className="text-sm tracking-wider">
+                            Proses PAK
+                        </h3>
+                        <p className="text-3xl">
+                            {dataByRole["prosesPAKCount"]}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                    <div className="p-4 bg-bermuda">
+                        <IconContext.Provider
+                            value={{ color: "white", size: "50px" }}
+                        >
+                            <MdWorkHistory className="w-12 h-full" />
                         </IconContext.Provider>
                     </div>
                     <div className="px-4 text-gray-700">
                         <h3 className="text-sm tracking-wider">
                             Riwayat Karir Saya
                         </h3>
-                        <p className="text-3xl">{PAKCount}</p>
+                        <p className="text-3xl">
+                            {dataByRole["riwayatKarirCount"]}
+                        </p>
                     </div>
                 </div>
-
-                {/* NOTE: Di iterasi awal ini belum ada */}
-                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-bermuda">
+                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                    <div className="p-4 bg-bermuda/75">
                         <IconContext.Provider
                             value={{ color: "white", size: "50px" }}
                         >
-                            <HiDocumentDuplicate className="w-12 h-full" />
+                            <RiArchive2Fill className="w-12 h-full" />
                         </IconContext.Provider>
                     </div>
                     <div className="px-4 text-gray-700">
                         <h3 className="text-sm tracking-wider">
-                            Total Dokumen Diarsipkan
+                            Arsip Dokumen
                         </h3>
-                        <p className="text-3xl">{arsipDokumenCount}</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center max-w-sm overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <HiDocumentDuplicate className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total Riwayat Karir
-                        </h3>
-                        <p className="text-3xl">{pengusulanPAKCount ?? 0}</p>
+                        <p className="text-3xl">
+                            {dataByRole["arsipDokumenCount"]}
+                        </p>
                     </div>
                 </div>
             </section>

@@ -33,9 +33,10 @@ return new class extends Migration
             // Status pengajuan
             $table->enum('status', [
                 'diusulkan',
-                'disetujui',
                 'ditolak',
                 'direvisi',
+                'disetujui',
+                'selesai',
             ])->default('diusulkan');
 
             // Tracking proses
@@ -43,6 +44,7 @@ return new class extends Migration
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_direvisi')->nullable();
             $table->datetime('tanggal_disetujui')->nullable();
+            $table->datetime('tanggal_selesai')->nullable();
 
             $table->timestamps();
         });

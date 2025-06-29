@@ -1,29 +1,18 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useState } from "react";
-import {
-    MdCancel,
-    MdOutlineKeyboardDoubleArrowLeft,
-    MdOutlineKeyboardDoubleArrowRight,
-    MdPersonSearch,
-} from "react-icons/md";
+import React, { useEffect, useRef, useState } from "react";
+import { MdCancel } from "react-icons/md";
 import ReactPaginate from "react-paginate";
 import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import {
     FilterSearchCustom,
-    InputLabel,
     Pagination,
-    PrimaryButton,
     StatusLabel,
     TooltipHover,
-    useFilterSearch,
 } from "@/Components";
-import { TbEyeCheck } from "react-icons/tb";
 import { IoCloseOutline, IoDocument } from "react-icons/io5";
-import ModalCekValidasi from "./Partials/ModalCekValidasi";
-import { FaCheck, FaDownload, FaEye } from "react-icons/fa6";
-import { FaEdit, FaFileDownload } from "react-icons/fa";
-import FilterSearchPegawai from "../KelolaPegawai/Partials/FilterSearchPegawai";
+import { FaCheck, FaEye } from "react-icons/fa6";
+import { FaEdit } from "react-icons/fa";
 import moment from "moment/min/moment-with-locales";
 import ModalCekPengajuan from "./Partials/ModalCekPengajuan";
 import { BiSolidArchiveIn } from "react-icons/bi";
@@ -45,7 +34,6 @@ export default function Index({
     byKesimpulanReq,
     jabatanList,
     kesimpulanList,
-    folderArsipList,
 }) {
     // ===========================================Pagination===========================================
     moment.locale("id");
@@ -75,7 +63,7 @@ export default function Index({
         toast: true,
         position: "top-end",
         showConfirmButton: false,
-        timer: 3000,
+        timer: 1500,
         timerProgressBar: true,
         didOpen: (toast) => {
             toast.onmouseenter = Swal.stopTimer;
@@ -83,14 +71,27 @@ export default function Index({
         },
     });
 
+    const shown = useRef(new Set());
+
     useEffect(() => {
-        if (flash.toast) {
+        if (
+            flash.toast &&
+            flash.toast_id &&
+            !shown.current.has(flash.toast_id)
+        ) {
             Toast.fire({
                 icon: "success",
                 title: flash.toast,
             });
+
+            shown.current.add(flash.toast_id);
+
+            // Optional: reset biar bisa muncul lagi setelah beberapa detik
+            setTimeout(() => {
+                shown.current.delete(flash.toast_id);
+            }, 3000);
         }
-    }, [flash.toast]);
+    }, [flash.toast_id]);
 
     // UndoSubmit divisi SDM
     const handleCancel = (id) => {
@@ -118,24 +119,47 @@ export default function Index({
     };
 
     const handleViewDocument = async (pengajuan) => {
-        const pakId =pengajuan.riwayat_pak_id
+        const pakId = pengajuan.riwayat_pak_id;
         if (pengajuan.status === "divalidasi") {
             const url = `/storage/${pengajuan.approved_pak_path}`;
             setLinkIframe(url);
             setShowIframe(true);
         } else {
-            router.post("/pak/process", {riwayat_pak_id: pengajuan.riwayat_pak_id}, {
-                preserveScroll: true,
-                preserveState: true,
-                onError: (errors) => {
-                    console.error("Error:", errors);
-                },
-                onSuccess: () => {
-                    setLinkIframe(route("pak.preview"));
-                    setShowIframe(true); // Munculkan iframe setelah data dikirim
-                },
-            });
+            router.post(
+                "/pak/process",
+                { riwayat_pak_id: pengajuan.riwayat_pak_id },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onError: (errors) => {
+                        console.error("Error:", errors);
+                    },
+                    onSuccess: () => {
+                        setLinkIframe(route("pak.preview"));
+                        setShowIframe(true); // Munculkan iframe setelah data dikirim
+                    },
+                }
+            );
         }
+    };
+
+    const handleArchive = (id) => {
+        setActiveModal(`ModalArsipDokumen-${id}`);
+    };
+
+    const handleReject = (id) => {
+        setActiveModal(`ModalCatatan-${id}`);
+    };
+
+    const handleApprove = (id) => {
+        router.post(
+            route("pimpinan.pengajuan.approve", id),
+            {},
+            {
+                preserveState:false,
+                preserveScroll: true,
+            }
+        );
     };
 
     // ===========================================Handling Search & Filter===========================================
@@ -145,44 +169,70 @@ export default function Index({
     const [linkIframe, setLinkIframe] = useState("");
     const [showDetail, setShowDetail] = useState(null);
 
+    const showIframeWithFile = (filePath) => {
+        if (!filePath) return;
+
+        setLinkIframe(`/storage/${filePath}`);
+        setShowIframe(true);
+    };
+
+
     const role = auth.user.role;
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
     return (
         <Authenticated user={auth.user} title={title}>
-            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-                {showIframe && (
-                    <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
-                        <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
-                            <button
-                                className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
-                                onClick={() => setShowIframe(false)}
-                            >
-                                <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
-                            </button>
+            {showIframe && (
+                <div className="w-full fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                    <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                        <button
+                            className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
+                            onClick={() => setShowIframe(false)}
+                        >
+                            <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
+                        </button>
+
+                        {/* Indikator Loading */}
+                        {!linkIframe ? (
+                            <div>
+                                <div className="text-center modal-box">
+                                    <span className="loading loading-spinner loading-lg"></span>
+                                    <p className="mt-4 text-gray-600">
+                                        Memuat Dokumen...
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
                             <iframe
                                 src={linkIframe}
                                 width="100%"
                                 height="100%"
                                 className="border-0"
                             ></iframe>
-                        </div>
+                        )}
                     </div>
-                )}
-
+                </div>
+            )}
+            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 {showDetail && (
                     <ModalCekPengajuan
                         id={showDetail}
                         onClose={() => setShowDetail(null)}
-                        handleCancel={handleCancel}
-                        handleViewDocument={handleViewDocument}
+                        handleAction={{
+                            handleCancel,
+                            handleApprove,
+                            handleViewDocument,
+                            handleArchive,
+                            handleReject,
+                            showIframeWithFile
+                        }}
                     />
                 )}
 
                 <ModalCatatan
                     activeModal={activeModal}
-                    setActiveModal={setActiveModal}
+                    onClose={() => setActiveModal(null)}
                     routeName={"pimpinan.pengajuan.reject"}
                     placeholder={
                         "Ketikkan catatan untuk penolakan pengajuan ini"
@@ -217,6 +267,7 @@ export default function Index({
                                     "direvisi",
                                     "ditolak",
                                     "divalidasi",
+                                    "selesai",
                                 ],
                             },
                             {
@@ -329,6 +380,7 @@ export default function Index({
                                         const isValidated = [
                                             "ditolak",
                                             "divalidasi",
+                                            "selesai",
                                         ].includes(pengajuan.status);
                                         return (
                                             <tr
@@ -470,6 +522,14 @@ export default function Index({
                                                     </div>
                                                 </td>
 
+                                                <ModalArsipDokumen
+                                                    pengajuan={pengajuan}
+                                                    onClose={() =>
+                                                        setActiveModal(null)
+                                                    }
+                                                    activeModal={activeModal}
+                                                />
+
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
@@ -493,19 +553,16 @@ export default function Index({
                                                     {isPimpinan && (
                                                         <>
                                                             <div className="relative inline-flex group">
-                                                                <Link
+                                                                <button
                                                                     as="button"
-                                                                    href={route(
-                                                                        "pimpinan.pengajuan.approve",
-                                                                        pengajuan.id
-                                                                    )}
                                                                     className="action-btn-success action-btn group/button"
+                                                                    onClick={() =>
+                                                                        handleApprove(
+                                                                            pengajuan.id
+                                                                        )
+                                                                    }
                                                                     disabled={
                                                                         isValidated
-                                                                    }
-                                                                    method="post"
-                                                                    preserveScroll={
-                                                                        true
                                                                     }
                                                                 >
                                                                     <FaCheck
@@ -513,7 +570,7 @@ export default function Index({
                                                                             "scale-125 group-hover/button:stroke-white group-hover/button:fill-white"
                                                                         }
                                                                     />
-                                                                </Link>
+                                                                </button>
                                                                 <TooltipHover
                                                                     message={
                                                                         "Validasi Pengajuan" +
@@ -530,11 +587,11 @@ export default function Index({
                                                                     disabled={
                                                                         isValidated
                                                                     }
-                                                                    onClick={() => {
-                                                                        setActiveModal(
-                                                                            `ModalCatatan-${pengajuan.id}`
-                                                                        );
-                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleReject(
+                                                                            pengajuan.id
+                                                                        )
+                                                                    }
                                                                     className="action-btn-warning action-btn group/button"
                                                                 >
                                                                     <IoCloseOutline className="scale-150 group-hover/button:stroke-white" />
@@ -637,23 +694,12 @@ export default function Index({
                                                             {pengajuan.status ===
                                                             "divalidasi" ? (
                                                                 <div className="relative inline-flex group">
-                                                                    <ModalArsipDokumen
-                                                                        pengajuan={
-                                                                            pengajuan
-                                                                        }
-                                                                        setActiveModal={
-                                                                            setActiveModal
-                                                                        }
-                                                                        activeModal={
-                                                                            activeModal
-                                                                        }
-                                                                    />
                                                                     <button
-                                                                        onClick={() => {
-                                                                            setActiveModal(
-                                                                                `ModalArsipDokumen-${pengajuan.id}`
-                                                                            );
-                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleArchive(
+                                                                                pengajuan.id
+                                                                            )
+                                                                        }
                                                                         disabled={
                                                                             pengajuan.status !==
                                                                             "divalidasi"
@@ -735,16 +781,11 @@ export default function Index({
 
                                                             <div className="relative inline-flex group">
                                                                 <button
-                                                                    onClick={() => {
-                                                                        setActiveModal(
-                                                                            `ModalArsipDokumen-${pengajuan.id}`
-                                                                        );
-                                                                        document
-                                                                            .getElementById(
-                                                                                `ModalArsipDokumen-${pengajuan.id}`
-                                                                            )
-                                                                            .showModal();
-                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleArchive(
+                                                                            pengajuan.id
+                                                                        )
+                                                                    }
                                                                     disabled={
                                                                         pengajuan.status !==
                                                                         "divalidasi"

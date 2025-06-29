@@ -278,3 +278,12 @@ table.table-bordered > tfoot > tr > td {
 .folder-card {
     @apply transition duration-200 border border-gray-100 hover:shadow-xl;
 }
+
+.dl-primary {
+    @apply flex flex-col items-center justify-center rounded-lg bg-primary/5
+}
+
+.dt-primary {
+    @apply flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-primary/10 text-primary
+}
+

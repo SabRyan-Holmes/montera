@@ -12,6 +12,8 @@ use App\Models\PengusulanPAK;
 use App\Models\RiwayatPAK;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -33,7 +35,6 @@ class PengusulanPAKController extends Controller
 
     public function index()
     {
-        // TODO
         $pengusulanPAK = PengusulanPAK::with([
             'pegawai:id,NIP,Nama,Gelar Tambahan,Jabatan/TMT'
         ])->latest();
@@ -220,6 +221,10 @@ class PengusulanPAKController extends Controller
             entityType: get_class($pengusulanPAK),
             entityId: $pengusulanPAK->id
         );
+        return redirect()->back()->with([
+            'toast' => "Pengusulan PAK berhasil divalidasi.",
+            'toast_id' => uniqid(),
+        ]);
     }
 
     public function reject(Request $request)
@@ -252,21 +257,57 @@ class PengusulanPAKController extends Controller
         return redirect()->back()->with('message', 'Pengusulan PAK berhasil ditolak');
     }
 
-    public function undo_validate(PengusulanPAK $pengusulanPAK)
+    public function reset_validate(PengusulanPAK $pengusulanPAK)
     {
-        $pengusulanPAK->update([
-            "status" => 'diproses',
-            'approved_by' => null,
-            'tanggal_ditolak' => null,
-            'tanggal_disetujui' => null,
-            'catatan_validator_id' => null,
-        ]);
-        ActivityLogger::log(
-            aktivitas: "Reset Validasi Pengusulan PAK",
-            keterangan: "{$this->user->name} mereset validasi pengusulan PAK dengan ID: #{$pengusulanPAK->id} ",
-            entityType: get_class($pengusulanPAK),
-            entityId: $pengusulanPAK->id
-        );
-        return redirect()->back()->with('message', 'Penolakan pengusulan berhasil dibatalkan');
+        $pengusulanPAK->load(['catatan_validator']);
+        try {
+            DB::transaction(function () use ($pengusulanPAK) {
+
+                // Hapus catatan validator jika ada
+                if ($pengusulanPAK->catatan_validator) {
+                    $pengusulanPAK->catatan_validator->delete();
+                }
+
+                // Reset pengusulanPAK
+                $pengusulanPAK->update([
+                    'status' => 'diusulkan',
+                    'validated_by' => null,
+                    'tanggal_ditolak' => null,
+                    'tanggal_disetujui' => null,
+                    'catatan_validator_id' => null,
+                ]);
+
+                ActivityLogger::log(
+                    aktivitas: 'Reset Validasi Pengusulan PAK',
+                    keterangan: $this->user->name . " (" . $this->user->role . ") mereset validasi pengusulan PAK dengan id: #{$pengusulanPAK->id}",
+                    entityType: PengusulanPAK::class,
+                    entityId: $pengusulanPAK->id
+                );
+            });
+
+            return redirect()->back()->with('message', 'Validasi pengusulan PAK berhasil direset!');
+        } catch (\Exception $e) {
+            Log::error('Undo validate error: ' . $e->getMessage());
+            return redirect()->back()->withErrors('Terjadi kesalahan saat membatalkan validasi.');
+        }
     }
+
+
+    // public function reset_validate(R $pengusulanPAK)
+    // {
+    //     $pengusulanPAK->updateOrFail([
+    //         "status" => 'diusulkan',
+    //         'approved_by' => null,
+    //         'tanggal_ditolak' => null,
+    //         'tanggal_disetujui' => null,
+    //         'catatan_validator_id' => null,
+    //     ]);
+    //     ActivityLogger::log(
+    //         aktivitas: "Reset Validasi Pengusulan PAK",
+    //         keterangan: "{$this->user->name} mereset validasi pengusulan PAK dengan ID: #{$pengusulanPAK->id} ",
+    //         entityType: get_class($pengusulanPAK),
+    //         entityId: $pengusulanPAK->id
+    //     );
+    //     return redirect()->back()->with('message', 'Validasi pengusulan berhasil direset');
+    // }
 }

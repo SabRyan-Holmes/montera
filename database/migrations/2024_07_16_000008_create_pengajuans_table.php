@@ -24,14 +24,17 @@ return new class extends Migration
             $table->foreign('validated_by')->references('nip')->on('users')->onDelete('cascade'); //update tgl 2 Juni 2025-ubah berdasarkan nip
             $table->enum('status', [
                 'diajukan',
-                'divalidasi',
                 'ditolak',
                 'direvisi',
+                'divalidasi',
+                'selesai',
             ])->default('diajukan');
             $table->string("approved_pak_path")->nullable()->comment('penyimpanan dokumen sementara setelah di validasi/ditandatangani'); //for store validated/approved PAK
             $table->datetime('tanggal_ditolak')->nullable();
             $table->datetime('tanggal_direvisi')->nullable();
             $table->datetime("tanggal_divalidasi")->nullable();
+            $table->datetime('tanggal_selesai')->nullable();
+
             $table->timestamps();
         });
     }

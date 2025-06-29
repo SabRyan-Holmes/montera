@@ -120,13 +120,17 @@ export default function Create({
 
     const submit = (e) => {
         e.preventDefault();
-        console.log('isi data sebelum disubmit')
-        console.log(data)
+        console.log("isi data sebelum disubmit");
+        console.log(data);
         if (isEdit) {
-            router.post(route("pegawai.pengusulan-pak.update", pengusulanPAK),  {_method: "patch", ...data}, {
-                forceFormData:true,
-                onError: (err) => alert(JSON.stringify(err))
-            });
+            router.post(
+                route("pegawai.pengusulan-pak.update", pengusulanPAK),
+                { _method: "patch", ...data },
+                {
+                    forceFormData: true,
+                    onError: (err) => alert(JSON.stringify(err)),
+                }
+            );
         } else {
             post(route("pegawai.pengusulan-pak.store"), {
                 forceFormData: true,
@@ -329,24 +333,6 @@ export default function Create({
                                             </option>
                                             <option>
                                                 Kenaikan Pangkat & Jabatan
-                                            </option>
-                                            <option>
-                                                Mutasi/Rotasi Jabatan
-                                            </option>
-                                            <option>
-                                                Kenaikan Gaji Berkala
-                                            </option>
-                                            <option>
-                                                Pengangkatan Pertama Kali dalam
-                                                Jabatan Fungsional
-                                            </option>
-                                            <option>
-                                                Dokumentasi Kinerja Sebagai
-                                                Rekam Jejak Karir
-                                            </option>
-                                            <option>
-                                                Kebutuhan Evaluasi atau Inspeksi
-                                                Internal
                                             </option>
                                             <option>Lainnya</option>
                                         </select>
@@ -650,7 +636,6 @@ export default function Create({
                                 <BsFillSendFill className="w-4 h-4 fill-white" />
                             </SuccessButton>
                         </div>
-
                     </form>
                 </section>
             </main>

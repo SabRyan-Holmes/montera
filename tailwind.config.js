@@ -13,11 +13,20 @@ export default {
         // flowbite
         "./node_modules/flowbite/**/*.js",
     ],
+    safelist: [
+        {
+            pattern: /bg-(primary|warning|bermuda|hijau|success)\/(5|10)/,
+        },
+        {
+            pattern: /text-(primary|warning|bermuda|hijau|success)(\/80)?/,
+        },
+    ],
     darkMode: ["class", '[data-theme="bps-theme"]'],
 
     theme: {
         extend: {
             colors: {
+
                 transparent: "transparent",
                 current: "currentColor",
                 "primary-dark": "oklch(50% 0.134 242.749)",

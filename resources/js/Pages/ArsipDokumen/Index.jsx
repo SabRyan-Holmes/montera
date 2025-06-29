@@ -296,7 +296,6 @@ export default function Index({
                                                         data.tanggal_divalidasi
                                                     ).fromNow()}
                                                 </td>
-                                                {/* TODO: Logic Action Button */}
                                                 <td className="space-x-2 text-center text-nowrap ">
                                                     <button
                                                         onClick={(e) =>

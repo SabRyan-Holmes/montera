@@ -12,7 +12,7 @@ class Pegawai extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['riwayat_pak'];
+    // protected $with = ['riwayat_pak'];
 
     public function riwayat_pak()
     {

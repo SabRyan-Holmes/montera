@@ -9,6 +9,7 @@ use App\Models\AturanPAK;
 use App\Models\Catatan;
 use App\Models\Pegawai;
 use App\Models\Pengajuan;
+use App\Models\PengusulanPAK;
 use App\Models\RiwayatPAK;
 use App\Services\ActivityLogger;
 use App\Services\AturanPAKService;
@@ -105,6 +106,13 @@ class PengajuanController extends Controller
             $validated['catatan_id'] = $new_catatan->id;
         }
 
+        // Kalo diajukan dan itu dr pengusulan pegawai
+        $riwayatPAK = RiwayatPAK::findOrFail($request->riwayat_pak_id)->first();
+        if ($riwayatPAK && $riwayatPAK->pengusulan_pak_id) {
+            PengusulanPAK::find($riwayatPAK->pengusulan_pak_id)?->update([
+                "status" => "selesai"
+            ]);
+        }
         Pengajuan::create($validated);
         return redirect()->back()->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
         // return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'PAK Berhasil diajukan! Silahkan menunggu untuk diproses!');
@@ -115,6 +123,7 @@ class PengajuanController extends Controller
         $data = Pengajuan::with([
             'riwayat_pak',
             'riwayat_pak.pegawai',
+            'riwayat_pak.pengusulan_pak.pegawai',
             'pengaju',
             'validator',
             'catatan_pengaju',
@@ -188,14 +197,15 @@ class PengajuanController extends Controller
         );
 
         // 6. Redirect dengan feedback
-        return redirect()->back()->with('toast', 'Pengajuan PAK berhasil divalidasi.');
+        return redirect()->back()->with([
+            'toast' => "Pengajuan PAK berhasil divalidasi.",
+            'toast_id' => uniqid(),
+        ]);
     }
 
     public function reject(Pengajuan $pengajuan, Request $request)
     {
-        // dd($request->all());
         $new_catatan = null;
-        // TODO? : Mungkin sebaikny tambhakn tipe kek penolakan dari validator/pimpinan?
         if ($request->catatan) {
             $new_catatan = Catatan::create([
                 'user_nip' => $this->user->nip,
@@ -230,10 +240,9 @@ class PengajuanController extends Controller
 
 
 
-    public function undo_validate(Pengajuan $pengajuan)
+    public function reset_validate(Pengajuan $pengajuan)
     {
         $pengajuan->load(['riwayat_pak', 'catatan_validator']);
-        dd($pengajuan);
         try {
             DB::transaction(function () use ($pengajuan) {
                 // Hapus file jika ada
@@ -318,7 +327,7 @@ class PengajuanController extends Controller
         return Inertia::render('RiwayatPAK/CreateOrEdit', [
             'title' => 'Revisi Penetapan Angka Kredit',
             'isEdit' => true,
-            'riwayat' => RiwayatPAK::findOrFail($request->pakId),
+            'riwayat' => RiwayatPAK::with('pegawai')->findOrFail($request->pakId),
             'isRevisi' => $request->isRevisi,
             'pengajuanId' => $request->pengajuanId,
             'aturanPAK' => AturanPAKService::get(),

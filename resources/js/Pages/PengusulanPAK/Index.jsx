@@ -1,8 +1,8 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { FaCheck, FaEye } from "react-icons/fa6";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoCloseOutline } from "react-icons/io5";
 import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import {
@@ -34,7 +34,8 @@ export default function Index({
     moment.locale("id");
     const [shownMessages, setShownMessages] = useRemember([]);
     const [activeModal, setActiveModal] = useState(null);
-    // Cek message dan status modal
+    const [showIframe, setShowIframe] = useState(false);
+    const [linkIframe, setLinkIframe] = useState("");
     useEffect(() => {
         if (flash.message) {
             Swal.fire({
@@ -50,6 +51,40 @@ export default function Index({
         }
     }, [flash.message]);
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    const shown = useRef(new Set());
+
+    useEffect(() => {
+        if (
+            flash.toast &&
+            flash.toast_id &&
+            !shown.current.has(flash.toast_id)
+        ) {
+            Toast.fire({
+                icon: "success",
+                title: flash.toast,
+            });
+
+            shown.current.add(flash.toast_id);
+
+            // Optional: reset biar bisa muncul lagi setelah beberapa detik
+            setTimeout(() => {
+                shown.current.delete(flash.toast_id);
+            }, 3000);
+        }
+    }, [flash.toast_id]);
+
     const handleApprove = (id) => {
         router.post(
             route("divisi-sdm.pengusulan-pak.approve", id),
@@ -57,6 +92,7 @@ export default function Index({
             {
                 onError: (err) => alert(err),
                 onSuccess: () => {
+                    setActiveModal(null);
                     Swal.fire({
                         title: "Berhasil!",
                         text: "Pengusulan PAK telah disetujui. Proses PAK Sekarang?",
@@ -84,6 +120,39 @@ export default function Index({
         );
     };
 
+    // batal usulan
+    const handleDelete = (id) => {
+        Swal.fire({
+            ...(activeModal && { target: `#${activeModal}` }),
+            icon: "warning",
+            text: "Anda yakin ingin membatalkan usulan?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(route("pegawai.pengusulan-pak.destroy", id), {
+                    preserveState: false,
+                    onError: (err) => JSON.stringify(err),
+                    onSuccess: () => setActiveModal(null),
+                });
+            }
+        });
+    };
+
+    const handleReject = (id) => {
+        setActiveModal(`ModalCatatan-${id}`);
+    };
+
+    const showIframeWithFile = (filePath) => {
+        if (!filePath) return;
+
+        setLinkIframe(`/storage/${filePath}`);
+        setShowIframe(true);
+    };
+
     const role = auth.user.role;
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
@@ -93,21 +162,55 @@ export default function Index({
 
     return (
         <Authenticated user={auth.user} title={title}>
+            {showIframe && (
+                <div className="w-full fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4">
+                    <div className="relative w-full max-w-7xl h-[80vh] bg-white rounded shadow-lg overflow-hidden">
+                        <button
+                            className="absolute z-10 p-2 transition bg-white rounded-full shadow group top-2 right-2 hover:bg-red-500 hover:text-white"
+                            onClick={() => setShowIframe(false)}
+                        >
+                            <IoCloseOutline className="w-6 h-6 stroke-red-500 group-hover:stroke-white" />
+                        </button>
+
+                        {/* Indikator Loading */}
+                        {!linkIframe ? (
+                            <div className="text-center ">
+                                <span className="loading loading-spinner loading-lg"></span>
+                                <p className="mt-4 text-gray-600">
+                                    Memuat Dokumen...
+                                </p>
+                            </div>
+                        ) : (
+                            <iframe
+                                src={linkIframe}
+                                width="100%"
+                                height="100%"
+                                className="border-0"
+                            ></iframe>
+                        )}
+                    </div>
+                </div>
+            )}
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <ModalCatatan
                     activeModal={activeModal}
-                    setActiveModal={setActiveModal}
+                    onClose={() => setActiveModal(null)}
                     routeName={"divisi-sdm.pengusulan-pak.reject"}
+                    placeholder={
+                        "Ketikkan catatan untuk penolakan pengusulan pak ini"
+                    }
                 />
 
                 {showDetail && (
                     <ModalCekPengusulan
                         id={showDetail}
                         onClose={() => setShowDetail(null)}
-                        handleApprove={handleApprove}
-                        handleReject={() =>
-                            setActiveModal(`ModalCatatan-${showDetail}`)
-                        }
+                        handleAction={{
+                            handleApprove,
+                            handleDelete,
+                            handleReject,
+                            showIframeWithFile,
+                        }}
                     />
                 )}
 
@@ -132,6 +235,7 @@ export default function Index({
                                     "direvisi",
                                     "ditolak",
                                     "divalidasi",
+                                    "selesai",
                                 ],
                             },
                         ]}
@@ -246,6 +350,7 @@ export default function Index({
                                         const isValidated = [
                                             "ditolak",
                                             "disetujui",
+                                            "selesai",
                                         ].includes(data.status);
                                         const isProcessed = processed.includes(
                                             data.id
@@ -295,7 +400,8 @@ export default function Index({
                                                 </td>
                                                 <td className="p-0 m-0">
                                                     <StatusLabel
-                                                        status={data.status} isDone={isProcessed}
+                                                        status={data.status}
+                                                        isDone={isProcessed}
                                                     />
                                                     <div className="mt-2 font-normal">
                                                         <span className="block">
@@ -357,8 +463,8 @@ export default function Index({
                                                                         isValidated
                                                                     }
                                                                     onClick={() =>
-                                                                        setActiveModal(
-                                                                            `ModalCatatan-${data.id}`
+                                                                        handleReject(
+                                                                            data.id
                                                                         )
                                                                     }
                                                                     className="group action-btn action-btn-warning"
@@ -405,21 +511,23 @@ export default function Index({
                                                             </div>
 
                                                             <div className="relative inline-flex group">
-                                                                <Link
-                                                                    as="button"
-                                                                    method="delete"
-                                                                    href={route(
-                                                                        "pegawai.pengusulan-pak.destroy",
-                                                                        data.id
-                                                                    )}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            data.id
+                                                                        )
+                                                                    }
                                                                     disabled={
                                                                         data.status ===
-                                                                        "disetujui"
+                                                                            "disetujui" ||
+                                                                        data.status ===
+                                                                            "selesai"
                                                                     }
                                                                     className="action-btn group action-btn-warning "
                                                                 >
                                                                     <MdCancel className="scale-125 group-hover:fill-white" />
-                                                                </Link>
+                                                                </button>
                                                                 <TooltipHover
                                                                     message={
                                                                         "Batalkan Usulan PAK "
@@ -435,7 +543,6 @@ export default function Index({
                                 </tbody>
                             </table>
 
-                            {/* Pagination */}
                             <Pagination
                                 datas={pengusulanPAK}
                                 urlRoute={`/${formatRole(role)}/pengusulan-pak`}

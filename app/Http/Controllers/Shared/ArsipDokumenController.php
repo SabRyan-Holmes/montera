@@ -6,6 +6,7 @@ use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArsipDokumenStoreRequest;
 use App\Models\ArsipDokumen;
+use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -59,8 +60,9 @@ class ArsipDokumenController extends Controller
      */
     public function store(ArsipDokumenStoreRequest $request)
     {
-        // dd($request->tanggal_divalidasi);
-        $validated = $request->validated();
+        $pengajuanPAK = Pengajuan::with('riwayat_pak.pegawai')->findOrFail($request->pengajuan_pak_id);
+        $validated = $request->except(['pengajuan_pak_id']);
+        $validated['nip_pak'] = $pengajuanPAK->riwayat_pak->pegawai['NIP'];
 
         // Logic Store File PDF Document
         $fileName = $request->title . '.pdf';

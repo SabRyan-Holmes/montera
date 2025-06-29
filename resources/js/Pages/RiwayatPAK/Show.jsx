@@ -1,4 +1,3 @@
-// ModalCekValidasi.jsx
 import {
     DetailPAKTable,
     DetailPegawai,

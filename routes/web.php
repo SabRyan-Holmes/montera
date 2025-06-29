@@ -63,10 +63,12 @@ Route::middleware(['authOrSSO', 'Divisi SDM'])->prefix('/divisi-sdm')->name('div
     // ==============Proses PAK================
 
     // Pengusulan PAK(R, Accept, Reject)
-    Route::get('pengusulan-pak/', [PengusulanPAKController::class, 'index'])->name('pengusulan-pak.index');
-    Route::post('pengusulan-pak/approve/{pengusulanPAK}', [PengusulanPAKController::class, 'approve'])->name('pengusulan-pak.approve');
-    Route::post('pengusulan-pak/reject', [PengusulanPAKController::class, 'reject'])->name('pengusulan-pak.reject');
-    Route::post('pengusulan-pak/undo-validate', [PengusulanPAKController::class, 'undo_validate'])->name('pengusulan-pak.undo-validate');
+    Route::prefix('pengusulan-pak')->name('pengusulan-pak.')->group(function () {
+        Route::get('/', [PengusulanPAKController::class, 'index'])->name('index');
+        Route::post('approve/{pengusulanPAK}', [PengusulanPAKController::class, 'approve'])->name('approve');
+        Route::post('reset-validate/{pengusulanPAK}', [PengusulanPAKController::class, 'reset_validate'])->name('reset-validate');
+        Route::post('reject', [PengusulanPAKController::class, 'reject'])->name('reject');
+    });
 
     // Penetapan Angka Kredit(CRUD, Submit) => Pemrosesan, Penghitungan, Penetapan dan Pencetakan dalam output pdf
     Route::prefix('/pak')->name('pak.')->group(function () {
@@ -128,7 +130,7 @@ Route::middleware(['authOrSSO', 'pimpinan'])->prefix('pimpinan')->name('pimpinan
         Route::get('/', [PengajuanController::class, 'index'])->name('index');
         Route::post('/approve/{pengajuan}', [PengajuanController::class, 'approve'])->name('approve');
         Route::post('/reject/{pengajuan}', [PengajuanController::class, 'reject'])->name('reject');
-        Route::post('/undo-validate/{pengajuan}', [PengajuanController::class, 'undo_validate'])->name('undo-validate');
+        Route::post('/reset-validate/{pengajuan}', [PengajuanController::class, 'reset_validate'])->name('reset-validate');
     });
 
     // Aturan PAK(R)
@@ -160,7 +162,7 @@ Route::middleware(['authOrSSO'])->prefix('pegawai')->name('pegawai.')->group(fun
     Route::resource('pengusulan-pak', PengusulanPAKController::class)->parameters(['pengusulan-pak' => 'pengusulanPAK']);
 
     //Status Proses PAK/Pengajuan(R)
-    Route::get('/proses-pak/pengajuan', [PengajuanController::class, 'index'])->name('proses-pak.index');
+    Route::get('/proses-pak/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan.index');
 
     // Aturan PAK (R), //NOTE! Ini mungkin dak usah?
     Route::get('/aturan-pak', [AturanPAKController::class, 'index'])->name('aturan-pak.index');

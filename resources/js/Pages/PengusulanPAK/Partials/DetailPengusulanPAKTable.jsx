@@ -7,8 +7,7 @@ import { FaFilePdf } from "react-icons/fa6";
 export default function PengusulanPAKTable({
     data,
     collapse = true,
-    setLinkIframe,
-    setShowIframe,
+    showIframeWithFile,
 }) {
     moment.locale("id");
 
@@ -105,12 +104,11 @@ export default function PengusulanPAKTable({
                             <td>Dokumen Penilaian Kinerja</td>
                             <td className="text-base font-normal">
                                 <button
-                                    onClick={() => {
-                                        setLinkIframe(
-                                            `/storage/${data["dokumen_utama_path"]}`
-                                        );
-                                        setShowIframe(true);
-                                    }}
+                                    onClick={() =>
+                                        showIframeWithFile(
+                                            data["dokumen_utama_path"]
+                                        )
+                                    }
                                     className="inline-flex items-center gap-1 text-primary-dark hover:text-primary hover:underline"
                                 >
                                     <FaFilePdf className="w-5 h-5" />
@@ -125,12 +123,11 @@ export default function PengusulanPAKTable({
                             <td className="text-base font-normal">
                                 {data["dokumen_pendukung_path"] ? (
                                     <button
-                                        onClick={() => {
-                                            setLinkIframe(
-                                                `/storage/${data["dokumen_pendukung_path"]}`
-                                            );
-                                            setShowIframe(true);
-                                        }}
+                                        onClick={() =>
+                                            showIframeWithFile(
+                                                data["dokumen_pendukung_path"]
+                                            )
+                                        }
                                         className="inline-flex items-center justify-start gap-1 text-primary-dark hover:text-primary hover:underline"
                                     >
                                         <FaFilePdf className="w-5 h-5" />

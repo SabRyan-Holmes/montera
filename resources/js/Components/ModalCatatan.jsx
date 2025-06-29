@@ -4,11 +4,10 @@ import React, { useState, useEffect } from "react";
 
 export default function ModalCatatan({
     onClose,
-    setActiveModal,
     activeModal,
     routeName,
     title,
-    placeholder
+    placeholder = "",
 }) {
     const { data, setData, post, processing, errors } = useForm({
         id: "",
@@ -30,17 +29,16 @@ export default function ModalCatatan({
             onError: (errors) => {
                 console.error("Error:", errors);
             },
-            onSuccess: () => setActiveModal(null),
+            onSuccess: onClose,
         });
-        onClose(); // Tutup pop-up setelah submit
     };
 
     return (
         <Modal
-            id={modalId} // agar Swal bisa target
+            id={modalId}
             show={activeModal === modalId}
             closeButton={false}
-            onClose={() => setActiveModal(null)} // agar modal bisa ditutup dengan onClose
+            onClose={onClose}
             maxWidth="md"
         >
             <section className="w-full max-w-md p-6 mx-auto rounded-lg ">
@@ -53,7 +51,7 @@ export default function ModalCatatan({
                             <textarea
                                 name="catatan"
                                 className="relative h-24 px-2 border laptop:w-full textarea border-gradient placeholder:text-accent"
-                                placeholder={placeholder ?? "Ketikkan catatan untuk penolakan pengusulan ini.."}
+                                placeholder={placeholder}
                                 maxLength={1000}
                                 onChange={(e) =>
                                     setData("catatan", e.target.value)
@@ -66,7 +64,7 @@ export default function ModalCatatan({
                     <div className="flex justify-end mt-4 space-x-3">
                         <button
                             type="button"
-                            onClick={() => setActiveModal(null)}
+                            onClick={onClose}
                             className="px-4 py-2 text-sm font-medium text-gray-700 transition duration-200 bg-gray-100 rounded-md hover:bg-gray-200"
                         >
                             Batal

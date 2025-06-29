@@ -7,34 +7,39 @@ export default function StatusLabel({ status, isDone = false }) {
     // alert(status)
     return (
         <div className="group/item">
-            {(status === "diusulkan" || status === "diajukan" || status === "direvisi") && (
-                <button
-                    disabled
-                    className="transition-all duration-150 label-base bg-accent/50 text-slate-500 group-hover/item:text-slate-100"
+            {(status === "diusulkan" || status === "diajukan") && (
+                <div className="transition-all duration-150 label-base bg-accent/50 text-slate-500 group-hover/item:text-slate-100">
+                    {status}
+                    <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
+                </div>
+            )}
+
+            {status === "direvisi" && (
+                <div
+                    className="transition-all duration-150 label-base bg-bermuda/20 text-emerald-700 group-hover/item:text-slate-100"
                 >
                     {status}
                     <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
-                </button>
+                </div>
             )}
 
-            {(status == "disetujui" || status === "divalidasi") && (
-                <button
-                    disabled
-                    className="inline-flex items-center transition-all duration-150 label-base bg-hijau/10 text-hijau/80 group-hover/item:text-hijau/60"
+            {(status == "disetujui" ||
+                status === "divalidasi" ||
+                status === "selesai") && (
+                <div                    className="inline-flex items-center transition-all duration-150 label-base bg-hijau/10 text-hijau/80 group-hover/item:text-hijau/60"
                 >
-                     {!isDone ? status : "Selesai"}
+                    {status}
                     <FaCheck className="ml-1 scale-125 fill-hijau/80 stroke-hijau/80 group-hover/item:fill-hijau" />
-                </button>
+                </div>
             )}
 
             {status === "ditolak" && (
-                <button
-                    disabled
+                <div
                     className="inline-flex items-center transition-all duration-150 label-base bg-warning/10 text-warning/80 group-hover/item:text-warning/60"
                 >
                     {status}
                     <IoClose className="ml-1 scale-125 fill-warning/80 stroke-warning/80 group-hover/item:fill-warning" />
-                </button>
+                </div>
             )}
         </div>
     );

@@ -1,9 +1,12 @@
 import { Graph, RadialChart } from "@/Components";
 import React from "react";
 import { IconContext } from "react-icons";
+import { BsFillSendArrowUpFill } from "react-icons/bs";
 import { FaFileAlt } from "react-icons/fa";
 import { FaUserLarge, FaUsers, FaUserTie } from "react-icons/fa6";
 import { HiDocumentDuplicate } from "react-icons/hi2";
+import { MdOutlineAssignmentInd, MdWorkHistory } from "react-icons/md";
+import { RiArchive2Fill } from "react-icons/ri";
 
 export default function SdmDashboardContent({ dataGraph, dataByRole }) {
     const nonFungsional =
@@ -15,10 +18,6 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                 <section className="w-3/5">
                     <Graph data={dataGraph} />
                 </section>
-
-                {/* NOTE : Mungkin sebaikny tambahkan juga No Surat PAK terakhir yang pernah dibuat */}
-
-                {/* Grid */}
 
                 <section className="grid items-center justify-center w-full grid-cols-2 gap-5 my-auto ">
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
@@ -92,7 +91,7 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
                             >
-                                <HiDocumentDuplicate className="w-12 h-full" />
+                                <MdOutlineAssignmentInd className="w-12 h-full" />
                             </IconContext.Provider>
                         </div>
                         <div className="px-4 text-gray-700">
@@ -106,11 +105,11 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                     </div>
 
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                        <div className="p-4 bg-bermuda">
+                        <div className="p-4 bg-hijau/75">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
                             >
-                                <HiDocumentDuplicate className="w-12 h-full" />
+                                <BsFillSendArrowUpFill className="w-12 h-full" />
                             </IconContext.Provider>
                         </div>
                         <div className="px-4 text-gray-700">
@@ -123,19 +122,36 @@ export default function SdmDashboardContent({ dataGraph, dataByRole }) {
                         </div>
                     </div>
                     <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                        <div className="p-4 bg-bermuda/75">
+                        <div className="p-4 bg-bermuda">
                             <IconContext.Provider
                                 value={{ color: "white", size: "50px" }}
                             >
-                                <HiDocumentDuplicate className="w-12 h-full" />
+                                <MdWorkHistory className="w-12 h-full" />
                             </IconContext.Provider>
                         </div>
                         <div className="px-4 text-gray-700">
                             <h3 className="text-sm tracking-wider">
-                                Pengajuan PAK masih diproses
+                                Riwayat Karir Pegawai
                             </h3>
                             <p className="text-3xl">
-                                {dataByRole["pengajuanCount"]}
+                                {dataByRole["riwayatKarirCount"]}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
+                        <div className="p-4 bg-bermuda/75">
+                            <IconContext.Provider
+                                value={{ color: "white", size: "50px" }}
+                            >
+                                <RiArchive2Fill className="w-12 h-full" />
+                            </IconContext.Provider>
+                        </div>
+                        <div className="px-4 text-gray-700">
+                            <h3 className="text-sm tracking-wider">
+                                Arsip Dokumen
+                            </h3>
+                            <p className="text-3xl">
+                                {dataByRole["arsipDokumenCount"]}
                             </p>
                         </div>
                     </div>

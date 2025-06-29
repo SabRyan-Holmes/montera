@@ -29,6 +29,7 @@ class ArsipDokumen extends Model
     }
 
 
+
     public static function byUser($user)
     {
         return static::where(function ($query) use ($user) {

@@ -12,6 +12,7 @@ use App\Models\Pengajuan;
 use App\Models\PengusulanPAK;
 use App\Models\RiwayatPAK;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\AturanPAKService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -143,9 +144,28 @@ class DokumenPAKController extends Controller
         $dataForStore = $request->except(['id', 'pegawai']);
         $pegawai_id = $request->input('pegawai.id');
         $dataForStore['pegawai_id'] = $pegawai_id;
-        RiwayatPAK::create($dataForStore);
-        // Update no surat
+        if ($request->pengusulan_pak_id) {
+            $pengusulanPAK = PengusulanPAK::find($request->pengusulan_pak_id);
+            $pengusulanPAK?->update([
+                "status" => "selesai"
+            ]);
+            ActivityLogger::log(
+                aktivitas: 'Memproses Pengusulan PAK',
+                keterangan: $this->user->name . '(' . $this->user->role . ') memproses pengusulan PAK dari pegawai dengan NIP : ' . $pengusulanPAK->pegawai_nip,
+                entityType: PengusulanPAK::class,
+                entityId: $request->pengusulan_pak_id,
+            );
+        }
+
+        $riwayatPAK = RiwayatPAK::create($dataForStore);
         AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
+        $no_surat =  AturanPAK::extractNoSurat($dataForStore['no_surat1']);
+        ActivityLogger::log(
+            aktivitas: 'Menyimpan Riwayat PAK',
+            keterangan: $this->user->name . '(' . $this->user->role . ') menyimpan riwayat PAK dengan NO PAK: ' . $no_surat,
+            entityType: RiwayatPAK::class,
+            entityId: $riwayatPAK->id,
+        );
         return Redirect::route('divisi-sdm.riwayat-pak.index')->with('message', 'Data Berhasil Disimpan sebagai Riwayat PAK');
     }
 
@@ -184,6 +204,13 @@ class DokumenPAKController extends Controller
                 ]);
             }
 
+            // Kalo dari pengusulan
+            if ($request->pengusulan_pak_id) {
+                PengusulanPAK::find($request->pengusulan_pak_id)?->update([
+                    "status" => "selesai"
+                ]);
+            }
+
             DB::commit();
             return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Dokumen PAK berhasil Diajukan!');
         } catch (\Throwable $e) {
@@ -191,36 +218,6 @@ class DokumenPAKController extends Controller
             return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
     }
-
-    // public function save_and_submit(Request $request)
-    // {
-    //     // Kalo si store ke database)
-    //     $dataForStore = $request->except(['pegawai', 'catatan']);
-    //     $pegawai_id = $request->input('pegawai.id');
-    //     $dataForStore['pegawai_id'] = $pegawai_id;
-    //     AturanPAK::updateNoSuratTerakhir($dataForStore['no_surat1']);
-    //     $newPAK = RiwayatPAK::create($dataForStore);
-    //     $catatan = null;
-    //     if($request->catatan) {
-    //         $catatan = Catatan::create([
-    //             'user_nip' => $this->user->nip,
-    //             'tipe' => 'Pengajuan PAK-Divisi SDM',
-    //             'isi' => $request->catatan,
-    //         ]);
-    //     }
-    //     $validated = [
-    //         "riwayat_pak_id" => $newPAK->id,
-    //         "pegawai_id" => $newPAK->pegawai_id,
-    //         "user_nip" => $this->user->nip,
-    //         "catatan_pengaju_id" => $catatan?->id ?? null
-    //     ];
-    //     if (!isset($request->id)) {
-    //         Pengajuan::create($validated);
-    //     }
-
-    //     return Redirect::route('divisi-sdm.pengajuan.index')->with('message', 'Dokumen PAK berhasil Diajukan! Silahkan menunggu untuk diproses.');
-    // }
-
 
     private function cleanData(&$item)
     {

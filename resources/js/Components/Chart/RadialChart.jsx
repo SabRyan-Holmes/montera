@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
+import ColorCard from "./Partials/ColorCard";
+import { usePage } from "@inertiajs/react";
 
 export default function RadialChart({ title, data, chartId }) {
     const [seriesData, setSeriesData] = useState(Object.values(data));
     const [labels, setLabels] = useState(Object.keys(data));
+
+    const colors = ["primary", "bermuda", "warning", "hijau", "hijau"];
 
     useEffect(() => {
         if (
             document.getElementById(chartId) &&
             typeof ApexCharts !== "undefined"
         ) {
-            // console.log("data", data);
-            // console.log("series", seriesData);
             const chart = new ApexCharts(
                 document.querySelector(`#${chartId}`),
                 getChartOptions({ seriesData, labels })
@@ -22,13 +24,19 @@ export default function RadialChart({ title, data, chartId }) {
                 chart.destroy();
             };
         }
-    }, [data, chartId]); // Re-render ketika data berubah
+    }, [data, chartId]);
 
     const getChartOptions = ({ seriesData, labels }) => {
         return {
             series: seriesData,
             labels: labels,
-            colors: ["#2D95C9", "#16BDCA",  "oklch(64.5% 0.246 16.439)","#22c55e"],
+            colors: [
+                "#2D95C9",
+                "#16BDCA",
+                "oklch(64.5% 0.246 16.439)",
+                "#22c55e",
+                "#00ff00",
+            ],
             chart: {
                 height: "350px",
                 width: "100%",
@@ -83,13 +91,20 @@ export default function RadialChart({ title, data, chartId }) {
         };
     };
 
+    const { auth } = usePage().props;
+    const role = auth.user.role;
+    function formatRole(label) {
+        return label.trim().toLowerCase().replace(/\s+/g, "-");
+    }
+
+    const isPengusulan = title.includes("Pengusulan");
     return (
         <section className="w-full max-w-sm p-4 mx-auto bg-white rounded-lg shadow-sm dark:bg-gray-800 md:p-6">
             <div className="flex justify-between mb-3">
                 <div className="flex items-center">
                     <div className="flex items-center justify-center">
                         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
-                            {title}
+                            {role === "Pegawai" ? title + " Saya" : title}
                         </h5>
                         <svg
                             data-popover-target={"chart-info" + chartId}
@@ -159,42 +174,32 @@ export default function RadialChart({ title, data, chartId }) {
             </div>
 
             <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                <div className="grid grid-cols-4 gap-3 mb-2">
-                    <dl className="bg-primary/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
-                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-primary/10 text-primary dark:bg-gray-500 dark:text-orange-300">
-                            {seriesData[0]}
-                        </dt>
-                        <dd className="text-sm font-medium text-primary/80 dark:text-orange-300">
-                            {labels[0]}
-                        </dd>
-                    </dl>
-                    <dl className="bg-bermuda/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
-                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-bermuda/20 text-bermuda dark:bg-gray-500 dark:text-orange-300">
-                            {seriesData[1]}
-                        </dt>
-                        <dd className="text-sm font-medium text-bermuda dark:text-orange-300">
-                            {labels[1]}
-                        </dd>
-                    </dl>
+                <div className="grid grid-cols-3 gap-3 ">
+                    {/* Baris pertama */}
+                    {seriesData.slice(0, 3).map((value, index) => (
+                        <ColorCard
+                            key={index}
+                            value={value}
+                            label={labels[index]}
+                            color={colors[index]}
+                        />
+                    ))}
 
-                    <dl className="bg-warning/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
-                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-warning/10 text-warning/80 dark:bg-gray-500 dark:text-blue-300">
-                            {seriesData[2]}
-                        </dt>
-                        <dd className="text-sm font-medium text-warning/80 dark:text-blue-300">
-                            {labels[2]}
-                        </dd>
-                    </dl>
-                    <dl className="bg-hijau/5 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
-                        <dt className="flex items-center justify-center w-8 h-8 mb-1 text-sm font-medium rounded-full bg-hijau/10 text-hijau/80 dark:bg-gray-500 dark:text-teal-300">
-                            {seriesData[3]}
-                        </dt>
-                        <dd className="text-sm font-medium text-hijau/80 dark:text-teal-300">
-                            {labels[3]}
-                        </dd>
-                    </dl>
+                    {/* Baris kedua - tengahin 2 item */}
+                    <div className="flex justify-center col-span-3 gap-3">
+                        <ColorCard
+                            value={seriesData[3]}
+                            label={labels[3]}
+                            color={colors[3]}
+                        />
+                        <ColorCard
+                            value={seriesData[4]}
+                            label={labels[4]}
+                            color={colors[4]}
+                        />
+                    </div>
                 </div>
-                <button
+                {/* <button
                     data-collapse-toggle={"more-details" + chartId}
                     type="button"
                     className="inline-flex items-center text-xs font-medium text-gray-500 hover:underline dark:text-gray-400"
@@ -215,7 +220,7 @@ export default function RadialChart({ title, data, chartId }) {
                             d="m1 1 4 4 4-4"
                         />
                     </svg>
-                </button>
+                </button> */}
                 <div
                     id={"more-details" + chartId}
                     className="hidden pt-3 mt-3 space-y-2 border-t border-gray-200 dark:border-gray-600"
@@ -343,7 +348,13 @@ export default function RadialChart({ title, data, chartId }) {
                         </ul>
                     </div>
                     <a
-                        href="#"
+                        href={
+                            isPengusulan && role !== "Pimpinan"
+                                ? route(
+                                      `${formatRole(role)}.pengusulan-pak.index`
+                                  )
+                                : route(`${formatRole(role)}.pengajuan.index`)
+                        }
                         className="inline-flex items-center px-3 py-2 text-sm font-semibold text-blue-600 uppercase rounded-lg hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                     >
                         Progress report
