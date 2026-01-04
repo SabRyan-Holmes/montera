@@ -5,50 +5,68 @@ namespace App\Helpers;
 class GetSubtitle
 {
     public static function getSubtitle(
+        // --- 1. Filter Terkait Pegawai & Struktur ---
         ?string $byJabatan = null,
-        ?string $byDaerah = null,
+        ?string $byDivisi = null, // Pengganti 'Daerah' agar sesuai Bank XYZ
+
+        // --- 2. Filter Terkait Produk & KPI ---
+        ?string $byKategori = null, // Tabungan, Kredit, Asuransi
+        ?string $byIndikator = null, // Nama KPI
+
+        // --- 3. Filter Terkait Transaksi & Monitoring ---
+        ?string $byStatus = null, // Pending, Valid, Tolak
+        ?string $byPeriode = null, // Mingguan, Bulanan, Tahunan
+
+        // --- 4. Search & General ---
         ?string $search = null,
-        ?string $byJenisPerubahan = null, //perubahan di riwayatKarir
-        ?string $byJenisAktivitas = null, //perubahan di logAktivitas
-        ?string $byStatus = null,
-        ?string $searchLabel = "Cari pegawai dengan Nama/NIP : ",
-        ?string $byKesimpulan = null,
-        ?string $byRole = null
+        ?string $searchLabel = "Mencari data dengan kata kunci : ",
+
+        // --- RUANG KOSONG (Kebutuhan Masa Depan) ---
+        // Kamu bisa menambahkan parameter baru di bawah sini jika ada model lain
+        ?string $byCustom1 = null,
+        ?string $byCustom2 = null
     ): string {
         $filters = [];
 
+        // Logika Jabatan & Divisi
         if ($byJabatan) {
-            $filters[] = "Jabatan : $byJabatan";
+            $filters[] = "Jabatan: $byJabatan";
+        }
+        if ($byDivisi) {
+            $filters[] = "Divisi: $byDivisi";
         }
 
-        if ($byDaerah) {
-            $filters[] = "Daerah : $byDaerah";
+        // Logika Produk & KPI (BI Context)
+        if ($byKategori) {
+            $filters[] = "Kategori Produk: " . ucfirst($byKategori);
+        }
+        if ($byIndikator) {
+            $filters[] = "Indikator: $byIndikator";
         }
 
-        if ($byJenisPerubahan) {
-            $filters[] = "Jenis Perubahan : $byJenisPerubahan";
-        }
-
-        if ($byJenisAktivitas) {
-            $filters[] = "Jenis Aktivitas : $byJenisAktivitas";
-        }
-
+        // Logika Status & Periode (Monitoring Context)
         if ($byStatus) {
-            $filters[] = "Status : $byStatus";
+            $filters[] = "Status Verifikasi: " . ucfirst($byStatus);
+        }
+        if ($byPeriode) {
+            $filters[] = "Periode: " . ucfirst($byPeriode);
         }
 
-        if ($byKesimpulan) {
-            $filters[] = "Kesimpulan : $byKesimpulan";
+        // --- TEMPAT MENAMBAH LOGIKA FILTER BARU ---
+        if ($byCustom1) {
+            $filters[] = "Label: $byCustom1";
         }
 
+        // Finalisasi Output
         if (!empty($filters)) {
-            return "Berdasarkan " . implode(" dan ", $filters);
+            // Menggunakan implode dengan koma, dan "serta" di akhir agar lebih formal
+            return "Menampilkan data berdasarkan " . implode(", ", $filters);
         }
 
         if ($search) {
-            return $searchLabel . $search;
+            return $searchLabel . " '" . $search . "'";
         }
 
-        return "";
+        return "Menampilkan seluruh data";
     }
 }

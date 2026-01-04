@@ -17,8 +17,6 @@
 
     @routes
     @viteReactRefresh
-    {{-- COMMENT THIS @vite WHEN PRODUCTION!!! --}}
-    {{-- @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"]) --}}
     @inertiaHead
 
     <!----------------------------------------------- NOTE:  FOR HOSTING!! --------------------------------------------------->
@@ -33,8 +31,7 @@
         src="{{ asset('build/' . $manifest['resources/js/Pages/' . $page['component'] . '.jsx']['file']) }}"></script>
 
     <!-- Import CSS -->
-    {{-- CHANGE THIS LATER!! --}}
-    <link rel="stylesheet" href="{{ asset('build/assets/app-BZr28vA_.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-CW-snbV_.css') }}">
     <!----------------------------------------------- NOTE:  FOR HOSTING!! --------------------------------------------------->
 
 </head>

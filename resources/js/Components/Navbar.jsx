@@ -5,44 +5,16 @@ import { ProfileImage, TooltipHover } from ".";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
 
 const Navbar = ({ user, title }) => {
-    let admin = false;
-    let name = "a";
-    let loggedIn = false;
-    if (user) {
-        name = user.email;
-        loggedIn = true;
-    }
 
-    if (name == "admin@admin.com") {
-        admin = true;
-    }
 
     const nameParts = user.name.split(" ");
-    const first = nameParts[0];
-    const second = nameParts[1];
-    const fullName = first + " " + second;
 
     const styleByRole = {
-        "Divisi SDM": "text-primary",
-        Pimpinan: "text-hijau",
-        Pegawai: "text-secondary",
+        Administrator: "text-primary",
+        Supervisor: "text-hijau",
+        "Kepala Cabang": "text-secondary",
     };
 
-    const isDivisiSDM = user?.role === "Divisi SDM";
-    const isRiwayatKarir = title?.trim() === "Riwayat Karir Pegawai";
-    const isKelolaPegawai = title?.trim() === "Kelola Data Pegawai";
-    const showToggleLink = isDivisiSDM && (isRiwayatKarir || isKelolaPegawai);
-
-    // Info untuk toggle
-    const toggleTarget = isRiwayatKarir
-        ? {
-              route: route("divisi-sdm.pegawai.index"),
-              tooltip: "Lihat Pegawai",
-          }
-        : {
-              route: route("divisi-sdm.riwayat-karir.index"),
-              tooltip: "Lihat Riwayat Karir",
-          };
 
     return (
         <nav>
@@ -69,30 +41,10 @@ const Navbar = ({ user, title }) => {
                     </label>
                 </div>
                 <div className="navbar-start">
-                    {showToggleLink ? (
-                        <div>
-                            <a className="inline-flex ml-6 text-xl font-semibold normal-case ">
-                                {title}
-                                <Link
-                                    as="button"
-                                    href={toggleTarget.route}
-                                    className="relative inline-flex w-24 cursor-pointer group text-secondary hover:text-primary"
-                                >
-                                    <CgArrowsExchangeAltV className="scale-110" />
-                                    <div className="tooltip">
-                                        <small className="font-semibold">
-                                            {toggleTarget.tooltip}
-                                        </small>
-                                        <div className="triangle"></div>
-                                    </div>
-                                </Link>
-                            </a>
-                        </div>
-                    ) : (
+
                         <a className="ml-6 text-xl font-semibold normal-case ">
                             {title}
                         </a>
-                    )}
                 </div>
 
                 <div className="navbar-end">

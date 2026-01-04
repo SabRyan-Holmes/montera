@@ -57,7 +57,7 @@ export default function Index({
         aturanPAKTableProps,
     } = UseAturanPenetapan((aturanPAK = aturanPAK));
 
-    const [pegawaiState, setPegawaiState] = useState(null);
+    const [jabatanstate, setjabatanstate] = useState(null);
     // IF EDIT
     useEffect(() => {
         const { findKoefisienPertahunValue } = rumusPenghitungan;
@@ -70,7 +70,7 @@ export default function Index({
                 //forRevisiPengajuanPAK
                 ...(pengajuanId && { pengajuanId: pengajuanId }),
             });
-            setPegawaiState(riwayat.pegawai);
+            setjabatanstate(riwayat.pegawai);
         } else if (isByPengusulan && pegawai) {
             let koefisienPertahunValue = findKoefisienPertahunValue(
                 pegawai["Jabatan/TMT"]
@@ -114,7 +114,7 @@ export default function Index({
         const { findKoefisienPertahunValue } = rumusPenghitungan;
         if (!isEdit && pegawai) {
             setData("pegawai", pegawai);
-            setPegawaiState(pegawai);
+            setjabatanstate(pegawai);
 
             const akNormatifValue = findKoefisienPertahunValue(
                 pegawai["Jabatan/TMT"]
@@ -247,7 +247,7 @@ export default function Index({
                 replace: true,
                 onSuccess: () => {
                     setData("pegawai", pegawai);
-                    setPegawaiState(pegawai);
+                    setjabatanstate(pegawai);
                 },
             }
         );
@@ -325,10 +325,10 @@ export default function Index({
                                     </li>
                                 )}
 
-                                {!isEdit && pegawaiState && (
+                                {!isEdit && jabatanstate && (
                                     <li>
                                         <span className="inline-flex items-center gap-2">
-                                            {pegawaiState.Nama}
+                                            {jabatanstate.Nama}
                                         </span>
                                     </li>
                                 )}
@@ -368,7 +368,7 @@ export default function Index({
                                     {search && (
                                         <ul className="mt-2 overflow-y-auto border rounded-md max-h-48">
                                             {filtered.length > 0 ||
-                                            pegawaiState ? (
+                                            jabatanstate ? (
                                                 filtered.map((p, i) => (
                                                     <li
                                                         key={i}
@@ -398,9 +398,9 @@ export default function Index({
                         <section className={isEdit ? "mt-20" : "mt-10"}>
                             <DetailPegawai
                                 pegawai={
-                                    !isEdit ? pegawaiState : riwayat.pegawai
+                                    !isEdit ? jabatanstate : riwayat.pegawai
                                 }
-                                collapse={pegawaiState ? true : false}
+                                collapse={jabatanstate ? true : false}
                             />
                         </section>
                     </div>
@@ -434,7 +434,7 @@ export default function Index({
 
                             {/* AKUMULASI ANGKA KREDIT | START */}
                             <AkumulasiTable
-                                pegawai={pegawaiState}
+                                pegawai={jabatanstate}
                                 data={data}
                                 setData={setData}
                                 aturanAkmTableProps={aturanAkmTableProps}
@@ -446,7 +446,7 @@ export default function Index({
                             {/* ANCHOR */}
                             {/* PENETAPAN ANGKA KREDIT | START*/}
                             <PAKTable
-                                pegawai={pegawaiState}
+                                pegawai={jabatanstate}
                                 data={data}
                                 setData={setData}
                                 isEdit={isEdit}

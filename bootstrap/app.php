@@ -17,10 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ])->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
             'authOrSSO' => \App\Http\Middleware\AuthOrSSO::class,
-            'pegawai' => \App\Http\Middleware\Pegawai::class,
-            'Divisi SDM' => \App\Http\Middleware\DivisiSDM::class,
-            'pimpinan' => \App\Http\Middleware\Pimpinan::class,
-            'pimpinan_or_sdm' => \App\Http\Middleware\PimpinanOrDivisiSDM::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
 

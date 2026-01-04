@@ -49,17 +49,17 @@ export default function Login({ status, canResetPassword }) {
                 </a>
 
                 <strong className="text-sm italic font-bold text-slate-600">
-                    BPS Provinsi Jambi
+                    BANK XYZ
                 </strong>
             </div>
 
             <div className="flex-col justify-center w-full mt-5">
                 <strong className="flex justify-center mb-1 text-2xl tracking-wider uppercase text-slate-500 text-gradient bg-gradient-to-br from-primary/80 via-slate-500 to-secondary/70">
-                    SIPACAK
+                    MONTERA
                 </strong>
 
                 <strong className="block -mt-1 text-lg font-semibold text-center text-slate-600">
-                    Sistem Penetapan & Pencetakan Angka Kredit
+                    Monitoring Target, Evaluasi & Realisasi Akuisisi
                 </strong>
             </div>
 
@@ -139,7 +139,7 @@ export default function Login({ status, canResetPassword }) {
                         <SecondaryButton
                             asLink
                             type="button"
-                            href={route("sso-login.form")}
+                            href={""}
                             className="font-extrabold bg-secondary/5 text-nowrap hover:scale-105"
                         >
                             Login SSO

@@ -4,6 +4,17 @@ import { initFlowbite } from "flowbite";
 
 
 export default function Graph({ data }) {
+    // TODO Hapus nanti
+    data = {
+        tes: 23,
+        tes2: 45,
+        tes3: 12,
+        tes4: 67,
+        tes5: 34,
+    };
+
+
+
     useEffect(() => {
         if (document.getElementById("donut-chart")) {
             // Konversi data props menjadi format yang dibutuhkan ApexCharts
@@ -234,7 +245,7 @@ export default function Graph({ data }) {
                 </div>
             </div>
 
-                <a href={route('divisi-sdm.export-csv')}>
+                <a href={route('shared.export-csv')}>
                     <button
                         type="button"
                         dataTooltipTarget="data-tooltip"

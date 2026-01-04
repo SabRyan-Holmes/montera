@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Pegawai;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
-use App\Models\ArsipDokumen;
-use App\Models\AturanPAK;
-use App\Models\Pengajuan;
-use App\Models\PengusulanPAK;
-use App\Models\RiwayatKarir;
-use App\Models\RiwayatPAK;
+use App\Models\Akuisisi;
+use App\Models\Divisi;
+use App\Models\Produk;
+use App\Models\Target;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -35,84 +31,47 @@ class DashboardController extends Controller
     public function dashboard()
     {
         // Inisialisasi role dan nip
-        $role = $this->user->role;
         $nip = $this->user->nip;
+        $namaJabatan = $this->user->jabatan->nama_jabatan;
+        $isAtasan = in_array($namaJabatan, ["Administrator", "Kepala Cabang", "Supervisor"]);
 
         $dataByRole = null;
         $dataGraph = null;
 
-        if (($role == "Divisi SDM" || $role == "Pimpinan")) {
-            $koefisien_per_tahun = AturanPAK::where('name', 'Koefisien Per Tahun')->first()->value;
-            $dataGraph = [];
-            foreach ($koefisien_per_tahun as $koefisien) {
-                $jabatan = $koefisien['jabatan'];
-                $count = Pegawai::where('Jabatan/TMT', 'LIKE', "%{$jabatan}%")->count();
-                $dataGraph[$jabatan] = $count;
-            }
-
+        if ($isAtasan) {
             $dataByRole = [
-                'pegawaiFungsional' => array_sum($dataGraph),
-                'PAKCount' => RiwayatPAK::count(),
-                'noPAKTerakhir' => AturanPAK::where('name', 'No Surat Terakhir')->first()->value[0]['no_surat'],
+                'produkCount' => Produk::count(),
+                'akuisisiCount' => Akuisisi::count(),
                 'userCount' => User::count(),
-                'pegawaiCount' => Pegawai::count(),
-                'pengusulanCount' => PengusulanPAK::count(),
-                'pengajuanCount' => Pengajuan::count(),
-                'riwayatKarirCount' => RiwayatKarir::count(),
-                'arsipDokumenCount' => ArsipDokumen::byUser($this->user)->count(),
-                'pengusulanPAKGraph' => [
-                    'Diusulkan' => PengusulanPAK::where('status', 'diusulkan')->count(),
-                    'Direvisi' => PengusulanPAK::where('status', 'direvisi')->count(),
-                    'Ditolak' => PengusulanPAK::where('status', 'ditolak')->count(),
-                    'Disetujui' => PengusulanPAK::where('status', 'disetujui')->count(),
-                    'Selesai' => PengusulanPAK::where('status', 'selesai')->count(),
+                'targetCount' => Target::count(),
+                'divisiCount' => Divisi::count(),
+                'produkGraph' => [
+                    'Diusulkan' => Produk::where('kategori', 'diusulkan')->count(),
+                    'Direvisi' => Produk::where('kategori', 'direvisi')->count(),
+                    'Ditolak' => Produk::where('kategori', 'ditolak')->count(),
                 ],
-                'pengajuanPAKGraph' => [
-                    'Diajukan' => Pengajuan::where('status', 'diajukan')->count(),
-                    'Direvisi' => Pengajuan::where('status', 'direvisi')->count(),
-                    'Ditolak' => Pengajuan::where('status', 'ditolak')->count(),
-                    'Divalidasi' => Pengajuan::where('status', 'divalidasi')->count(),
-                    'Selesai' => Pengajuan::where('status', 'selesai')->count(),
+                'targetGraph' => [
+                    'Diajukan' => Target::where('nilai_target', 'diajukan')->count(),
+                    'Direvisi' => Target::where('nilai_target', 'direvisi')->count(),
+                    'Ditolak' => Target::where('nilai_target', 'ditolak')->count(),
                 ],
             ];
+        } else {
+            // TODO: data untuk role lain
+            $dataByRole = [];
+            // $dataByRole = [
+            //     'produkCount' => Produk::where('created_by', $nip)->count(),
+            //     'akuisisiCount' => Akuisisi::where('created_by', $nip)->count(),
+            //     'userCount' => User::where('nip', $nip)->count(),
+            //     'targetCount' => Target::where('created_by', $nip)->count(),
+            // ];
         }
 
-
-        //  TODO: data for Pegawai Role is Different! Jangan lupa tambahin nanti logikany, kalo lah bisa SSO
-        if ($role == "Pegawai") {
-            $pegawai = Pegawai::byNIP($nip)->first(); //find or Fail
-            if (!$pegawai) {
-                return back()->withErrors(['nip' => 'Data pegawai dengan NIP ini belum terdaftar di sistem. Hubungi Divisi Sumber Daya Manusia.']);
-            }
-            // Pengajuan/Proses PAK
-            $dataProsesPAKGraph = [
-                'Diajukan' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'diajukan')->count(),
-                'Direvisi' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'direvisi')->count(),
-                'Ditolak' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'ditolak')->count(),
-                'Divalidasi' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'divalidasi')->count(),
-                'Selesai' => Pengajuan::byPegawaiIdAndStatus($pegawai->id, 'selesai')->count(),
-            ];
-            $dataByRole = [
-                'PAKCount' => Pengajuan::byPegawaiId($pegawai->id)->count(),
-                'pengusulanPAKCount' => PengusulanPAK::byPegawai($nip)->count(),
-                'prosesPAKCount' => Pengajuan::byPegawaiId($pegawai->id)->count(),
-                'riwayatKarirCount' => RiwayatKarir::count(),
-                'arsipDokumenCount' => ArsipDokumen::byUser($this->user)->count(),
-                'pengusulanPAKGraph' =>  [
-                    'Diusulkan' => PengusulanPAK::byPegawaiAndStatus($nip, 'diusulkan')->count(),
-                    'Direvisi' => PengusulanPAK::byPegawaiAndStatus($nip, 'direvisi')->count(),
-                    'Ditolak' => PengusulanPAK::byPegawaiAndStatus($nip, 'ditolak')->count(),
-                    'Disetujui' => PengusulanPAK::byPegawaiAndStatus($nip, 'disetujui')->count(),
-                    'Selesai' => PengusulanPAK::byPegawaiAndStatus($nip, 'selesai')->count(),
-                ],
-                'prosesPAKGraph' => $dataProsesPAKGraph,
-            ];
-        }
-
-        return Inertia::render('Dashboard/AuthDashboard', [
+        return Inertia::render('_Shared/Dashboard/AuthDashboard', [
             'title' => 'Dashboard',
             'dataGraph' => $dataGraph,
             'dataByRole' => $dataByRole,
+            'isAtasan' => $isAtasan,
         ]);
     }
 
@@ -131,11 +90,11 @@ class DashboardController extends Controller
             $handle = fopen('php://output', 'w');
 
             // Mendapatkan nama kolom dari tabel database
-            $columns = DB::getSchemaBuilder()->getColumnListing('pegawais');
+            $columns = DB::getSchemaBuilder()->getColumnListing('jabatans');
             fputcsv($handle, $columns);
 
             // Mengambil data dari tabel database
-            $data = DB::table('pegawais')->get(); // Ganti dengan nama tabel Anda
+            $data = DB::table('jabatans')->get(); // Ganti dengan nama tabel Anda
 
             // Menulis data ke dalam file CSV
             foreach ($data as $row) {

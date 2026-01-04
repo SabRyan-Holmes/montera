@@ -3,9 +3,17 @@ import ColorCard from "./Partials/ColorCard";
 import { usePage } from "@inertiajs/react";
 
 export default function RadialChart({ title, data, chartId }) {
-    const [seriesData, setSeriesData] = useState(Object.values(data));
-    const [labels, setLabels] = useState(Object.keys(data));
+    const rawData = {
+        tes: 23,
+        tes2: 45,
+        tes3: 12,
+        tes4: 67,
+        tes5: 34,
+    };
 
+    // seriesData akan berisi [23, 45, 12, 67, 34]
+    const seriesData = Object.values(rawData);
+    const labels = Object.keys(rawData);
     const colors = ["primary", "bermuda", "warning", "hijau", "hijau"];
 
     useEffect(() => {
@@ -24,7 +32,7 @@ export default function RadialChart({ title, data, chartId }) {
                 chart.destroy();
             };
         }
-    }, [data, chartId]);
+    }, [seriesData, chartId]);
 
     const getChartOptions = ({ seriesData, labels }) => {
         return {
@@ -92,10 +100,13 @@ export default function RadialChart({ title, data, chartId }) {
     };
 
     const { auth } = usePage().props;
-    const role = auth.user.role;
+    const role = auth.user.jabatan.nama_jabatan;
     function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
+    // Jika label undefined atau null, kembalikan string kosong agar tidak error
+    if (!label) return "";
+
+    return label.trim().toLowerCase().replace(/\s+/g, "-");
+}
 
     const isPengusulan = title.includes("Pengusulan");
     return (
@@ -348,13 +359,13 @@ export default function RadialChart({ title, data, chartId }) {
                         </ul>
                     </div>
                     <a
-                        href={
-                            isPengusulan && role !== "Pimpinan"
-                                ? route(
-                                      `${formatRole(role)}.pengusulan-pak.index`
-                                  )
-                                : route(`${formatRole(role)}.pengajuan.index`)
-                        }
+                        // href={
+                        //     isPengusulan && role !== "Pimpinan"
+                        //         ? route(
+                        //               `${formatRole(role)}.pengusulan-pak.index`
+                        //           )
+                        //         : route(`${formatRole(role)}.pengajuan.index`)
+                        // }
                         className="inline-flex items-center px-3 py-2 text-sm font-semibold text-blue-600 uppercase rounded-lg hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                     >
                         Progress report

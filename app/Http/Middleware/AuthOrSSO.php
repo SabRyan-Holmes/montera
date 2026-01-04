@@ -16,15 +16,16 @@ class AuthOrSSO
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // 1. Kalau user login biasa (Auth) dan role-nya Pimpinan atau SDM
+        // 1. Kalau user login biasa (Auth) dan nama jabatanny administrator, supervisor atau kepala cabang
         if (Auth::check()) {
-            $role = Auth::user()->role;
-            if (in_array($role, ['Divisi SDM', 'Pimpinan', 'Pegawai'])) {
+            // benerin ini sesuai field yg nama jabatan, role -> jabatan
+            $jabatan = Auth::user()->jabatan->nama_jabatan;
+            if (in_array($jabatan, ['Administrator', 'Supervisor', 'Kepala Cabang'])) {
                 return $next($request);
             }
         }
 
-        // 2. Kalau user login via SSO (session)
+        // 2. Kalau user login sebagao pegawai
         if (session()->has('logged_in') && session('role') === 'Pegawai') {
             return $next($request);
         }

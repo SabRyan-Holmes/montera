@@ -14,7 +14,7 @@ import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 
 export default function Index({
     auth,
-    pegawais,
+    jabatans,
     title,
     subTitle,
     searchReq: initialSearch,
@@ -28,7 +28,7 @@ export default function Index({
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
         const selectedPage = event.selected + 1;
-        const newOffset = (selectedPage - 1) * pegawais.per_page;
+        const newOffset = (selectedPage - 1) * jabatans.per_page;
 
         // console.log(
         //     `User requested page number ${selectedPage}, which is offset ${newOffset}`
@@ -251,7 +251,7 @@ export default function Index({
                             </tr>
                         </thead>
                         <tbody>
-                            {pegawais.data?.map((pegawai, i) => (
+                            {jabatans.data?.map((pegawai, i) => (
                                 <tr
                                     role="list"
                                     key={i}
@@ -305,16 +305,16 @@ export default function Index({
                 <div className="mb-8 text-sm box-footer">
                     <div className="items-center justify-between sm:flex">
                         <div className="flex items-center text-xs">
-                            showing {pegawais.data.length} Entries{" "}
+                            showing {jabatans.data.length} Entries{" "}
                             <TiArrowRight className="w-5 h-5" />
                         </div>
                         <ReactPaginate
                             breakLabel={<span>...</span>}
                             nextLabel={
-                                pegawais.next_page_url && (
+                                jabatans.next_page_url && (
                                     <a
                                         className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                        href={pegawais.next_page_url}
+                                        href={jabatans.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
                                         <span className="sr-only">Next</span>
@@ -325,12 +325,12 @@ export default function Index({
                             }
                             onPageChange={handlePageClick}
                             pageRangeDisplayed={1}
-                            pageCount={pegawais.last_page}
+                            pageCount={jabatans.last_page}
                             previousLabel={
-                                pegawais.prev_page_url && (
+                                jabatans.prev_page_url && (
                                     <a
                                         className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                        href={pegawais.next_page_url}
+                                        href={jabatans.next_page_url}
                                         onClick={() => setNum(num + 1)}
                                     >
                                         <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />

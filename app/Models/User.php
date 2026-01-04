@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -22,6 +24,7 @@ class User extends Authenticatable
         'password',
     ];
     protected $casts = ['jumlah' => 'array'];
+    protected $with = ['jabatan'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,29 +49,65 @@ class User extends Authenticatable
         ];
     }
 
-    public function riwayat_pak()
+    public function jabatan(): BelongsTo
     {
-        return $this->hasMany(RiwayatPAK::class);
+        return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
 
-    public function hasRole(string|array $roles): bool
+    /**
+     * Relasi ke Divisi (Many to One)
+     * User ini masuk di divisi mana?
+     */
+    public function divisi(): BelongsTo
     {
-        $userRole = $this->role;
-
-        if (is_array($roles)) {
-            return in_array($userRole, $roles);
-        }
-
-        return $userRole === $roles;
+        return $this->belongsTo(Divisi::class, 'divisi_id');
     }
 
-    public function isPimpinan(): bool
+    /**
+     * Relasi ke Akuisisi (One to Many)
+     * Daftar data akuisisi yang diinput oleh user ini
+     */
+    public function akuisisi(): HasMany
     {
-        return $this->role === 'Pimpinan';
+        return $this->hasMany(Akuisisi::class, 'user_id');
     }
 
-    public function canValidate(): bool
+    // Relasi tambahan untuk mendukung Verifikasi & Target
+    public function targets()
     {
-        return in_array($this->role, ['Pimpinan', 'Divisi SDM']);
+        return $this->hasMany(Target::class); // Untuk monitoring pencapaian vs target pribadi
     }
+
+    public function inputAkuisisi()
+    {
+        return $this->hasMany(Akuisisi::class, 'user_id'); // Data yang diinput pegawai
+    }
+
+    public function verifikasiAkuisisi()
+    {
+        return $this->hasMany(Akuisisi::class, 'verifikator_id'); // Khusus aktor Supervisor
+    }
+
+
+
+    // public function hasRole(string|array $roles): bool
+    // {
+    //     $userRole = $this->role;
+
+    //     if (is_array($roles)) {
+    //         return in_array($userRole, $roles);
+    //     }
+
+    //     return $userRole === $roles;
+    // }
+
+    // public function isPimpinan(): bool
+    // {
+    //     return $this->role === 'Pimpinan';
+    // }
+
+    // public function canValidate(): bool
+    // {
+    //     return in_array($this->role, ['Pimpinan', 'Divisi SDM']);
+    // }
 }

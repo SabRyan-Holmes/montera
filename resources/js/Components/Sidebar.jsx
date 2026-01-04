@@ -1,34 +1,16 @@
-import {
-    MdAdminPanelSettings,
-    MdAssignment,
-    MdEditDocument,
-    MdOutlineAssignmentInd,
-    MdPeopleAlt,
-} from "react-icons/md";
+import { MdEditDocument, MdOutlineAssignmentInd } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import {
-    FaChartLine,
-    FaDatabase,
-    FaDownload,
-    FaNotesMedical,
-    FaPrint,
-    FaUserTie,
-} from "react-icons/fa6";
-import { MdSwitchAccount } from "react-icons/md";
-import logo from "../../assets/image/logo.png";
+import { FaDatabase, FaUserTie } from "react-icons/fa6";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import SidebarLink from "@/Components/SidebarLink";
-import { RiAppsFill, RiArchive2Fill, RiUserSettingsFill } from "react-icons/ri";
-import { BsFillSendArrowUpFill } from "react-icons/bs";
-import { IoMdArchive } from "react-icons/io";
-import { GrDocumentPerformance, GrHelpBook } from "react-icons/gr";
+import { RiAppsFill } from "react-icons/ri";
+import { GrHelpBook } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
-import { SidebarLinkCollapse, TooltipHover } from ".";
+import { SidebarLinkCollapse } from ".";
 import { FaInfoCircle } from "react-icons/fa";
-import { MdWorkHistory } from "react-icons/md";
 
-const Sidebar = ({ role }) => {
+const Sidebar = ({ role, isAtasan }) => {
     // console.log(active)
 
     return (
@@ -47,18 +29,18 @@ const Sidebar = ({ role }) => {
                         <ApplicationLogo className="mx-auto text-gray-500 fill-current w-7 h-7 aspect-square " />
                     </a>
                     <strong className="text-xs italic font-bold text-slate-400">
-                        BPS Provinsi Jambi
+                        Bank XYZ
                     </strong>
                 </div>
                 <div className="relative z-20 flex-col items-center justify-center mt-10 space-y-6">
                     {/* App Name */}
                     <strong className="flex justify-center -mb-3 text-3xl tracking-wider uppercase text-gradient gradient-base">
-                        SIPACAK
+                        MONTERA
                     </strong>
 
                     <div className="flex items-center justify-center h-20 mx-5 border rounded-xl bg-slate-400/50 border-t-primary/70 border-x-secondary/70 border-b-hijau/70">
                         <strong className="mx-5 text-lg font-semibold leading-6 text-center height text-slate-300 text-opacity-90 ">
-                            Sistem Penetapan dan Pencetakan Angka Kredit
+                            Monitoring Target, Evaluasi & Realisasi Akuisisi
                         </strong>
                     </div>
 
@@ -73,87 +55,7 @@ const Sidebar = ({ role }) => {
                     </div>
                 </div>
 
-                {/* SECTION - DIVISI SDM - Iterasi Awal */}
-                {/* {role === "Divisi SDM" && (
-                    <section className="scale-105 menu">
-                        <SidebarLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <MdSpaceDashboard />
-                            Dashboard
-                        </SidebarLink>
-
-                        <SidebarLink
-                            href={route("divisi-sdm.pak.create")}
-                            actives={[
-                                "divisi-sdm.pak.create",
-                                "divisi-sdm.pak.create-by-pengusulan",
-                            ]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <MdEditDocument />
-                            <span className="text-nowrap">
-                                Penetapan Angka Kredit
-                            </span>
-                        </SidebarLink>
-
-                        <SidebarLink
-                            href={route("divisi-sdm.pengajuan.index")}
-                            active={route().current(
-                                "divisi-sdm.pengajuan.index"
-                            )}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <BsFillSendArrowUpFill />
-                            Pengajuan PAK
-                        </SidebarLink>
-
-                        <SidebarLink
-                            href={route("divisi-sdm.riwayat-pak.index")}
-                            actives={[
-                                "divisi-sdm.riwayat-pak.index",
-                                "divisi-sdm.riwayat-pak.edit",
-                                "divisi-sdm.pak.edit",
-                            ]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <IoDocuments />
-                            Kelola Riwayat PAK
-                        </SidebarLink>
-
-                        <SidebarLink
-                            href={route("divisi-sdm.pegawai.index")}
-                            actives={[
-                                "divisi-sdm.pegawai.index",
-                                "divisi-sdm.pegawai.create",
-                                "divisi-sdm.pegawai.edit",
-                                "divisi-sdm.pegawai.show",
-                            ]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <FaUserTie />
-                            Kelola Pegawai
-                        </SidebarLink>
-
-                        <SidebarLink
-                            href={route("divisi-sdm.aturan-pak.index")}
-                            actives={[
-                                "divisi-sdm.aturan-pak.index",
-                                "divisi-sdm.aturan-pak.edit",
-                            ]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <IoSettings />
-                            Kelola Aturan PAK
-                        </SidebarLink>
-                    </section>
-                )} */}
-                {/* !SECTION - DIVISI SDM - Iterasi Awal */}
-
-                {/* SECTION - DIVISI SDM - Iterasi Akhir */}
-                {role === "Divisi SDM" && (
+                {isAtasan  || role ? (
                     <>
                         <section className="scale-105 menu">
                             <SidebarLink
@@ -170,12 +72,14 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 <MdOutlineAssignmentInd />
-                                                Pengusulan PAK
+                                                Produk
                                             </>
                                         ),
-                                        route: "divisi-sdm.pengusulan-pak.index",
+                                        route: "shared.produk.index",
                                         actives: [
-                                            "divisi-sdm.pengusulan-pak.index",
+                                            "shared.produk.index",
+                                            "shared.produk.create",
+                                            "shared.produk.show",
                                         ],
                                     },
                                     {
@@ -183,31 +87,22 @@ const Sidebar = ({ role }) => {
                                             <>
                                                 <MdEditDocument />
                                                 <span className="text-nowrap">
-                                                    Penetapan Angka Kredit
+                                                    Indikator
                                                 </span>
                                             </>
                                         ),
-                                        route: "divisi-sdm.pak.create",
+                                        route: "shared.indikator.create",
                                         actives: [
-                                            "divisi-sdm.pak.create",
-                                            "divisi-sdm.pak.create-by-pengusulan",
+                                            "shared.indikator.create",
+                                            "shared.indikator.show",
                                         ],
                                     },
-                                    {
-                                        label: (
-                                            <>
-                                                <BsFillSendArrowUpFill />
-                                                Pengajuan PAK
-                                            </>
-                                        ),
-                                        route: "divisi-sdm.pengajuan.index",
-                                        actives: ["divisi-sdm.pengajuan.index"],
-                                    },
+
                                 ]}
                             >
                                 <span className="flex items-center">
                                     <RiAppsFill className="mr-2 scale-105" />
-                                    Proses PAK
+                                    Main
                                 </span>
                             </SidebarLinkCollapse>
 
@@ -217,56 +112,45 @@ const Sidebar = ({ role }) => {
                                         label: (
                                             <>
                                                 <IoDocuments />
-                                                Riwayat PAK
+                                                User
                                             </>
                                         ),
-                                        route: "divisi-sdm.riwayat-pak.index",
+                                        route: "admin.user.index",
                                         actives: [
-                                            "divisi-sdm.riwayat-pak.index",
-                                            "divisi-sdm.riwayat-pak.edit",
-                                            "divisi-sdm.pak.edit",
+                                            "admin.user.index",
+                                            "admin.user.create",
+                                            "admin.user.show",
+                                            "admin.user.edit",
                                         ],
                                     },
                                     {
                                         label: (
                                             <>
                                                 <IoSettings />
-                                                Aturan PAK
+                                                Jabatan
                                             </>
                                         ),
-                                        route: "divisi-sdm.aturan-pak.index",
+                                        route: "admin.jabatan.index",
                                         actives: [
-                                            "divisi-sdm.aturan-pak.index",
-                                            "divisi-sdm.aturan-pak.edit",
+                                            "admin.jabatan.index",
+                                            "admin.jabatan.create",
+                                            "admin.jabatan.show",
+                                            "admin.jabatan.edit",
                                         ],
                                     },
                                     {
                                         label: (
                                             <>
                                                 <FaUserTie />
-                                                Pegawai
+                                                Divisi
                                             </>
                                         ),
-                                        route: "divisi-sdm.pegawai.index",
+                                        route: "admin.divisi.index",
                                         actives: [
-                                            "divisi-sdm.pegawai.index",
-                                            "divisi-sdm.pegawai.create",
-                                            "divisi-sdm.pegawai.edit",
-                                            "divisi-sdm.pegawai.show",
-                                            "divisi-sdm.riwayat-karir.index",
-                                        ],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <RiArchive2Fill />
-                                                Arsip Dokumen
-                                            </>
-                                        ),
-                                        route: "divisi-sdm.arsip-dokumen.index",
-                                        actives: [
-                                            "divisi-sdm.arsip-dokumen.index",
-                                            "divisi-sdm.arsip-dokumen.show",
+                                            "admin.divisi.index",
+                                            "admin.divisi.create",
+                                            "admin.divisi.edit",
+                                            "admin.divisi.show",
                                         ],
                                     },
                                 ]}
@@ -286,7 +170,7 @@ const Sidebar = ({ role }) => {
                                                 Log Aktivitas
                                             </>
                                         ),
-                                        route: "divisi-sdm.log-aktivitas.index",
+                                        route: "main-log",
                                         actives: [
                                             "divisi-sdm.log-aktivitas.index",
                                         ],
@@ -298,18 +182,8 @@ const Sidebar = ({ role }) => {
                                                 Panduan/Bantuan
                                             </>
                                         ),
-                                        route: "info.help-and-guide",
-                                        actives: ["info.help-and-guide"],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <FaDownload />
-                                                Download Template
-                                            </>
-                                        ),
-                                        route: "info.download-template",
-                                        actives: ["info.download-template"],
+                                        route: "help-and-guide",
+                                        actives: ["help-and-guide"],
                                     },
                                 ]}
                             >
@@ -321,11 +195,7 @@ const Sidebar = ({ role }) => {
                             <div className="h-10" />
                         </section>
                     </>
-                )}
-                {/* !SECTION - DIVISI SDM - Iterasi Akhir */}
-
-                {/* SECTION - PIMPINAN - Iterasi 2 */}
-                {role === "Pimpinan" && (
+                ) : (
                     <section className="scale-105 menu">
                         {/* Link Dashboard */}
                         <SidebarLink
@@ -337,41 +207,6 @@ const Sidebar = ({ role }) => {
                             Dashboard
                         </SidebarLink>
 
-                        <SidebarLink
-                            href={route("pimpinan.pengajuan.index")}
-                            actives={["pimpinan.pengajuan.index"]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <BsFillSendArrowUpFill />
-                            Pengajuan PAK
-                        </SidebarLink>
-                        <SidebarLink
-                            href={route("pimpinan.aturan-pak.index")}
-                            actives={["pimpinan.aturan-pak.index"]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <IoSettings />
-                            Aturan PAK
-                        </SidebarLink>
-                        <SidebarLink
-                            href={route("pimpinan.pegawai.index")}
-                            actives={["pimpinan.pegawai.index"]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <RiArchive2Fill />
-                            Daftar Pegawai
-                        </SidebarLink>
-
-                        {/* NOTE: Iterasi Kedua tinggal nambahin  dibawah ini */}
-                        <SidebarLink
-                            href={route("pimpinan.riwayat-karir.index")}
-                            actives={["pimpinan.riwayat-karir.index"]}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <MdWorkHistory />
-                            Riwayat Karir Pegawai
-                        </SidebarLink>
-
                         <SidebarLinkCollapse
                             submenu={[
                                 {
@@ -381,8 +216,8 @@ const Sidebar = ({ role }) => {
                                             Log Aktivitas
                                         </>
                                     ),
-                                    route: "pimpinan.log-aktivitas",
-                                    actives: ["pimpinan.log-aktivitas"],
+                                    route: "main-log",
+                                    actives: ["main-log"],
                                 },
                                 {
                                     label: (
@@ -391,18 +226,8 @@ const Sidebar = ({ role }) => {
                                             Panduan/Bantuan
                                         </>
                                     ),
-                                    route: "info.help-and-guide",
-                                    actives: ["pimpinan.help-and-guide"],
-                                },
-                                {
-                                    label: (
-                                        <>
-                                            <FaDownload />
-                                            Download Template
-                                        </>
-                                    ),
-                                    route: "info.download-template",
-                                    actives: ["divisi-sdm.download-template"],
+                                    route: "help-and-guide",
+                                    actives: ["help-and-guide"],
                                 },
                             ]}
                         >
@@ -413,106 +238,6 @@ const Sidebar = ({ role }) => {
                         </SidebarLinkCollapse>
                     </section>
                 )}
-                {/* !SECTION - PIMPINAN - Iterasi 2*/}
-
-                {/* SECTION - PEGAWAI */}
-                {!role ||
-                    (role === "Pegawai" && (
-                        <section className="scale-105 menu">
-                            {/* Link Dashboard */}
-                            <SidebarLink
-                                href={route("dashboard")}
-                                active={route().current("dashboard")}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <MdSpaceDashboard />
-                                Dashboard
-                            </SidebarLink>
-
-                            <SidebarLink
-                                href={route("pegawai.pengusulan-pak.index")}
-                                actives={[
-                                    "pegawai.pengusulan-pak.index",
-                                    "pegawai.pengusulan-pak.edit",
-                                    "pegawai.pengusulan-pak.create",
-                                ]}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <MdOutlineAssignmentInd />
-                                Pengusulan PAK
-                            </SidebarLink>
-
-                            <SidebarLink
-                                href={route("pegawai.pengajuan.index")}
-                                actives={["pegawai.pengajuan.index"]}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <BsFillSendArrowUpFill />
-                                Proses Pengajuan PAK
-                            </SidebarLink>
-
-                            <SidebarLink
-                                href={route("pegawai.aturan-pak.index")}
-                                actives={["pegawai.aturan-pak.index"]}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <IoSettings />
-                                Aturan PAK
-                            </SidebarLink>
-
-                            <SidebarLink
-                                href={route("pegawai.riwayat-karir.index")}
-                                actives={["pegawai.riwayat-karir.index"]}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <MdWorkHistory />
-                                Riwayat Karir
-                            </SidebarLink>
-
-                            <SidebarLink
-                                href={route("pegawai.arsip-dokumen.index")}
-                                actives={[
-                                    "pegawai.arsip-dokumen.index",
-                                    "pegawai.arsip-dokumen.edit",
-                                ]}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <RiArchive2Fill />
-                                Arsip Dokumen
-                            </SidebarLink>
-
-                            <SidebarLinkCollapse
-                                submenu={[
-                                    {
-                                        label: (
-                                            <>
-                                                <GrHelpBook />
-                                                Panduan/Bantuan
-                                            </>
-                                        ),
-                                        route: "info.help-and-guide",
-                                        actives: ["info.help-and-guide"],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <FaDownload />
-                                                Download Template
-                                            </>
-                                        ),
-                                        route: "info.download-template",
-                                        actives: ["info.download-template"],
-                                    },
-                                ]}
-                            >
-                                <span className="flex items-center text-base">
-                                    <FaInfoCircle className="mr-2" />
-                                    Info
-                                </span>
-                            </SidebarLinkCollapse>
-                        </section>
-                    ))}
-                {/* !SECTION - PEGAWAI */}
             </ul>
 
             {/* Decorative Bottom Shadow */}

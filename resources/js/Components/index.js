@@ -22,7 +22,7 @@ import Sidebar from "./Sidebar";
 import SuccessButton from "./SuccessButton";
 import TextInput from "./TextInput";
 import TextInputSecondary from "./TextInputSecondary";
-import SdmPimpinanContent from "@/Pages/Dashboard/SdmPimpinanContent";
+import AtasanContent from "@/Pages/_Shared/Dashboard/AtasanContent";
 import TooltipHover from "./TooltipHover";
 import useFilterSearch from "./UseFilterSearch";
 import InputLabelCustom from "./InputLabelCustom.jsx";
@@ -34,6 +34,7 @@ import FilterSearchCustom from "./FilterSearchCustom";
 import StatusLabel from "./StatusLabel";
 import Graph from "./Chart/Graph";
 import RadialChart from "./Chart/RadialChart";
+import SelectInput from "./Forms/SelectInput";
 
 export {
     ApplicationLogo,
@@ -62,7 +63,7 @@ export {
     RadialChart,
     DetailPegawai,
     DetailPAKTable,
-    SdmPimpinanContent,
+    AtasanContent,
     TooltipHover,
     useFilterSearch,
     InputLabelCustom,
@@ -72,5 +73,6 @@ export {
     UseFilterSearchCustom,
     FilterSearchCustom,
     StatusLabel,
+    SelectInput
 
 };

@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React from "react";
 import logo from "@/../assets/image/logo.png";
-export default function Index({ auth, pegawais, title }) {
+export default function Index({ auth, jabatans, title }) {
     return (
         <section className="p-32 pt-20 mx-auto w-a4 h-a4 bg-slate-300">
             <div className="flex items-center gap-3 italic">
