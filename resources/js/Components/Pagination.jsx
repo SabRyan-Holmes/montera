@@ -9,6 +9,7 @@ import ReactPaginate from "react-paginate";
 const DEFAULT_CATEGORY = "Semua Kategori";
 export default function Paginations({ datas, urlRoute, filters }) {
     const handlePageClick = (event) => {
+        event?.event?.preventDefault(); // 👈 INI PENTING
         const selectedPage = event.selected + 1;
 
         const filteredQuery = Object.fromEntries(
@@ -43,7 +44,6 @@ export default function Paginations({ datas, urlRoute, filters }) {
                         datas.next_page_url && (
                             <a
                                 className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                href="#"
                             >
                                 <span className="sr-only">Next</span>
                                 <span aria-hidden="true">Next</span>
@@ -58,7 +58,6 @@ export default function Paginations({ datas, urlRoute, filters }) {
                         datas.prev_page_url && (
                             <a
                                 className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                                href="#"
                             >
                                 <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
                                 <span className="sr-only">Prev</span>

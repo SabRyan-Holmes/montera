@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Models\Jabatan;
-use App\Models\Divisi;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -16,50 +14,8 @@ class UserSeeder extends Seeder
     protected static ?string $password;
     public function run(): void
     {
-        // // --- 1. SEED DATA JABATAN (Sesuai UC-03) ---
-        // $adminJabatan = Jabatan::create([
-        //     'nama_jabatan' => 'Administrator',
-        //     'kode_jabatan' => 'ADM',
-        //     'level_otoritas' => 1,
-        //     'deskripsi_tugas' => 'Mengelola master data sistem'
-        // ]);
 
-        // $spvJabatan = Jabatan::create([
-        //     'nama_jabatan' => 'Supervisor',
-        //     'kode_jabatan' => 'SPV',
-        //     'level_otoritas' => 2,
-        //     'deskripsi_tugas' => 'Verifikasi data akuisisi pegawai'
-        // ]);
-
-        // $staffJabatan = Jabatan::create([
-        //     'nama_jabatan' => 'Pegawai',
-        //     'kode_jabatan' => 'STF',
-        //     'level_otoritas' => 3,
-        //     'deskripsi_tugas' => 'Input data akuisisi nasabah'
-        // ]);
-
-        // $kcJabatan = Jabatan::create([
-        //     'nama_jabatan' => 'Kepala Cabang',
-        //     'kode_jabatan' => 'KCB',
-        //     'level_otoritas' => 3,
-        //     'deskripsi_tugas' => 'Input data akuisisi nasabah'
-        // ]);
-
-        // // --- 2. SEED DATA DIVISI (Sesuai UC-04) ---
-        // $mktDivisi = Divisi::create([
-        //     'nama_divisi' => 'Marketing',
-        //     'kode_divisi' => 'MKT',
-        //     'lokasi_lantai' => 'Lantai 2'
-        // ]);
-
-        // $opsDivisi = Divisi::create([
-        //     'nama_divisi' => 'Operasional',
-        //     'kode_divisi' => 'OPS',
-        //     'lokasi_lantai' => 'Lantai 1'
-        // ]);
-
-        // --- 3. SEED DATA USERS (5 User: 1 Admin, 1 SPV, 3 Pegawai) ---
-
+        // ---  SEED DATA USERS
         // 1. Admin
         User::create([
             'name' => 'Budi Administrator',

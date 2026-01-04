@@ -1,10 +1,10 @@
-import { usePage } from "@inertiajs/react";
 import React, { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
-export default function DetailProduk({ produk, collapse = true}) {
+export default function DetailIndikator({ indikator, collapse = true }) {
     const [isCollapsed, setIsCollapsed] = useState(collapse);
     const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+
     const RowData = ({ label, value }) => (
         <tr>
             <td width="50%">{label}</td>
@@ -20,7 +20,7 @@ export default function DetailProduk({ produk, collapse = true}) {
             >
                 <tr>
                     <th colSpan={2}>
-                        Detail Produk
+                        Detail Indikator
                         {isCollapsed ? (
                             <span className="float-right text-sm font-normal">
                                 [Tampilkan]
@@ -37,40 +37,40 @@ export default function DetailProduk({ produk, collapse = true}) {
             </thead>
 
             <tbody>
-                {!produk ? (
+                {!indikator ? (
                     <tr>
                         <td
                             colSpan={2}
                             className="text-base text-center text-warning"
                         >
-                            Pilih Nama Produk Terlebih Dahulu!
+                            Pilih Nama Indikator Terlebih Dahulu!
                         </td>
                     </tr>
                 ) : !isCollapsed ? (
                     <>
-                        <RowData label="Nama Produk" value={produk.nama_produk} />
-
                         <RowData
-                            label="Kode Produk"
-                            value={produk["kode_produk"] || "-"}
+                            label="Nama KPI/Indikator"
+                            value={indikator["nama_kpi"] || "-"}
                         />
                         <RowData
-                            label="Kategori"
-                            value={produk["kategori"] || "-"}
+                            label="Satuan"
+                            value={indikator["satuan"] || "-"}
                         />
                         <RowData
-                            label="Harga satuan"
-                            value={produk["harga_satuan"]}
+                            label="Bobot Nilai"
+                            value={indikator["bobot_nilai"]}
                         />
                         <RowData
-                            label="Komisi Poin"
-                            value={produk["komisi_poin"]}
+                            label="Target Minimal"
+                            value={indikator["target_minimal"]}
                         />
                         <RowData
-                            label="Deskripsi Produk"
-                            value={produk["deskripsi_produk"]  ?? "Tidak ada deskripsi"}
+                            label="Metode Perhitungan"
+                            value={
+                                indikator["metode_perhitungan"] ??
+                                "Tidak ada deskripsi"
+                            }
                         />
-
                     </>
                 ) : null}
             </tbody>

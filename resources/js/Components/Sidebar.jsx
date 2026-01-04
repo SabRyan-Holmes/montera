@@ -91,8 +91,9 @@ const Sidebar = ({ role, isAtasan }) => {
                                                 </span>
                                             </>
                                         ),
-                                        route: "shared.indikator.create",
+                                        route: "shared.indikator.index",
                                         actives: [
+                                            "shared.indikator.index",
                                             "shared.indikator.create",
                                             "shared.indikator.show",
                                         ],

@@ -21,4 +21,26 @@ class Indikator extends Model
     {
         return $this->hasMany(Target::class);
     }
+
+    public function scopeFilter($query, array $filters): void
+    {
+        // 1. Search berdasarkan Nama Produk atau Kode Produk
+        $query->when(
+            $filters['search'] ?? false,
+            fn($query, $search) =>
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_produk', 'like', '%' . $search . '%')
+                    ->orWhere('kode_produk', 'like', '%' . $search . '%');
+            })
+        );
+
+        // 2. Filter Berdasarkan Target Minimal (Tabungan, Kredit, Asuransi)
+        $query->when(
+            $filters['byTargetMinimal'] ?? false,
+            fn($query, $byKategori) =>
+            $query->where('target_minimal', $byKategori)
+        );
+
+
+    }
 }

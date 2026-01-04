@@ -18,6 +18,7 @@ D<?php
                 $table->string('nip', 20)->unique(); // Nomor Induk Pegawai
                 $table->string('email')->unique();
                 $table->string('password');
+
                 // Foreign Keys
                 $table->foreignId('jabatan_id')->constrained('jabatans');
                 $table->foreignId('divisi_id')->constrained('divisis');
