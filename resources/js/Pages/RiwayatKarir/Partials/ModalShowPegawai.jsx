@@ -20,7 +20,7 @@ export default function ModalShowPegawai({ pegawai }) {
                     <h1 className="my-4 text-xl font-medium">
                         Detail Pegawai Saya (Di Sistem Terkini )
                     </h1>
-                    <DetailPegawai pegawai={pegawai} />
+                    {/* <DetailPegawai pegawai={pegawai} /> */}
                 </div>
             </div>
         </dialog>

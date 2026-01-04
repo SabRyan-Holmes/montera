@@ -1,6 +1,4 @@
 import {
-    DetailPAKTable,
-    DetailPegawai,
     Modal,
     SecondaryButton,
     SuccessButton,
@@ -129,11 +127,11 @@ export default function ModalCekPengajuan({
                             <h1 className="mb-3 text-xl font-medium mt-7 ">
                                 Data Penetapan Angka Kredit dalam Pengajuan
                             </h1>
-                            <DetailPAKTable
+                            {/* <DetailPAKTable
                                 data={data.riwayat_pak}
                                 collapse={false}
                                 onScrollToPengusulanPAK={scrollToPengusulanPAK}
-                            />
+                            /> */}
                         </div>
 
                         {pengusulanPAK && (
@@ -158,7 +156,7 @@ export default function ModalCekPengajuan({
                             <h1 className="mb-3 text-xl font-medium mt-7">
                                 Data Pegawai dalam Penetapan Angka Kredit
                             </h1>
-                            <DetailPegawai pegawai={pegawai} />
+                            {/* <DetailPegawai pegawai={pegawai} /> */}
                         </div>
                     </section>
 

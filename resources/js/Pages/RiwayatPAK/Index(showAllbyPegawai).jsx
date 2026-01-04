@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { Link, router, useForm, usePage } from "@inertiajs/react";
-import { DetailPegawai, SecondaryButton, SuccessButton } from "@/Components";
+import {  SecondaryButton, SuccessButton } from "@/Components";
 import { FaEye, FaEdit } from "react-icons/fa";
 import { FaPlane, FaTrash } from "react-icons/fa6";
 import { FaPrint } from "react-icons/fa6";
@@ -124,7 +124,7 @@ export default function Index({
                     {/* <h1 className="text-2xl font-medium my-7">
                         Data Pegawai Untuk Pencetakan PAK
                     </h1> */}
-                    <DetailPegawai pegawai={pegawai} />
+                    {/* <DetailPegawai pegawai={pegawai} /> */}
                 </div>
 
                 <section className="px-2 pt-3 mx-auto mb-20 overflow-hidden rounded-xl">

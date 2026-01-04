@@ -1,6 +1,5 @@
 import {
-    DetailPAKTable,
-    DetailPegawai,
+    // DetailPegawai,
     Modal,
     PrimaryButton,
     SecondaryButton,
@@ -108,13 +107,13 @@ export default function Show({ riwayatPAK, onClose }) {
                         <h1 className="my-4 text-xl font-medium">
                             Data Riwayat dalam Penetapan Angka Kredit
                         </h1>
-                        <DetailPAKTable
+                        {/* <DetailPAKTable
                             collapse={false}
                             data={data}
                             onScrollToPengusulanPAK={
                                 data.pengusulan_pak && scrollToPengusulanPAK
                             }
-                        />
+                        /> */}
                     </div>
                     {data.pengusulan_pak && (
                         <div
@@ -135,7 +134,7 @@ export default function Show({ riwayatPAK, onClose }) {
                         <h1 className="my-4 text-xl font-medium">
                             Data Pegawai dalam Penetapan Angka Kredit
                         </h1>
-                        <DetailPegawai pegawai={data.pegawai} />
+                        {/* <DetailPegawai pegawai={data.pegawai} /> */}
                     </div>
                 </section>
 

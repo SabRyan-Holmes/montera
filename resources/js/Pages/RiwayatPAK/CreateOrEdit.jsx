@@ -396,12 +396,12 @@ export default function Index({
 
                         {/* Konten untuk memilih Pegawai End */}
                         <section className={isEdit ? "mt-20" : "mt-10"}>
-                            <DetailPegawai
+                            {/* <DetailPegawai
                                 pegawai={
                                     !isEdit ? jabatanstate : riwayat.pegawai
                                 }
                                 collapse={jabatanstate ? true : false}
-                            />
+                            /> */}
                         </section>
                     </div>
                 </section>

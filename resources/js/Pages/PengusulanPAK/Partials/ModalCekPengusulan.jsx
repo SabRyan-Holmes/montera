@@ -1,6 +1,4 @@
 import {
-    DetailPAKTable,
-    DetailPegawai,
     Modal,
     SecondaryButton,
     SuccessButton,
@@ -118,7 +116,7 @@ export default function ModalCekPengusulan({
                                 <h1 className="my-4 text-xl font-medium">
                                     Data Pegawai dalam Pengusulan
                                 </h1>
-                                <DetailPegawai pegawai={data.pegawai} />
+                                {/* <DetailPegawai pegawai={data.pegawai} /> */}
                             </div>
                         </section>
                     </main>

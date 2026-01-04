@@ -312,7 +312,7 @@ export default function Index({ auth, pegawai, koefisien, title, flash }) {
                     <h1 className="text-2xl font-medium my-7">
                         Data Pegawai Untuk PAK
                     </h1>
-                    <DetailPegawai pegawai={pegawai} />
+                    {/* <DetailPegawai pegawai={pegawai} /> */}
                 </div>
             </section>
 

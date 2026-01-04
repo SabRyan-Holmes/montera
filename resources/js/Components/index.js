@@ -1,5 +1,3 @@
-import DetailPegawai from "@/Pages/Partials/DetailPegawai";
-import DetailPAKTable from "@/Pages/Partials/DetailPAKTable";
 import ApplicationLogo from "./ApplicationLogo";
 import Checkbox from "./Checkbox";
 import CollapsedLink from "./CollapsedLink";
@@ -61,8 +59,6 @@ export {
     TextInputSecondary,
     Graph,
     RadialChart,
-    DetailPegawai,
-    DetailPAKTable,
     AtasanContent,
     TooltipHover,
     useFilterSearch,
