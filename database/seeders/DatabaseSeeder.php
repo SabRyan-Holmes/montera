@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             // 4. Data Transaksi & Perencanaan (Target & Realisasi)
             TargetSeeder::class,    // Target butuh user_id dan indikator_id
             AkuisisiSeeder::class,  // Akuisisi butuh user_id dan produk_id
+            TransaksiSeeder::class,  // Transaksi butuh user_id dan produk_id dan indikator_id
         ]);
         // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

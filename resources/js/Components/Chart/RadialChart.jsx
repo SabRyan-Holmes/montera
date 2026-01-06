@@ -115,7 +115,7 @@ export default function RadialChart({ title, data, chartId }) {
                 <div className="flex items-center">
                     <div className="flex items-center justify-center">
                         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
-                            {role === "Pegawai" ? title + " Saya" : title}
+                             {title}
                         </h5>
                         <svg
                             data-popover-target={"chart-info" + chartId}

@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Admin\{UserController, JabatanController, DivisiController};
 use App\Http\Controllers\Auth\DashboardController;
-use App\Http\Controllers\Shared\{ProdukController, IndikatorController, ProfileController};
+use App\Http\Controllers\Shared\{ProdukController, IndikatorController, ProfileController, TransaksiController};
 use App\Http\Controllers\Pegawai\{AkuisisiController, StatsController};
 use App\Http\Controllers\Supervisor\{VerifikasiController, TeamController};
-use App\Http\Controllers\KepalaCabang\{TargetController};
+use App\Http\Controllers\KepalaCabang\{KepalaCabangController, TargetController};
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('user', UserController::class);
         Route::resource('jabatan', JabatanController::class);
         Route::resource('divisi', DivisiController::class);
+
+        Route::resource('target', TargetController::class);
+        Route::resource('akuisisi', AkuisisiController::class);
+        Route::resource('transaksi', TransaksiController::class);
     });
 
     // --- SHARED (Admin & SPV) ---
@@ -51,7 +55,8 @@ Route::middleware('auth')->group(function () {
     });
 
     // --- PEGAWAI (Operasional) ---
-    Route::middleware('role:Pegawai')->prefix('me')->name('pegawai.')->group(function () {
+    Route::middleware('role:Pegawai')->prefix('pegawai')->name('pegawai.')->group(function () {
+        Route::get('/target', [TargetController::class, 'byPegawai'])->name('target.index'); // Monitoring Pribadi
         Route::get('/stats', [StatsController::class, 'index'])->name('stats'); // Monitoring Pribadi
         Route::resource('akuisisi', AkuisisiController::class);
     });
@@ -59,9 +64,10 @@ Route::middleware('auth')->group(function () {
     // <============================================================ SUPERVISOR ============================================================>
     // Pengawasan Tim & Verifikasi Akuisisi
     Route::middleware('role:Supervisor')->prefix('spv')->name('spv.')->group(function () {
-        Route::get('/team', [TeamController::class, 'index'])->name('team'); // Monitoring Tim
+        Route::get('/verify-akuisisi', [AkuisisiController::class, 'verify'])->name('verify'); // Monitoring Pribadi
         Route::patch('/verify/{akuisisi}/approve', [VerifikasiController::class, 'approve'])->name('verify.approve');
         Route::patch('/verify/{akuisisi}/reject', [VerifikasiController::class, 'reject'])->name('verify.reject');
+        Route::get('/team', [TeamController::class, 'index'])->name('team'); // Monitoring Tim
     });
 
     // <============================================================ KEPALA CABANG ============================================================>
@@ -69,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Kepala Cabang')->prefix('kacab')->name('kacab.')->group(function () {
         // Semua fungsi BI (Ranking, Historis, Tren) digabung di DashboardController
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/analytics', [KepalaCabangController::class, 'analytics'])->name('analytics');
         Route::get('/export-report', [DashboardController::class, 'export'])->name('export');
         Route::resource('target', TargetController::class);
     });

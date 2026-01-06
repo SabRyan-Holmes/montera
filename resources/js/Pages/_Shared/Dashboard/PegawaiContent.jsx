@@ -4,8 +4,8 @@ import { IconContext } from "react-icons";
 import { BsFillSendArrowUpFill } from "react-icons/bs";
 import { FaUserLarge, FaUsers, FaUserTie } from "react-icons/fa6";
 import { HiDocumentDuplicate } from "react-icons/hi2";
-import { MdOutlineAssignmentInd, MdWorkHistory } from "react-icons/md";
-import { RiArchive2Fill } from "react-icons/ri";
+import { MdErrorOutline, MdOutlineAssignmentInd, MdWorkHistory } from "react-icons/md";
+import { RiArchive2Fill, RiVerifiedBadgeFill } from "react-icons/ri";
 
 export default function PegawaiContent({ dataByRole }) {
     const { PAKCount, pengusulanPAKCount, prosesPAKCount, arsipDokumenCount } =
@@ -13,88 +13,84 @@ export default function PegawaiContent({ dataByRole }) {
     return (
         <main className="w-full mx-auto px-7 ">
             {/* Grid */}
-            <section className="grid items-center justify-center grid-cols-3 gap-5 px-24 my-auto gap-x-7 ">
-                {/* NOTE: Di iterasi awal ini belum ada */}
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-secondary">
+            <section className="grid grid-cols-1 gap-6 px-4 py-8 md:grid-cols-3">
+                {/* Card 1: Total Target */}
+                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
+                    <div className="p-4 bg-sky-600">
                         <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
+                            value={{ color: "white", size: "35px" }}
                         >
-                            <HiDocumentDuplicate className="w-12 h-full" />
+                            <MdOutlineAssignmentInd />
                         </IconContext.Provider>
                     </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">Riwayat PAK</h3>
-                        <p className="text-3xl">{dataByRole["PAKCount"]}</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <MdOutlineAssignmentInd className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Pengusulan PAK
+                    <div className="px-4 py-2 text-gray-700">
+                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                            Target Saya
                         </h3>
-                        <p className="text-3xl">
-                            {dataByRole["pengusulanPAKCount"]}
+                        <p className="text-2xl font-bold">
+                            {dataByRole["totalTarget"]}{" "}
+                            <span className="text-sm font-normal">
+                                Indikator
+                            </span>
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau/75">
+                {/* Card 2: Akuisisi Verified (Poin Sah) */}
+                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
+                    <div className="p-4 bg-emerald-500">
                         <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
+                            value={{ color: "white", size: "35px" }}
                         >
-                            <BsFillSendArrowUpFill className="w-12 h-full" />
+                            <RiVerifiedBadgeFill />
                         </IconContext.Provider>
                     </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Proses PAK
+                    <div className="px-4 py-2 text-gray-700">
+                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                            Verified (Sah)
                         </h3>
-                        <p className="text-3xl">
-                            {dataByRole["prosesPAKCount"]}
+                        <p className="text-2xl font-bold">
+                            {dataByRole["akuisisiVerified"]}{" "}
+                            <span className="text-sm font-normal">Nasabah</span>
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-bermuda">
+
+                {/* Card 3: Akuisisi Rejected (Butuh Revisi) */}
+                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
+                    <div className="p-4 bg-rose-500">
                         <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
+                            value={{ color: "white", size: "35px" }}
                         >
-                            <MdWorkHistory className="w-12 h-full" />
+                            <MdErrorOutline />
                         </IconContext.Provider>
                     </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Riwayat Karir Saya
+                    <div className="px-4 py-2 text-gray-700">
+                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                            Butuh Revisi
                         </h3>
-                        <p className="text-3xl">
-                            {dataByRole["riwayatKarirCount"]}
+                        <p className="text-2xl font-bold">
+                            {dataByRole["akuisisiRejected"]}{" "}
+                            <span className="text-sm font-normal">Laporan</span>
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-bermuda/75">
+
+                {/* Card 4: Total Laporan */}
+                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
+                    <div className="p-4 bg-slate-600">
                         <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
+                            value={{ color: "white", size: "35px" }}
                         >
-                            <RiArchive2Fill className="w-12 h-full" />
+                            <HiDocumentDuplicate />
                         </IconContext.Provider>
                     </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Arsip Dokumen
+                    <div className="px-4 py-2 text-gray-700">
+                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                            Total Input
                         </h3>
-                        <p className="text-3xl">
-                            {dataByRole["arsipDokumenCount"]}
+                        <p className="text-2xl font-bold">
+                            {dataByRole["totalAkuisisi"]}
                         </p>
                     </div>
                 </div>
@@ -102,7 +98,7 @@ export default function PegawaiContent({ dataByRole }) {
             <div className="flex w-full mt-10 ">
                 <section className="w-full">
                     <RadialChart
-                        title={"Proses Pengusulan PAK"}
+                        title={"Data 1"}
                         data={dataByRole["pengusulanPAKGraph"]}
                         chartId={"pengusulan-pak"}
                     />
@@ -110,7 +106,7 @@ export default function PegawaiContent({ dataByRole }) {
 
                 <section className="w-full">
                     <RadialChart
-                        title={"Proses Pengajuan PAK"}
+                        title={"Data 2"}
                         data={dataByRole["prosesPAKGraph"]}
                         chartId={"proses-pak"}
                     />

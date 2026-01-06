@@ -82,7 +82,7 @@ export default function Graph({ data }) {
                             total: {
                                 showAlways: true,
                                 show: true,
-                                label: "Pegawai Fungsional",
+                                label: "Data",
                                 fontFamily: "Inter, sans-serif",
                                 formatter: function (w) {
                                     const sum = w.globals.seriesTotals.reduce(
@@ -97,7 +97,7 @@ export default function Graph({ data }) {
                                 fontFamily: "Inter, sans-serif",
                                 offsetY: -20,
                                 formatter: function (value) {
-                                    return value + " Pegawai";
+                                    return value + " data";
                                 },
                             },
                         },
@@ -121,14 +121,14 @@ export default function Graph({ data }) {
             yaxis: {
                 labels: {
                     formatter: function (value) {
-                        return value + " Pegawai";
+                        return value + " data";
                     },
                 },
             },
             xaxis: {
                 labels: {
                     formatter: function (value) {
-                        return value + " Pegawai";
+                        return value + " data";
                     },
                 },
                 axisTicks: {
@@ -147,7 +147,7 @@ export default function Graph({ data }) {
         <div className="flex items-center justify-around mb-3 ">
             <div className="flex items-center justify-center">
                 <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
-                    Data Pegawai Fungsional
+                    Semua Data
                 </h5>
                 <svg
                     data-popover-target="chart-info"
@@ -168,11 +168,11 @@ export default function Graph({ data }) {
                 >
                     <div className="p-3 space-y-2">
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                            Pegawai Fungsional di BPS Provinsi Jambi
+                            data Fungsional di BPS Provinsi Jambi
                         </h3>
                         <p className="text-[12px]">
-                            Pegawai fungsional di BPS Provinsi Jambi adalah
-                            pegawai yang memiliki tugas dan tanggung jawab
+                            data fungsional di BPS Provinsi Jambi adalah
+                            data yang memiliki tugas dan tanggung jawab
                             khusus sesuai dengan bidang keahlian
                             masing-masing. Jabatan fungsional ini terdiri
                             dari beberapa tingkatan, yaitu:

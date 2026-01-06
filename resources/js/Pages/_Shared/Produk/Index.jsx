@@ -86,6 +86,7 @@ export default function Index({
             title={(role === "Admnistrator" ? "Kelola " : "Daftar ") + title}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
@@ -99,7 +100,6 @@ export default function Index({
                                 {
                                     name: "byKategori",
                                     label: "Kategori",
-                                    // TODO: fetch options dari backend
                                     options: filtersList.kategori,
                                 },
 

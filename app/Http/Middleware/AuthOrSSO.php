@@ -20,15 +20,15 @@ class AuthOrSSO
         if (Auth::check()) {
             // benerin ini sesuai field yg nama jabatan, role -> jabatan
             $jabatan = Auth::user()->jabatan->nama_jabatan;
-            if (in_array($jabatan, ['Administrator', 'Supervisor', 'Kepala Cabang'])) {
+            if (in_array($jabatan, ['Administrator', 'Supervisor', 'Kepala Cabang', 'Pegawai'])) {
                 return $next($request);
             }
         }
 
         // 2. Kalau user login sebagao pegawai
-        if (session()->has('logged_in') && session('role') === 'Pegawai') {
-            return $next($request);
-        }
+        // if (session()->has('logged_in') && session('role') === 'Pegawai') {
+        //     return $next($request);
+        // }
 
         // 3. Kalau tidak lolos dua-duanya
         return redirect()->route('login')->withErrors(['login' => 'Anda tidak punya akses ke dashboard.']);

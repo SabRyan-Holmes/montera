@@ -1,17 +1,18 @@
-import { MdEditDocument, MdOutlineAssignmentInd } from "react-icons/md";
-import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaUserTie } from "react-icons/fa6";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import SidebarLink from "@/Components/SidebarLink";
-import { RiAppsFill } from "react-icons/ri";
-import { GrHelpBook } from "react-icons/gr";
-import { AiFillNotification } from "react-icons/ai";
-import { IoDocuments, IoSettings } from "react-icons/io5";
-import { SidebarLinkCollapse } from ".";
-import { FaInfoCircle } from "react-icons/fa";
+import AdminSidebar from "./SidebarByRole/AdminSidebar";
+import PegawaiSidebar from "./SidebarByRole/PegawaiSidebar";
+import SupervisorSidebar from "./SidebarByRole/SupervisorSidebar";
+import KepalaCabangSidebar from "./SidebarByRole/KepalaCabangSidebar";
 
 const Sidebar = ({ role, isAtasan }) => {
-    // console.log(active)
+    const sidebarByRole = {
+        Administrator: AdminSidebar,
+        Supervisor: SupervisorSidebar,
+        "Kepala Cabang": KepalaCabangSidebar,
+        Pegawai: PegawaiSidebar,
+    };
+
+    const SidebarComponent = sidebarByRole[role] || <></>;
 
     return (
         //TODO: Benerin tampilan side barny kadang dk bener
@@ -55,190 +56,9 @@ const Sidebar = ({ role, isAtasan }) => {
                     </div>
                 </div>
 
-                {isAtasan  || role ? (
-                    <>
-                        <section className="scale-105 menu">
-                            <SidebarLink
-                                href={route("dashboard")}
-                                active={route().current("dashboard")}
-                                className="z-20 mx-[18px] -mb-1"
-                            >
-                                <MdSpaceDashboard />
-                                Dashboard
-                            </SidebarLink>
-                            <SidebarLinkCollapse
-                                submenu={[
-                                    {
-                                        label: (
-                                            <>
-                                                <MdOutlineAssignmentInd />
-                                                Produk
-                                            </>
-                                        ),
-                                        route: "shared.produk.index",
-                                        actives: [
-                                            "shared.produk.index",
-                                            "shared.produk.create",
-                                            "shared.produk.show",
-                                        ],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <MdEditDocument />
-                                                <span className="text-nowrap">
-                                                    Indikator
-                                                </span>
-                                            </>
-                                        ),
-                                        route: "shared.indikator.index",
-                                        actives: [
-                                            "shared.indikator.index",
-                                            "shared.indikator.create",
-                                            "shared.indikator.show",
-                                        ],
-                                    },
+                <SidebarComponent />
 
-                                ]}
-                            >
-                                <span className="flex items-center">
-                                    <RiAppsFill className="mr-2 scale-105" />
-                                    Main
-                                </span>
-                            </SidebarLinkCollapse>
 
-                            <SidebarLinkCollapse
-                                submenu={[
-                                    {
-                                        label: (
-                                            <>
-                                                <IoDocuments />
-                                                User
-                                            </>
-                                        ),
-                                        route: "admin.user.index",
-                                        actives: [
-                                            "admin.user.index",
-                                            "admin.user.create",
-                                            "admin.user.show",
-                                            "admin.user.edit",
-                                        ],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <IoSettings />
-                                                Jabatan
-                                            </>
-                                        ),
-                                        route: "admin.jabatan.index",
-                                        actives: [
-                                            "admin.jabatan.index",
-                                            "admin.jabatan.create",
-                                            "admin.jabatan.show",
-                                            "admin.jabatan.edit",
-                                        ],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <FaUserTie />
-                                                Divisi
-                                            </>
-                                        ),
-                                        route: "admin.divisi.index",
-                                        actives: [
-                                            "admin.divisi.index",
-                                            "admin.divisi.create",
-                                            "admin.divisi.edit",
-                                            "admin.divisi.show",
-                                        ],
-                                    },
-                                ]}
-                            >
-                                <span className="flex items-center ">
-                                    <FaDatabase className="mr-2" />
-                                    Data Master
-                                </span>
-                            </SidebarLinkCollapse>
-
-                            <SidebarLinkCollapse
-                                submenu={[
-                                    {
-                                        label: (
-                                            <>
-                                                <AiFillNotification />
-                                                Log Aktivitas
-                                            </>
-                                        ),
-                                        route: "main-log",
-                                        actives: [
-                                            "divisi-sdm.log-aktivitas.index",
-                                        ],
-                                    },
-                                    {
-                                        label: (
-                                            <>
-                                                <GrHelpBook />
-                                                Panduan/Bantuan
-                                            </>
-                                        ),
-                                        route: "help-and-guide",
-                                        actives: ["help-and-guide"],
-                                    },
-                                ]}
-                            >
-                                <span className="flex items-center">
-                                    <FaInfoCircle className="mr-2" />
-                                    Info
-                                </span>
-                            </SidebarLinkCollapse>
-                            <div className="h-10" />
-                        </section>
-                    </>
-                ) : (
-                    <section className="scale-105 menu">
-                        {/* Link Dashboard */}
-                        <SidebarLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
-                            className="z-20 mx-[18px] -mb-1"
-                        >
-                            <MdSpaceDashboard />
-                            Dashboard
-                        </SidebarLink>
-
-                        <SidebarLinkCollapse
-                            submenu={[
-                                {
-                                    label: (
-                                        <>
-                                            <AiFillNotification />
-                                            Log Aktivitas
-                                        </>
-                                    ),
-                                    route: "main-log",
-                                    actives: ["main-log"],
-                                },
-                                {
-                                    label: (
-                                        <>
-                                            <GrHelpBook />
-                                            Panduan/Bantuan
-                                        </>
-                                    ),
-                                    route: "help-and-guide",
-                                    actives: ["help-and-guide"],
-                                },
-                            ]}
-                        >
-                            <span className="flex items-center">
-                                <FaInfoCircle className="mr-2" />
-                                Info
-                            </span>
-                        </SidebarLinkCollapse>
-                    </section>
-                )}
             </ul>
 
             {/* Decorative Bottom Shadow */}

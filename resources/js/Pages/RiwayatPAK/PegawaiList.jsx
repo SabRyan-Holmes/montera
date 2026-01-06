@@ -128,7 +128,7 @@ export default function Index({
                             <div className="flex-none w-72">
                                 <InputLabel
                                     value="Jabatan"
-                                    Htmlfor="Jabatan"
+                                    htmlFor="Jabatan"
                                     className="max-w-sm ml-1 text-lg"
                                 />
                                 <select
@@ -157,7 +157,7 @@ export default function Index({
                             <div className="flex-none w-72">
                                 <InputLabel
                                     value="Daerah"
-                                    Htmlfor="Daerah"
+                                    htmlFor="Daerah"
                                     className="max-w-sm ml-1 text-lg"
                                 />
 
@@ -190,7 +190,7 @@ export default function Index({
                         <div className="flex-none w-80">
                             <InputLabel
                                 value="Nama/NIP"
-                                Htmlfor="search"
+                                htmlFor="search"
                                 className="max-w-sm ml-1 text-lg"
                             />
 

@@ -11,18 +11,25 @@ export default function FilterSearchCustom({
     initialFilters = {},
     searchConfig = null, // { name, label, placeholder, initialValue }
 }) {
+    // pastikan selalu array
+    const safeFiltersConfig = Array.isArray(filtersConfig) ? filtersConfig : [];
+
     // State dinamis untuk filters
     const [filters, setFilters] = useState(() => {
         const init = {};
-        filtersConfig.forEach(({ name }) => {
+        safeFiltersConfig.forEach(({ name }) => {
             init[name] = initialFilters[name] || DEFAULT_CATEGORY;
         });
         return init;
     });
 
     // State untuk search
-    const [searchInput, setSearchInput] = useState(searchConfig?.initialValue || "");
-    const [submittedSearch, setSubmittedSearch] = useState(searchConfig?.initialValue || "");
+    const [searchInput, setSearchInput] = useState(
+        searchConfig?.initialValue || ""
+    );
+    const [submittedSearch, setSubmittedSearch] = useState(
+        searchConfig?.initialValue || ""
+    );
 
     // Kirim data ke server saat filter/search berubah
     useEffect(() => {
@@ -32,7 +39,7 @@ export default function FilterSearchCustom({
         let isSame = true;
 
         // Cek per filter
-        filtersConfig.forEach(({ name }) => {
+        safeFiltersConfig.forEach(({ name }) => {
             const currentValue = urlParams.get(name) || DEFAULT_CATEGORY;
             const selectedValue = filters[name];
             if (selectedValue !== currentValue) isSame = false;
@@ -67,42 +74,50 @@ export default function FilterSearchCustom({
     return (
         <form className="w-full" onSubmit={handleSubmit}>
             <section className="flex items-center justify-between w-full gap-3 my-3 ">
-            <div className="flex flex-wrap items-center gap-3">
-                    {filtersConfig.map(({ name, label, options }) => (
-                        <div key={name} className="flex-none capitalize w-fit">
-                            <InputLabel
-                                value={label}
-                                Htmlfor={name}
-                                className="max-w-sm ml-1 text-lg"
-                            />
-                            <select
-                                className="w-full max-w-xs text-sm capitalize border selection:capitalize select border-gradient"
-                                name={name}
-                                id={name}
-                                value={filters[name]}
-                                onChange={(e) =>
-                                    setFilters((prev) => ({
-                                        ...prev,
-                                        [name]: e.target.value,
-                                    }))
-                                }
+                <div className="flex flex-wrap items-center gap-3">
+                    {safeFiltersConfig.length > 0 &&
+                        safeFiltersConfig.map(({ name, label, options }) => (
+                            <div
+                                key={name}
+                                className="flex-none capitalize w-fit"
                             >
-                                <option>{DEFAULT_CATEGORY}</option>
-                                {options.map((item) => (
-                                    <option key={item} value={item} className="capitalize">
-                                        {item}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    ))}
+                                <InputLabel
+                                    value={label}
+                                    htmlFor={name}
+                                    className="max-w-sm ml-1 text-lg"
+                                />
+                                <select
+                                    className="w-full max-w-xs text-sm capitalize border selection:capitalize select border-gradient"
+                                    name={name}
+                                    id={name}
+                                    value={filters[name]}
+                                    onChange={(e) =>
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            [name]: e.target.value,
+                                        }))
+                                    }
+                                >
+                                    <option>{DEFAULT_CATEGORY}</option>
+                                    {options.map((item) => (
+                                        <option
+                                            key={item}
+                                            value={item}
+                                            className="capitalize"
+                                        >
+                                            {item}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        ))}
                 </div>
 
                 {searchConfig && (
                     <div className="flex-none w-80">
                         <InputLabel
                             value={searchConfig.label || "Cari"}
-                            Htmlfor={searchConfig.name}
+                            htmlFor={searchConfig.name}
                             className="max-w-sm ml-1 text-lg"
                         />
                         <div className="relative">
@@ -116,9 +131,14 @@ export default function FilterSearchCustom({
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 className="w-full p-4 py-[13px] pl-10 text-sm text-gray-900 border border-gradient rounded-md"
-                                placeholder={searchConfig.placeholder || "Cari..."}
+                                placeholder={
+                                    searchConfig.placeholder || "Cari..."
+                                }
                             />
-                            <PrimaryButton type="submit" className=" absolute end-2 bottom-[6px]">
+                            <PrimaryButton
+                                type="submit"
+                                className=" absolute end-2 bottom-[6px]"
+                            >
                                 Search
                             </PrimaryButton>
                         </div>

@@ -55,7 +55,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Relasi ke Divisi (Many to One)
      * User ini masuk di divisi mana?
      */
     public function divisi(): BelongsTo
@@ -64,7 +63,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Relasi ke Akuisisi (One to Many)
      * Daftar data akuisisi yang diinput oleh user ini
      */
     public function akuisisi(): HasMany
@@ -78,6 +76,11 @@ class User extends Authenticatable
         return $this->hasMany(Target::class); // Untuk monitoring pencapaian vs target pribadi
     }
 
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class);
+    }
+
     public function inputAkuisisi()
     {
         return $this->hasMany(Akuisisi::class, 'user_id'); // Data yang diinput pegawai
@@ -88,26 +91,39 @@ class User extends Authenticatable
         return $this->hasMany(Akuisisi::class, 'verifikator_id'); // Khusus aktor Supervisor
     }
 
+    public function scopeFilter($query, array $filters): void
+    {
+        $query->when(
+            $filters['search'] ?? false,
+            fn($query, $search) =>
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('nip', 'like', '%' . $search . '%');
+            })
+        );
 
+        // filter berdasarkan nama jabatan
+        $query->when(
+            $filters['byJabatan'] ?? false,
+            fn($query, $byJabatan) =>
+            $query->whereHas('jabatan', function ($q) use ($byJabatan) {
+                $q->where('nama_jabatan', 'like', "%{$byJabatan}%");
+            })
+        );
 
-    // public function hasRole(string|array $roles): bool
-    // {
-    //     $userRole = $this->role;
+        // filter berdasarkan nama divisi
+        $query->when(
+            $filters['byDivisi'] ?? false,
+            fn($query, $byDivisi) =>
+            $query->whereHas('divisi', function ($q) use ($byDivisi) {
+                $q->where('nama_divisi', 'like', "%{$byDivisi}%");
+            })
+        );
 
-    //     if (is_array($roles)) {
-    //         return in_array($userRole, $roles);
-    //     }
-
-    //     return $userRole === $roles;
-    // }
-
-    // public function isPimpinan(): bool
-    // {
-    //     return $this->role === 'Pimpinan';
-    // }
-
-    // public function canValidate(): bool
-    // {
-    //     return in_array($this->role, ['Pimpinan', 'Divisi SDM']);
-    // }
+        $query->when(
+            $filters['byStatus'] ?? false,
+            fn($query, $byStatus) =>
+            $query->where('status_aktif', '>=', $byStatus)
+        );
+    }
 }

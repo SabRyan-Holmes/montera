@@ -23,7 +23,7 @@ class GetSubtitle
 
         // --- RUANG KOSONG (Kebutuhan Masa Depan) ---
         // Kamu bisa menambahkan parameter baru di bawah sini jika ada model lain
-        ?string $byCustom1 = null,
+        ?string $byTipe = null,
         ?string $byCustom2 = null
     ): string {
         $filters = [];
@@ -53,8 +53,8 @@ class GetSubtitle
         }
 
         // --- TEMPAT MENAMBAH LOGIKA FILTER BARU ---
-        if ($byCustom1) {
-            $filters[] = "Label: $byCustom1";
+        if ($byTipe) {
+            $filters[] = "Tipe Target: $byTipe";
         }
 
         // Finalisasi Output

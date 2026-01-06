@@ -7,12 +7,12 @@ import { CgArrowsExchangeAltV } from "react-icons/cg";
 const Navbar = ({ user, title }) => {
 
 
-    const nameParts = user.name.split(" ");
-
+    const role = user.jabatan.nama_jabatan;
     const styleByRole = {
         Administrator: "text-primary",
         Supervisor: "text-hijau",
         "Kepala Cabang": "text-secondary",
+        "Pegawai": "text-slate-500",
     };
 
 
@@ -63,10 +63,10 @@ const Navbar = ({ user, title }) => {
                                         <span
                                             className={
                                                 "block text-xs text-right " +
-                                                styleByRole[user.role]
+                                                styleByRole[role]
                                             }
                                         >
-                                            {user.role}
+                                            {role}
                                         </span>
                                     </div>
                                     {/* {user.profile ? (

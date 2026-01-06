@@ -57,14 +57,16 @@ class DashboardController extends Controller
                 ],
             ];
         } else {
-            // TODO: data untuk role lain
-            $dataByRole = [];
-            // $dataByRole = [
-            //     'produkCount' => Produk::where('created_by', $nip)->count(),
-            //     'akuisisiCount' => Akuisisi::where('created_by', $nip)->count(),
-            //     'userCount' => User::where('nip', $nip)->count(),
-            //     'targetCount' => Target::where('created_by', $nip)->count(),
-            // ];
+            $dataByRole = [
+                'totalTarget' => Target::where('user_id', $this->user->id)->count(),
+                'totalAkuisisi' => Akuisisi::where('user_id', $this->user->id)->count(),
+                'akuisisiVerified' => Akuisisi::where('user_id', $this->user->id)
+                    ->where('status_verifikasi', 'verified')->count(),
+                'akuisisiRejected' => Akuisisi::where('user_id', $this->user->id)
+                    ->where('status_verifikasi', 'rejected')->count(),
+                'akuisisiPending' => Akuisisi::where('user_id', $this->user->id)
+                    ->where('status_verifikasi', 'pending')->count(),
+            ];
         }
 
         return Inertia::render('_Shared/Dashboard/AuthDashboard', [

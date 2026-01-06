@@ -39,7 +39,7 @@ class ProdukController extends Controller
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byKategori" => $params['byKategori'] ?? "Semua Kategori",
-                "byStatus"   => $params['byStatus'] ?? "Semua Status",
+                "byStatus"   => $params['byStatus'] ?? "Semua Kategori",
             ],
             "filtersList"   => [
                 "kategori" => Produk::getEnumValues('kategori'),
@@ -69,15 +69,15 @@ class ProdukController extends Controller
     {
         $validated = $request->validated();
         Produk::create($validated);
-        return Redirect::route('divisi-sdm.produk.index')->with('message', 'Data Produk Berhasil Ditambahkan!');
+        return Redirect::route('shared.produk.index')->with('message', 'Data Produk Berhasil Ditambahkan!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Produk $produk)
+    public function show(Produk $produk) //Unused
     {
-        return Inertia::render('KelolaPegawai/Show', [
+        return Inertia::render('_Shared/Produk/Show', [
             'title' => 'Detail Data Produk',
             'produk' => $produk
         ]);

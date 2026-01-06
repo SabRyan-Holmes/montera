@@ -36,4 +36,25 @@ class Akuisisi extends Model
     {
         return $this->belongsTo(User::class, 'verifikator_id'); // Aktor yang menjamin data objektif
     }
+
+
+     public function scopeFilter($query, array $filters): void
+    {
+        $query->when(
+            $filters['search'] ?? false,
+            fn($query, $search) =>
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_nasabah', 'like', '%' . $search . '%')
+                    ->orWhere('no_identitas_nasabah', 'like', '%' . $search . '%');
+            })
+        );
+
+        $query->when(
+            $filters['byStatus'] ?? false,
+            fn($query, $byStatus) =>
+            $query->where('status_verifikasi', $byStatus)
+        );
+
+
+    }
 }
