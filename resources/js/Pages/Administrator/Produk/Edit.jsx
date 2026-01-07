@@ -84,7 +84,7 @@ export default function Edit({ auth, produk, title, flash }) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                destroy(route("shared.produk.destroy", id), {
+                destroy(route("admin.produk.destroy", id), {
                     onError: () => {
                         alert("Gagal Menghapus Data");
                     },
@@ -96,7 +96,7 @@ export default function Edit({ auth, produk, title, flash }) {
     // ===========================================Logic Lainnya===========================================
     const submit = (e) => {
         e.preventDefault();
-        patch(route("shared.produk.update", produk));
+        patch(route("admin.produk.update", produk));
     };
 
     return (
@@ -111,7 +111,7 @@ export default function Edit({ auth, produk, title, flash }) {
                         <ul>
                             <li>
                                 <a
-                                    href={route("shared.produk.index")}
+                                    href={route("admin.produk.index")}
                                     className="gap-2"
                                 >
                                     <FaDatabase className="w-4 h-4 stroke-current" />

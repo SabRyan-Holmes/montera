@@ -52,7 +52,7 @@ const Sidebar = ({ role, isAtasan }) => {
                     /> */}
 
                     <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md bg-slate-300 ">
-                        <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary via-primary/20 to-secondary" />
+                        <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary/60 via-secondary/50 to-emerald" />
                     </div>
                 </div>
 

@@ -39,7 +39,7 @@ export default function Index({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("shared.indikator.destroy", id), {
+                router.delete(route("admin.indikator.destroy", id), {
                     onSuccess: () => {
                         document.getElementById(activeModal).close();
                     },
@@ -108,8 +108,8 @@ export default function Index({
                         <div className="flex-none pb-3 ">
                             <Link
                                 as="button"
-                                href={route("shared.indikator.create")}
-                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                                href={route("admin.indikator.create")}
+                                className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
                                 Tambah Indikator
                                 <IoMdAdd className="w-5 h-5" />
@@ -312,12 +312,12 @@ export default function Index({
                                                         <Link
                                                             as="a"
                                                             href={route(
-                                                                "shared.indikator.edit",
+                                                                "admin.indikator.edit",
                                                                 indikator.id
                                                             )}
-                                                            className="action-btn group/button action-btn-secondary"
+                                                            className="action-btn group/button action-btn-bermuda"
                                                         >
-                                                            <FaEdit className=" fill-secondary group-hover/button:fill-white" />
+                                                            <FaEdit className=" group-hover/button:fill-white" />
                                                         </Link>
                                                         <TooltipHover
                                                             message={

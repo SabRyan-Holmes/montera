@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Pegawai;
+namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
-use App\Models\Akuisisi;
+use App\Models\Target;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AkuisisiController extends Controller
+class TargetController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-     protected $user;
+
+    protected $user;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -25,24 +26,25 @@ class AkuisisiController extends Controller
     public function index()
     {
         $subTitle = "";
-        $params = request()->all(['search', 'byStatus']);
+        $params = request()->all(['search', 'byTipe', 'byPeriode']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
 
-        return Inertia::render('Administrator/Akuisisi/Index', [
-            "title" => "Verifikasi Data Akuisisi",
+        return Inertia::render('Administrator/Target/Index', [
+            "title" => "Target Kinerja Pegawai",
             "subTitle"  => $subTitle,
-            "akuisisis"    => Akuisisi::with(['pegawai:id,name', 'produk:id,nama_produk', 'verifikator:id,name' ])->filter($params)->paginate(10)->withQueryString(),
+            "targets" => Target::with(['indikator:id,nama_kpi,satuan', 'produk:id,nama_produk'])->paginate(10)
+                ->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
-                "byStatus"   => $params['byStatus'] ?? "Semua Kategori",
+                "byTipe"     => $params['byTipe'] ?? "Semua Kategori",
+                "byPeriode"     => $params['byPeriode'] ?? "Semua Kategori",
             ],
             "filtersList"   => [
-                "status"   => ['pending', 'verified', 'rejected'],
+                "tipe_target" => ['nominal', 'noa'],
+                "periode"   => ['mingguan', 'bulanan', 'tahunan'],
             ],
         ]);
     }
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -63,7 +65,7 @@ class AkuisisiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Akuisisi $akuisisi)
+    public function show(Target $target)
     {
         //
     }
@@ -71,7 +73,7 @@ class AkuisisiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Akuisisi $akuisisi)
+    public function edit(Target $target)
     {
         //
     }
@@ -79,7 +81,7 @@ class AkuisisiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Akuisisi $akuisisi)
+    public function update(Request $request, Target $target)
     {
         //
     }
@@ -87,8 +89,10 @@ class AkuisisiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Akuisisi $akuisisi)
+    public function destroy(Target $target)
     {
         //
     }
+
+
 }

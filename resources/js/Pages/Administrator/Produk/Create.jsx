@@ -32,7 +32,7 @@ export default function Create({ auth, filtersList, title }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("shared.produk.store"), data);
+        post(route("admin.produk.store"), data);
     };
 
     // console.log("isi errors", errors);
@@ -48,7 +48,7 @@ export default function Create({ auth, filtersList, title }) {
                         <ul>
                             <li>
                                 <a
-                                    href={route("shared.produk.index")}
+                                    href={route("admin.produk.index")}
                                     className="inline-flex items-center gap-2 "
                                 >
                                     <FaUserTie className="w-4 h-4 stroke-current" />

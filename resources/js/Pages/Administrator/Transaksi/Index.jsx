@@ -115,7 +115,7 @@ export default function Index({
                             <Link
                                 as="button"
                                 href={route("admin.transaksi.create")}
-                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                                className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
                                 Tambah Data
                                 <IoMdAdd className="w-5 h-5" />
@@ -385,9 +385,9 @@ export default function Index({
                                                                 "admin.transaksi.edit",
                                                                 transaksi.id
                                                             )}
-                                                            className="action-btn group/button action-btn-secondary"
+                                                            className="action-btn group/button action-btn-bermuda"
                                                         >
-                                                            <FaEdit className=" fill-secondary group-hover/button:fill-white" />
+                                                            <FaEdit className=" group-hover/button:fill-white" />
                                                         </Link>
                                                         <TooltipHover
                                                             message={
@@ -438,7 +438,7 @@ export default function Index({
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
                                 {!subTitle
-                                    ? "Belum Ada Data Produk Terbaru Untuk Saat Ini"
+                                    ? "Belum Ada Data Transaksi Terbaru Untuk Saat Ini"
                                     : "Tidak Ditemukan"}
                             </h2>
                         </div>

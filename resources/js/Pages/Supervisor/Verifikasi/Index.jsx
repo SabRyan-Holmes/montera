@@ -22,35 +22,6 @@ export default function Index({
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
-    function handleDelete(id) {
-        Swal.fire({
-            ...(activeModal && { target: `#${activeModal}` }),
-            icon: "warning",
-            text: "Anda yakin ingin menghapus data akuisisi ini?",
-            showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: "Tidak",
-            confirmButtonColor: "#2D95C9",
-            cancelButtonColor: "#9ca3af",
-            customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
-                confirmButton: "order-2",
-                denyButton: "order-3",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.delete(route("admin.akuisisi.destroy", id), {
-                    onSuccess: () => {
-                        document.getElementById(activeModal).close();
-                    },
-                    onError: () => {
-                        console.log("Gagal Menghapus Data");
-                    },
-                });
-            }
-        });
-    }
 
     useEffect(() => {
         if (flash.message) {
@@ -85,7 +56,7 @@ export default function Index({
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/master/akuisisi`}
+                            routeName={`/verify-akuisisi`}
                             initialFilters={{
                                 byStatus: filtersReq.status,
                             }}
@@ -98,8 +69,8 @@ export default function Index({
                             ]}
                             searchConfig={{
                                 name: "search",
-                                label: "Nama/ID Nasabah",
-                                placeholder: "Ketik Nama/NIP Nasabah..",
+                                label: "Nama/NIP Pegawai",
+                                placeholder: "Ketik Nama/NIP Pegawai..",
                                 initialValue: filtersReq.search,
                             }}
                         />
@@ -288,10 +259,9 @@ export default function Index({
                                                 {/* AKSI */}
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
-                                                        <button className="action-btn action-btn-success">
-
-                                                            <FaEye  />
-                                                        </button>
+                                                        <a className="action-btn group action-btn-success text">
+                                                            <FaEye className="scale-125 group-hover:text-white" />
+                                                        </a>
                                                         <TooltipHover
                                                             message={
                                                                 "Lihat Detail"
@@ -352,7 +322,7 @@ export default function Index({
                             {/* Pagination */}
                             <Pagination
                                 datas={akuisisis}
-                                urlRoute={`/spv/akuisisi`}
+                                urlRoute={`verify-akuisisi`}
                                 filters={{
                                     byStatus: filtersReq.byStatus,
                                     search: filtersReq.search,

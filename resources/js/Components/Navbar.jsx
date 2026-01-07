@@ -8,9 +8,10 @@ const Navbar = ({ user, title }) => {
 
 
     const role = user.jabatan.nama_jabatan;
+    const divisi = user.divisi.nama_divisi;
     const styleByRole = {
         Administrator: "text-primary",
-        Supervisor: "text-hijau",
+        Supervisor: "text-emerald",
         "Kepala Cabang": "text-secondary",
         "Pegawai": "text-slate-500",
     };
@@ -67,6 +68,13 @@ const Navbar = ({ user, title }) => {
                                             }
                                         >
                                             {role}
+                                        </span>
+                                        <span
+                                            className={
+                                                "block text-xxs text-right "
+                                            }
+                                        >
+                                            {divisi}
                                         </span>
                                     </div>
                                     {/* {user.profile ? (

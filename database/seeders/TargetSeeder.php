@@ -10,32 +10,30 @@ use Illuminate\Database\Seeder;
 
 class TargetSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $pegawaiIds = User::whereHas('jabatan', fn($q) => $q->where('nama_jabatan', 'Pegawai'))->pluck('id');
         $produkIds = Produk::pluck('id');
-        $indikatorIds = Indikator::pluck('id'); // Ambil ID Indikator
+        $indikatorIds = Indikator::pluck('id');
 
         if ($pegawaiIds->isEmpty() || $indikatorIds->isEmpty()) {
-            return; // Jaga-jaga kalau seeder sebelumnya kosong
+            return;
         }
 
-        for ($i = 0; $i < 15; $i++) {
+        // Loop diubah jadi 22
+        for ($i = 0; $i < 22; $i++) {
             Target::create([
                 'user_id' => $pegawaiIds->random(),
-                'indikator_id' => $indikatorIds->random(), // SINKRONKAN DISINI
+                'indikator_id' => $indikatorIds->random(),
                 'produk_id' => $produkIds->random(),
-                'nilai_target' => rand(50000000, 500000000),
+                'nilai_target' => rand(50000000, 500000000), // Target antara 50jt - 500jt
                 'tipe_target' => rand(0, 1) ? 'nominal' : 'noa',
                 'periode' => 'bulanan',
-                'tahun' => 2026,
+                'tahun' => date('Y'),
                 'tanggal_mulai' => now()->startOfMonth(),
                 'tanggal_selesai' => now()->endOfMonth(),
                 'deadline_pencapaian' => now()->endOfMonth(),
-                'keterangan_tambahan' => 'Target performa awal tahun.',
+                'keterangan_tambahan' => 'Target performa bulanan Q1.',
             ]);
         }
     }

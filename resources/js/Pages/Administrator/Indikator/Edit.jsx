@@ -84,7 +84,7 @@ export default function Edit({ auth, indikator, title, flash }) {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                destroy(route("shared.indikator.destroy", id), {
+                destroy(route("admin.indikator.destroy", id), {
                     onError: () => {
                         alert("Gagal Menghapus Data");
                     },
@@ -96,7 +96,7 @@ export default function Edit({ auth, indikator, title, flash }) {
     // ===========================================Logic Lainnya===========================================
     const submit = (e) => {
         e.preventDefault();
-        patch(route("shared.indikator.update", indikator));
+        patch(route("admin.indikator.update", indikator));
     };
 
     return (
@@ -111,7 +111,7 @@ export default function Edit({ auth, indikator, title, flash }) {
                         <ul>
                             <li>
                                 <a
-                                    href={route("shared.indikator.index")}
+                                    href={route("admin.indikator.index")}
                                     className="gap-2"
                                 >
                                     <FaDatabase className="w-4 h-4 stroke-current" />

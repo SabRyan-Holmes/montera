@@ -20,7 +20,7 @@ import Sidebar from "./Sidebar";
 import SuccessButton from "./SuccessButton";
 import TextInput from "./TextInput";
 import TextInputSecondary from "./TextInputSecondary";
-import AtasanContent from "@/Pages/Shared/Dashboard/AtasanContent";
+import AtasanContent from "@/Pages/Shared/Dashboard/AdminContent";
 import TooltipHover from "./TooltipHover";
 import useFilterSearch from "./UseFilterSearch";
 import InputLabelCustom from "./InputLabelCustom.jsx";
@@ -30,9 +30,10 @@ import RadioWithEditableLabel from "./Forms/RadioEditableLabel";
 import UseFilterSearchCustom from "./UseFilterSearchCustom";
 import FilterSearchCustom from "./FilterSearchCustom";
 import StatusLabel from "./StatusLabel";
-import Graph from "./Chart/Graph";
+import AkuisisiGraph from "./Chart/AkuisisiGraph";
 import RadialChart from "./Chart/RadialChart";
 import SelectInput from "./Forms/SelectInput";
+import DivisiBarChart from "./Chart/DivisiBarChart";
 
 export {
     ApplicationLogo,
@@ -57,7 +58,7 @@ export {
     ProfileImage,
     SuccessButton,
     TextInputSecondary,
-    Graph,
+    AkuisisiGraph,
     RadialChart,
     AtasanContent,
     TooltipHover,
@@ -69,6 +70,6 @@ export {
     UseFilterSearchCustom,
     FilterSearchCustom,
     StatusLabel,
-    SelectInput
-
+    SelectInput,
+    DivisiBarChart
 };

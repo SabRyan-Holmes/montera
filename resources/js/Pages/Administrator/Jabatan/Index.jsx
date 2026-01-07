@@ -112,7 +112,7 @@ export default function Index({
                             <Link
                                 as="button"
                                 href={route("admin.jabatan.create")}
-                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                                className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
                                 Tambah Jabatan
                                 <IoMdAdd className="w-5 h-5" />
@@ -299,7 +299,7 @@ export default function Index({
                                                             "admin.jabatan.edit",
                                                             jabatan.id
                                                         )}
-                                                        className="action-btn group/button action-btn-secondary"
+                                                        className="action-btn group/button action-btn-bermuda"
                                                     >
                                                         <FaEdit className="group-hover/button:fill-white" />
                                                     </Link>

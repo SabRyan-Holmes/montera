@@ -19,6 +19,7 @@ export default function Index({
     subTitle,
     filtersReq,
     filtersList,
+    canCreate,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
@@ -104,12 +105,16 @@ export default function Index({
                             }}
                         />
                     </div>
-                    {role === "Administrator" && (
+                    {canCreate && (
                         <div className="flex-none pb-3 ">
                             <Link
                                 as="button"
-                                href={route("admin.akuisisi.create")}
-                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                                href={
+                                    role === "Administrator"
+                                        ? route("admin.akuisisi.create")
+                                        : route("pegawai.akuisisi.create")
+                                }
+                                className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
                                 Tambah Data
                                 <IoMdAdd className="w-5 h-5" />
@@ -342,9 +347,9 @@ export default function Index({
                                                                 "admin.akuisisi.edit",
                                                                 akuisisi.id
                                                             )}
-                                                            className="action-btn group/button action-btn-secondary"
+                                                            className="action-btn group/button action-btn-bermuda"
                                                         >
-                                                            <FaEdit className=" fill-secondary group-hover/button:fill-white" />
+                                                            <FaEdit className=" group-hover/button:fill-white" />
                                                         </Link>
                                                         <TooltipHover
                                                             message={

@@ -2,17 +2,17 @@ import { SecondaryButton } from "@/Components";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
-import DetailIndikator from "./Partials/DetailIndikator";
+import DetailTransaksi from "./DetailTransaksi";
 
 export default function ShowModal({
-    indikator,
+    transaksi,
     setActiveModal,
     handleDelete,
     canManage = false,
 }) {
     return (
         <dialog
-            id={`Show-${indikator.id}`}
+            id={`Show-${transaksi.id}`}
             onClose={() => setActiveModal(null)}
             className="modal"
         >
@@ -25,9 +25,10 @@ export default function ShowModal({
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
                     <h3 className="mb-2 text-xl font-bold">
-                        Lihat Detail Data Indikator
+                        Lihat Detail Data Transaksi
                     </h3>
-                    <DetailIndikator indikator={indikator} collapse={false} />
+
+                    <DetailTransaksi transaksi={transaksi} collapse={false} />
                 </div>
             </div>
 
@@ -36,14 +37,14 @@ export default function ShowModal({
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-14 left-1/2">
                     <SecondaryButton
                         asLink
-                        href={route("shared.indikator.edit", indikator.id)}
+                        href={route("admin.transaksi.edit", transaksi.id)}
                     >
                         <FaEdit className="w-4 h-4 mr-1 " />
                         Edit Data
                     </SecondaryButton>
 
                     <SecondaryButton
-                        onClick={() => handleDelete(indikator.id)}
+                        onClick={() => handleDelete(transaksi.id)}
                         className="text-white bg-warning/80"
                     >
                         <FaTrash className="w-4 h-4 mr-1 " />

@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\Admin\{UserController, JabatanController, DivisiController};
 use App\Http\Controllers\Auth\DashboardController;
-use App\Http\Controllers\Shared\{ProdukController, IndikatorController, ProfileController, TransaksiController};
-use App\Http\Controllers\Pegawai\{AkuisisiController, Pegaw, PegawaiController, PegawaiControlleraiPegawaiController};
-use App\Http\Controllers\Supervisor\{SupervisorController, TeamController};
-use App\Http\Controllers\KepalaCabang\{KepalaCabangController, TargetController};
+use App\Http\Controllers\Shared\{ProfileController};
+use App\Http\Controllers\Pegawai\{PegawaiController};
+use App\Http\Controllers\Supervisor\{SupervisorController};
+use App\Http\Controllers\KepalaCabang\{KepalaCabangController};
+use App\Http\Controllers\Admin\{UserController, AkuisisiController, TransaksiController, ProdukController, IndikatorController, TargetController, JabatanController, DivisiController};
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -35,7 +35,7 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(
 
 Route::middleware('auth')->group(function () {
 
-    // --- SHARED (Admin & SPV) ---
+    // --- SHARED (All Actor) ---
     Route::prefix('shared')->name('shared.')->group(function () {
         Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data
         Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
@@ -68,22 +68,28 @@ Route::middleware('auth')->group(function () {
     // <============================================================ SUPERVISOR ============================================================>
     // Pengawasan Tim & Verifikasi Akuisisi
     Route::middleware('role:Supervisor')->prefix('spv')->name('spv.')->group(function () {
-        Route::resource('produk', ProdukController::class);
-        Route::resource('indikator', IndikatorController::class);
+        Route::resource('produk', ProdukController::class)->only(['index', 'show']);
+        Route::resource('indikator', IndikatorController::class)->only(['index', 'show']);
         Route::get('/verify-akuisisi', [SupervisorController::class, 'verify'])->name('verify'); // Monitoring Pribadi
         Route::patch('/verify/{akuisisi}/approve', [SupervisorController::class, 'approve'])->name('verify.approve');
         Route::patch('/verify/{akuisisi}/reject', [SupervisorController::class, 'reject'])->name('verify.reject');
-        Route::get('/team', [SupervisorController::class, 'index'])->name('team'); // Monitoring Tim
+        Route::get('/report', [SupervisorController::class, 'report'])->name('report');
+        Route::get('/team', [SupervisorController::class, 'team'])->name('team'); // Monitoring Tim
+        Route::get('/team/{user}/transactions', [SupervisorController::class, 'memberTransactions'])
+        ->name('team.transactions');
     });
 
     // <============================================================ KEPALA CABANG ============================================================>
     // --- KEPALA CABANG (BI Dashboard & Keputusan Strategis) ---
     Route::middleware('role:Kepala Cabang')->prefix('kacab')->name('kacab.')->group(function () {
         // Semua fungsi BI (Ranking, Historis, Tren) digabung di DashboardController
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/analytics', [KepalaCabangController::class, 'analytics'])->name('analytics');
-        Route::get('/export-report', [DashboardController::class, 'export'])->name('export');
-        Route::resource('target', TargetController::class);
+        Route::get('/monitoring/ringkasan', [KepalaCabangController::class, 'summary'])->name('summary');
+        Route::get('/monitoring/realisasi', [KepalaCabangController::class, 'realisasi'])->name('realisasi');
+        Route::get('/monitoring/divisi', [KepalaCabangController::class, 'divisi'])->name('divisi');
+        Route::get('/evaluasi/ranking-pegawai', [KepalaCabangController::class, 'pegawai_rank'])->name('pegawai_rank');
+        Route::get('/evaluasi/promosi-pegawai', [KepalaCabangController::class, 'pegawai_promotion'])->name('pegawai_promotion');
+        Route::get('/report/final-report', [KepalaCabangController::class, 'final_report'])->name('final-report');
+        Route::get('/report/export-data', [KepalaCabangController::class, 'export_data'])->name('export-data');
     });
 
     // Log Aktivitas(R)
@@ -96,43 +102,6 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // ==============Proses PAK================
-
-    // Produk(R, Accept, Reject)
-    // Route::prefix('produk')->name('produk.')->group(function () {
-    //     Route::get('/', [AdminController::class, 'index'])->name('index');
-    // Route::post('approve/{pengusulanPAK}', [PengusulanPAKController::class, 'approve'])->name('approve');
-    // Route::post('reset-validate/{pengusulanPAK}', [PengusulanPAKController::class, 'reset_validate'])->name('reset-validate');
-    // Route::post('reject', [PengusulanPAKController::class, 'reject'])->name('reject');
-    // });
-
-
-
-    // Pengajuan PAK(CRUD, Revisi, RESEBMIT, Cancel) //NOTE!! Urutan jangan diubah, resource harus paling bawah
-    // Route::get('/pengajuan/revisi', [PengajuanController::class, 'revisi'])->name('pengajuan.revisi');
-    // Route::patch('/pengajuan/ajukan-ulang', [PengajuanController::class, 'ajukan_ulang'])->name('pengajuan.ajukan-ulang');
-    // Route::resource('pengajuan', PengajuanController::class);
-
-
-    // Arsip Dokumen(CRUD)
-    // Route::resource('arsip-dokumen', ArsipDokumenController::class)->parameters(['arsip-dokumen' => 'arsipDokumen']);
 
 
     // ===============Data Master================

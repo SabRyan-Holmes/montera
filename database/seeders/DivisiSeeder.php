@@ -21,7 +21,7 @@ class DivisiSeeder extends Seeder
         ];
 
         foreach ($divisi as $d) {
-            \App\Models\Divisi::create([
+            Divisi::create([
                 'nama_divisi' => $d['nama'],
                 'kode_divisi' => $d['kode'],
             ]);

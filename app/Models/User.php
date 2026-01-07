@@ -24,7 +24,7 @@ class User extends Authenticatable
         'password',
     ];
     protected $casts = ['jumlah' => 'array'];
-    protected $with = ['jabatan'];
+    protected $with = ['jabatan', 'divisi:id,nama_divisi'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -71,12 +71,12 @@ class User extends Authenticatable
     }
 
     // Relasi tambahan untuk mendukung Verifikasi & Target
-    public function targets()
+    public function target()
     {
-        return $this->hasMany(Target::class); // Untuk monitoring pencapaian vs target pribadi
+        return $this->hasOne(Target::class, 'user_id');
     }
 
-    public function transaksis()
+    public function transaksi()
     {
         return $this->hasMany(Transaksi::class);
     }
@@ -89,6 +89,13 @@ class User extends Authenticatable
     public function verifikasiAkuisisi()
     {
         return $this->hasMany(Akuisisi::class, 'verifikator_id'); // Khusus aktor Supervisor
+    }
+
+    public function scopeRole($query, $namaRole)
+    {
+        return $query->whereHas('jabatan', function ($q) use ($namaRole) {
+            $q->where('nama_jabatan', $namaRole);
+        });
     }
 
     public function scopeFilter($query, array $filters): void

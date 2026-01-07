@@ -2,7 +2,7 @@ import { Link, Head } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 
-export default function Authenticated({ user, title, header, children, current, isAtasan }) {
+export default function Authenticated({ user, title, header, children, current}) {
     // console.log('isi current', current)
 
     return (
@@ -23,7 +23,7 @@ export default function Authenticated({ user, title, header, children, current, 
                 </div>
                 <Sidebar
                     active={(current? current :  route().current("dashbard"))}
-                    role={user.jabatan.nama_jabatan} isAtasan={isAtasan}
+                    role={user.jabatan.nama_jabatan}
                 ></Sidebar>
             </div>
         </div>

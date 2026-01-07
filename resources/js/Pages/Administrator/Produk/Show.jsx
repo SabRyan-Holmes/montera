@@ -2,7 +2,7 @@ import { SecondaryButton } from "@/Components";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
-// import DetailProduk from "./Partials/DetailProduk";
+import DetailProduk from "./Partials/DetailProduk";
 
 export default function ShowModal({
     produk,
@@ -37,7 +37,7 @@ export default function ShowModal({
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-14 left-1/2">
                     <SecondaryButton
                         asLink
-                        href={route("shared.produk.edit", produk.id)}
+                        href={route("admin.produk.edit", produk.id)}
                     >
                         <FaEdit className="w-4 h-4 mr-1 " />
                         Edit Data

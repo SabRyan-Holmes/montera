@@ -29,10 +29,10 @@ export default {
                 transparent: "transparent",
                 current: "currentColor",
                 "primary-dark": "oklch(50% 0.134 242.749)",
-                secondary: "#fb923c",
                 oren: "#fb923c",
                 hijau: "#22c55e",
                 bermuda: "#16BDCA",
+                "disabled-color": "#9ca3af",
             },
             fontFamily: {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
@@ -58,6 +58,7 @@ export default {
             },
             fontSize: {
                 xs: "13px",
+                xxs: "11px",
             },
             width: {
                 a4: "210mm",
@@ -77,7 +78,7 @@ export default {
                     "primary-content": "#ffffff",
 
                     // Biru Gelap / Navy (Warna standar perbankan agar kontras dengan emas)
-                    secondary: "#1E293B",
+                    secondary: "#052f4a",
                     "secondary-content": "#ffffff",
 
                     // Oranye Cerah (untuk tombol aksi/interaksi agar tidak monoton)
@@ -92,12 +93,11 @@ export default {
                     // Warna Status (Standar UI)
                     info: "#3ABFF8",
                     success: "#10B981", // Hijau Emerald lebih mewah dibanding #00ff00
-                    warning: "#FBBF24",
+                    warning: "#EF4444",
                     error: "#EF4444",
                 },
 
-                  bps_theme: {
-
+                bps_theme: {
                     primary: "#2D95C9",
 
                     secondary: "#fb923c",
@@ -119,7 +119,6 @@ export default {
                     warning: "oklch(64.5% 0.246 16.439)",
 
                     error: "#ff0000",
-
                 },
             },
         ],

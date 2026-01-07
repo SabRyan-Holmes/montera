@@ -37,7 +37,7 @@ export default function ShowModal({
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-14 left-1/2">
                     <SecondaryButton
                         asLink
-                        href={route("shared.produk.edit", produk.id)}
+                        href={route("pegawai.target.edit", produk.id)}
                     >
                         <FaEdit className="w-4 h-4 mr-1 " />
                         Edit Data

@@ -1,185 +1,148 @@
-import { Graph, RadialChart } from "@/Components";
+import { RadialChart } from "@/Components";
 import React from "react";
-import { IconContext } from "react-icons";
-import { BsFillSendArrowUpFill } from "react-icons/bs";
-import { FaUserLarge, FaUsers, FaUserTie } from "react-icons/fa6";
-import { HiDocumentDuplicate } from "react-icons/hi2";
-import { MdErrorOutline, MdOutlineAssignmentInd, MdWorkHistory } from "react-icons/md";
-import { RiArchive2Fill, RiVerifiedBadgeFill } from "react-icons/ri";
+import {
+    HiOutlineDocumentPlus,
+    HiOutlineCheckBadge,
+    HiOutlineClipboardDocumentList,
+    HiOutlineExclamationTriangle,
+    HiOutlineCurrencyDollar,
+} from "react-icons/hi2";
+import { TbTargetArrow } from "react-icons/tb";
 
 export default function PegawaiContent({ dataByRole }) {
-    const { PAKCount, pengusulanPAKCount, prosesPAKCount, arsipDokumenCount } =
-        dataByRole;
+    console.log("Data by Role :", dataByRole);
+    const {
+        totalTarget,
+        akuisisiVerified,
+        akuisisiRejected,
+        totalAkuisisi,
+        transaksiCount,
+        totalNominalRealisasi,
+        progresTargetNasabah,
+        progresTargetNominal,
+    } = dataByRole;
+
+    const formatRupiah = (val) =>
+        new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+        }).format(val);
+
     return (
-        <main className="w-full mx-auto px-7 ">
-            {/* Grid */}
-            <section className="grid grid-cols-1 gap-6 px-4 py-8 md:grid-cols-3">
-                {/* Card 1: Total Target */}
-                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
-                    <div className="p-4 bg-sky-600">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "35px" }}
-                        >
-                            <MdOutlineAssignmentInd />
-                        </IconContext.Provider>
+        <main className="w-full py-6 mx-auto px-7">
+            {/* Row 1: Status Performa (Cards Besar) */}
+            <section className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
+                {/* Total Realisasi Sah (Nominal) */}
+                <div className="flex items-center p-6 bg-white border border-l-8 shadow-sm border-primary rounded-xl border-l-primary">
+                    <div className="p-3 rounded-full bg-primary/10">
+                        <HiOutlineCurrencyDollar className="w-10 h-10 text-primary" />
                     </div>
-                    <div className="px-4 py-2 text-gray-700">
-                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                            Target Saya
+                    <div className="ml-5">
+                        <h3 className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                            Realisasi Nominal
                         </h3>
-                        <p className="text-2xl font-bold">
-                            {dataByRole["totalTarget"]}{" "}
-                            <span className="text-sm font-normal">
-                                Indikator
+                        <p className="text-2xl font-black text-secondary">
+                            {formatRupiah(totalNominalRealisasi)}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Status Verified vs Target */}
+                <div className="flex items-center p-6 bg-white border border-l-8 shadow-sm border-success rounded-xl border-l-success">
+                    <div className="p-3 rounded-full bg-success/10">
+                        <HiOutlineCheckBadge className="w-10 h-10 text-success" />
+                    </div>
+                    <div className="ml-5">
+                        <h3 className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                            Transaksi Sah
+                        </h3>
+                        <p className="text-2xl font-black text-secondary">
+                            {transaksiCount}{" "}
+                            <span className="text-sm font-normal text-gray-400">
+                                Poin
                             </span>
                         </p>
                     </div>
                 </div>
 
-                {/* Card 2: Akuisisi Verified (Poin Sah) */}
-                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
-                    <div className="p-4 bg-emerald-500">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "35px" }}
-                        >
-                            <RiVerifiedBadgeFill />
-                        </IconContext.Provider>
+                {/* Status Kerja Lapangan */}
+                <div className="flex items-center p-6 bg-white border border-l-8 shadow-sm border-secondary rounded-xl border-l-secondary">
+                    <div className="p-3 rounded-full bg-secondary/10">
+                        <TbTargetArrow className="w-10 h-10 text-secondary" />
                     </div>
-                    <div className="px-4 py-2 text-gray-700">
-                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                            Verified (Sah)
+                    <div className="ml-5">
+                        <h3 className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                            Target Aktif
                         </h3>
-                        <p className="text-2xl font-bold">
-                            {dataByRole["akuisisiVerified"]}{" "}
-                            <span className="text-sm font-normal">Nasabah</span>
-                        </p>
-                    </div>
-                </div>
-
-                {/* Card 3: Akuisisi Rejected (Butuh Revisi) */}
-                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
-                    <div className="p-4 bg-rose-500">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "35px" }}
-                        >
-                            <MdErrorOutline />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 py-2 text-gray-700">
-                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                            Butuh Revisi
-                        </h3>
-                        <p className="text-2xl font-bold">
-                            {dataByRole["akuisisiRejected"]}{" "}
-                            <span className="text-sm font-normal">Laporan</span>
-                        </p>
-                    </div>
-                </div>
-
-                {/* Card 4: Total Laporan */}
-                <div className="flex items-center overflow-hidden bg-white border shadow-sm rounded-xl">
-                    <div className="p-4 bg-slate-600">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "35px" }}
-                        >
-                            <HiDocumentDuplicate />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 py-2 text-gray-700">
-                        <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                            Total Input
-                        </h3>
-                        <p className="text-2xl font-bold">
-                            {dataByRole["totalAkuisisi"]}
+                        <p className="text-2xl font-black text-secondary">
+                            {totalTarget}{" "}
+                            <span className="text-sm font-normal text-gray-400">
+                                Item
+                            </span>
                         </p>
                     </div>
                 </div>
             </section>
-            <div className="flex w-full mt-10 ">
-                <section className="w-full">
-                    <RadialChart
-                        title={"Data 1"}
-                        data={dataByRole["pengusulanPAKGraph"]}
-                        chartId={"pengusulan-pak"}
-                    />
-                </section>
 
-                <section className="w-full">
+            {/* Row 2: Statistik Operasional */}
+            <section className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+                <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
+                    <HiOutlineDocumentPlus className="mr-3 text-2xl text-primary" />
+                    <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase">
+                            Total Laporan
+                        </p>
+                        <p className="text-xl font-bold">{totalAkuisisi}</p>
+                    </div>
+                </div>
+                <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
+                    <HiOutlineClipboardDocumentList className="mr-3 text-2xl text-sky-500" />
+                    <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase">
+                            Laporan Verified
+                        </p>
+                        <p className="text-xl font-bold">{akuisisiVerified}</p>
+                    </div>
+                </div>
+                <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
+                    <HiOutlineExclamationTriangle className="mr-3 text-2xl text-error" />
+                    <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase">
+                            Ditolak/Revisi
+                        </p>
+                        <p className="text-xl font-bold text-error">
+                            {akuisisiRejected}
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Row 3: Visual Progress */}
+            {/* Row 3: Visual Progress */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="p-6 bg-white border shadow-sm rounded-xl">
                     <RadialChart
-                        title={"Data 2"}
-                        data={dataByRole["prosesPAKGraph"]}
-                        chartId={"proses-pak"}
+                        title={"Progress Nasabah (NOA)"}
+                        // Kirim dalam bentuk Objek agar ada Labelnya
+                        data={{
+                            Realisasi: progresTargetNasabah ?? 0,
+                            "Sisa Target": 100 - (progresTargetNasabah ?? 0),
+                        }}
+                        chartId={"chart-noa-pegawai"}
                     />
-                </section>
+                </div>
+                <div className="p-6 bg-white border shadow-sm rounded-xl">
+                    <RadialChart
+                        title={"Progres Volume (Nominal)"}
+                        data={{
+                            Tercapai: progresTargetNominal ?? 0,
+                            Sisa: 100 - (progresTargetNominal ?? 0),
+                        }}
+                        chartId={"chart-vol-pegawai"}
+                    />
+                </div>
             </div>
-            {/* Grid */}
-            {/* <section className="grid items-center justify-center grid-cols-2 gap-5 my-auto ">
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <HiDocumentDuplicate className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total Arsip Dokumen
-                        </h3>
-                        <p className="text-3xl">{pengusulanCount ?? 0}</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <HiDocumentDuplicate className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total Jumlah Riwayat PAK
-                        </h3>
-                        <p className="text-3xl">{PAKCount ?? 0}</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <HiDocumentDuplicate className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total Jumlah PAK diproses
-                        </h3>
-                        <p className="text-3xl">{pengajuanCount ?? 0}</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center overflow-hidden bg-white border shadow rounded-xl">
-                    <div className="p-4 bg-hijau">
-                        <IconContext.Provider
-                            value={{ color: "white", size: "50px" }}
-                        >
-                            <HiDocumentDuplicate className="w-12 h-full" />
-                        </IconContext.Provider>
-                    </div>
-                    <div className="px-4 text-gray-700">
-                        <h3 className="text-sm tracking-wider">
-                            Total Jumlah PAK diproses
-                        </h3>
-                        <p className="text-3xl">{arsipDokumenCount ?? 0}</p>
-                    </div>
-                </div>
-            </section> */}
-
-            {/* end of content */}
         </main>
     );
 }

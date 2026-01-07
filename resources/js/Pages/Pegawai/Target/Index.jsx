@@ -40,7 +40,7 @@ export default function Index({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("shared.target.destroy", id), {
+                router.delete(route("admin.target.destroy", id), {
                     onSuccess: () => {
                         document.getElementById(activeModal).close();
                     },
@@ -87,38 +87,36 @@ export default function Index({
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
-                        {/* <FilterSearchCustom
-                            routeName={`/master/target`}
+                        <FilterSearchCustom
+                            routeName={`/admin/target`}
                             initialFilters={{
-                                byKategori: filtersReq.kategori,
+                                byTipe: filtersReq.tipe,
                                 byStatus: filtersReq.status,
-                                // minPoin: filtersReq.minPoin,
                             }}
                             filtersConfig={[
                                 {
-                                    name: "byKategori",
-                                    label: "Kategori",
-                                    // TODO: fetch options dari backend
-                                    options: filtersList.kategori,
+                                    name: "byTipe",
+                                    label: "Tipe Target ",
+                                    options: filtersList.tipe_target,
                                 },
 
                                 {
-                                    name: "byStatus",
-                                    label: "Status ",
-                                    options: filtersList.status,
+                                    name: "byPeriode",
+                                    label: "Periode ",
+                                    options: filtersList.periode,
                                 },
                             ]}
                             searchConfig={{
                                 name: "search",
                                 label: "Nama Target",
-                                placeholder: "Ketik Nama Target..",
+                                placeholder: "Ketik Nama Pegawai/Produk..",
                                 initialValue: filtersReq.search,
                             }}
-                        /> */}
+                        />
                     </div>
                 </section>
 
-                <section className="pt-3 overflow-x-auto">
+                <section className="pt-3">
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -129,236 +127,227 @@ export default function Index({
 
                     {targets.data.length > 0 ? (
                         <>
-                            <table className="table overflow-x-scroll text-xs text-center table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
-                                    <tr className="text-center">
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            width="5%"
-                                            className=" rounded-tl-xl"
-                                        >
-                                            No
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Nama Indikator
-                                        </th>
-
-                                        <th scope="col" width="15%">
-                                            Nama Produk
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Nilai Target
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Tipe Target
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Periode
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Tahun
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Tanggal Mulai
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Tanggal Selesai
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Deadline Pencapaian
-                                        </th>
-                                        {/* <th scope="col" width="15%">
-                                            Keterangan
-                                        </th> */}
-
-                                        <>
+                            <div className="w-full overflow-x-auto scrollbar-primary ">
+                                <table className="table text-xs text-center table-bordered">
+                                    <thead className="text-sm font-medium text-white bg-primary ">
+                                        <tr className="text-center">
                                             <th
                                                 scope="col"
-                                                width="10%"
-                                                className={
-                                                    "text-center cursor-pointer " +
-                                                    (!showLastUpdated
-                                                        ? "rounded-tr-xl"
-                                                        : "")
-                                                }
+                                                dir="rtl"
+                                                width="5%"
+                                                className=" rounded-tl-xl"
                                             >
-                                                <div className="flex items-center justify-center gap-2">
-                                                    {showLastUpdated ? (
-                                                        <>
-                                                            <button
-                                                                className="action-btn hover:scale-[1.15] hover:bg-bermuda"
-                                                                onClick={() =>
-                                                                    setShowLastUpdated(
-                                                                        !showLastUpdated
-                                                                    )
-                                                                }
-                                                            >
-                                                                <FaEyeSlash className="mr-1 text-white " />
-                                                                Diperbarui
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <div className="flex items-center justify-center gap-2">
-                                                            <button
-                                                                className=" action-btn hover:scale-125 hover:bg-bermuda"
-                                                                onClick={() =>
-                                                                    setShowLastUpdated(
-                                                                        !showLastUpdated
-                                                                    )
-                                                                }
-                                                            >
-                                                                <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
-                                                            </button>
-                                                            <span className="">
-                                                                Aksi
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                No
                                             </th>
-                                            {showLastUpdated && (
+                                            <th scope="col">Nama Indikator</th>
+
+                                            <th scope="col">Nama Produk</th>
+                                            <th scope="col">Nilai Target</th>
+                                            <th scope="col">Tipe Target</th>
+                                            <th scope="col">Periode</th>
+                                            <th scope="col">Tahun</th>
+                                            <th scope="col">Tanggal Mulai</th>
+                                            <th scope="col">Tanggal Selesai</th>
+                                            <th scope="col">
+                                                Deadline Pencapaian
+                                            </th>
+
+                                            <>
                                                 <th
                                                     scope="col"
-                                                    className="text-center rounded-tr-xl"
-                                                >
-                                                    Aksi
-                                                </th>
-                                            )}
-                                        </>
-                                    </tr>
-                                </thead>
-                                <tbody className="overflow-x-scroll">
-                                    {targets.data?.map((target, i) => (
-                                        <tr key={target.id}>
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-
-                                            {/* Nama Indikator */}
-                                            <td className="relative text-center group">
-                                                <span className="block">
-                                                    {target.indikator?.nama_kpi}
-                                                </span>
-                                                <span className="badge-xs-secondary">
-                                                    {
-                                                        target.indikator
-                                                            ?.kode_indikator
+                                                    width="10%"
+                                                    className={
+                                                        "text-center cursor-pointer " +
+                                                        (!showLastUpdated
+                                                            ? "rounded-tr-xl"
+                                                            : "")
                                                     }
-                                                </span>
-                                            </td>
-
-                                            {/* Nama Produk */}
-                                            <td>
-                                                <span className="block">
-                                                    {target.produk
-                                                        ?.nama_produk ?? "-"}
-                                                </span>
-                                            </td>
-
-                                            {/* Nilai Target */}
-                                            <td>
-                                                <span className="block">
-                                                    {target.nilai_target}
-                                                </span>
-                                            </td>
-
-                                            {/* Tipe Target */}
-                                            <td>
-                                                <span className="block capitalize">
-                                                    {target.tipe_target}
-                                                </span>
-                                            </td>
-
-                                            {/* Periode */}
-                                            <td>
-                                                <span className="block capitalize">
-                                                    {target.periode}
-                                                </span>
-                                            </td>
-
-                                            {/* Tahun */}
-                                            <td>
-                                                <span className="block">
-                                                    {target.tahun}
-                                                </span>
-                                            </td>
-
-                                            {/* Tanggal Mulai */}
-                                            <td>
-                                                <span className="block">
-                                                    {moment(
-                                                        target.tanggal_mulai
-                                                    ).format("LL")}
-                                                </span>
-                                            </td>
-
-                                            {/* Tanggal Selesai */}
-                                            <td>
-                                                <span className="block">
-                                                    {moment(
-                                                        target.tanggal_selesai
-                                                    ).format("LL")}
-                                                </span>
-                                            </td>
-
-                                            {/* Deadline Pencapaian */}
-                                            <td>
-                                                <span className="block">
-                                                    {moment(
-                                                        target.deadline_pencapaian
-                                                    ).format("LL")}
-                                                </span>
-                                            </td>
-
-                                            {/* Last Updated */}
-                                            <td
-                                                className={`font-normal text-center ${
-                                                    !showLastUpdated && "hidden"
-                                                }`}
-                                            >
-                                                <span className="block">
-                                                    {moment(
-                                                        target.updated_at
-                                                    ).format("LL")}
-                                                </span>
-                                                <span className="block text-[12px]">
-                                                    {moment(
-                                                        target.updated_at
-                                                    ).fromNow()}
-                                                </span>
-                                            </td>
-
-                                            {/* Aksi */}
-                                            <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                <div className="relative inline-flex group">
-                                                    <button
-                                                        onClick={() => {
-                                                            setActiveModal(
-                                                                `Show-${target.id}`
-                                                            );
-                                                            document
-                                                                .getElementById(
-                                                                    `Show-${target.id}`
-                                                                )
-                                                                .showModal();
-                                                        }}
-                                                        className="action-btn group/button action-btn-success "
+                                                >
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        {showLastUpdated ? (
+                                                            <>
+                                                                <button
+                                                                    className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                                    onClick={() =>
+                                                                        setShowLastUpdated(
+                                                                            !showLastUpdated
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <FaEyeSlash className="mr-1 text-white " />
+                                                                    Diperbarui
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <div className="flex items-center justify-center gap-2">
+                                                                <button
+                                                                    className=" action-btn hover:scale-125 hover:bg-bermuda"
+                                                                    onClick={() =>
+                                                                        setShowLastUpdated(
+                                                                            !showLastUpdated
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
+                                                                </button>
+                                                                <span className="">
+                                                                    Aksi
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </th>
+                                                {showLastUpdated && (
+                                                    <th
+                                                        scope="col"
+                                                        className="text-center rounded-tr-xl"
                                                     >
-                                                        <FaEye className="scale-125 group-hover/button:fill-white" />
-                                                    </button>
-                                                </div>
-                                            </td>
+                                                        Aksi
+                                                    </th>
+                                                )}
+                                            </>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="overflow-x-scroll">
+                                        {targets.data?.map((target, i) => (
+                                            <tr key={target.id}>
+                                                <td className="text-center">
+                                                    {i + 1}
+                                                </td>
+
+                                                {/* Nama Indikator */}
+                                                <td className="relative text-center group">
+                                                    <span className="block">
+                                                        {
+                                                            target.indikator
+                                                                ?.nama_kpi
+                                                        }
+                                                    </span>
+                                                    <span className="badge-xs-accent">
+                                                        {
+                                                            target.indikator
+                                                                ?.satuan
+                                                        }
+                                                    </span>
+                                                </td>
+
+                                                {/* Nama Produk */}
+                                                <td>
+                                                    <span className="block">
+                                                        {target.produk
+                                                            ?.nama_produk ??
+                                                            "-"}
+                                                    </span>
+                                                </td>
+
+                                                {/* Nilai Target */}
+                                                <td>
+                                                    <span className="block">
+                                                        {target.nilai_target}
+                                                    </span>
+                                                </td>
+
+                                                {/* Tipe Target */}
+                                                <td>
+                                                    <span className="block capitalize">
+                                                        {target.tipe_target}
+                                                    </span>
+                                                </td>
+
+                                                {/* Periode */}
+                                                <td>
+                                                    <span className="block capitalize">
+                                                        {target.periode}
+                                                    </span>
+                                                </td>
+
+                                                {/* Tahun */}
+                                                <td>
+                                                    <span className="block">
+                                                        {target.tahun}
+                                                    </span>
+                                                </td>
+
+                                                {/* Tanggal Mulai */}
+                                                <td>
+                                                    <span className="block">
+                                                        {moment(
+                                                            target.tanggal_mulai
+                                                        ).format("LL")}
+                                                    </span>
+                                                </td>
+
+                                                {/* Tanggal Selesai */}
+                                                <td>
+                                                    <span className="block">
+                                                        {moment(
+                                                            target.tanggal_selesai
+                                                        ).format("LL")}
+                                                    </span>
+                                                </td>
+
+                                                {/* Deadline Pencapaian */}
+                                                <td>
+                                                    <span className="block">
+                                                        {moment(
+                                                            target.deadline_pencapaian
+                                                        ).format("LL")}
+                                                    </span>
+                                                </td>
+
+                                                {/* Last Updated */}
+                                                <td
+                                                    className={`font-normal text-center ${
+                                                        !showLastUpdated &&
+                                                        "hidden"
+                                                    }`}
+                                                >
+                                                    <span className="block">
+                                                        {moment(
+                                                            target.updated_at
+                                                        ).format("LL")}
+                                                    </span>
+                                                    <span className="block text-[12px]">
+                                                        {moment(
+                                                            target.updated_at
+                                                        ).fromNow()}
+                                                    </span>
+                                                </td>
+
+                                                {/* Aksi */}
+                                                <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                    <div className="relative inline-flex group">
+                                                        <button
+                                                            onClick={() => {
+                                                                setActiveModal(
+                                                                    `Show-${target.id}`
+                                                                );
+                                                                document
+                                                                    .getElementById(
+                                                                        `Show-${target.id}`
+                                                                    )
+                                                                    .showModal();
+                                                            }}
+                                                            className="action-btn group/button action-btn-success "
+                                                        >
+                                                            <span className="block mr-1 group-hover/button:text-white">Lihat</span>
+                                                            <FaEye className="scale-125 group-hover/button:fill-white" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                             {/* Pagination */}
                             <Pagination
                                 datas={targets}
-                                urlRoute={`/pegawai/target`}
+                                urlRoute={`/target-pegawai`}
                                 filters={{
                                     search: filtersReq.search,
+                                    byTipe: filtersReq.tipe_target,
+                                    byPeriode: filtersReq.periode,
                                 }}
                             />
                         </>

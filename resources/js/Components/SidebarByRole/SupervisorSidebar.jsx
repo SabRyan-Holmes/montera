@@ -48,12 +48,12 @@ export default function SupervisorSidebar() {
                 className="z-20 mx-[18px] -mb-1"
             >
                 <HiOutlineUserGroup />
-                Monitoring Pegawai
+                Performa Tim
             </SidebarLink>
 
             <SidebarLink
-                href={route("spv.team")}
-                active={route().current("main-log")}
+                href={route("spv.report")}
+                active={route().current("spv.report")}
                 className="z-20 mx-[18px] -mb-1"
             >
                 <HiOutlineDocumentChartBar />
@@ -96,7 +96,7 @@ export default function SupervisorSidebar() {
             >
                 <span className="flex items-center ">
                     <FaDatabase className="mr-2" />
-                    Data Master
+                    Main Data
                 </span>
             </SidebarLinkCollapse>
 

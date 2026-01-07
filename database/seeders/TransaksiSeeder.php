@@ -6,47 +6,47 @@ use App\Models\Akuisisi;
 use App\Models\Indikator;
 use App\Models\Produk;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class TransaksiSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Ambil data pendukung secara acak agar relasinya tersambung
-        $users = User::all();
-        $produks = Produk::all();
+        // 1. Ambil data pendukung
         $indikators = Indikator::all();
+        // Ambil SEMUA akuisisi yang verified (ini adalah sumber kebenaran/source of truth)
         $akuisisis = Akuisisi::where('status_verifikasi', 'verified')->get();
 
-        // Cek jika data master kosong agar tidak error
-        if ($users->isEmpty() || $produks->isEmpty() || $indikators->isEmpty()) {
-            $this->command->error('Data User, Produk, atau Indikator kosong. Jalankan seeder master dulu!');
+        if ($akuisisis->isEmpty() || $indikators->isEmpty()) {
+            $this->command->error('Data Akuisisi Verified atau Indikator kosong.');
             return;
         }
 
-        // Bikin 7 data contoh
-        for ($i = 0; $i < 7; $i++) {
-            $user = $users->random();
-            $produk = $produks->random();
-            $indikator = $indikators->random();
+        // 2. Loop berdasarkan data AKUISISI, bukan loop angka random
+        // Kita ambil 17 sampel acak dari akuisisi yang ada
+        $sampleAkuisisis = $akuisisis->count() > 17
+            ? $akuisisis->random(17)
+            : $akuisisis; // Kalau datanya kurang dari 17, pakai semua yang ada
 
-            // Kita simulasi nominal random antara 5jt - 50jt untuk realisasi
-            $nominal = fake()->randomFloat(2, 5000000, 50000000);
+        foreach ($sampleAkuisisis as $akuisisi) {
+            // Ambil indikator secara acak (atau sesuaikan logika bisnis jika indikator terikat produk)
+            // Agar lebih akurat, ambil indikator yang sesuai dengan produk akuisisi tersebut
+            $indikator = $indikators->where('produk_id', $akuisisi->produk_id)->first();
+
+            // Fallback jika tidak ada indikator spesifik, ambil random (untuk dummy data)
+            if (!$indikator) {
+                $indikator = $indikators->random();
+            }
 
             DB::table('transaksis')->insert([
-                'user_id' => $user->id,
-                'produk_id' => $produk->id,
+                'user_id' => $akuisisi->user_id, // AMBIL DARI AKUISISI
+                'produk_id' => $akuisisi->produk_id, // AMBIL DARI AKUISISI
                 'indikator_id' => $indikator->id,
-                // Kita sambungkan ke ID akuisisi jika ada, jika tidak biarkan null
-                'akuisisi_id' => $akuisisis->isNotEmpty() ? $akuisisis->random()->id : null,
+                'akuisisi_id' => $akuisisi->id, // PASTI ADA (NOT NULL)
 
-                'nilai_realisasi' => $nominal,
-                'poin_didapat' => rand(10, 100), // Simulasi skor poin KPI
+                'nilai_realisasi' => $akuisisi->nominal_realisasi, // SINKRON DENGAN AKUISISI
+                'poin_didapat' => rand(10, 100),
                 'bulan' => date('n'),
                 'tahun' => date('Y'),
                 'created_at' => now(),
@@ -54,6 +54,6 @@ class TransaksiSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('7 Data Transaksi berhasil dibuat dan relasi tersambung!');
+        $this->command->info('Data Transaksi berhasil dibuat dari Akuisisi Verified!');
     }
 }

@@ -10,8 +10,11 @@ use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Akuisisi;
 use App\Models\Divisi;
+use App\Models\Indikator;
+use App\Models\Jabatan;
 use App\Models\Produk;
 use App\Models\Target;
+use App\Models\Transaksi;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -32,48 +35,148 @@ class DashboardController extends Controller
     {
         // Inisialisasi role dan nip
         $nip = $this->user->nip;
-        $namaJabatan = $this->user->jabatan->nama_jabatan;
-        $isAtasan = in_array($namaJabatan, ["Administrator", "Kepala Cabang", "Supervisor"]);
+        $role = $this->user->jabatan->nama_jabatan;
+        $isAtasan = in_array($role, ["Administrator", "Kepala Cabang", "Supervisor"]);
 
         $dataByRole = null;
-        $dataGraph = null;
 
-        if ($isAtasan) {
+        // Pastikan ini ada di AdminController
+        if ($role === "Administrator") {
             $dataByRole = [
-                'produkCount' => Produk::count(),
-                'akuisisiCount' => Akuisisi::count(),
-                'userCount' => User::count(),
-                'targetCount' => Target::count(),
-                'divisiCount' => Divisi::count(),
-                'produkGraph' => [
-                    'Diusulkan' => Produk::where('kategori', 'diusulkan')->count(),
-                    'Direvisi' => Produk::where('kategori', 'direvisi')->count(),
-                    'Ditolak' => Produk::where('kategori', 'ditolak')->count(),
+                // GROUP 1: Quick Stats (Counter Sederhana)
+                'masterData' => [
+                    'produk'    => Produk::count(),
+                    'user'      => User::count(),
+                    'divisi'    => Divisi::count(),
+                    'jabatan'   => Jabatan::count(),
+                    'indikator' => Indikator::count(),
                 ],
-                'targetGraph' => [
-                    'Diajukan' => Target::where('nilai_target', 'diajukan')->count(),
-                    'Direvisi' => Target::where('nilai_target', 'direvisi')->count(),
-                    'Ditolak' => Target::where('nilai_target', 'ditolak')->count(),
+
+                // GROUP 2: Operational Stats (Highlight Utama)
+                'operationalData' => [
+                    'total_target'    => Target::count(),
+                    'total_akuisisi'  => Akuisisi::count(),
+                    'total_transaksi' => Transaksi::count(),
                 ],
+
+                // GROUP 3: Charts Data
+                'akuisisiGraph' => [
+                    'Verified' => Akuisisi::where('status_verifikasi', 'verified')->count(),
+                    'Pending'  => Akuisisi::where('status_verifikasi', 'pending')->count(),
+                    'Rejected' => Akuisisi::where('status_verifikasi', 'rejected')->count(),
+                ],
+
+                'userDivisiGraph' => Divisi::withCount('users')->get()->map(function ($divisi) {
+                    return [
+                        'name'  => $divisi->nama_divisi,
+                        'count' => $divisi->users_count
+                    ];
+                }),
+
+                // GROUP 4: Recent Activities (Opsional tapi nice to have)
+                'recentActivities' => Akuisisi::with(['pegawai', 'produk'])
+                    ->latest()
+                    ->take(5)
+                    ->get()
+                    ->map(function ($a) {
+                        return [
+                            'id' => $a->id,
+                            'user' => $a->pegawai->name,
+                            'produk' => $a->produk->nama_produk,
+                            'status' => $a->status_verifikasi,
+                            'time' => $a->created_at->diffForHumans()
+                        ];
+                    }),
             ];
-        } else {
+        } else if ($role === "Pegawai") {
             $dataByRole = [
+                // Counter Dasar
                 'totalTarget' => Target::where('user_id', $this->user->id)->count(),
+                'akuisisiVerified' => Akuisisi::where('user_id', $this->user->id)->where('status_verifikasi', 'verified')->count(),
+                'akuisisiRejected' => Akuisisi::where('user_id', $this->user->id)->where('status_verifikasi', 'rejected')->count(),
                 'totalAkuisisi' => Akuisisi::where('user_id', $this->user->id)->count(),
-                'akuisisiVerified' => Akuisisi::where('user_id', $this->user->id)
-                    ->where('status_verifikasi', 'verified')->count(),
-                'akuisisiRejected' => Akuisisi::where('user_id', $this->user->id)
-                    ->where('status_verifikasi', 'rejected')->count(),
-                'akuisisiPending' => Akuisisi::where('user_id', $this->user->id)
-                    ->where('status_verifikasi', 'pending')->count(),
+                'transaksiCount' => Transaksi::where('user_id', $this->user->id)->count(), // Total Transaksi Sah
+
+                // Perbandingan Nominal (Penting!)
+                'totalNominalTarget' => Target::where('user_id', $this->user->id)->sum('nilai_target'),
+                'totalNominalRealisasi' => Transaksi::where('user_id', $this->user->id)->sum('nilai_realisasi'),
+
+                // Data Grafik Progres
+                'progresTargetNasabah' => 75, // (Total Transaksi / Total Target) * 100
+                'progresTargetNominal' => 60, // (Total Realisasi / Total Target Nominal) * 100
+            ];
+        } else if ($role === "Supervisor") {
+            $divisiId = $this->user->divisi_id; // Ambil ID divisi supervisor
+
+            $dataByRole = [
+                // Antrean Verifikasi: Cari Akuisisi yang 'pegawai'-nya satu divisi dengan Supervisor
+                'pendingVerification' => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
+                    $q->where('divisi_id', $divisiId);
+                })->where('status_verifikasi', 'pending')->count(),
+
+                // Total Anggota Tim dalam satu Divisi
+                'totalTeamMembers'    => User::where('divisi_id', $divisiId)->count(),
+
+                // Laporan yang diverifikasi oleh Supervisor ini (berdasarkan verifikator_id/id supervisor)
+                'verifiedToday'       => Akuisisi::where('verifikator_id', $this->user->id)
+                    ->where('status_verifikasi', 'verified')
+                    ->whereDate('updated_at', now())->count(),
+
+                // Total Target Tim (Relasi Target biasanya ke 'user', sesuaikan jika nama relasinya berbeda)
+                'totalTeamTarget'     => Target::whereHas('user', function ($q) use ($divisiId) {
+                    $q->where('divisi_id', $divisiId);
+                })->count(),
+
+                // Data Grafik: Status laporan dari anggota tim di divisi tersebut
+                'verificationRateGraph' => [
+                    'Verified' => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
+                        $q->where('divisi_id', $divisiId);
+                    })->where('status_verifikasi', 'verified')->count(),
+                    'Pending'  => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
+                        $q->where('divisi_id', $divisiId);
+                    })->where('status_verifikasi', 'pending')->count(),
+                    'Rejected' => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
+                        $q->where('divisi_id', $divisiId);
+                    })->where('status_verifikasi', 'rejected')->count(),
+                ],
+
+                // Progress Divisi (Gunakan data agregat tim)
+                'teamProgressGraph' => [
+                    'Tercapai' => 65,
+                    'Sisa'     => 35
+                ]
+            ];
+        } else if ($role === "Kepala Cabang") {
+            $dataByRole = [
+                // Statistik Utama Cabang
+                'totalRealisasiCabang' => Transaksi::sum('nilai_realisasi'),
+                'totalTargetCabang'    => Target::sum('nilai_target'),
+                'totalNasabahCabang'   => Transaksi::count(), // Total NOA sah
+                'topPerformer'         => User::role('Pegawai')
+                    ->withCount('transaksi')
+                    ->orderBy('transaksi_count', 'desc')
+                    ->first(),
+
+                // Data Grafik: Capaian per Divisi (Bar Chart)
+                'divisiPerformanceGraph' => Divisi::with(['users.transaksi'])->get()->map(function ($divisi) {
+                    return [
+                        'name' => $divisi->nama_divisi,
+                        'realisasi' => $divisi->users->flatMap->transaksi->sum('nilai_realisasi'),
+                        'target' => $divisi->users->flatMap->target->sum('nilai_target'),
+                    ];
+                }),
+
+                // Data Grafik: Progres Keseluruhan Cabang (Radial)
+                'cabangProgressGraph' => [
+                    'Tercapai' => 85, // Persentase total realisasi vs target cabang
+                    'Sisa'     => 15
+                ]
             ];
         }
 
         return Inertia::render('Shared/Dashboard/AuthDashboard', [
             'title' => 'Dashboard',
-            'dataGraph' => $dataGraph,
             'dataByRole' => $dataByRole,
-            'isAtasan' => $isAtasan,
         ]);
     }
 

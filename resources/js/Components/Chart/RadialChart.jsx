@@ -1,391 +1,122 @@
-import React, { useEffect, useState } from "react";
-import ColorCard from "./Partials/ColorCard";
-import { usePage } from "@inertiajs/react";
+import React, { useEffect, useRef } from "react";
+import ColorCard from "./Partials/ColorCard"; // Pastikan path ini benar
+import ApexCharts from "apexcharts";
 
 export default function RadialChart({ title, data, chartId }) {
-    const rawData = {
-        tes: 23,
-        tes2: 45,
-        tes3: 12,
-        tes4: 67,
-        tes5: 34,
-    };
+    // data dari props sekarang berupa Object: { 'Realisasi': 75, 'Sisa Target': 25 }
+    const chartRef = useRef(null);
 
-    // seriesData akan berisi [23, 45, 12, 67, 34]
-    const seriesData = Object.values(rawData);
-    const labels = Object.keys(rawData);
-    const colors = ["primary", "bermuda", "warning", "hijau", "hijau"];
+    // Mengambil nilai dan label dari props data
+    const seriesData = data ? Object.values(data) : [];
+    const labels = data ? Object.keys(data) : [];
+
+    // Warna konsisten dengan tema Bank XYZ Gold & Navy
+    const colors = ["#D4AF37", "#1E293B", "#10B981", "#EF4444"];
 
     useEffect(() => {
-        if (
-            document.getElementById(chartId) &&
-            typeof ApexCharts !== "undefined"
-        ) {
-            const chart = new ApexCharts(
-                document.querySelector(`#${chartId}`),
-                getChartOptions({ seriesData, labels })
-            );
-            chart.render();
+        const chartElement = document.getElementById(chartId);
 
-            // Cleanup
-            return () => {
-                chart.destroy();
-            };
-        }
-    }, [seriesData, chartId]);
-
-    const getChartOptions = ({ seriesData, labels }) => {
-        return {
-            series: seriesData,
-            labels: labels,
-            colors: [
-                "#2D95C9",
-                "#16BDCA",
-                "oklch(64.5% 0.246 16.439)",
-                "#22c55e",
-                "#00ff00",
-            ],
-            chart: {
-                height: "350px",
-                width: "100%",
-                type: "radialBar",
-                sparkline: {
+        if (chartElement && seriesData.length > 0) {
+            const options = {
+                series: seriesData,
+                labels: labels,
+                colors: colors,
+                chart: {
+                    height: "350px",
+                    width: "100%",
+                    type: "radialBar",
+                    sparkline: { enabled: true },
+                },
+                plotOptions: {
+                    radialBar: {
+                        track: { background: "#F3F4F6" },
+                        hollow: { size: "40%" },
+                        dataLabels: {
+                            name: { show: true, fontSize: "16px", offsetY: 10 },
+                            value: {
+                                show: true,
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                                formatter: (val) => val + "%"
+                            },
+                            total: {
+                                show: true,
+                                label: "Capaian",
+                                formatter: function (w) {
+                                    // Mengambil nilai pertama (biasanya realisasi)
+                                    return w.config.series[0] + "%";
+                                }
+                            }
+                        },
+                    },
+                },
+                legend: {
+                    show: true,
+                    position: "bottom",
+                    fontFamily: "Inter, sans-serif",
+                },
+                tooltip: {
                     enabled: true,
-                },
-            },
-            plotOptions: {
-                radialBar: {
-                    track: {
-                        background: "#E5E7EB",
-                    },
-                    dataLabels: {
-                        show: false,
-                    },
-                    hollow: {
-                        margin: 0,
-                        size: "32%",
-                    },
-                },
-            },
-            grid: {
-                show: false,
-                strokeDashArray: 4,
-                padding: {
-                    left: 2,
-                    right: 2,
-                    top: -23,
-                    bottom: -20,
-                },
-            },
-            legend: {
-                show: true,
-                position: "bottom",
-                fontFamily: "Inter, sans-serif",
-            },
-            tooltip: {
-                enabled: true,
-                x: {
-                    show: false,
-                },
-            },
-            yaxis: {
-                show: false,
-                labels: {
-                    formatter: function (value) {
-                        return value + "%";
-                    },
-                },
-            },
+                    y: { formatter: (val) => val + "%" }
+                }
+            };
+
+            if (chartRef.current) {
+                chartRef.current.destroy();
+            }
+
+            chartRef.current = new ApexCharts(chartElement, options);
+            chartRef.current.render();
+        }
+
+        return () => {
+            if (chartRef.current) chartRef.current.destroy();
         };
-    };
+    }, [data, chartId]);
 
-    const { auth } = usePage().props;
-    const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-    // Jika label undefined atau null, kembalikan string kosong agar tidak error
-    if (!label) return "";
-
-    return label.trim().toLowerCase().replace(/\s+/g, "-");
-}
-
-    const isPengusulan = title.includes("Pengusulan");
     return (
-        <section className="w-full max-w-sm p-4 mx-auto bg-white rounded-lg shadow-sm dark:bg-gray-800 md:p-6">
-            <div className="flex justify-between mb-3">
+        <section className="w-full max-w-sm p-4 mx-auto bg-white border shadow-sm rounded-xl border-slate-100 md:p-6">
+            <div className="flex justify-between mb-4">
                 <div className="flex items-center">
-                    <div className="flex items-center justify-center">
-                        <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
-                             {title}
-                        </h5>
-                        <svg
-                            data-popover-target={"chart-info" + chartId}
-                            data-popover-placement="bottom"
-                            className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1"
-                            ariaHidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm0 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm1-5.034V12a1 1 0 0 1-2 0v-1.418a1 1 0 0 1 1.038-.999 1.436 1.436 0 0 0 1.488-1.441 1.501 1.501 0 1 0-3-.116.986.986 0 0 1-1.037.961 1 1 0 0 1-.96-1.037A3.5 3.5 0 1 1 11 11.466Z" />
-                        </svg>
-                        <div
-                            data-popover
-                            id={"chart-info" + chartId}
-                            role="tooltip"
-                            className="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
-                        >
-                            <div className="p-3 space-y-2">
-                                <h3 className="font-semibold text-gray-900 dark:text-white">
-                                    {title}
-                                </h3>
-                                <p>
-                                    Lorem ipsum dolor, sit amet consectetur
-                                    adipisicing elit. Eveniet sequi reiciendis
-                                    qui, est, quam omnis tempore eum, molestiae
-                                    tenetur cum numquam? Cumque aut magnam enim!
-                                    Atque magni quaerat accusantium modi.
-                                </p>
-                                <h3 className="font-semibold text-gray-900 dark:text-white">
-                                    Ketentuan Persetujuan/Validasi {title}
-                                </h3>
-                                <p>
-                                    For each date bucket, the all-time volume of
-                                    activities is calculated. This means that
-                                    activities in period n contain all
-                                    activities up to period n, plus the
-                                    activities generated by your community in
-                                    period.
-                                </p>
-                                <a
-                                    href="#"
-                                    className="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline"
-                                >
-                                    Read more
-                                    <svg
-                                        className="w-2 h-2 ms-1.5 rtl:rotate-180"
-                                        ariaHidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 6 10"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m1 9 4-4-4-4"
-                                        />
-                                    </svg>
-                                </a>
-                            </div>
-                            <div data-popper-arrow></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                <div className="grid grid-cols-3 gap-3 ">
-                    {/* Baris pertama */}
-                    {seriesData.slice(0, 3).map((value, index) => (
-                        <ColorCard
-                            key={index}
-                            value={value}
-                            label={labels[index]}
-                            color={colors[index]}
-                        />
-                    ))}
-
-                    {/* Baris kedua - tengahin 2 item */}
-                    <div className="flex justify-center col-span-3 gap-3">
-                        <ColorCard
-                            value={seriesData[3]}
-                            label={labels[3]}
-                            color={colors[3]}
-                        />
-                        <ColorCard
-                            value={seriesData[4]}
-                            label={labels[4]}
-                            color={colors[4]}
-                        />
-                    </div>
-                </div>
-                {/* <button
-                    data-collapse-toggle={"more-details" + chartId}
-                    type="button"
-                    className="inline-flex items-center text-xs font-medium text-gray-500 hover:underline dark:text-gray-400"
-                >
-                    Lihat Detail
+                    <h5 className="text-xl font-bold leading-none text-secondary">
+                        {title}
+                    </h5>
                     <svg
-                        className="w-2 h-2 ms-1"
-                        ariaHidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 10 6"
+                        data-popover-target={"chart-info" + chartId}
+                        className="w-4 h-4 text-gray-400 cursor-pointer hover:text-primary ms-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
                     >
-                        <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m1 1 4 4 4-4"
-                        />
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM11 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm0-3a1 1 0 0 1-2 0V7a1 1 0 1 1 2 0v4Z" />
                     </svg>
-                </button> */}
-                <div
-                    id={"more-details" + chartId}
-                    className="hidden pt-3 mt-3 space-y-2 border-t border-gray-200 dark:border-gray-600"
-                >
-                    <dl className="flex items-center justify-between">
-                        <dt className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                            Rata-rata Proses Diselesaikan:
-                        </dt>
-                        <dd className="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-green-900 dark:text-green-300">
-                            <svg
-                                className="w-2.5 h-2.5 me-1.5"
-                                ariaHidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 10 14"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13V1m0 0L1 5m4-4 4 4"
-                                />
-                            </svg>
-                            57%
-                        </dd>
-                    </dl>
-                    <dl className="flex items-center justify-between">
-                        <dt className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                            Hari hingga tenggat berakhir:
-                        </dt>
-                        <dd className="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-gray-600 dark:text-gray-300">
-                            Tidak ada
-                        </dd>
-                    </dl>
-                    <dl className="flex items-center justify-between">
-                        <dt className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                            Proses Terakhir Diselesaikan:
-                        </dt>
-                        <dd className="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-gray-600 dark:text-gray-300">
-                            199928228292992
-                        </dd>
-                    </dl>
+                    {/* Popover Content */}
+                    <div data-popover id={"chart-info" + chartId} role="tooltip" className="absolute z-10 invisible inline-block p-3 text-sm text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72">
+                        <h3 className="mb-1 font-semibold text-secondary">Panduan Capaian</h3>
+                        <p className="text-xs">Persentase ini dihitung dari perbandingan total realisasi transaksi yang sudah sah (Verified) terhadap target yang ditetapkan di awal bulan.</p>
+                        <div data-popper-arrow></div>
+                    </div>
                 </div>
             </div>
 
-            {/* <!-- Radial Chart --> */}
-            <div className="py-6" id={chartId}></div>
+            {/* Render Color Cards (Legends) */}
+            <div className="grid grid-cols-2 gap-3 p-3 mb-4 rounded-lg bg-slate-50">
+                {seriesData.map((value, index) => (
+                    <ColorCard
+                        key={index}
+                        value={value + "%"}
+                        label={labels[index]}
+                        color={index === 0 ? "primary" : "secondary"}
+                    />
+                ))}
+            </div>
 
-            <div className="grid items-center justify-between grid-cols-1 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between pt-5">
-                    {/* <!-- Button --> */}
-                    <button
-                        id={"dropdownDefaultButton" + chartId}
-                        data-dropdown-toggle={"lastDaysdropdown" + chartId}
-                        data-dropdown-placement="bottom"
-                        className="inline-flex items-center text-sm font-medium text-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                        type="button"
-                    >
-                        Semua Hari
-                        <svg
-                            className="w-2.5 m-2.5 ms-1.5"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 10 6"
-                        >
-                            <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="m1 1 4 4 4-4"
-                            />
-                        </svg>
-                    </button>
-                    <div
-                        id={"lastDaysdropdown" + chartId}
-                        className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700"
-                    >
-                        <ul
-                            className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                            aria-labelledby={"dropdownDefaultButton" + chartId}
-                        >
-                            <li>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                >
-                                    Kemarin
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                >
-                                    Hari Ini
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                >
-                                    7 Hari Terakhir
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                >
-                                    30 Hari Terakhir
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                >
-                                    Semua Hari
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <a
-                        // href={
-                        //     isPengusulan && role !== "Pimpinan"
-                        //         ? route(
-                        //               `${formatRole(role)}.pengusulan-pak.index`
-                        //           )
-                        //         : route(`${formatRole(role)}.pengajuan.index`)
-                        // }
-                        className="inline-flex items-center px-3 py-2 text-sm font-semibold text-blue-600 uppercase rounded-lg hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                    >
-                        Progress report
-                        <svg
-                            className="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 6 10"
-                        >
-                            <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="m1 9 4-4-4-4"
-                            />
-                        </svg>
-                    </a>
-                </div>
+            {/* Radial Chart Container */}
+            <div id={chartId} className="min-h-[350px]"></div>
+
+            <div className="flex items-center justify-center pt-5 border-t border-slate-100">
+                <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                    Progres Realisasi Akuisisi
+                </span>
             </div>
         </section>
     );

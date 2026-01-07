@@ -24,11 +24,11 @@ class Akuisisi extends Model
 
     /**
      * Relasi ke User yang melakukan verifikasi (UC-11)
-     * Menggunakan foreign key 'verified_by'
+     * Menggunakan foreign key 'verifikator_id'
      */
     public function verifikator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'verified_by');
+        return $this->belongsTo(User::class, 'verifikator_id');
     }
 
 
@@ -38,14 +38,14 @@ class Akuisisi extends Model
     }
 
 
-     public function scopeFilter($query, array $filters): void
+    public function scopeFilter($query, array $filters): void
     {
         $query->when(
             $filters['search'] ?? false,
             fn($query, $search) =>
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_nasabah', 'like', '%' . $search . '%')
-                    ->orWhere('no_identitas_nasabah', 'like', '%' . $search . '%');
+            $query->whereHas('pegawai', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', '%' . $search . '%');
             })
         );
 
@@ -54,7 +54,5 @@ class Akuisisi extends Model
             fn($query, $byStatus) =>
             $query->where('status_verifikasi', $byStatus)
         );
-
-
     }
 }

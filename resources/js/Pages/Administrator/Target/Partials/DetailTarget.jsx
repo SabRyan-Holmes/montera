@@ -2,7 +2,7 @@ import moment from "moment";
 import React, { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
-export default function DetailJabatan({ jabatan, collapse = true }) {
+export default function DetailTarget({ target, collapse = true }) {
     const [isCollapsed, setIsCollapsed] = useState(collapse);
     const toggleCollapse = () => setIsCollapsed(!isCollapsed);
     const RowData = ({ label, value }) => (
@@ -37,7 +37,7 @@ export default function DetailJabatan({ jabatan, collapse = true }) {
             </thead>
 
             <tbody>
-                {!jabatan ? (
+                {!target ? (
                     <tr>
                         <td
                             colSpan={2}
@@ -48,31 +48,32 @@ export default function DetailJabatan({ jabatan, collapse = true }) {
                     </tr>
                 ) : !isCollapsed ? (
                     <>
-                        <RowData
+                        {/* TODO lengkapi */}
+                        {/* <RowData
                             label="Nama Jabatan"
-                            value={jabatan["nama_jabatan"]}
+                            value={target["nama_target"]}
                         />
 
                         <RowData
                             label="Jabatan"
-                            value={jabatan["kode_jabatan"]}
+                            value={target["kode_target"]}
                         />
                         <RowData
                             label="Divisi"
-                            value={jabatan["level_otoritas"]}
+                            value={target["level_otoritas"]}
                         />
                         <RowData
                             label="Deskripsi Tugas"
-                            value={jabatan["deskripsi_tugas"]}
+                            value={target["deskripsi_tugas"]}
                         />
                         <RowData
                             label="Tanggal Dibuat"
-                            value={moment(jabatan["created_at"]).format("LL")}
+                            value={moment(target["created_at"]).format("LL")}
                         />
                         <RowData
                             label="Terakhir Diperbarui"
-                            value={moment(jabatan["updated_at"]).format("LL")}
-                        />
+                            value={moment(target["updated_at"]).format("LL")}
+                        /> */}
                     </>
                 ) : null}
             </tbody>

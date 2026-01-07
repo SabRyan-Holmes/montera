@@ -2,17 +2,17 @@ import { SecondaryButton } from "@/Components";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
-import DetailProduk from "./Partials/DetailProduk";
+import DetailIndikator from "./Partials/DetailIndikator";
 
 export default function ShowModal({
-    produk,
+    indikator,
     setActiveModal,
     handleDelete,
     canManage = false,
 }) {
     return (
         <dialog
-            id={`Show-${produk.id}`}
+            id={`Show-${indikator.id}`}
             onClose={() => setActiveModal(null)}
             className="modal"
         >
@@ -25,10 +25,9 @@ export default function ShowModal({
 
                 <div className="px-2 my-10 mb-16 overflow-x-auto">
                     <h3 className="mb-2 text-xl font-bold">
-                        Lihat Detail Data Produk
+                        Lihat Detail Data Indikator
                     </h3>
-
-                    <DetailProduk produk={produk} collapse={false} />
+                    <DetailIndikator indikator={indikator} collapse={false} />
                 </div>
             </div>
 
@@ -37,14 +36,14 @@ export default function ShowModal({
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-14 left-1/2">
                     <SecondaryButton
                         asLink
-                        href={route("shared.produk.edit", produk.id)}
+                        href={route("admin.indikator.edit", indikator.id)}
                     >
                         <FaEdit className="w-4 h-4 mr-1 " />
                         Edit Data
                     </SecondaryButton>
 
                     <SecondaryButton
-                        onClick={() => handleDelete(produk.id)}
+                        onClick={() => handleDelete(indikator.id)}
                         className="text-white bg-warning/80"
                     >
                         <FaTrash className="w-4 h-4 mr-1 " />

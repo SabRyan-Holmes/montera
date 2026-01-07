@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Shared;
+namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
@@ -20,7 +20,7 @@ class IndikatorController extends Controller
         $params = request()->all(['search']);
         // $subTitle = GetSubtitle::getSubtitle(...$params);
 
-        return Inertia::render('Shared/Indikator/Index', [
+        return Inertia::render('Administrator/Indikator/Index', [
             "title" => "Data Indikator",
             "subTitle"  => $subTitle,
             "indikators"    => Indikator::filter($params)->paginate(10)->withQueryString(),
@@ -41,7 +41,7 @@ class IndikatorController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Shared/Indikator/Create', [
+        return Inertia::render('Administrator/Indikator/Create', [
             'title' => "Tambah Data Indikator",
         ]);
     }
@@ -53,7 +53,7 @@ class IndikatorController extends Controller
     {
         $validated = $request->validated();
         Indikator::create($validated);
-        return Redirect::route('shared.indikator.index')->with('message', 'Data Indikator Berhasil Ditambahkan!');
+        return Redirect::route('admin.indikator.index')->with('message', 'Data Indikator Berhasil Ditambahkan!');
     }
 
     /**
@@ -61,7 +61,7 @@ class IndikatorController extends Controller
      */
     public function show(Indikator $indikator)
     {
-        return Inertia::render('Shared/Indikator/Show', [
+        return Inertia::render('Administrator/Indikator/Show', [
             'title' => 'Detail Data Indikator',
             'indikator' => $indikator
         ]);
@@ -72,7 +72,7 @@ class IndikatorController extends Controller
      */
     public function edit(Indikator $indikator)
     {
-        return Inertia::render('Shared/Indikator/Edit', [
+        return Inertia::render('Administrator/Indikator/Edit', [
             'title' => "Edit Data Indikator",
             'indikator' => $indikator,
             //  "filtersList"   => [

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Shared;
+namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
@@ -52,7 +52,7 @@ class TransaksiController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Shared/Transaksi/Create', [
+        return Inertia::render('Admin/Transaksi/Create', [
             'title' => "Tambah Data Transaksi",
             "filtersList"   => [
                 "kategori" => Transaksi::getEnumValues('kategori'),
@@ -68,7 +68,7 @@ class TransaksiController extends Controller
     {
         $validated = $request->validated();
         Transaksi::create($validated);
-        return Redirect::route('shared.transaksi.index')->with('message', 'Data Transaksi Berhasil Ditambahkan!');
+        return Redirect::route('admin.transaksi.index')->with('message', 'Data Transaksi Berhasil Ditambahkan!');
     }
 
     /**
@@ -76,7 +76,7 @@ class TransaksiController extends Controller
      */
     public function show(Transaksi $transaksi) //Unused
     {
-        return Inertia::render('Shared/Transaksi/Show', [
+        return Inertia::render('Admin/Transaksi/Show', [
             'title' => 'Detail Data Transaksi',
             'transaksi' => $transaksi
         ]);
@@ -87,7 +87,7 @@ class TransaksiController extends Controller
      */
     public function edit(Transaksi $transaksi)
     {
-        return Inertia::render('Shared/Transaksi/Edit', [
+        return Inertia::render('Admin/Transaksi/Edit', [
             'title' => "Edit Data Transaksi",
             'transaksi' => $transaksi,
             "filtersList"   => [
