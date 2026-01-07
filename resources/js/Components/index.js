@@ -20,7 +20,7 @@ import Sidebar from "./Sidebar";
 import SuccessButton from "./SuccessButton";
 import TextInput from "./TextInput";
 import TextInputSecondary from "./TextInputSecondary";
-import AtasanContent from "@/Pages/_Shared/Dashboard/AtasanContent";
+import AtasanContent from "@/Pages/Shared/Dashboard/AtasanContent";
 import TooltipHover from "./TooltipHover";
 import useFilterSearch from "./UseFilterSearch";
 import InputLabelCustom from "./InputLabelCustom.jsx";

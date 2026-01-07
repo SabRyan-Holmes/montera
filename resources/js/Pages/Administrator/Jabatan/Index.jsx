@@ -87,12 +87,17 @@ export default function Index({
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/master/jabatan`}
+                            routeName={`/admin/jabatan`}
                             initialFilters={{
-                                byJabatan: filtersReq.jabatan,
-                                byDivisi: filtersReq.divisi,
-                                byStatus: filtersReq.status,
+                                byLevel: filtersReq.byLevel,
                             }}
+                              filtersConfig={[
+                                {
+                                    name: "byLevel",
+                                    label: "Level Otoritas",
+                                    options: filtersList.level,
+                                },
+                            ]}
                             searchConfig={{
                                 name: "search",
                                 label: "Nama Jabatan",

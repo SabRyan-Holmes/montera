@@ -104,6 +104,18 @@ export default function Index({
                             }}
                         />
                     </div>
+                    {role === "Administrator" && (
+                        <div className="flex-none pb-3 ">
+                            <Link
+                                as="button"
+                                href={route("admin.akuisisi.create")}
+                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                            >
+                                Tambah Data
+                                <IoMdAdd className="w-5 h-5" />
+                            </Link>
+                        </div>
+                    )}
                 </section>
 
                 <section className="pt-3 ">
@@ -346,7 +358,9 @@ export default function Index({
                                                         <button
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    akuisisi["id"]
+                                                                    akuisisi[
+                                                                        "id"
+                                                                    ]
                                                                 )
                                                             }
                                                             className="action-btn action-btn-warning group/button"

@@ -18,7 +18,7 @@ class SSOController extends Controller
 {
     public function showLoginForm()
     {
-        return Inertia::render('Auth/SSOLogin', [
+        return Inertia::render('Shared/Auth/SSOLogin', [
             // 'canAddPegawai' => Route::has('pegawai.add-pegawai.request'),
             'status' => session('status'),
         ]);

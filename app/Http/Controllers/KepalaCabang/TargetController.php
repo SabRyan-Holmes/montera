@@ -94,26 +94,5 @@ class TargetController extends Controller
         //
     }
 
-    public function byPegawai(Target $target)
-    {
 
-        $subTitle = "";
-        $params = request()->all(['search', 'byKategori', 'byStatus']);
-        // $subTitle = GetSubtitle::getSubtitle(...$params);
-
-        return Inertia::render('_Pegawai/Target/Index', [
-            "title" => "Semua Target Kerja Saya",
-            "subTitle"  => $subTitle,
-            "targets" => $this->user->targets()->with(['indikator:id,nama_kpi', 'produk:id,nama_produk'])->paginate(10)
-                ->withQueryString(),
-            // "targets"    => Target::filter($params)->paginate(10)->withQueryString(),
-            "filtersReq"   => [
-                "search"     => $params['search'] ?? "",
-            ],
-            // "filtersList"   => [
-            //     "kategori" => Target::getEnumValues('kategori'),
-            //     "status"   => Target::getEnumValues('status'),
-            // ],
-        ]);
-    }
 }

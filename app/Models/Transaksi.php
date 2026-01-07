@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,15 +30,30 @@ class Transaksi extends Model
         return $this->belongsTo(Akuisisi::class);
     }
 
-     public function scopeFilter(Builder $query, array $filters): void
+    public function scopeFilter(Builder $query, array $filters): void
     {
         $query->when(
             $filters['search'] ?? false,
             fn($query, $search) =>
-            $query->where('nama_jabatan', 'like', '%' . $search . '%')
-                ->orWhere('kode_jabatan', 'like', '%' . $search . '%')
+            $query->whereHas('pegawai', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhere('nip', 'like', '%' . $search . '%')
         );
 
-        // untuk filter : kategori, indikator, status produk
+        $query->when(
+            $filters['byKategori'] ?? false,
+            fn($query, $byKategori) =>
+            $query->whereHas('produk', function ($q) use ($byKategori) {
+                $q->where('kategori', 'like', "%{$byKategori}%");
+            })
+        );
+        $query->when(
+            $filters['byStatus'] ?? false,
+            fn($query, $byStatus) =>
+            $query->whereHas('produk', function ($q) use ($byStatus) {
+                $q->where('status', 'like', "%{$byStatus}%");
+            })
+        );
+
     }
 }

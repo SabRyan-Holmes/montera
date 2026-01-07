@@ -4,10 +4,12 @@ import { GrHelpBook } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
 import { FaInfoCircle } from "react-icons/fa";
-import { MdEditDocument, MdOutlineAssignmentInd } from "react-icons/md";
+import { MdEditDocument, MdOutlineAssignmentInd, MdOutlineGroups } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaDatabase, FaUserTie } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
+import { HiOutlineAdjustmentsVertical, HiOutlineBriefcase, HiOutlineBuildingLibrary, HiOutlineCheckBadge, HiOutlineDocumentPlus, HiOutlineUsers } from "react-icons/hi2";
+import { TbTargetArrow } from "react-icons/tb";
 
 
 export default function AdminSidebar() {
@@ -27,37 +29,37 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                    <MdOutlineAssignmentInd />
+                                    <HiOutlineBuildingLibrary />
                                     Produk
                                 </>
                             ),
-                            route: "shared.produk.index",
+                            route: "admin.produk.index",
                             actives: [
-                                "shared.produk.index",
-                                "shared.produk.create",
-                                "shared.produk.show",
+                                "admin.produk.index",
+                                "admin.produk.create",
+                                "admin.produk.show",
                             ],
                         },
                         {
                             label: (
                                 <>
-                                    <MdEditDocument />
+                                    <HiOutlineAdjustmentsVertical />
                                     <span className="text-nowrap">
                                         Indikator
                                     </span>
                                 </>
                             ),
-                            route: "shared.indikator.index",
+                            route: "admin.indikator.index",
                             actives: [
-                                "shared.indikator.index",
-                                "shared.indikator.create",
-                                "shared.indikator.show",
+                                "admin.indikator.index",
+                                "admin.indikator.create",
+                                "admin.indikator.show",
                             ],
                         },
                         {
                             label: (
                                 <>
-                                    <MdEditDocument />
+                                   <TbTargetArrow />
                                     <span className="text-nowrap">
                                         Target
                                     </span>
@@ -73,7 +75,7 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                    <MdEditDocument />
+                                    <HiOutlineDocumentPlus />
                                     <span className="text-nowrap">
                                         Akuisisi
                                     </span>
@@ -89,7 +91,7 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                    <MdEditDocument />
+                                    <HiOutlineCheckBadge />
                                     <span className="text-nowrap">
                                         Transaksi
                                     </span>
@@ -115,7 +117,7 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                    <IoDocuments />
+                                    <HiOutlineUsers />
                                     User
                                 </>
                             ),
@@ -130,7 +132,7 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                    <IoSettings />
+                                    <HiOutlineBriefcase />
                                     Jabatan
                                 </>
                             ),
@@ -145,7 +147,7 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                    <FaUserTie />
+                                    <MdOutlineGroups />
                                     Divisi
                                 </>
                             ),

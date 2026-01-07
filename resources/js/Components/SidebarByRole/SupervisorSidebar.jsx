@@ -4,10 +4,21 @@ import { GrHelpBook } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
 import { FaInfoCircle } from "react-icons/fa";
-import { MdEditDocument, MdOutlineAssignmentInd } from "react-icons/md";
+import {
+    MdEditDocument,
+    MdOutlineAssignmentInd,
+    MdOutlineGroupWork,
+} from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaDatabase, FaUserTie } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
+import {
+    HiOutlineAdjustmentsVertical,
+    HiOutlineBuildingLibrary,
+    HiOutlineDocumentChartBar,
+    HiOutlineShieldCheck,
+    HiOutlineUserGroup,
+} from "react-icons/hi2";
 
 export default function SupervisorSidebar() {
     return (
@@ -23,11 +34,11 @@ export default function SupervisorSidebar() {
             </SidebarLink>
 
             <SidebarLink
-                href={route("spv.akuisisi.index")}
-                active={route().current("spv.akuisisi.index")}
+                href={route("spv.verify")}
+                active={route().current("spv.verify")}
                 className="z-20 mx-[18px] -mb-1"
             >
-                <MdSpaceDashboard />
+                <HiOutlineShieldCheck />
                 Verifikasi Data
             </SidebarLink>
 
@@ -36,7 +47,7 @@ export default function SupervisorSidebar() {
                 active={route().current("spv.team")}
                 className="z-20 mx-[18px] -mb-1"
             >
-                <MdSpaceDashboard />
+                <HiOutlineUserGroup />
                 Monitoring Pegawai
             </SidebarLink>
 
@@ -45,7 +56,7 @@ export default function SupervisorSidebar() {
                 active={route().current("main-log")}
                 className="z-20 mx-[18px] -mb-1"
             >
-                <MdSpaceDashboard />
+                <HiOutlineDocumentChartBar />
                 Laporan & Evaluasi
             </SidebarLink>
 
@@ -54,31 +65,31 @@ export default function SupervisorSidebar() {
                     {
                         label: (
                             <>
-                                <IoDocuments />
+                                <HiOutlineBuildingLibrary />
                                 Produk
                             </>
                         ),
-                        route: "shared.produk.index",
+                        route: "spv.produk.index",
                         actives: [
-                            "shared.produk.index",
-                            "shared.produk.create",
-                            "shared.produk.show",
-                            "shared.produk.edit",
+                            "spv.produk.index",
+                            "spv.produk.create",
+                            "spv.produk.show",
+                            "spv.produk.edit",
                         ],
                     },
                     {
                         label: (
                             <>
-                                <IoSettings />
+                                <HiOutlineAdjustmentsVertical />
                                 Indikator
                             </>
                         ),
-                        route: "shared.indikator.index",
+                        route: "spv.indikator.index",
                         actives: [
-                            "shared.indikator.index",
-                            "shared.indikator.create",
-                            "shared.indikator.show",
-                            "shared.indikator.edit",
+                            "spv.indikator.index",
+                            "spv.indikator.create",
+                            "spv.indikator.show",
+                            "spv.indikator.edit",
                         ],
                     },
                 ]}

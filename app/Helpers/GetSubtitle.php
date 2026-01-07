@@ -24,6 +24,7 @@ class GetSubtitle
         // --- RUANG KOSONG (Kebutuhan Masa Depan) ---
         // Kamu bisa menambahkan parameter baru di bawah sini jika ada model lain
         ?string $byTipe = null,
+        ?string $byLevel = null,
         ?string $byCustom2 = null
     ): string {
         $filters = [];
@@ -55,6 +56,9 @@ class GetSubtitle
         // --- TEMPAT MENAMBAH LOGIKA FILTER BARU ---
         if ($byTipe) {
             $filters[] = "Tipe Target: $byTipe";
+        }
+        if ($byLevel) {
+            $filters[] = "Level Otoritas: $byLevel";
         }
 
         // Finalisasi Output

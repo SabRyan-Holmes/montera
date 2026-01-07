@@ -18,7 +18,7 @@ class JabatanController extends Controller
     public function index()
     {
         $subTitle = "";
-        $params = request()->all(['search']);
+        $params = request()->all(['search', 'byLevel']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
 
         return Inertia::render('Administrator/Jabatan/Index', [
@@ -27,6 +27,10 @@ class JabatanController extends Controller
             "jabatans"    => Jabatan::filter($params)->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
+                "byLevel"     => $params['byLevel'] ?? "",
+            ],
+             "filtersList"   => [
+                "level" => [0,1,2,3]
             ],
         ]);
     }

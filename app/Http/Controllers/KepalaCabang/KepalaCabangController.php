@@ -44,7 +44,7 @@ class KepalaCabangController extends Controller
             ->limit(5)
             ->get();
 
-        return Inertia::render('_KepalaCabang/Analytics', [
+        return Inertia::render('KepalaCabang/Analytics', [
             'chartData' => $performanceByKategori,
             'trendData' => $monthlyTrend,
             'ranking'   => $topPegawai

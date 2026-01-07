@@ -8,6 +8,7 @@ import { MdEditDocument, MdOutlineAssignmentInd } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaDatabase, FaUserTie } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
+import { HiOutlineClipboardDocumentList, HiOutlineDocumentPlus, HiOutlineFlag, HiOutlineTrophy } from "react-icons/hi2";
 
 export default function PegawaiSidebar() {
     return (
@@ -23,26 +24,43 @@ export default function PegawaiSidebar() {
             </SidebarLink>
 
             <SidebarLink
-                href={route("pegawai.target.index")}
-                active={route().current("pegawai.target.index")}
+                href={route("pegawai.target")}
+                active={route().current("pegawai.target")}
                 className="z-20 mx-[18px] -mb-1"
             >
-                <MdSpaceDashboard />
+                <HiOutlineFlag />
                 Target Kerja
             </SidebarLink>
 
             <SidebarLink
-                href={route("dashboard")}
-                active={route().current("main-log")}
+                href={route("pegawai.akuisisi.index")}
+                active={route().current("pegawai.akuisisi.index")}
                 className="z-20 mx-[18px] -mb-1"
             >
-                <MdSpaceDashboard />
+                <HiOutlineDocumentPlus />
                 Akuisisi
+            </SidebarLink>
+            <SidebarLink
+                href={route("pegawai.report")}
+                active={route().current("pegawai.report")}
+                className="z-20 mx-[18px] -mb-1"
+            >
+                <HiOutlineClipboardDocumentList />
+                Riwayat Laporan
             </SidebarLink>
 
             <SidebarLink
-                href={route("dashboard")}
-                active={route().current("main-log")}
+                href={route("pegawai.transaksi")}
+                active={route().current("pegawai.transaksi")}
+                className="z-20 mx-[18px] -mb-1"
+            >
+                <HiOutlineTrophy />
+                Transaksi Saya
+            </SidebarLink>
+
+            <SidebarLink
+                href={route("pegawai.stats")}
+                active={route().current("pegawai.stats")}
                 className="z-20 mx-[18px] -mb-1"
             >
                 <MdSpaceDashboard />

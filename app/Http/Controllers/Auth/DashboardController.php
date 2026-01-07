@@ -69,7 +69,7 @@ class DashboardController extends Controller
             ];
         }
 
-        return Inertia::render('_Shared/Dashboard/AuthDashboard', [
+        return Inertia::render('Shared/Dashboard/AuthDashboard', [
             'title' => 'Dashboard',
             'dataGraph' => $dataGraph,
             'dataByRole' => $dataByRole,

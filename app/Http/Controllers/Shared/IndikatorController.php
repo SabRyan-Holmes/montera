@@ -20,7 +20,7 @@ class IndikatorController extends Controller
         $params = request()->all(['search']);
         // $subTitle = GetSubtitle::getSubtitle(...$params);
 
-        return Inertia::render('_Shared/Indikator/Index', [
+        return Inertia::render('Shared/Indikator/Index', [
             "title" => "Data Indikator",
             "subTitle"  => $subTitle,
             "indikators"    => Indikator::filter($params)->paginate(10)->withQueryString(),
@@ -41,7 +41,7 @@ class IndikatorController extends Controller
      */
     public function create()
     {
-        return Inertia::render('_Shared/Indikator/Create', [
+        return Inertia::render('Shared/Indikator/Create', [
             'title' => "Tambah Data Indikator",
         ]);
     }
@@ -61,7 +61,7 @@ class IndikatorController extends Controller
      */
     public function show(Indikator $indikator)
     {
-        return Inertia::render('_Shared/Indikator/Show', [
+        return Inertia::render('Shared/Indikator/Show', [
             'title' => 'Detail Data Indikator',
             'indikator' => $indikator
         ]);
@@ -72,7 +72,7 @@ class IndikatorController extends Controller
      */
     public function edit(Indikator $indikator)
     {
-        return Inertia::render('_Shared/Indikator/Edit', [
+        return Inertia::render('Shared/Indikator/Edit', [
             'title' => "Edit Data Indikator",
             'indikator' => $indikator,
             //  "filtersList"   => [

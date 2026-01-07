@@ -12,13 +12,6 @@ class Jabatan extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    public static function byNIP($nip)
-    {
-        return static::where(function ($query) use ($nip) {
-            $query->where('NIP', $nip)->orWhere('NIP', 'like', '%' . $nip . '%');
-        });
-    }
-
     public function users(): HasMany
     {
         return $this->hasMany(User::class, 'jabatan_id');
@@ -33,13 +26,13 @@ class Jabatan extends Model
                 ->orWhere('kode_jabatan', 'like', '%' . $search . '%')
         );
 
+        $query->when(
+            $filters['byLevel'] ?? false,
+            fn($query, $byLevel) =>
+            $query->where('level_otoritas', $byLevel)
+        );
     }
 
-    // Untuk Route Model Binding Custom(defaultny id)
-    // public function getRouteKeyName()
-    // {
-    //     return 'NIP';
-    // }
 
     // protected static function booted()
     // {

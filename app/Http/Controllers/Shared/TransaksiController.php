@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Models\Produk;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -26,22 +27,22 @@ class TransaksiController extends Controller
     public function index()
     {
         $subTitle = "";
-        $params = request()->all(['search']);
+        $params = request()->all(['search', 'byKategori', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
 
         return Inertia::render('Administrator/Transaksi/Index', [
             "title" => "Data Transaksi",
             "subTitle"  => $subTitle,
-            // "akuisisis"    => Akuisisi::with(['pegawai:id,name', 'produk:id,nama_produk', 'verifikator:id,name' ])->filter($params)->paginate(10)->withQueryString(),
-
-            "transaksis"    => Transaksi::with(['pegawai:id,name,nip', 'produk:id,nama_produk,kode_produk', 'indikator:id,nama_kpi,satuan', 'akuisisi:id,nama_nasabah,no_identitas_nasabah'])->filter($params)->paginate(10)->withQueryString(),
-
+            "transaksis"    => Transaksi::with(['pegawai:id,name,nip', 'produk:id,nama_produk,kode_produk', 'indikator:id,nama_kpi,satuan', 'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
+                ->filter($params)->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
+                "byKategori"     => $params['byKategori'] ?? "",
+                "byStatus"     => $params['byStatus'] ?? "",
             ],
             "filtersList"   => [
-                // "kategori" => Transaksi::getEnumValues('kategori'),
-                // "status"   => Transaksi::getEnumValues('status'),
+                "kategori" => Produk::getEnumValues('kategori'),
+                "status"   => Produk::getEnumValues('status'),
             ],
         ]);
     }
@@ -51,7 +52,7 @@ class TransaksiController extends Controller
      */
     public function create()
     {
-        return Inertia::render('_Shared/Transaksi/Create', [
+        return Inertia::render('Shared/Transaksi/Create', [
             'title' => "Tambah Data Transaksi",
             "filtersList"   => [
                 "kategori" => Transaksi::getEnumValues('kategori'),
@@ -75,7 +76,7 @@ class TransaksiController extends Controller
      */
     public function show(Transaksi $transaksi) //Unused
     {
-        return Inertia::render('_Shared/Transaksi/Show', [
+        return Inertia::render('Shared/Transaksi/Show', [
             'title' => 'Detail Data Transaksi',
             'transaksi' => $transaksi
         ]);
@@ -86,7 +87,7 @@ class TransaksiController extends Controller
      */
     public function edit(Transaksi $transaksi)
     {
-        return Inertia::render('_Shared/Transaksi/Edit', [
+        return Inertia::render('Shared/Transaksi/Edit', [
             'title' => "Edit Data Transaksi",
             'transaksi' => $transaksi,
             "filtersList"   => [

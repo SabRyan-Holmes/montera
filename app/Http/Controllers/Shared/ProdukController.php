@@ -32,7 +32,7 @@ class ProdukController extends Controller
         $params = request()->all(['search', 'byKategori', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
 
-        return Inertia::render('_Shared/Produk/Index', [
+        return Inertia::render('Shared/Produk/Index', [
             "title" => "Data Produk",
             "subTitle"  => $subTitle,
             "produks"    => Produk::filter($params)->paginate(10)->withQueryString(),
@@ -53,7 +53,7 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        return Inertia::render('_Shared/Produk/Create', [
+        return Inertia::render('Shared/Produk/Create', [
             'title' => "Tambah Data Produk",
             "filtersList"   => [
                 "kategori" => Produk::getEnumValues('kategori'),
@@ -77,7 +77,7 @@ class ProdukController extends Controller
      */
     public function show(Produk $produk) //Unused
     {
-        return Inertia::render('_Shared/Produk/Show', [
+        return Inertia::render('Shared/Produk/Show', [
             'title' => 'Detail Data Produk',
             'produk' => $produk
         ]);
@@ -88,7 +88,7 @@ class ProdukController extends Controller
      */
     public function edit(Produk $produk)
     {
-        return Inertia::render('_Shared/Produk/Edit', [
+        return Inertia::render('Shared/Produk/Edit', [
             'title' => "Edit Data Produk",
             'produk' => $produk,
              "filtersList"   => [

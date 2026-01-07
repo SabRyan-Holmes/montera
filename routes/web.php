@@ -3,21 +3,21 @@
 use App\Http\Controllers\Admin\{UserController, JabatanController, DivisiController};
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Shared\{ProdukController, IndikatorController, ProfileController, TransaksiController};
-use App\Http\Controllers\Pegawai\{AkuisisiController, StatsController};
-use App\Http\Controllers\Supervisor\{VerifikasiController, TeamController};
+use App\Http\Controllers\Pegawai\{AkuisisiController, Pegaw, PegawaiController, PegawaiControlleraiPegawaiController};
+use App\Http\Controllers\Supervisor\{SupervisorController, TeamController};
 use App\Http\Controllers\KepalaCabang\{KepalaCabangController, TargetController};
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
 // Route::get('/', function () {
-//     return Inertia::render('Auth/Login');
+//     return Inertia::render('Shared/Auth/Login');
 // })->middleware('guest');
 
 // Login SSO
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Shared/Auth/Login');
     })->name('reguler-login.form');
 });
 
@@ -35,39 +35,45 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(
 
 Route::middleware('auth')->group(function () {
 
+    // --- SHARED (Admin & SPV) ---
+    Route::prefix('shared')->name('shared.')->group(function () {
+        Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data
+        Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
+    });
+
     // --- ADMIN (Data Master) ---
     Route::middleware('role:Administrator')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('user', UserController::class);
         Route::resource('jabatan', JabatanController::class);
         Route::resource('divisi', DivisiController::class);
 
+        Route::resource('produk', ProdukController::class);
+        Route::resource('indikator', IndikatorController::class);
+
         Route::resource('target', TargetController::class);
         Route::resource('akuisisi', AkuisisiController::class);
         Route::resource('transaksi', TransaksiController::class);
     });
 
-    // --- SHARED (Admin & SPV) ---
-    Route::middleware('role:Administrator,Supervisor')->prefix('master')->name('shared.')->group(function () {
-        Route::resource('produk', ProdukController::class);
-        Route::resource('indikator', IndikatorController::class);
-        Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data
-        Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
-    });
 
     // --- PEGAWAI (Operasional) ---
     Route::middleware('role:Pegawai')->prefix('pegawai')->name('pegawai.')->group(function () {
-        Route::get('/target', [TargetController::class, 'byPegawai'])->name('target.index'); // Monitoring Pribadi
-        Route::get('/stats', [StatsController::class, 'index'])->name('stats'); // Monitoring Pribadi
-        Route::resource('akuisisi', AkuisisiController::class);
+        Route::get('/target-pegawai', [PegawaiController::class, 'target'])->name('target'); // Monitoring Pribadi
+        Route::resource('akuisisi', AkuisisiController::class)->only(['index', 'create', 'store']);
+        Route::get('/report', [PegawaiController::class, 'report'])->name('report'); // Monitoring Pribadi
+        Route::get('/transaksi', [PegawaiController::class, 'transaksi'])->name('transaksi'); // Monitoring Pribadi
+        Route::get('/stats', [PegawaiController::class, 'stats'])->name('stats'); // Monitoring Pribadi
     });
 
     // <============================================================ SUPERVISOR ============================================================>
     // Pengawasan Tim & Verifikasi Akuisisi
     Route::middleware('role:Supervisor')->prefix('spv')->name('spv.')->group(function () {
-        Route::get('/verify-akuisisi', [AkuisisiController::class, 'verify'])->name('verify'); // Monitoring Pribadi
-        Route::patch('/verify/{akuisisi}/approve', [VerifikasiController::class, 'approve'])->name('verify.approve');
-        Route::patch('/verify/{akuisisi}/reject', [VerifikasiController::class, 'reject'])->name('verify.reject');
-        Route::get('/team', [TeamController::class, 'index'])->name('team'); // Monitoring Tim
+        Route::resource('produk', ProdukController::class);
+        Route::resource('indikator', IndikatorController::class);
+        Route::get('/verify-akuisisi', [SupervisorController::class, 'verify'])->name('verify'); // Monitoring Pribadi
+        Route::patch('/verify/{akuisisi}/approve', [SupervisorController::class, 'approve'])->name('verify.approve');
+        Route::patch('/verify/{akuisisi}/reject', [SupervisorController::class, 'reject'])->name('verify.reject');
+        Route::get('/team', [SupervisorController::class, 'index'])->name('team'); // Monitoring Tim
     });
 
     // <============================================================ KEPALA CABANG ============================================================>

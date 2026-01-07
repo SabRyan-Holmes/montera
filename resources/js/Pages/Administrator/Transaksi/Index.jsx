@@ -86,16 +86,22 @@ export default function Index({
                     <div className="flex-1 ">
                         <FilterSearchCustom
                             routeName={`/admin/transaksi`}
-                            // initialFilters={{
-                            //     byStatus: filtersReq.status,
-                            // }}
-                            // filtersConfig={[
-                            //     {
-                            //         name: "byStatus",
-                            //         label: "Status ",
-                            //         options: filtersList.status,
-                            //     },
-                            // ]}
+                            initialFilters={{
+                                byKategori: filtersReq.kategori,
+                                byStatus: filtersReq.status,
+                            }}
+                            filtersConfig={[
+                                {
+                                    name: "byKategori",
+                                    label: "Kategori ",
+                                    options: filtersList.kategori,
+                                },
+                                {
+                                    name: "byStatus",
+                                    label: "Status ",
+                                    options: filtersList.status,
+                                },
+                            ]}
                             searchConfig={{
                                 name: "search",
                                 label: "Nama/ID Nasabah",
@@ -104,6 +110,18 @@ export default function Index({
                             }}
                         />
                     </div>
+                    {role === "Administrator" && (
+                        <div className="flex-none pb-3 ">
+                            <Link
+                                as="button"
+                                href={route("admin.transaksi.create")}
+                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                            >
+                                Tambah Data
+                                <IoMdAdd className="w-5 h-5" />
+                            </Link>
+                        </div>
+                    )}
                 </section>
 
                 <section className="pt-3 ">
@@ -410,8 +428,9 @@ export default function Index({
                                 datas={transaksis}
                                 urlRoute={`/admin/transaksi`}
                                 filters={{
-                                    // byStatus: filtersReq.byStatus,
                                     search: filtersReq.search,
+                                    byKategori: filtersReq.byKategori,
+                                    byStatus: filtersReq.byStatus,
                                 }}
                             />
                         </>

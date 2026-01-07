@@ -237,7 +237,7 @@ export default function Index({
                                                     {produk["nama_produk"]}
                                                 </span>
 
-                                                <span className="badge-xs-secondary">
+                                                <span className="badge-xs-accent">
                                                     {produk["kode_produk"]}
                                                 </span>
                                             </td>

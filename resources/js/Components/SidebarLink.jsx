@@ -14,7 +14,7 @@ export default function SidebarLink({
         'font-bold flex items-center ' +
         (isActive
             ? 'border-primary/80 text-primary focus:border-primary bg-slate-700/80 active:bg-hijau '
-            : 'border-transparent hover:text-bermuda focus:text-secondary active:text-secondary active:bg-primary ') +
+            : 'border-transparent hover:text-primary focus:text-secondary active:text-secondary active:bg-primary ') +
         className;
 
     if (asDownload) {

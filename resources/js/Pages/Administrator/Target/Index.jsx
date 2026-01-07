@@ -80,10 +80,7 @@ export default function Index({
     // ===========================================Other Logics===========================================
 
     return (
-        <Authenticated
-            user={auth.user}
-            title={`Kelola + ${title}`}
-        >
+        <Authenticated user={auth.user} title={`Kelola ${title}`}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
@@ -114,6 +111,19 @@ export default function Index({
                             }}
                         />
                     </div>
+
+                    {role === "Administrator" && (
+                        <div className="flex-none pb-3 ">
+                            <Link
+                                as="button"
+                                href={route("admin.target.create")}
+                                className="flex items-center mx-2 text-white btn glass bg-sky-600 hover:bg-primary/90"
+                            >
+                                Tambah Data
+                                <IoMdAdd className="w-5 h-5" />
+                            </Link>
+                        </div>
+                    )}
                 </section>
 
                 <section className="pt-3 overflow-x-auto">
