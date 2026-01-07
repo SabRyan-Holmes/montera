@@ -19,6 +19,7 @@ export default function Index({
     subTitle,
     filtersReq,
     filtersList,
+    canManage
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);

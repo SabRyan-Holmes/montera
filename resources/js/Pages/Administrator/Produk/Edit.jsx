@@ -1,4 +1,9 @@
-import { TextInput, InputError, SecondaryButton, SuccessButton } from "@/Components";
+import {
+    TextInput,
+    InputError,
+    SecondaryButton,
+    SuccessButton,
+} from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
 import React, { useEffect } from "react";
@@ -162,8 +167,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="nama_produk"
                                             value={data["nama_produk"]}
-                                            disabled
-                                            className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient :text-accent hover:cursor-not-allowed "
                                         />
                                     </td>
                                 </tr>
@@ -176,8 +180,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="kode_produk"
                                             value={data["kode_produk"]}
-                                            disabled
-                                            className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient :text-accent hover:cursor-not-allowed "
                                         />
                                     </td>
                                 </tr>
@@ -233,8 +236,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="komisi_poin"
                                             value={data["komisi_poin"]}
-                                            disabled
-                                            className="w-full px-2 h-9 border-gradient disabled:text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient :text-accent hover:cursor-not-allowed "
                                             onChange={(e) =>
                                                 setData(
                                                     "komisi_poin",
@@ -251,8 +253,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="deskripsi_produk"
                                             value={data["deskripsi_produk"]}
-                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
-                                            disabled
+                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent :text-accent hover:cursor-not-allowed"
                                             placeholder="input disini"
                                         />
                                     </td>
@@ -262,13 +263,9 @@ export default function Edit({ auth, produk, title, flash }) {
                                     <td className="flex border-x">
                                         <TextInput
                                             type="text"
-                                            name="deskripsi_produk"
-                                            value={
-                                                data["deskripsi_produk"] ??
-                                                "Tidak ada deskripsi"
-                                            }
-                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent disabled:text-accent hover:cursor-not-allowed"
-                                            disabled
+                                            name="status"
+                                            value={data["status"]}
+                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent :text-accent hover:cursor-not-allowed"
                                             placeholder="input disini"
                                         />
                                     </td>
@@ -285,9 +282,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                 <FaSave className="w-4 h-5 fill-hijau group-hover/button:fill-white" />
                             </button> */}
 
-                            <SuccessButton
-                                type="submit"
-                            >
+                            <SuccessButton type="submit">
                                 <FaSave className="w-4 h-4 mr-1 " />
                                 Update Data
                             </SuccessButton>

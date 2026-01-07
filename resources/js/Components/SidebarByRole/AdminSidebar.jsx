@@ -4,13 +4,23 @@ import { GrHelpBook } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
 import { FaInfoCircle } from "react-icons/fa";
-import { MdEditDocument, MdOutlineAssignmentInd, MdOutlineGroups } from "react-icons/md";
+import {
+    MdEditDocument,
+    MdOutlineAssignmentInd,
+    MdOutlineGroups,
+} from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaDatabase, FaUserTie } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
-import { HiOutlineAdjustmentsVertical, HiOutlineBriefcase, HiOutlineBuildingLibrary, HiOutlineCheckBadge, HiOutlineDocumentPlus, HiOutlineUsers } from "react-icons/hi2";
+import {
+    HiOutlineAdjustmentsVertical,
+    HiOutlineBriefcase,
+    HiOutlineBuildingLibrary,
+    HiOutlineCheckBadge,
+    HiOutlineDocumentPlus,
+    HiOutlineUsers,
+} from "react-icons/hi2";
 import { TbTargetArrow } from "react-icons/tb";
-
 
 export default function AdminSidebar() {
     return (
@@ -36,6 +46,7 @@ export default function AdminSidebar() {
                             route: "admin.produk.index",
                             actives: [
                                 "admin.produk.index",
+                                "admin.produk.edit",
                                 "admin.produk.create",
                                 "admin.produk.show",
                             ],
@@ -52,6 +63,7 @@ export default function AdminSidebar() {
                             route: "admin.indikator.index",
                             actives: [
                                 "admin.indikator.index",
+                                "admin.indikator.edit",
                                 "admin.indikator.create",
                                 "admin.indikator.show",
                             ],
@@ -59,10 +71,8 @@ export default function AdminSidebar() {
                         {
                             label: (
                                 <>
-                                   <TbTargetArrow />
-                                    <span className="text-nowrap">
-                                        Target
-                                    </span>
+                                    <TbTargetArrow />
+                                    <span className="text-nowrap">Target</span>
                                 </>
                             ),
                             route: "admin.target.index",

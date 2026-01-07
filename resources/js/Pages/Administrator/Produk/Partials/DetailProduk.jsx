@@ -1,8 +1,9 @@
 import { usePage } from "@inertiajs/react";
+import moment from "moment";
 import React, { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
-export default function DetailProduk({ produk, collapse = true}) {
+export default function DetailProduk({ produk, collapse = true }) {
     const [isCollapsed, setIsCollapsed] = useState(collapse);
     const toggleCollapse = () => setIsCollapsed(!isCollapsed);
     const RowData = ({ label, value }) => (
@@ -48,7 +49,10 @@ export default function DetailProduk({ produk, collapse = true}) {
                     </tr>
                 ) : !isCollapsed ? (
                     <>
-                        <RowData label="Nama Produk" value={produk.nama_produk} />
+                        <RowData
+                            label="Nama Produk"
+                            value={produk.nama_produk}
+                        />
 
                         <RowData
                             label="Kode Produk"
@@ -68,9 +72,24 @@ export default function DetailProduk({ produk, collapse = true}) {
                         />
                         <RowData
                             label="Deskripsi Produk"
-                            value={produk["deskripsi_produk"]  ?? "Tidak ada deskripsi"}
+                            value={
+                                produk["deskripsi_produk"] ??
+                                "Tidak ada deskripsi"
+                            }
+                        />
+                        <RowData
+                            label="Status Produk"
+                            value={produk["status"]}
                         />
 
+                        <RowData
+                            label="Tanggal Dibuat"
+                            value={moment(produk["created_at"]).format("LL")}
+                        />
+                        <RowData
+                            label="Terakhir Diperbarui"
+                            value={moment(produk["updated_at"]).format("LL")}
+                        />
                     </>
                 ) : null}
             </tbody>

@@ -26,12 +26,14 @@ class PegawaiController extends Controller
         $subTitle = "";
         $params = request()->all(['search', 'byTipe', 'byPeriode']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
+        $role = $this->user->jabatan->nama_jabatan;
 
         return Inertia::render('Pegawai/Target/Index', [
             "title" => "Target Kinerja Pegawai",
             "subTitle"  => $subTitle,
             "targets" => Target::with(['indikator:id,nama_kpi,satuan', 'produk:id,nama_produk'])->paginate(10)
                 ->withQueryString(),
+            "canManage" => $role === "Administrator",
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byTipe"     => $params['byTipe'] ?? "Semua Kategori",
@@ -56,10 +58,11 @@ class PegawaiController extends Controller
         $subTitle = "";
         $params = request()->all(['search', 'byKategori', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
-
-        return Inertia::render('Pegawai/Transaksi/Index', [
-            "title" => "Data Transaksi",
+        $role = $this->user->jabatan->nama_jabatan;
+        return Inertia::render('Administrator/Transaksi/Index', [
+            "title" => "Data Transaksi Saya",
             "subTitle"  => $subTitle,
+            "canManage" => $role === "Administrator",
             "transaksis"    => $this->user->transaksi()->with(['pegawai:id,name,nip', 'produk:id,nama_produk,kode_produk', 'indikator:id,nama_kpi,satuan', 'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
                 ->filter($params)->paginate(10)->withQueryString(),
             "filtersReq"   => [

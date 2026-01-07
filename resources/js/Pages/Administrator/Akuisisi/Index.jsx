@@ -20,6 +20,7 @@ export default function Index({
     filtersReq,
     filtersList,
     canCreate,
+    canManage,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
@@ -303,82 +304,129 @@ export default function Index({
                                                 </td>
 
                                                 {/* AKSI */}
-                                                <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                    <div className="relative inline-flex group">
-                                                        <button
-                                                            as="button"
-                                                            onClick={() => {
-                                                                setActiveModal(
-                                                                    `Show-${akuisisi.id}`
-                                                                );
-                                                                document
-                                                                    .getElementById(
+                                                {canManage ? (
+                                                    <>
+                                                        <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                            <div className="relative inline-flex group">
+                                                                <button
+                                                                    as="button"
+                                                                    onClick={() => {
+                                                                        setActiveModal(
+                                                                            `Show-${akuisisi.id}`
+                                                                        );
+                                                                        document
+                                                                            .getElementById(
+                                                                                `Show-${akuisisi.id}`
+                                                                            )
+                                                                            .showModal();
+                                                                    }}
+                                                                    className="action-btn group/button action-btn-success "
+                                                                >
+                                                                    <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                                </button>
+                                                                <ShowModal
+                                                                    handleDelete={
+                                                                        handleDelete
+                                                                    }
+                                                                    setActiveModal={
+                                                                        setActiveModal
+                                                                    }
+                                                                    akuisisi={
+                                                                        akuisisi
+                                                                    }
+                                                                    canManage={
+                                                                        true
+                                                                    }
+                                                                />
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Lihat Data"
+                                                                    }
+                                                                />
+                                                            </div>
+
+                                                            {/* EDIT */}
+
+                                                            <div className="relative inline-flex group">
+                                                                <Link
+                                                                    as="a"
+                                                                    href={route(
+                                                                        "admin.akuisisi.edit",
+                                                                        akuisisi.id
+                                                                    )}
+                                                                    className="action-btn group/button action-btn-bermuda"
+                                                                >
+                                                                    <FaEdit className=" group-hover/button:fill-white" />
+                                                                </Link>
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Edit Data"
+                                                                    }
+                                                                />
+                                                            </div>
+
+                                                            {/* DELETE */}
+                                                            <div className="relative inline-flex group">
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            akuisisi[
+                                                                                "id"
+                                                                            ]
+                                                                        )
+                                                                    }
+                                                                    className="action-btn action-btn-warning group/button"
+                                                                >
+                                                                    <FaTrash className="scale-125 group-hover/button:fill-white" />
+                                                                </button>
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Hapus Data"
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </>
+                                                ) : (
+                                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                        <div className="relative inline-flex group">
+                                                            <button
+                                                                as="button"
+                                                                onClick={() => {
+                                                                    setActiveModal(
                                                                         `Show-${akuisisi.id}`
-                                                                    )
-                                                                    .showModal();
-                                                            }}
-                                                            className="action-btn group/button action-btn-success "
-                                                        >
-                                                            <FaEye className="scale-125 group-hover/button:fill-white " />
-                                                        </button>
-                                                        <ShowModal
-                                                            handleDelete={
-                                                                handleDelete
-                                                            }
-                                                            setActiveModal={
-                                                                setActiveModal
-                                                            }
-                                                            akuisisi={akuisisi}
-                                                            canManage={true}
-                                                        />
-                                                        <TooltipHover
-                                                            message={
-                                                                "Lihat Data"
-                                                            }
-                                                        />
-                                                    </div>
-
-                                                    {/* EDIT */}
-
-                                                    <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="a"
-                                                            href={route(
-                                                                "admin.akuisisi.edit",
-                                                                akuisisi.id
-                                                            )}
-                                                            className="action-btn group/button action-btn-bermuda"
-                                                        >
-                                                            <FaEdit className=" group-hover/button:fill-white" />
-                                                        </Link>
-                                                        <TooltipHover
-                                                            message={
-                                                                "Edit Data"
-                                                            }
-                                                        />
-                                                    </div>
-
-                                                    {/* DELETE */}
-                                                    <div className="relative inline-flex group">
-                                                        <button
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    akuisisi[
-                                                                        "id"
-                                                                    ]
-                                                                )
-                                                            }
-                                                            className="action-btn action-btn-warning group/button"
-                                                        >
-                                                            <FaTrash className="scale-125 group-hover/button:fill-white" />
-                                                        </button>
-                                                        <TooltipHover
-                                                            message={
-                                                                "Hapus Data"
-                                                            }
-                                                        />
-                                                    </div>
-                                                </td>
+                                                                    );
+                                                                    document
+                                                                        .getElementById(
+                                                                            `Show-${akuisisi.id}`
+                                                                        )
+                                                                        .showModal();
+                                                                }}
+                                                                className="action-btn group/button action-btn-success "
+                                                            >
+                                                                <span className="mr-1">Lihat</span>
+                                                                <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                            </button>
+                                                            <ShowModal
+                                                                handleDelete={
+                                                                    handleDelete
+                                                                }
+                                                                setActiveModal={
+                                                                    setActiveModal
+                                                                }
+                                                                akuisisi={
+                                                                    akuisisi
+                                                                }
+                                                                canManage={true}
+                                                            />
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Lihat Data"
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                )}
                                             </tr>
                                         );
                                     })}

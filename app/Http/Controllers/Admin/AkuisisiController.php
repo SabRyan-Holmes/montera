@@ -29,11 +29,25 @@ class AkuisisiController extends Controller
         $subTitle = "";
         $params = request()->all(['search', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
+
+        $query = Akuisisi::with([
+            'pegawai:id,name',
+            'produk:id,nama_produk',
+            'verifikator:id,name',
+        ])->filter($params);
+
+        $role = $this->user->jabatan->nama_jabatan;
+        $isAdmin = $role === "Administrator";
+        if (!$isAdmin) {
+            $query->where('user_id', $this->user->id);
+        }
+
         return Inertia::render('Administrator/Akuisisi/Index', [
-            "title" => "Verifikasi Data Akuisisi",
+            "title" => "Data Akuisisi",
             "subTitle"  => $subTitle,
-            "canCreate" => in_array($this->user->jabatan->nama_jabatan, ['Administrator', 'Pegawai']),
-            "akuisisis"    => Akuisisi::with(['pegawai:id,name', 'produk:id,nama_produk', 'verifikator:id,name'])->filter($params)->paginate(10)->withQueryString(),
+            "canCreate" => in_array($role, ['Administrator', 'Pegawai']),
+            "canManage" => $isAdmin,
+            'akuisisis' => $query->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byStatus"   => $params['byStatus'] ?? "Semua Kategori",
