@@ -23,7 +23,7 @@ class IndikatorController extends Controller
         return Inertia::render('Administrator/Indikator/Index', [
             "title" => "Data Indikator",
             "subTitle"  => $subTitle,
-            "indikators"    => Indikator::filter($params)->paginate(10)->withQueryString(),
+            "indikators"    => Indikator::filter($params)->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byTargetMinimal" => $params['byTargetMinimal'] ?? "Semua Kategori",

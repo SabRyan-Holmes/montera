@@ -401,7 +401,7 @@ export default function Index({
                             {/* Pagination */}
                             <Pagination
                                 datas={produks}
-                                urlRoute={`/master/produk`}
+                                urlRoute={`/admin/produk`}
                                 filters={{
                                     byKategori: filtersReq.byKategori,
                                     byStatus: filtersReq.byStatus,

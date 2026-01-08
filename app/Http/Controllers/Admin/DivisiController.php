@@ -23,7 +23,7 @@ class DivisiController extends Controller
         return Inertia::render('Administrator/Divisi/Index', [
             "title" => "Data Divisi",
             "subTitle"  => $subTitle,
-            "divisis"    => Divisi::filter($params)->paginate(10)->withQueryString(),
+            "divisis"    => Divisi::filter($params)->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byLevel"     => $params['byLevel'] ?? "", //level/lokasi lantai

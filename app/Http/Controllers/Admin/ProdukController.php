@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProdukStoreUpdateRequest;
 use Inertia\Inertia;
 use App\Models\Produk;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\jabatanstoreRequest;
 use App\Http\Requests\UpdatePegawaiRequest;
 use App\Services\LogPegawaiChangesService;
 use Illuminate\Support\Facades\Auth;
+
 
 class ProdukController extends Controller
 {
@@ -35,7 +36,7 @@ class ProdukController extends Controller
         return Inertia::render('Administrator/Produk/Index', [
             "title" => "Data Produk",
             "subTitle"  => $subTitle,
-            "produks"    => Produk::filter($params)->paginate(10)->withQueryString(),
+            "produks" => Produk::filter($params)->latest()->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byKategori" => $params['byKategori'] ?? "Semua Kategori",
@@ -65,12 +66,18 @@ class ProdukController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(jabatanstoreRequest $request)
+    public function store(ProdukStoreUpdateRequest $request)
     {
-        $validated = $request->validated();
-        Produk::create($validated);
-        return Redirect::route('admin.produk.index')->with('message', 'Data Produk Berhasil Ditambahkan!');
+        Produk::create($request->validated());
+
+        return redirect()
+            ->route('admin.produk.index')
+            ->with('message', 'Data Produk Berhasil Ditambahkan!');
     }
+
+
+
+
 
     /**
      * Display the specified resource.
@@ -91,7 +98,7 @@ class ProdukController extends Controller
         return Inertia::render('Administrator/Produk/Edit', [
             'title' => "Edit Data Produk",
             'produk' => $produk,
-             "filtersList"   => [
+            "filtersList"   => [
                 "kategori" => Produk::getEnumValues('kategori'),
                 "status"   => Produk::getEnumValues('status'),
             ],
@@ -101,17 +108,13 @@ class ProdukController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePegawaiRequest $request, Produk $produk)
+    public function update(ProdukStoreUpdateRequest $request, Produk $produk)
     {
-        $validated = $request->validated();
-
-        $pegawaiOld = $produk->toArray(); // ambil data lama sebelum update
-
-        $produk->update($validated); // update data
-
-        app(LogPegawaiChangesService::class)->logChanges($pegawaiOld, $validated);
-
-        return redirect()->back()->with('message', 'Data Produk Berhasil Diupdate!');
+        // dd($request);
+        $produk->update($request->validated());
+        return redirect()
+            ->route('admin.produk.index')
+            ->with('message', 'Data Produk Berhasil Diperbarui!');
     }
 
     /**

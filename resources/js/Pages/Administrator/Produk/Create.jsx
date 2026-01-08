@@ -118,7 +118,7 @@ export default function Create({ auth, filtersList, title }) {
                                             type="text"
                                             name="kode_produk"
                                             placeholder="Masukkan Kode Produk"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
+                                            className="w-full px-2 h-9 "
                                             maxLength={18}
                                             onChange={(e) =>
                                                 setData(
@@ -166,7 +166,7 @@ export default function Create({ auth, filtersList, title }) {
                                         <TextInput
                                             type="number"
                                             name="harga_satuan"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
+                                            className="w-full px-2 h-9"
                                             placeholder="Masukkan Harga Satuan dalam Rupiah. contoh: 10000"
                                             onChange={(e) =>
                                                 setData(
@@ -188,7 +188,7 @@ export default function Create({ auth, filtersList, title }) {
                                         <TextInput
                                             type="number"
                                             name="komisi_poin"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
+                                            className="w-full px-2 h-9"
                                             isFocused={true}
                                             maxLength={50}
                                             placeholder="Masukkan Komisi Poin. contoh: 10 POIN"
@@ -213,7 +213,7 @@ export default function Create({ auth, filtersList, title }) {
                                         <TextInput
                                             type="text"
                                             name="deskripsi_produk"
-                                            className="w-full px-2 h-9 placeholder:text-accent "
+                                            className="w-full px-2 h-9"
                                             isFocused={true}
                                             placeholder="Masukkan Deskripsi Produk. contoh: PRODUK A adalah.... "
                                             maxLength={100}

@@ -24,7 +24,7 @@ class JabatanController extends Controller
         return Inertia::render('Administrator/Jabatan/Index', [
             "title" => "Data Jabatan",
             "subTitle"  => $subTitle,
-            "jabatans"    => Jabatan::filter($params)->paginate(10)->withQueryString(),
+            "jabatans"    => Jabatan::filter($params)->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byLevel"     => $params['byLevel'] ?? "",

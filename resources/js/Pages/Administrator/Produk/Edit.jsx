@@ -3,6 +3,7 @@ import {
     InputError,
     SecondaryButton,
     SuccessButton,
+    SelectInput,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
@@ -12,7 +13,7 @@ import { FaSave, FaUserEdit } from "react-icons/fa";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 
-export default function Edit({ auth, produk, title, flash }) {
+export default function Edit({ auth, produk, title, flash, filtersList }) {
     // ==========================================================Form===============================================================
     const {
         data,
@@ -167,7 +168,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="nama_produk"
                                             value={data["nama_produk"]}
-                                            className="w-full px-2 h-9 border-gradient :text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient :text-accent "
                                         />
                                     </td>
                                 </tr>
@@ -180,7 +181,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="kode_produk"
                                             value={data["kode_produk"]}
-                                            className="w-full px-2 h-9 border-gradient :text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient :text-accent "
                                         />
                                     </td>
                                 </tr>
@@ -188,21 +189,19 @@ export default function Edit({ auth, produk, title, flash }) {
                                 <tr className="border">
                                     <td className="">KATEGORI</td>
                                     <td className="flex border-x">
-                                        <TextInput
-                                            id="nama"
-                                            type="text"
-                                            name="kategori"
-                                            defaultValue={data["kategori"]}
-                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent "
-                                            placeholder="Masukkan nomor Seri Karpeg. contoh: P 152011"
+                                        <SelectInput
+                                            id="status"
+                                            value={data.status}
+                                            className="w-full mt-1"
+                                            placeholder="-- Pilih Kategori --"
+                                            options={filtersList.kategori}
                                             onChange={(e) =>
                                                 setData(
-                                                    "kategori",
+                                                    "status",
                                                     e.target.value
                                                 )
                                             }
                                         />
-
                                         <InputError
                                             message={errors["kategori"]}
                                             className="mt-2"
@@ -236,7 +235,7 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="komisi_poin"
                                             value={data["komisi_poin"]}
-                                            className="w-full px-2 h-9 border-gradient :text-accent hover:cursor-not-allowed "
+                                            className="w-full px-2 h-9 border-gradient :text-accent "
                                             onChange={(e) =>
                                                 setData(
                                                     "komisi_poin",
@@ -253,20 +252,32 @@ export default function Edit({ auth, produk, title, flash }) {
                                             type="text"
                                             name="deskripsi_produk"
                                             value={data["deskripsi_produk"]}
-                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent :text-accent hover:cursor-not-allowed"
+                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent :text-accent "
                                             placeholder="input disini"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "deskripsi_produk",
+                                                    e.target.value
+                                                )
+                                            }
                                         />
                                     </td>
                                 </tr>
                                 <tr className="border">
                                     <td className="">STATUS</td>
                                     <td className="flex border-x">
-                                        <TextInput
-                                            type="text"
-                                            name="status"
-                                            value={data["status"]}
-                                            className="w-full px-2 h-9 border-gradient placeholder:text-accent :text-accent hover:cursor-not-allowed"
-                                            placeholder="input disini"
+                                        <SelectInput
+                                            id="status"
+                                            value={data.status}
+                                            className="w-full mt-1"
+                                            placeholder="-- Pilih Status --"
+                                            options={filtersList.status}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "status",
+                                                    e.target.value
+                                                )
+                                            }
                                         />
                                     </td>
                                 </tr>
