@@ -12,6 +12,7 @@ import { FaCheck, FaPlus, FaFileMedical } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { HiDocumentPlus } from "react-icons/hi2";
 import TextInput from "@/Components/TextInput";
+import axios from "axios";
 
 export default function Create({ auth, filtersList, title }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -30,6 +31,24 @@ export default function Create({ auth, filtersList, title }) {
         post(route("pegawai.akuisisi.store"), {
             forceFormData: true,
         });
+    };
+
+    const [generating, setGenerating] = useState(false);
+
+    const handleGenerateNumber = async () => {
+        setGenerating(true);
+        try {
+            // Panggil endpoint yang kita buat tadi
+            const response = await axios.get(route("pegawai.akuisisi.generate-tn"));
+
+            // Update data form Inertia
+            setData("no_transaksi", response.data.no_transaksi);
+        } catch (error) {
+            console.error("Gagal generate nomor", error);
+            alert("Gagal mengambil nomor transaksi baru.");
+        } finally {
+            setGenerating(false);
+        }
     };
 
     return (
@@ -79,22 +98,89 @@ export default function Create({ auth, filtersList, title }) {
                                 </thead>
                                 <tbody>
                                     <tr className="border">
-                                        <td width="40%">
+                                        <td width="40%" className="px-4 py-2">
                                             No. Transaksi / Referensi
                                         </td>
-                                        <td className="border-x" width="60%">
-                                            <TextInput
-                                                type="text"
-                                                value={data.no_transaksi}
-                                                placeholder="Contoh: TR-2023001"
-                                                className="w-full px-2 h-9"
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "no_transaksi",
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
+                                        <td
+                                            className="px-4 py-2 border-x"
+                                            width="60%"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                {/* Input Field */}
+                                                <div className="flex-grow">
+                                                    <TextInput
+                                                        type="text"
+                                                        value={
+                                                            data.no_transaksi
+                                                        }
+                                                        disabled
+                                                        className="w-full px-2 h-9 bg-gray-50" // bg-gray-50 memberitahu user ini auto, tapi masih bisa diedit
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "no_transaksi",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        placeholder="Klik tombol generate..."
+                                                    />
+                                                </div>
+
+                                                {/* Tombol Generate */}
+                                                <button
+                                                    type="button"
+                                                    onClick={
+                                                        handleGenerateNumber
+                                                    }
+                                                    disabled={generating}
+                                                    className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all"
+                                                    title="Generate Nomor Baru"
+                                                >
+                                                    {generating ? (
+                                                        // Spinner Loading sederhana
+                                                        <svg
+                                                            className="w-4 h-4 animate-spin"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <circle
+                                                                className="opacity-25"
+                                                                cx="12"
+                                                                cy="12"
+                                                                r="10"
+                                                                stroke="currentColor"
+                                                                strokeWidth="4"
+                                                                fill="none"
+                                                            ></circle>
+                                                            <path
+                                                                className="opacity-75"
+                                                                fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                            ></path>
+                                                        </svg>
+                                                    ) : (
+                                                        <>
+                                                            {/* Icon Refresh/Generate */}
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                strokeWidth={
+                                                                    1.5
+                                                                }
+                                                                stroke="currentColor"
+                                                                className="w-4 h-4 mr-1"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                                                                />
+                                                            </svg>
+                                                            Generate
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+
                                             <InputError
                                                 message={errors.no_transaksi}
                                                 className="mt-2"

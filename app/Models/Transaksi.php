@@ -20,10 +20,6 @@ class Transaksi extends Model
         return $this->belongsTo(Produk::class);
     }
 
-    public function indikator()
-    {
-        return $this->belongsTo(Indikator::class);
-    }
 
     public function akuisisi()
     {

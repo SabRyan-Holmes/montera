@@ -20,23 +20,40 @@ import {
     HiOutlineUserGroup,
 } from "react-icons/hi2";
 
-export default function SupervisorSidebar() {
+export default function SupervisorSidebar({ isCollapsed }) {
     return (
-        <section className="scale-105 menu">
+        <ul >
+            {/* Header Kategori (Hilang saat collapsed) */}
+            {!isCollapsed && (
+                <li className="px-4 mt-4 mb-2 text-xs font-bold tracking-wider uppercase text-slate-400">
+                    Menu Utama
+                </li>
+            )}
             {/* Link Dashboard */}
             <SidebarLink
                 href={route("dashboard")}
                 active={route().current("dashboard")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <MdSpaceDashboard />
                 Dashboard
+            </SidebarLink>
+            <SidebarLink
+                href={route("spv.report")}
+                active={route().current("spv.report")}
+                className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
+            >
+                <HiOutlineDocumentChartBar />
+                Target
             </SidebarLink>
 
             <SidebarLink
                 href={route("spv.verify")}
                 active={route().current("spv.verify")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <HiOutlineShieldCheck />
                 Verifikasi Data
@@ -46,6 +63,7 @@ export default function SupervisorSidebar() {
                 href={route("spv.team")}
                 active={route().current("spv.team")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <HiOutlineUserGroup />
                 Performa Tim
@@ -55,18 +73,19 @@ export default function SupervisorSidebar() {
                 href={route("spv.report")}
                 active={route().current("spv.report")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <HiOutlineDocumentChartBar />
                 Laporan & Evaluasi
             </SidebarLink>
 
-            <SidebarLinkCollapse
+            {/* <SidebarLinkCollapse
                 submenu={[
                     {
                         label: (
                             <>
                                 <HiOutlineBuildingLibrary />
-                                Produk
+                                Target
                             </>
                         ),
                         route: "spv.produk.index",
@@ -77,30 +96,30 @@ export default function SupervisorSidebar() {
                             "spv.produk.edit",
                         ],
                     },
-                    {
-                        label: (
-                            <>
-                                <HiOutlineAdjustmentsVertical />
-                                Indikator
-                            </>
-                        ),
-                        route: "spv.indikator.index",
-                        actives: [
-                            "spv.indikator.index",
-                            "spv.indikator.create",
-                            "spv.indikator.show",
-                            "spv.indikator.edit",
-                        ],
-                    },
+                    // {
+                    //     label: (
+                    //         <>
+                    //             <HiOutlineAdjustmentsVertical />
+                    //             Indikator
+                    //         </>
+                    //     ),
+                    //     route: "spv.indikator.index",
+                    //     actives: [
+                    //         "spv.indikator.index",
+                    //         "spv.indikator.create",
+                    //         "spv.indikator.show",
+                    //         "spv.indikator.edit",
+                    //     ],
+                    // },
                 ]}
             >
                 <span className="flex items-center ">
                     <FaDatabase className="mr-2" />
                     Main Data
                 </span>
-            </SidebarLinkCollapse>
+            </SidebarLinkCollapse> */}
 
-            <SidebarLinkCollapse
+            {/* <SidebarLinkCollapse
                 submenu={[
                     {
                         label: (
@@ -128,7 +147,7 @@ export default function SupervisorSidebar() {
                     <FaInfoCircle className="mr-2" />
                     Info
                 </span>
-            </SidebarLinkCollapse>
-        </section>
+            </SidebarLinkCollapse> */}
+        </ul>
     );
 }

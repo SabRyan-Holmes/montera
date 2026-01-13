@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Akuisisi extends Model
 {
@@ -54,5 +56,21 @@ class Akuisisi extends Model
             fn($query, $byStatus) =>
             $query->where('status_verifikasi', $byStatus)
         );
+    }
+
+    public function scopeInSupervisorDivisi(Builder $query): void
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            // 1. Filter Verifikator harus User yang sedang login
+            // Ini ditaruh di query utama karena kolom 'verifikator_id' ada di tabel 'akuisisis'
+            $query->where('verifikator_id', $user->id);
+
+            // 2. DAN Filter Pegawainya harus satu divisi
+            $query->whereHas('pegawai', function ($q) use ($user) {
+                $q->where('divisi_id', $user->divisi_id);
+            });
+        }
     }
 }

@@ -60,6 +60,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Pegawai')->prefix('pegawai')->name('pegawai.')->group(function () {
         Route::get('/target-pegawai', [PegawaiController::class, 'target'])->name('target'); // Monitoring Pribadi
         Route::resource('akuisisi', AkuisisiController::class)->only(['index', 'create', 'store']);
+        Route::get('/akuisisi/generate-transaction-number', [PegawaiController::class, 'generateNoTransaksi'])
+            ->name('akuisisi.generate-tn');
         Route::get('/report', [PegawaiController::class, 'report'])->name('report'); // Monitoring Pribadi
         Route::get('/transaksi', [PegawaiController::class, 'transaksi'])->name('transaksi'); // Monitoring Pribadi
         Route::get('/stats', [PegawaiController::class, 'stats'])->name('stats'); // Monitoring Pribadi
@@ -76,7 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/report', [SupervisorController::class, 'report'])->name('report');
         Route::get('/team', [SupervisorController::class, 'team'])->name('team'); // Monitoring Tim
         Route::get('/team/{user}/transactions', [SupervisorController::class, 'memberTransactions'])
-        ->name('team.transactions');
+            ->name('team.transactions');
     });
 
     // <============================================================ KEPALA CABANG ============================================================>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="bps_theme" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html data-theme="bank_xyz_theme" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
@@ -31,7 +31,7 @@
         src="{{ asset('build/' . $manifest['resources/js/Pages/' . $page['component'] . '.jsx']['file']) }}"></script>
 
     <!-- Import CSS -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-CW-snbV_.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/CIKpBp9r.css') }}">
     <!----------------------------------------------- NOTE:  FOR HOSTING!! --------------------------------------------------->
 
 </head>

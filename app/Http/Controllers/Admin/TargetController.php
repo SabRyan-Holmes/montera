@@ -32,7 +32,7 @@ class TargetController extends Controller
         return Inertia::render('Administrator/Target/Index', [
             "title" => "Target Kinerja Pegawai",
             "subTitle"  => $subTitle,
-            "targets" => Target::with(['indikator:id,nama_kpi,satuan', 'produk:id,nama_produk'])->paginate(10)
+            "targets" => Target::with([ 'produk:id,nama_produk'])->paginate(10)
                 ->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",

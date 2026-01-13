@@ -10,7 +10,6 @@ use App\Exports\PegawaiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Akuisisi;
 use App\Models\Divisi;
-use App\Models\Indikator;
 use App\Models\Jabatan;
 use App\Models\Produk;
 use App\Models\Target;
@@ -49,7 +48,7 @@ class DashboardController extends Controller
                     'user'      => User::count(),
                     'divisi'    => Divisi::count(),
                     'jabatan'   => Jabatan::count(),
-                    'indikator' => Indikator::count(),
+
                 ],
 
                 // GROUP 2: Operational Stats (Highlight Utama)

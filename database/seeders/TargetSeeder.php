@@ -2,38 +2,49 @@
 
 namespace Database\Seeders;
 
-use App\Models\Indikator;
 use App\Models\Produk;
 use App\Models\Target;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class TargetSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ambil User Pegawai
         $pegawaiIds = User::whereHas('jabatan', fn($q) => $q->where('nama_jabatan', 'Pegawai'))->pluck('id');
         $produkIds = Produk::pluck('id');
-        $indikatorIds = Indikator::pluck('id');
 
-        if ($pegawaiIds->isEmpty() || $indikatorIds->isEmpty()) {
+        if ($pegawaiIds->isEmpty() || $produkIds->isEmpty()) {
             return;
         }
 
-        // Loop diubah jadi 22
+        // Buat 22 Target Contoh
         for ($i = 0; $i < 22; $i++) {
+            // Tentukan periode (Bulanan)
+            $bulan = rand(1, 12);
+            $tahun = 2026;
+
+            // Hitung tanggal otomatis pakai Carbon
+            $startDate = Carbon::createFromDate($tahun, $bulan, 1);
+            $endDate = $startDate->copy()->endOfMonth();
+
             Target::create([
                 'user_id' => $pegawaiIds->random(),
-                'indikator_id' => $indikatorIds->random(),
                 'produk_id' => $produkIds->random(),
-                'nilai_target' => rand(50000000, 500000000), // Target antara 50jt - 500jt
+
+                'nilai_target' => rand(5, 100) * 1000000, // Target 5jt - 100jt
                 'tipe_target' => rand(0, 1) ? 'nominal' : 'noa',
+
+                // Field yang dikembalikan:
                 'periode' => 'bulanan',
-                'tahun' => date('Y'),
-                'tanggal_mulai' => now()->startOfMonth(),
-                'tanggal_selesai' => now()->endOfMonth(),
-                'deadline_pencapaian' => now()->endOfMonth(),
-                'keterangan_tambahan' => 'Target performa bulanan Q1.',
+                'tahun' => $tahun,
+                'tanggal_mulai' => $startDate->format('Y-m-d'),
+                'tanggal_selesai' => $endDate->format('Y-m-d'),
+                'deadline_pencapaian' => $endDate->format('Y-m-d'), // Biasanya deadline akhir bulan
+
+                'keterangan_tambahan' => 'Target performa reguler bulan ' . $startDate->format('F'),
             ]);
         }
     }

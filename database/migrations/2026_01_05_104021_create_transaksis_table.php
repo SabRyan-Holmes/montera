@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users'); // Siapa pegawainya
             $table->foreignId('produk_id')->constrained('produks'); // Apa produknya
-            $table->foreignId('indikator_id')->constrained('indikators'); // Masuk kategori KPI mana
             $table->foreignId('akuisisi_id')->constrained('akuisisis'); // Referensi ke laporan aslinya
 
             $table->decimal('nilai_realisasi', 15, 2); // Nominal duitnya

@@ -6,6 +6,7 @@ use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Models\Akuisisi;
 use App\Models\Produk;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -24,7 +25,7 @@ class AkuisisiController extends Controller
         });
     }
 
-    public function index()
+    public function index() //Admin & Pegawai
     {
         $subTitle = "";
         $params = request()->all(['search', 'byStatus']);
@@ -34,7 +35,7 @@ class AkuisisiController extends Controller
             'pegawai:id,name',
             'produk:id,nama_produk',
             'verifikator:id,name',
-        ])->filter($params);
+        ])->filter($params)->latest();
 
         $role = $this->user->jabatan->nama_jabatan;
         $isAdmin = $role === "Administrator";
@@ -65,6 +66,7 @@ class AkuisisiController extends Controller
      */
     public function create()
     {
+        // tambah logic auto generate no transaksi
         return Inertia::render('Administrator/Akuisisi/Create', [
             'title' => 'Input Laporan Akuisisi',
             'filtersList' => [
@@ -102,8 +104,8 @@ class AkuisisiController extends Controller
         }
 
         Akuisisi::create($validated);
-
-        return redirect()->route('pegawai.akuisisi.index')->with('success', 'Laporan berhasil dikirim!');
+        $routeName = $this->user->jabatan->nama_jabatan === 'Pegawai' ? 'pegawai.akuisisi.index' : 'admin.akuisisi.index' ;
+        return redirect()->route($routeName)->with('message', 'Laporan berhasil dikirim!');
     }
 
     /**
@@ -156,4 +158,6 @@ class AkuisisiController extends Controller
         $akuisisi->delete();
         return redirect()->back()->with('message', 'Data Akuisisi Berhasil DiHapus!');
     }
+
+
 }

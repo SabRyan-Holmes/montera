@@ -14,10 +14,6 @@ class Target extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function indikator(): BelongsTo
-    {
-        return $this->belongsTo(Indikator::class);
-    }
 
     public function produk(): BelongsTo
     {

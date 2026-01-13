@@ -13,15 +13,49 @@ class DivisiSeeder extends Seeder
     public function run(): void
     {
         $divisi = [
-            ['nama' => 'SDM & Umum', 'kode' => 'ADM'], // Admin & SDM
-            ['nama' => 'Operasional', 'kode' => 'OPS'],
-            ['nama' => 'Pemasaran & Bisnis', 'kode' => 'MKT'],
-            ['nama' => 'Kredit & Konsumer', 'kode' => 'CRD'],
-            ['nama' => 'Pimpinan Cabang', 'kode' => 'KCP'], // Khusus Kepala Cabang
+            // --- KELOMPOK 1: PEGAWAI FRONTLINER ---
+            [
+                'main_divisi' => 'Front Liner',
+                'nama'        => 'Customer Service',
+                'kode'        => 'CS'
+            ],
+            [
+                'main_divisi' => 'Front Liner',
+                'nama'        => 'Teller',
+                'kode'        => 'TL'
+            ],
+            [
+                'main_divisi' => 'Front Liner',
+                'nama'        => 'Security',
+                'kode'        => 'SEC'
+            ],
+            [
+                'main_divisi' => 'Front Liner',
+                'nama'        => 'Admin Gov',
+                'kode'        => 'GOV'
+            ],
+
+            // --- KELOMPOK 2: PEGAWAI KREDIT ---
+            [
+                'main_divisi' => 'kredit',
+                'nama'        => 'Mikro Credit Analis',
+                'kode'        => 'MCA'
+            ],
+            [
+                'main_divisi' => 'kredit',
+                'nama'        => 'Sales Generalis Produktif',
+                'kode'        => 'SGP'
+            ],
+            [
+                'main_divisi' => 'kredit',
+                'nama'        => 'Sales Generalis Konsumtif',
+                'kode'        => 'SGK'
+            ],
         ];
 
         foreach ($divisi as $d) {
             Divisi::create([
+                'main_divisi' => $d['main_divisi'], // Field baru wajib diisi
                 'nama_divisi' => $d['nama'],
                 'kode_divisi' => $d['kode'],
             ]);

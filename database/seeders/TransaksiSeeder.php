@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Akuisisi;
-use App\Models\Indikator;
 use App\Models\Produk;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -13,40 +12,44 @@ class TransaksiSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Ambil data pendukung
-        $indikators = Indikator::all();
-        // Ambil SEMUA akuisisi yang verified (ini adalah sumber kebenaran/source of truth)
+        // 1. Ambil User Pegawai beserta Divisinya
+        $users = User::with('divisi')
+            ->whereHas('jabatan', fn($q) => $q->where('nama_jabatan', 'Pegawai'))
+            ->get();
+
+        // 2. Ambil Data Akuisisi Verified (Source of Truth)
         $akuisisis = Akuisisi::where('status_verifikasi', 'verified')->get();
 
-        if ($akuisisis->isEmpty() || $indikators->isEmpty()) {
-            $this->command->error('Data Akuisisi Verified atau Indikator kosong.');
+        if ($akuisisis->isEmpty()) {
+            $this->command->warn('Data Akuisisi Verified kosong. Pastikan AkuisisiSeeder jalan duluan.');
             return;
         }
 
-        // 2. Loop berdasarkan data AKUISISI, bukan loop angka random
-        // Kita ambil 17 sampel acak dari akuisisi yang ada
-        $sampleAkuisisis = $akuisisis->count() > 17
-            ? $akuisisis->random(17)
-            : $akuisisis; // Kalau datanya kurang dari 17, pakai semua yang ada
+        // 3. Loop 17 Transaksi dari data Akuisisi
+        $sample = $akuisisis->count() > 17 ? $akuisisis->random(17) : $akuisisis;
 
-        foreach ($sampleAkuisisis as $akuisisi) {
-            // Ambil indikator secara acak (atau sesuaikan logika bisnis jika indikator terikat produk)
-            // Agar lebih akurat, ambil indikator yang sesuai dengan produk akuisisi tersebut
-            $indikator = $indikators->where('produk_id', $akuisisi->produk_id)->first();
+        foreach ($sample as $akuisisi) {
+            $user = $users->find($akuisisi->user_id);
+            $produk = Produk::find($akuisisi->produk_id);
 
-            // Fallback jika tidak ada indikator spesifik, ambil random (untuk dummy data)
-            if (!$indikator) {
-                $indikator = $indikators->random();
-            }
+            // --- LOGIKA HITUNG POIN (CORE LOGIC) ---
+            // Cek Main Divisi User: 'Front Liner' atau 'kredit'
+            // (Pastikan DivisiSeeder sudah pakai enum yang benar)
+            $mainDivisi = $user->divisi->main_divisi ?? 'Front Liner'; // Default FL jika null
+
+            $poin = ($mainDivisi === 'kredit')
+                ? $produk->bobot_kredit
+                : $produk->bobot_frontliner;
+            // ----------------------------------------
 
             DB::table('transaksis')->insert([
-                'user_id' => $akuisisi->user_id, // AMBIL DARI AKUISISI
-                'produk_id' => $akuisisi->produk_id, // AMBIL DARI AKUISISI
-                'indikator_id' => $indikator->id,
-                'akuisisi_id' => $akuisisi->id, // PASTI ADA (NOT NULL)
+                'user_id' => $user->id,
+                'produk_id' => $produk->id,
+                'akuisisi_id' => $akuisisi->id,
 
-                'nilai_realisasi' => $akuisisi->nominal_realisasi, // SINKRON DENGAN AKUISISI
-                'poin_didapat' => rand(10, 100),
+                'nilai_realisasi' => $akuisisi->nominal_realisasi, // Data Uang (Untuk Kacab)
+                'poin_didapat' => $poin, // Data Skor (Untuk Penilaian KPI)
+
                 'bulan' => date('n'),
                 'tahun' => date('Y'),
                 'created_at' => now(),
@@ -54,6 +57,6 @@ class TransaksiSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('Data Transaksi berhasil dibuat dari Akuisisi Verified!');
+        $this->command->info('17 Transaksi berhasil digenerate dengan perhitungan Poin otomatis!');
     }
 }

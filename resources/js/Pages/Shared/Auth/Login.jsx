@@ -28,7 +28,7 @@ export default function Login({ status, canResetPassword }) {
         e.preventDefault();
         const routeName = e.nativeEvent.submitter.value;
         post(route(routeName), {
-            onError: (err) => alert(JSON.stringify(err))
+            // onError: (err) => alert(JSON.stringify(err))
         });
     };
 
@@ -136,14 +136,7 @@ export default function Login({ status, canResetPassword }) {
                                 Forgot your password?
                             </Link>
                         )}
-                        <SecondaryButton
-                            asLink
-                            type="button"
-                            href={""}
-                            className="font-extrabold bg-secondary/5 text-nowrap hover:scale-105"
-                        >
-                            Login SSO
-                        </SecondaryButton>
+
                         <PrimaryButton
                             name="action"
                             value="login"

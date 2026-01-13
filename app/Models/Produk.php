@@ -23,10 +23,6 @@ class Produk extends Model
         return $this->hasMany(Target::class, 'produk_id');
     }
 
-    public function indikators(): HasMany
-    {
-        return $this->hasMany(Indikator::class);
-    }
 
     public function scopeFilter($query, array $filters): void
     {

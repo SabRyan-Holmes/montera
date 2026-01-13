@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('targets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('indikator_id')->constrained('indikators'); // WAJIB ADA
             $table->foreignId('produk_id')->nullable()->constrained('produks');
 
             $table->decimal('nilai_target', 15, 2);
-            $table->enum('tipe_target', ['nominal', 'noa']); // TAMBAHKAN LAGI INI
+            $table->enum('tipe_target', ['nominal', 'noa']);
             $table->enum('periode', ['mingguan', 'bulanan', 'tahunan']);
 
             // Tambahkan kolom tahun untuk filter historis

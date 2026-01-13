@@ -47,7 +47,7 @@ export default function Index({
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
-    console.log(filtersList);
+
     // ===========================================Other Logics===========================================
 
     return (
@@ -116,9 +116,7 @@ export default function Index({
                                         <th scope="col" width="15%">
                                             Status
                                         </th>
-                                        <th scope="col" width="15%">
-                                            Verifikator
-                                        </th>
+
 
                                         <th
                                             scope="col"
@@ -230,13 +228,7 @@ export default function Index({
                                                         }
                                                     </span>
                                                 </td>
-                                                {/* Verifikator */}
-                                                <td>
-                                                    <span className="block">
-                                                        {akuisisi.verifikator
-                                                            ?.name ?? "-"}
-                                                    </span>
-                                                </td>
+
                                                 {/* Last Updated */}
                                                 <td
                                                     className={`text-center ${

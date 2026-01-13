@@ -9,17 +9,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    // database/migrations/xxxx_create_produks_table.php
     public function up(): void
     {
         Schema::create('produks', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_produk'); // Contoh: Kredit Mikro, Tabungan Berjangka
-            $table->string('kode_produk')->unique(); // Contoh: KM-001
-            $table->enum('kategori', ['tabungan', 'kredit', 'asuransi', 'retail', 'corporate', 'digital']);
-            $table->decimal('harga_satuan', 15, 2)->default(0);
-            $table->decimal('komisi_poin', 8, 2)->default(0); // Poin performa per produk
-            $table->text('deskripsi_produk')->nullable();
-            $table->enum('status', ['tersedia', 'discontinued', 'aktif'])->default('tersedia');
+            $table->string('nama_produk'); // Contoh: TABUNGAN ONLINE
+            $table->string('kode_produk')->unique();
+
+            // Kategori Indikator (Funding, Kredit, E-Channel, dll)
+            $table->string('kategori_produk');
+
+            // Label Input Form (Contoh: "NOMOR REKENING", "ID COMPANY")
+            $table->string('label_input');
+            // Satuan untuk display: 'Rekening', 'Unit', 'Merchant', 'Polis'
+            $table->string('satuan')->default('Unit');
+            // Bobot Penilaian (Poin) sesuai Jabatan
+            $table->integer('bobot_frontliner')->default(0);
+            $table->integer('bobot_kredit')->default(0);
+
+            $table->enum('status', ['tersedia', 'discontinued'])->default('tersedia');
             $table->timestamps();
         });
     }

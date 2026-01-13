@@ -24,10 +24,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,      // User butuh Jabatan & Divisi
             ProdukSeeder::class,    // Produk berdiri sendiri (kategori tabungan/kredit/asuransi)
 
-            // 3. Aturan Main (KPI)
-            IndikatorSeeder::class, // Indikator butuh produk_id
 
-            // 4. Data Transaksi & Perencanaan (Target & Realisasi)
+
+            // 3. Data Transaksi & Perencanaan (Target & Realisasi)
             TargetSeeder::class,    // Target butuh user_id dan indikator_id
             AkuisisiSeeder::class,  // Akuisisi butuh user_id dan produk_id
             TransaksiSeeder::class,  // Transaksi butuh user_id dan produk_id dan indikator_id

@@ -1,14 +1,12 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useState } from "react";
-import { FaEye, FaEdit } from "react-icons/fa";
-import { Link, router } from "@inertiajs/react";
-import { IoMdAdd } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { FaEye } from "react-icons/fa";
+import { router } from "@inertiajs/react";
 import Swal from "sweetalert2";
-import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
-import { FaEyeSlash, FaTrash } from "react-icons/fa6";
+import { FilterSearchCustom, Pagination } from "@/Components";
+import { FaEyeSlash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
-import ShowModal from "./Show";
 
 export default function Index({
     auth,
@@ -18,8 +16,6 @@ export default function Index({
     subTitle,
     filtersReq,
     filtersList,
-    isDivisiSDM,
-
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
@@ -72,7 +68,7 @@ export default function Index({
 
     // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
-    const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
+    const [showLastUpdated, setShowLastUpdated] = useState(false);
     const role = auth.user.jabatan.nama_jabatan;
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
@@ -85,11 +81,15 @@ export default function Index({
             user={auth.user}
             title={(role === "Admnistrator" ? "Kelola " : "Daftar ") + title}
         >
-            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+            {/* FIX UTAMA DISINI:
+                Gw ganti 'laptop:w-screen-laptop' jadi 'w-full'.
+                Biar dia ga maksa selebar layar (yg bikin nabrak sidebar), tapi menyesuaikan sisa ruang.
+            */}
+            <div className="w-full pb-10 mx-auto phone:h-screen laptop:h-full laptop:px-7 max-w-screen-desktop ">
                 <section className="flex items-end justify-between gap-4">
-                    <div className="flex-1 ">
+                    <div className="flex-1">
                         <FilterSearchCustom
-                            routeName={`/admin/target`}
+                            routeName={ `/pegawai/target-pegawai`}
                             initialFilters={{
                                 byTipe: filtersReq.tipe,
                                 byStatus: filtersReq.status,
@@ -100,7 +100,6 @@ export default function Index({
                                     label: "Tipe Target ",
                                     options: filtersList.tipe_target,
                                 },
-
                                 {
                                     name: "byPeriode",
                                     label: "Periode ",
@@ -109,15 +108,15 @@ export default function Index({
                             ]}
                             searchConfig={{
                                 name: "search",
-                                label: "Nama Target",
-                                placeholder: "Ketik Nama Pegawai/Produk..",
+                                label: "Nama Produk",
+                                placeholder: "Ketik Nama Produk..",
                                 initialValue: filtersReq.search,
                             }}
                         />
                     </div>
                 </section>
 
-                <section className="pt-3">
+                <section className="pt-3 overflow-no-scroll">
                     {subTitle && (
                         <div className="my-4">
                             <strong className="text-2xl font-bold text-gray-600">
@@ -128,208 +127,135 @@ export default function Index({
 
                     {targets.data.length > 0 ? (
                         <>
-                            <div className="w-full overflow-x-auto scrollbar-primary ">
-                                <table className="table text-xs text-center table-bordered">
-                                    <thead className="text-sm font-medium text-white bg-primary ">
+                            {/* --- WRAPPER UTAMA TABEL --- */}
+                            {/* overflow-x-auto: Bikin scrollbar cuma ada di box ini
+                                w-full: Biar lebarnya ngikutin parent (yg udah kita benerin jadi w-full)
+                            */}
+                            <div className="w-full mb-4 overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl">
+                                <table className="table text-xs text-center min-w-max table-bordered">
+                                    <thead className="text-sm font-medium text-white bg-primary">
                                         <tr className="text-center">
-                                            <th
-                                                scope="col"
-                                                dir="rtl"
-                                                width="5%"
-                                                className=" rounded-tl-xl"
-                                            >
-                                                No
-                                            </th>
-                                            <th scope="col">Nama Indikator</th>
+                                            <th scope="col" width="5%" className="py-3">No</th>
+                                            <th scope="col" className="py-3">Nama Produk</th>
+                                            <th scope="col" className="py-3">Kategori</th>
+                                            <th scope="col" className="py-3">Nilai Target</th>
+                                            <th scope="col" className="py-3">Tipe Target</th>
+                                            <th scope="col" className="py-3">Periode</th>
+                                            <th scope="col" className="py-3">Tahun</th>
+                                            <th scope="col" className="py-3">Tanggal Mulai</th>
+                                            <th scope="col" className="py-3">Tanggal Selesai</th>
+                                            <th scope="col" className="py-3">Deadline Pencapaian</th>
 
-                                            <th scope="col">Nama Produk</th>
-                                            <th scope="col">Nilai Target</th>
-                                            <th scope="col">Tipe Target</th>
-                                            <th scope="col">Periode</th>
-                                            <th scope="col">Tahun</th>
-                                            <th scope="col">Tanggal Mulai</th>
-                                            <th scope="col">Tanggal Selesai</th>
-                                            <th scope="col">
-                                                Deadline Pencapaian
-                                            </th>
-
+                                            {/* Header Aksi & Updated */}
                                             <>
-                                                <th
-                                                    scope="col"
-                                                    width="10%"
-                                                    className={
-                                                        "text-center cursor-pointer " +
-                                                        (!showLastUpdated
-                                                            ? "rounded-tr-xl"
-                                                            : "")
-                                                    }
-                                                >
+                                                <th scope="col" width="10%" className="py-3 text-center cursor-pointer">
                                                     <div className="flex items-center justify-center gap-2">
                                                         {showLastUpdated ? (
-                                                            <>
-                                                                <button
-                                                                    className="action-btn hover:scale-[1.15] hover:bg-bermuda"
-                                                                    onClick={() =>
-                                                                        setShowLastUpdated(
-                                                                            !showLastUpdated
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <FaEyeSlash className="mr-1 text-white " />
-                                                                    Diperbarui
-                                                                </button>
-                                                            </>
+                                                            <button
+                                                                className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                                onClick={() => setShowLastUpdated(!showLastUpdated)}
+                                                            >
+                                                                <FaEyeSlash className="mr-1 text-white" />
+                                                                Diperbarui
+                                                            </button>
                                                         ) : (
                                                             <div className="flex items-center justify-center gap-2">
                                                                 <button
-                                                                    className=" action-btn hover:scale-125 hover:bg-bermuda"
-                                                                    onClick={() =>
-                                                                        setShowLastUpdated(
-                                                                            !showLastUpdated
-                                                                        )
-                                                                    }
+                                                                    className="action-btn hover:scale-125 hover:bg-bermuda"
+                                                                    onClick={() => setShowLastUpdated(!showLastUpdated)}
                                                                 >
                                                                     <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
                                                                 </button>
-                                                                <span className="">
-                                                                    Aksi
-                                                                </span>
+                                                                <span>Aksi</span>
                                                             </div>
                                                         )}
                                                     </div>
                                                 </th>
                                                 {showLastUpdated && (
-                                                    <th
-                                                        scope="col"
-                                                        className="text-center rounded-tr-xl"
-                                                    >
-                                                        Aksi
-                                                    </th>
+                                                    <th scope="col" className="py-3 text-center">Aksi</th>
                                                 )}
                                             </>
                                         </tr>
                                     </thead>
-                                    <tbody className="overflow-x-scroll">
-                                        {targets.data?.map((target, i) => (
-                                            <tr key={target.id}>
-                                                <td className="text-center">
-                                                    {i + 1}
-                                                </td>
 
-                                                {/* Nama Indikator */}
-                                                <td className="relative text-center group">
-                                                    <span className="block">
-                                                        {
-                                                            target.indikator
-                                                                ?.nama_kpi
-                                                        }
+                                    {/* BODY: Overflow dihapus dari sini biar ga error */}
+                                    <tbody>
+                                        {targets.data?.map((target, i) => (
+                                            <tr key={target.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <td className="py-3 text-center">
+                                                    {i + 1 + (targets.meta?.from || 1) - 1}
+                                                </td>
+                                                <td className="px-2 py-3 text-left">
+                                                    <span className="block font-semibold">
+                                                        {target.produk?.nama_produk ?? "-"}
+                                                    </span>
+                                                </td>
+                                                <td className="relative px-2 py-3 text-center group">
+                                                    <span className="block mb-1">
+                                                        {target.produk?.kategori_produk ?? "-"}
                                                     </span>
                                                     <span className="badge-xs-accent">
-                                                        {
-                                                            target.indikator
-                                                                ?.satuan
-                                                        }
+                                                        {target.produk?.satuan}
                                                     </span>
                                                 </td>
-
-                                                {/* Nama Produk */}
-                                                <td>
-                                                    <span className="block">
-                                                        {target.produk
-                                                            ?.nama_produk ??
-                                                            "-"}
-                                                    </span>
-                                                </td>
-
-                                                {/* Nilai Target */}
-                                                <td>
-                                                    <span className="block">
+                                                <td className="py-3">
+                                                    <span className="block font-medium">
                                                         {target.nilai_target}
                                                     </span>
                                                 </td>
-
-                                                {/* Tipe Target */}
-                                                <td>
+                                                <td className="py-3">
                                                     <span className="block capitalize">
                                                         {target.tipe_target}
                                                     </span>
                                                 </td>
-
-                                                {/* Periode */}
-                                                <td>
+                                                <td className="py-3">
                                                     <span className="block capitalize">
                                                         {target.periode}
                                                     </span>
                                                 </td>
-
-                                                {/* Tahun */}
-                                                <td>
+                                                <td className="py-3">
                                                     <span className="block">
                                                         {target.tahun}
                                                     </span>
                                                 </td>
-
-                                                {/* Tanggal Mulai */}
-                                                <td>
+                                                <td className="py-3 whitespace-nowrap">
                                                     <span className="block">
-                                                        {moment(
-                                                            target.tanggal_mulai
-                                                        ).format("LL")}
+                                                        {moment(target.tanggal_mulai).format("LL")}
                                                     </span>
                                                 </td>
-
-                                                {/* Tanggal Selesai */}
-                                                <td>
+                                                <td className="py-3 whitespace-nowrap">
                                                     <span className="block">
-                                                        {moment(
-                                                            target.tanggal_selesai
-                                                        ).format("LL")}
+                                                        {moment(target.tanggal_selesai).format("LL")}
                                                     </span>
                                                 </td>
-
-                                                {/* Deadline Pencapaian */}
-                                                <td>
-                                                    <span className="block">
-                                                        {moment(
-                                                            target.deadline_pencapaian
-                                                        ).format("LL")}
+                                                <td className="py-3 whitespace-nowrap">
+                                                    <span className="block font-medium text-red-500">
+                                                        {moment(target.deadline_pencapaian).format("LL")}
                                                     </span>
                                                 </td>
 
                                                 {/* Last Updated */}
-                                                <td
-                                                    className={`font-normal text-center ${
-                                                        !showLastUpdated &&
-                                                        "hidden"
-                                                    }`}
-                                                >
+                                                <td className={`font-normal text-center whitespace-nowrap ${!showLastUpdated && "hidden"}`}>
                                                     <span className="block">
-                                                        {moment(
-                                                            target.updated_at
-                                                        ).format("LL")}
+                                                        {moment(target.updated_at).format("LL")}
                                                     </span>
-                                                    <span className="block text-[12px]">
-                                                        {moment(
-                                                            target.updated_at
-                                                        ).fromNow()}
+                                                    <span className="block text-[12px] text-gray-400">
+                                                        {moment(target.updated_at).fromNow()}
                                                     </span>
                                                 </td>
 
                                                 {/* Aksi */}
-                                                <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                <td className="py-3 space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             onClick={() => {
-                                                                setActiveModal(
-                                                                    `Show-${target.id}`
-                                                                );
-                                                                document
-                                                                    .getElementById(
-                                                                        `Show-${target.id}`
-                                                                    )
-                                                                    .showModal();
+                                                                setActiveModal(`Show-${target.id}`);
+                                                                setTimeout(() => {
+                                                                    const el = document.getElementById(`Show-${target.id}`);
+                                                                    if (el) el.showModal();
+                                                                }, 50);
                                                             }}
-                                                            className="action-btn group/button action-btn-success "
+                                                            className="action-btn group/button action-btn-success"
                                                         >
                                                             <span className="block mr-1 group-hover/button:text-white">Lihat</span>
                                                             <FaEye className="scale-125 group-hover/button:fill-white" />
@@ -341,7 +267,7 @@ export default function Index({
                                     </tbody>
                                 </table>
                             </div>
-                            {/* Pagination */}
+
                             <Pagination
                                 datas={targets}
                                 urlRoute={`/target-pegawai`}
@@ -355,14 +281,12 @@ export default function Index({
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
-                                {!subTitle
-                                    ? "Belum Ada Data Target Terbaru Untuk Saat Ini"
-                                    : "Tidak Ditemukan"}
+                                {!subTitle ? "Belum Ada Data Target Terbaru Untuk Saat Ini" : "Tidak Ditemukan"}
                             </h2>
                         </div>
                     )}
                 </section>
-            </main>
+            </div>
         </Authenticated>
     );
 }

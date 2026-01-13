@@ -1,23 +1,26 @@
-import React from "react";
-import { RiAppsFill } from "react-icons/ri";
-import { GrHelpBook } from "react-icons/gr";
-import { AiFillNotification } from "react-icons/ai";
-import { IoDocuments, IoSettings } from "react-icons/io5";
-import { FaInfoCircle } from "react-icons/fa";
-import { MdEditDocument, MdOutlineAssignmentInd } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaUserTie } from "react-icons/fa6";
-import { SidebarLink, SidebarLinkCollapse } from "..";
-import { HiOutlineClipboardDocumentList, HiOutlineDocumentPlus, HiOutlineFlag, HiOutlineTrophy } from "react-icons/hi2";
+import { SidebarLink } from "..";
+import {
+    HiOutlineClipboardDocumentList,
+    HiOutlineDocumentPlus,
+    HiOutlineFlag,
+} from "react-icons/hi2";
 
-export default function PegawaiSidebar() {
+export default function PegawaiSidebar({ isCollapsed }) {
     return (
-        <section className="scale-105 menu">
+        <ul>
+             {/* Header Kategori (Hilang saat collapsed) */}
+            {!isCollapsed && (
+                <li className="px-4 mt-4 mb-2 text-xs font-bold tracking-wider uppercase text-slate-400">
+                    Menu Utama
+                </li>
+            )}
             {/* Link Dashboard */}
             <SidebarLink
                 href={route("dashboard")}
                 active={route().current("dashboard")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <MdSpaceDashboard />
                 Dashboard
@@ -27,6 +30,7 @@ export default function PegawaiSidebar() {
                 href={route("pegawai.target")}
                 active={route().current("pegawai.target")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <HiOutlineFlag />
                 Target Kerja
@@ -36,6 +40,7 @@ export default function PegawaiSidebar() {
                 href={route("pegawai.akuisisi.index")}
                 active={route().current("pegawai.akuisisi.index")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <HiOutlineDocumentPlus />
                 Akuisisi
@@ -44,16 +49,18 @@ export default function PegawaiSidebar() {
                 href={route("pegawai.report")}
                 active={route().current("pegawai.report")}
                 className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
             >
                 <HiOutlineClipboardDocumentList />
-                Riwayat Laporan
+                Laporan
             </SidebarLink>
-
+            {/*
             <SidebarLink
                 href={route("pegawai.transaksi")}
                 active={route().current("pegawai.transaksi")}
                 className="z-20 mx-[18px] -mb-1"
-            >
+                isCollapsed={isCollapsed}
+                >
                 <HiOutlineTrophy />
                 Transaksi Saya
             </SidebarLink>
@@ -65,9 +72,9 @@ export default function PegawaiSidebar() {
             >
                 <MdSpaceDashboard />
                 Statistik & Ranking
-            </SidebarLink>
+            </SidebarLink> */}
 
-            <SidebarLinkCollapse
+            {/* <SidebarLinkCollapse
                 submenu={[
                     {
                         label: (
@@ -95,7 +102,7 @@ export default function PegawaiSidebar() {
                     <FaInfoCircle className="mr-2" />
                     Info
                 </span>
-            </SidebarLinkCollapse>
-        </section>
+            </SidebarLinkCollapse> */}
+        </ul>
     );
 }

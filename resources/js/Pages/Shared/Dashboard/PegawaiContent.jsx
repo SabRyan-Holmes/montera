@@ -120,7 +120,7 @@ export default function PegawaiContent({ dataByRole }) {
 
             {/* Row 3: Visual Progress */}
             {/* Row 3: Visual Progress */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div className="p-6 bg-white border shadow-sm rounded-xl">
                     <RadialChart
                         title={"Progress Nasabah (NOA)"}
@@ -142,7 +142,8 @@ export default function PegawaiContent({ dataByRole }) {
                         chartId={"chart-vol-pegawai"}
                     />
                 </div>
-            </div>
+            </section> */}
+
         </main>
     );
 }

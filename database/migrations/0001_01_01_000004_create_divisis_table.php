@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('divisis', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_divisi'); // ex: Pemasaran, IT, Operasional
-            $table->string('kode_divisi', 10)->unique(); // ex: MKT, IT, OPS
-            $table->string('lokasi_lantai', 10)->nullable();
+            $table->enum('main_divisi', ['Front Liner', 'kredit']);
+            $table->string('nama_divisi');
+            $table->string('kode_divisi', 10)->unique();
             $table->string('kepala_divisi')->nullable(); // Nama atau NIP pimpinan divisi
             $table->timestamps();
         });

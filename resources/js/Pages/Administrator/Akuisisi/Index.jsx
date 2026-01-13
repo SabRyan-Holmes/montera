@@ -83,7 +83,7 @@ export default function Index({
 
     return (
         <Authenticated user={auth.user} title={title}>
-            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+            <section className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
@@ -117,7 +117,9 @@ export default function Index({
                                 }
                                 className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
-                                Tambah Data
+                                {role === "Administrator"
+                                    ? "Tambah Data"
+                                    : "Ajukan Akuisisi"}
                                 <IoMdAdd className="w-5 h-5" />
                             </Link>
                         </div>
@@ -144,10 +146,12 @@ export default function Index({
                                         >
                                             No
                                         </th>
+                                        {role === "Administrator" && (
+                                            <th scope="col" width="15%">
+                                                Pegawai
+                                            </th>
+                                        )}
 
-                                        <th scope="col" width="15%">
-                                            Pegawai
-                                        </th>
                                         <th scope="col" width="15%">
                                             Produk
                                         </th>
@@ -229,11 +233,16 @@ export default function Index({
                                             <tr key={akuisisi.id}>
                                                 <td>{i + 1}</td>
                                                 {/* Pegawai */}
-                                                <td>
-                                                    <span className="block">
-                                                        {akuisisi.pegawai?.name}
-                                                    </span>
-                                                </td>
+                                                {role === "Administrator" && (
+                                                    <td>
+                                                        <span className="block">
+                                                            {
+                                                                akuisisi.pegawai
+                                                                    ?.name
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                )}
                                                 {/* Produk */}
                                                 <td>
                                                     <span className="block">
@@ -302,7 +311,6 @@ export default function Index({
                                                         ).fromNow()}
                                                     </span>
                                                 </td>
-
                                                 {/* AKSI */}
                                                 {canManage ? (
                                                     <>
@@ -404,7 +412,9 @@ export default function Index({
                                                                 }}
                                                                 className="action-btn group/button action-btn-success "
                                                             >
-                                                                <span className="mr-1">Lihat</span>
+                                                                <span className="mr-1">
+                                                                    Lihat
+                                                                </span>
                                                                 <FaEye className="scale-125 group-hover/button:fill-white " />
                                                             </button>
                                                             <ShowModal
@@ -453,7 +463,7 @@ export default function Index({
                         </div>
                     )}
                 </section>
-            </main>
+            </section>
         </Authenticated>
     );
 }

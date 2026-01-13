@@ -30,9 +30,15 @@ class SupervisorController extends Controller
         $subTitle = GetSubtitle::getSubtitle(...$params);
 
         return Inertia::render('Supervisor/Verifikasi/Index', [
-            "title" => "Verifikasi Data Akuisisi",
+            "title" => "Verifikasi Data Akuisisi Tim Saya",
             "subTitle"  => $subTitle,
-            "akuisisis"    => Akuisisi::with(['pegawai:id,name', 'produk:id,nama_produk', 'verifikator:id,name'])->filter($params)->paginate(10)->withQueryString(),
+            "akuisisis" => Akuisisi::query()
+                ->with(['pegawai:id,name', 'produk:id,nama_produk,kategori_produk', 'verifikator:id,name'])
+                ->inSupervisorDivisi() // <--- 1. Filter Divisi Supervisor
+                ->latest()             // <--- 2. Ambil data terbaru (ORDER BY created_at DESC)
+                ->filter($params)      // <--- 3. Filter Search/Status (bawaan kamu)
+                ->paginate(10)
+                ->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byStatus"   => $params['byStatus'] ?? "Semua Kategori",

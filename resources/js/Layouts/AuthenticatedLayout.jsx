@@ -1,30 +1,50 @@
-import { Link, Head } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import { Head } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 
-export default function Authenticated({ user, title, header, children, current}) {
-    // console.log('isi current', current)
+export default function Authenticated({ user, title, children }) {
+    // 1. UBAH STATE: Cek LocalStorage dulu saat inisialisasi
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        // Cek apakah ada simpanan state di browser?
+        const savedState = localStorage.getItem("sidebarOpen");
+        // Jika ada, pakai itu. Jika tidak, default True (Terbuka).
+        return savedState !== null ? JSON.parse(savedState) : true;
+    });
+
+    // 2. FUNGSI TOGGLE: Simpan ke LocalStorage setiap kali berubah
+    const toggleSidebar = () => {
+        setIsSidebarOpen((prev) => {
+            const newState = !prev;
+            localStorage.setItem("sidebarOpen", JSON.stringify(newState));
+            return newState;
+        });
+    };
 
     return (
-        <div className="h-full">
+        <div className="flex h-screen font-sans text-gray-900 bg-gray-50">
             <Head title={title} />
 
-            <div className="h-full drawer tablet:drawer-open">
-                <input
-                    id="my-drawer-2"
-                    type="checkbox"
-                    className="drawer-toggle"
-                />
-                <div className="flex flex-col h-full drawer-content bg-neutral">
-                    <Navbar user={user} title={title} />
-                    <div className="h-full mx-6 mt-6 bg-white">
-                        <main>{children}</main>
-                    </div>
-                </div>
+            {/* SIDEBAR */}
+            <div className="relative z-40 flex-shrink-0 h-full">
                 <Sidebar
-                    active={(current? current :  route().current("dashbard"))}
-                    role={user.jabatan.nama_jabatan}
-                ></Sidebar>
+                    user={user}
+                    isCollapsed={!isSidebarOpen}
+                />
+            </div>
+
+            {/* MAIN CONTENT */}
+            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+                <Navbar
+                    user={user}
+                    title={title}
+                    toggleSidebar={toggleSidebar}
+                    isSidebarOpen={isSidebarOpen}
+                />
+
+                <main className="flex-1 p-6 overflow-y-auto scroll-smooth">
+                    {children}
+                </main>
             </div>
         </div>
     );

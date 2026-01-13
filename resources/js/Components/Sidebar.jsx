@@ -4,7 +4,9 @@ import PegawaiSidebar from "./SidebarByRole/PegawaiSidebar";
 import SupervisorSidebar from "./SidebarByRole/SupervisorSidebar";
 import KepalaCabangSidebar from "./SidebarByRole/KepalaCabangSidebar";
 
-const Sidebar = ({ role, isAtasan }) => {
+const Sidebar = ({ user, isCollapsed }) => {
+    const role = user.jabatan?.nama_jabatan;
+
     const sidebarByRole = {
         Administrator: AdminSidebar,
         Supervisor: SupervisorSidebar,
@@ -12,58 +14,58 @@ const Sidebar = ({ role, isAtasan }) => {
         Pegawai: PegawaiSidebar,
     };
 
-    const SidebarComponent = sidebarByRole[role] || <></>;
+    const SidebarComponent = sidebarByRole[role] || (() => <></>);
 
     return (
-        //TODO: Benerin tampilan side barny kadang dk bener
-        <section className="relative shadow-2xl drawer-side">
-            <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
+        <aside
+            className={`
+                h-screen shadow-2xl transition-all duration-300 ease-in-out flex flex-col z-20 relative
+                ${isCollapsed ? "w-20" : "w-72"}
+                bg-secondary text-white
+            `}
+        >
+            {/* Background Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-b from-secondary to-slate-900 -z-10" />
 
-            {/* Smooth Gradient Background */}
-            <div className="absolute inset-0 transform shadow-xl bg-gradient-to-br from-slate-950 via-gray-800 to-sky-950 rounded-tr-2xl rounded-br-2xl" />
-
-            <ul className="relative z-10 h-full p-4 space-y-4  overflow-x-clip w-[19rem] text-slate-100">
-                {/* Sidebar content */}
-                {/*  */}
-                <div className="flex items-center justify-start gap-2 mb-5">
+            {/* === LOGO AREA === */}
+            {/* Tambahkan min-w-max agar konten tidak gepeng saat transisi */}
+            <div className={`
+                flex items-center h-20 transition-all duration-300 border-b border-white/10
+                ${isCollapsed ? "justify-center px-0" : "justify-start px-6 gap-3"}
+            `}>
+                <div className="flex items-center justify-center flex-shrink-0">
                     <a href="/">
-                        <ApplicationLogo className="mx-auto text-gray-500 fill-current w-7 h-7 aspect-square " />
+                        <ApplicationLogo className="w-8 h-8 transition-transform fill-current text-primary hover:scale-110" />
                     </a>
-                    <strong className="text-xs italic font-bold text-slate-400">
+                </div>
+
+                <div className={`
+                    flex flex-col overflow-hidden transition-all duration-300 whitespace-nowrap
+                    ${isCollapsed ? "w-0 opacity-0 scale-0" : "w-auto opacity-100 scale-100"}
+                `}>
+                    <span className="text-lg font-bold tracking-wide text-white">
                         Bank XYZ
-                    </strong>
+                    </span>
+                    <span className="text-[10px] font-medium text-primary/80 uppercase tracking-widest">
+                        Montera
+                    </span>
                 </div>
-                <div className="relative z-20 flex-col items-center justify-center mt-10 space-y-6">
-                    {/* App Name */}
-                    <strong className="flex justify-center -mb-3 text-3xl tracking-wider uppercase text-gradient gradient-base">
-                        MONTERA
-                    </strong>
+            </div>
 
-                    <div className="flex items-center justify-center h-20 mx-5 border rounded-xl bg-slate-400/50 border-y-primary/70 border-x-secondary/70 ">
-                        <strong className="mx-5 text-lg font-semibold leading-6 text-center height text-slate-300 text-opacity-90 ">
-                            Monitoring Target, Evaluasi & Realisasi Akuisisi
-                        </strong>
-                    </div>
+            {/* === MENU LIST === */}
+            {/* PENTING: overflow-x-hidden MENGHILANGKAN SCROLLBAR BAWAH */}
+            <div className="flex-1 px-3 py-6 overflow-x-hidden overflow-y-auto custom-scrollbar">
+                <SidebarComponent isCollapsed={isCollapsed} />
+            </div>
 
-                    {/* App Logo */}
-                    {/* <img
-                        src={logo}
-                        className="relative z-20 w-24 h-24 m-3 mx-auto mt-0 filter drop-shadow-lg"
-                    /> */}
-
-                    <div className="relative z-20 h-[2px] mx-3 border-none outline-none rounded-md bg-slate-300 ">
-                        <div className="absolute inset-0 w-full h-full p-0 transition-colors duration-1000 ease-in-out rounded-md opacity-100 bg-gradient-to-r from-primary/60 via-secondary/50 to-emerald" />
-                    </div>
-                </div>
-
-                <SidebarComponent />
-
-
-            </ul>
-
-            {/* Decorative Bottom Shadow */}
-            <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-lg shadow-inner bg-gradient-to-t from-slate-900 to-transparent" />
-        </section>
+            {/* === FOOTER === */}
+            <div className={`
+                p-4 border-t border-white/10 text-center text-xs text-slate-400 transition-opacity duration-300 whitespace-nowrap overflow-hidden
+                ${isCollapsed ? "opacity-0 hidden" : "opacity-100 block"}
+            `}>
+                &copy; 2026 BANK XYZ
+            </div>
+        </aside>
     );
 };
 
