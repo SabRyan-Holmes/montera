@@ -75,6 +75,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Target::class, 'user_id');
     }
+    // Ini targets gw tambhin gpp?
+    // untuk menampilkan semua targt pada pegawai yg ditargetkan
+    public function targets()
+    {
+        return $this->hasMany(Target::class, 'user_id');
+    }
 
     public function transaksi()
     {

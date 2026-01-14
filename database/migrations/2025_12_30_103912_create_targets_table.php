@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users');  // pegawai yang ditargetkan
             $table->foreignId('produk_id')->nullable()->constrained('produks');
 
             $table->decimal('nilai_target', 15, 2);

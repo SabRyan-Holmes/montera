@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Supervisor;
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Models\Akuisisi;
+use App\Models\Produk;
+use App\Models\Target;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +48,116 @@ class SupervisorController extends Controller
             "filtersList"   => [
                 "status"   => ['pending', 'verified', 'rejected'],
             ],
+        ]);
+    }
+
+
+    public function target_tim(Request $request)
+    {
+        $user = Auth::user();
+
+        // --- 1. FILTER PARAMS ---
+        $viewMode = $request->input('view', 'pegawai');
+        $search   = $request->input('search');
+
+        // Filter Historis: Tahun & Periode
+        $tahunFilter   = $request->input('tahun', date('Y')); // Default tahun ini
+        $periodeFilter = $request->input('periode'); // Optional (mingguan/bulanan/tahunan)
+
+        // Params untuk pagination link agar filter tidak hilang saat ganti page
+        $params = $request->all(['search', 'view', 'tahun', 'periode']);
+
+        $data = null;
+
+        // Helper Closure untuk reuse query filter tahun & periode
+        $applyHistoris = function ($query) use ($tahunFilter, $periodeFilter) {
+            $query->where('tahun', $tahunFilter);
+            if ($periodeFilter) {
+                $query->where('periode', $periodeFilter);
+            }
+        };
+
+        if ($viewMode === 'pegawai') {
+            // --- MODE 1: PER PEGAWAI ---
+            $data = User::query()
+                ->where('divisi_id', $user->divisi_id)
+                ->where('id', '!=', $user->id) // Exclude Supervisor sendiri
+                ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+
+                // Hitung jumlah target pegawai ini (sesuai filter tahun/periode)
+                ->withCount(['targets' => fn($q) => $applyHistoris($q)])
+
+                // Hitung total nominal target pegawai ini (sesuai filter tahun/periode)
+                ->withSum(['targets as total_nominal' => fn($q) => $applyHistoris($q)], 'nilai_target')
+
+                ->paginate(10)
+                ->appends($params);
+
+        } else {
+            // --- MODE 2: PER PRODUK (FOKUS PERBAIKAN DISINI) ---
+            $data = Produk::query()
+                ->where('status', 'tersedia')
+                ->when($search, fn($q) => $q->where('nama_produk', 'like', "%{$search}%"))
+
+                // 1. Hitung Total Target (Item) - INI YANG ANDA MINTA
+                ->withCount(['targets as targets_count' => function ($q) use ($user, $applyHistoris) {
+                    $applyHistoris($q); // Filter Tahun/Periode
+                    $q->whereHas('pegawai', fn ($sq) => $sq->where('divisi_id', $user->divisi_id));
+                }])
+
+                // 2. Hitung Pegawai Terpengaruh (Sama logicnya, tapi beda nama alias biar jelas di frontend)
+                ->withCount(['targets as impacted_employees_count' => function ($q) use ($user, $applyHistoris) {
+                    $applyHistoris($q);
+                    $q->whereHas('pegawai', fn ($sq) => $sq->where('divisi_id', $user->divisi_id));
+                }])
+
+                // 3. Hitung Total Nominal Tim
+                ->withSum(['targets as total_team_nominal' => function ($q) use ($user, $applyHistoris) {
+                    $applyHistoris($q);
+                    $q->whereHas('pegawai', fn ($sq) => $sq->where('divisi_id', $user->divisi_id));
+                }], 'nilai_target')
+
+                ->paginate(20)
+                ->appends($params);
+        }
+
+        return Inertia::render('Supervisor/TargetTim/Index', [
+            "title"      => "Target Kerja Tim",
+            "subTitle"   => "Periode Aktif: " . $tahunFilter . ($periodeFilter ? " (" . ucfirst($periodeFilter) . ")" : ""),
+            "targets"    => $data,
+            "viewMode"   => $viewMode,
+
+            // Kirim state filter ke frontend agar input terisi
+            "filtersReq" => [
+                "search"  => $search ?? "",
+                "view"    => $viewMode,
+                "tahun"   => $tahunFilter,
+                "periode" => $periodeFilter ?? "",
+            ],
+
+            // List opsi dropdown filter
+            "filtersList" => [
+                "periode" => ['mingguan', 'bulanan', 'tahunan'],
+                // Generate tahun dinamis (misal 5 tahun ke belakang + 1 tahun ke depan)
+                "tahun"   => range(date('Y') + 1, date('Y') - 4),
+            ],
+        ]);
+    }
+
+
+    public function target_tim_create(User $pegawai)
+    {
+        return Inertia::render('Supervisor/TargetTim/Create', [
+            "title" => "Buat Target Baru untuk Anggota Tim",
+            ""
+        ]);
+    }
+
+    public function store()
+    {
+        // logic store target tim here
+        return Inertia::render('Supervisor/TargetTim/Create', [
+            "title" => "Buat Target Baru untuk Anggota Tim",
         ]);
     }
 
