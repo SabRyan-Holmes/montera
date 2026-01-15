@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,6 +19,16 @@ class Target extends Model
     public function produk(): BelongsTo
     {
         return $this->belongsTo(Produk::class);
+    }
+
+    public function scopeTargetInDivision(Builder $query, $user)
+    {
+        return $query->with([
+                'pegawai:id,name,nip',
+                'produk:id,nama_produk,kategori_produk,satuan'
+            ])->whereHas('pegawai', function ($q) use ($user) {
+                $q->where('divisi_id', $user->divisi_id);
+            });
     }
 
     public function scopeFilter($query, array $filters): void
@@ -43,7 +54,5 @@ class Target extends Model
             fn($query, $byPeriode) =>
             $query->where('periode', $byPeriode)
         );
-
-
     }
 }

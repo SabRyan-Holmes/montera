@@ -122,7 +122,7 @@ class DashboardController extends Controller
                     ->whereDate('updated_at', now())->count(),
 
                 // Total Target Tim (Relasi Target biasanya ke 'user', sesuaikan jika nama relasinya berbeda)
-                'totalTeamTarget'     => Target::whereHas('user', function ($q) use ($divisiId) {
+                'totalTeamTarget'     => Target::whereHas('pegawai', function ($q) use ($divisiId) {
                     $q->where('divisi_id', $divisiId);
                 })->count(),
 

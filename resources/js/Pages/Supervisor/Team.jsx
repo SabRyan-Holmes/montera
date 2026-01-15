@@ -240,9 +240,7 @@ export default function Team({ title, auth, teamMembers, teamStats }) {
                             <h2 className="text-lg font-bold text-gray-900">
                                 Rincian Performa: <span className="text-primary">{selectedPegawai.name}</span>
                             </h2>
-                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
-                                <HiXMark className="w-6 h-6" />
-                            </button>
+
                         </div>
 
                         {/* Summary Cards dalam Modal */}

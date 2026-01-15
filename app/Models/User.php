@@ -87,10 +87,10 @@ class User extends Authenticatable
         return $this->hasMany(Transaksi::class);
     }
 
-    public function inputAkuisisi()
-    {
-        return $this->hasMany(Akuisisi::class, 'user_id'); // Data yang diinput pegawai
-    }
+    // public function inputAkuisisi()
+    // {
+    //     return $this->hasMany(Akuisisi::class, 'user_id'); // Data yang diinput pegawai
+    // }
 
     public function verifikasiAkuisisi()
     {
@@ -138,5 +138,11 @@ class User extends Authenticatable
             fn($query, $byStatus) =>
             $query->where('status_aktif', '>=', $byStatus)
         );
+    }
+
+    public function scopeMyTeam($query, User $user)
+    {
+        return $query->where('divisi_id', $user->divisi_id)
+                     ->where('id', '!=', $user->id); // Exclude diri sendiri
     }
 }

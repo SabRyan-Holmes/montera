@@ -76,7 +76,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/verify/{akuisisi}/approve', [SupervisorController::class, 'approve'])->name('verify.approve');
         Route::patch('/verify/{akuisisi}/reject', [SupervisorController::class, 'reject'])->name('verify.reject');
         Route::get('/target-tim', [SupervisorController::class, 'target_tim'])->name('target-tim');
-        Route::get('/target-tim/create/{pegawai}', [SupervisorController::class, 'target_tim_create'])->name('target-tim.create');
+        Route::get('/target-tim/create', [SupervisorController::class, 'target_tim_create'])->name('target-tim.create');
+        Route::post('/target-tim/store', [SupervisorController::class, 'target_tim_store'])->name('target-tim.store');
         Route::get('/report', [SupervisorController::class, 'report'])->name('report');
         Route::get('/team', [SupervisorController::class, 'team'])->name('team'); // Monitoring Tim
         Route::get('/team/{user}/transactions', [SupervisorController::class, 'memberTransactions'])

@@ -1,24 +1,6 @@
-import React from "react";
-import { RiAppsFill } from "react-icons/ri";
-import { GrHelpBook } from "react-icons/gr";
-import { AiFillNotification } from "react-icons/ai";
-import { IoDocuments, IoSettings } from "react-icons/io5";
-import { FaInfoCircle } from "react-icons/fa";
-import {
-    MdEditDocument,
-    MdOutlineAssignmentInd,
-    MdOutlineGroupWork,
-} from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaUserTie } from "react-icons/fa6";
-import { SidebarLink, SidebarLinkCollapse } from "..";
-import {
-    HiOutlineAdjustmentsVertical,
-    HiOutlineBuildingLibrary,
-    HiOutlineDocumentChartBar,
-    HiOutlineShieldCheck,
-    HiOutlineUserGroup,
-} from "react-icons/hi2";
+import { SidebarLink } from "..";
+import { HiOutlineDocumentChartBar, HiOutlineShieldCheck, HiOutlineUserGroup } from "react-icons/hi2";
 
 export default function SupervisorSidebar({ isCollapsed }) {
     return (
@@ -41,12 +23,12 @@ export default function SupervisorSidebar({ isCollapsed }) {
             </SidebarLink>
             <SidebarLink
                 href={route("spv.target-tim")}
-                active={route().current("spv.target-tim")}
+                active={route().current("spv.target-tim") || route().current("spv.target-tim.create*")}
                 className="z-20 mx-[18px] -mb-1"
                 isCollapsed={isCollapsed}
             >
                 <HiOutlineDocumentChartBar />
-                Target
+                Target Kerja Tim
             </SidebarLink>
 
             <SidebarLink
@@ -79,75 +61,7 @@ export default function SupervisorSidebar({ isCollapsed }) {
                 Laporan & Evaluasi
             </SidebarLink>
 
-            {/* <SidebarLinkCollapse
-                submenu={[
-                    {
-                        label: (
-                            <>
-                                <HiOutlineBuildingLibrary />
-                                Target
-                            </>
-                        ),
-                        route: "spv.produk.index",
-                        actives: [
-                            "spv.produk.index",
-                            "spv.produk.create",
-                            "spv.produk.show",
-                            "spv.produk.edit",
-                        ],
-                    },
-                    // {
-                    //     label: (
-                    //         <>
-                    //             <HiOutlineAdjustmentsVertical />
-                    //             Indikator
-                    //         </>
-                    //     ),
-                    //     route: "spv.indikator.index",
-                    //     actives: [
-                    //         "spv.indikator.index",
-                    //         "spv.indikator.create",
-                    //         "spv.indikator.show",
-                    //         "spv.indikator.edit",
-                    //     ],
-                    // },
-                ]}
-            >
-                <span className="flex items-center ">
-                    <FaDatabase className="mr-2" />
-                    Main Data
-                </span>
-            </SidebarLinkCollapse> */}
 
-            {/* <SidebarLinkCollapse
-                submenu={[
-                    {
-                        label: (
-                            <>
-                                <AiFillNotification />
-                                Log Aktivitas
-                            </>
-                        ),
-                        route: "main-log",
-                        actives: ["main-log"],
-                    },
-                    {
-                        label: (
-                            <>
-                                <GrHelpBook />
-                                Panduan/Bantuan
-                            </>
-                        ),
-                        route: "help-and-guide",
-                        actives: ["help-and-guide"],
-                    },
-                ]}
-            >
-                <span className="flex items-center">
-                    <FaInfoCircle className="mr-2" />
-                    Info
-                </span>
-            </SidebarLinkCollapse> */}
         </ul>
     );
 }

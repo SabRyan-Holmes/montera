@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Supervisor;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TargetStoreUpdateRequest;
 use App\Models\Akuisisi;
 use App\Models\Produk;
 use App\Models\Target;
@@ -57,42 +58,70 @@ class SupervisorController extends Controller
         $user = Auth::user();
 
         // --- 1. FILTER PARAMS ---
-        $viewMode = $request->input('view', 'pegawai');
+        $viewMode = $request->input('view', 'semua'); // Default: semua
         $search   = $request->input('search');
 
         // Filter Historis: Tahun & Periode
-        $tahunFilter   = $request->input('tahun', date('Y')); // Default tahun ini
-        $periodeFilter = $request->input('periode'); // Optional (mingguan/bulanan/tahunan)
+        $tahunFilter   = $request->input('tahun', date('Y'));
+        $periodeFilter = $request->input('periode');
 
         // Params untuk pagination link agar filter tidak hilang saat ganti page
         $params = $request->all(['search', 'view', 'tahun', 'periode']);
 
         $data = null;
 
-        // Helper Closure untuk reuse query filter tahun & periode
-        $applyHistoris = function ($query) use ($tahunFilter, $periodeFilter) {
+
+
+        // --- CLOSURE UNTUK TARGET (Pakai kolom 'tahun' & 'periode') ---
+        $applyHistorisTarget = function ($query) use ($tahunFilter, $periodeFilter) {
             $query->where('tahun', $tahunFilter);
             if ($periodeFilter) {
                 $query->where('periode', $periodeFilter);
             }
         };
 
-        if ($viewMode === 'pegawai') {
+        // --- CLOSURE UNTUK AKUISISI/TRANSAKSI (Pakai kolom Tanggal) ---
+        // Kita konversi filter tahun ke rentang tanggal
+        $applyHistorisReal = function ($query) use ($tahunFilter) {
+            // Filter berdasarkan TAHUN saja (karena transaksi gapunya kolom 'periode' enum)
+            // Asumsi kolom tanggal di tabel akuisisi adalah 'tanggal_akuisisi'
+            // Jika tabel transaksi pakai 'created_at', sesuaikan nama kolomnya
+            $query->whereYear('tanggal_akuisisi', $tahunFilter);
+        };
+
+        // Khusus Transaksi jika kolomnya created_at
+        $applyHistorisTransaksi = function ($query) use ($tahunFilter) {
+             $query->whereYear('created_at', $tahunFilter);
+        };
+        // --- 2. QUERY DATA BERDASARKAN MODE VIEW ---
+        if ($viewMode === 'semua') {
+            // --- MODE 3: SEMUA (LIST DETAIL / CRUD LOG) ---
+            // Ini logic yang Anda minta tambahkan
+            $data = Target::targetInDivision($user)
+                ->tap($applyHistorisTarget)
+                ->when($search, function ($q, $s) {
+                    $q->where(function ($sub) use ($s) {
+                        $sub->whereHas('pegawai', fn($sq) => $sq->where('name', 'like', "%{$s}%"))
+                            ->orWhereHas('produk', fn($sq) => $sq->where('nama_produk', 'like', "%{$s}%"));
+                    });
+                })->latest()
+                ->paginate(10)
+                ->appends($params);
+        } else if ($viewMode === 'pegawai') {
             // --- MODE 1: PER PEGAWAI ---
-            $data = User::query()
-                ->where('divisi_id', $user->divisi_id)
-                ->where('id', '!=', $user->id) // Exclude Supervisor sendiri
+            $data = User::myTeam($user) // Exclude Supervisor sendiri
                 ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
 
                 // Hitung jumlah target pegawai ini (sesuai filter tahun/periode)
-                ->withCount(['targets' => fn($q) => $applyHistoris($q)])
+                ->withCount(['targets' => fn($q) => $applyHistorisTarget($q)])
+                ->withCount(['akuisisi' => fn($q) => $applyHistorisReal($q)])
+                ->withCount(['transaksi' => fn($q) => $applyHistorisTransaksi($q)])
 
                 // Hitung total nominal target pegawai ini (sesuai filter tahun/periode)
-                ->withSum(['targets as total_nominal' => fn($q) => $applyHistoris($q)], 'nilai_target')
+                ->withSum(['targets as total_nominal' => fn($q) => $applyHistorisTarget($q)], 'nilai_target')
 
                 ->paginate(10)
                 ->appends($params);
-
         } else {
             // --- MODE 2: PER PRODUK (FOKUS PERBAIKAN DISINI) ---
             $data = Produk::query()
@@ -100,21 +129,21 @@ class SupervisorController extends Controller
                 ->when($search, fn($q) => $q->where('nama_produk', 'like', "%{$search}%"))
 
                 // 1. Hitung Total Target (Item) - INI YANG ANDA MINTA
-                ->withCount(['targets as targets_count' => function ($q) use ($user, $applyHistoris) {
-                    $applyHistoris($q); // Filter Tahun/Periode
-                    $q->whereHas('pegawai', fn ($sq) => $sq->where('divisi_id', $user->divisi_id));
+                ->withCount(['targets as targets_count' => function ($q) use ($user, $applyHistorisTarget) {
+                    $applyHistorisTarget($q); // Filter Tahun/Periode
+                    $q->whereHas('pegawai', fn($sq) => $sq->where('divisi_id', $user->divisi_id));
                 }])
 
                 // 2. Hitung Pegawai Terpengaruh (Sama logicnya, tapi beda nama alias biar jelas di frontend)
-                ->withCount(['targets as impacted_employees_count' => function ($q) use ($user, $applyHistoris) {
-                    $applyHistoris($q);
-                    $q->whereHas('pegawai', fn ($sq) => $sq->where('divisi_id', $user->divisi_id));
+                ->withCount(['targets as impacted_employees_count' => function ($q) use ($user, $applyHistorisTarget) {
+                    $applyHistorisTarget($q);
+                    $q->whereHas('pegawai', fn($sq) => $sq->where('divisi_id', $user->divisi_id));
                 }])
 
                 // 3. Hitung Total Nominal Tim
-                ->withSum(['targets as total_team_nominal' => function ($q) use ($user, $applyHistoris) {
-                    $applyHistoris($q);
-                    $q->whereHas('pegawai', fn ($sq) => $sq->where('divisi_id', $user->divisi_id));
+                ->withSum(['targets as total_team_nominal' => function ($q) use ($user, $applyHistorisTarget) {
+                    $applyHistorisTarget($q);
+                    $q->whereHas('pegawai', fn($sq) => $sq->where('divisi_id', $user->divisi_id));
                 }], 'nilai_target')
 
                 ->paginate(20)
@@ -145,21 +174,51 @@ class SupervisorController extends Controller
     }
 
 
-    public function target_tim_create(User $pegawai)
+    public function target_tim_create(Request $request)
     {
+        // Input dari URL (misal klik + dari index)
+
         return Inertia::render('Supervisor/TargetTim/Create', [
             "title" => "Buat Target Baru untuk Anggota Tim",
-            ""
+            "optionList" => [
+                "pegawai" => User::myTeam($this->user)->get()->map(fn($u) => [
+                    'value' => $u->id,
+                    'label' => $u->name . ' - ' . $u->nip
+                ]),
+                "produk" => Produk::all()->map(fn($p) => [
+                    'value' => $p->id,
+                    'label' => $p->nama_produk
+                ]),
+                "tipe_target" => [
+                    ['value' => 'nominal', 'label' => 'Nominal (Rupiah)'],
+                    ['value' => 'noa', 'label' => 'NoA (Number of Account)'],
+                ],
+                "periode" => [
+                    ['value' => 'mingguan', 'label' => 'Mingguan'],
+                    ['value' => 'bulanan', 'label' => 'Bulanan'],
+                    ['value' => 'tahunan', 'label' => 'Tahunan'],
+                ],
+            ],
+
+            // Kirim default value jika ada
+            "defaultValues" => [
+                "user_id"   => $request->input('pegawai_id'),
+                "produk_id" => $request->input('produk_id'),
+                "tahun" => date('Y'),
+                "tipe_target" => 'nominal',
+                "periode"    => 'bulanan',
+            ]
         ]);
     }
 
-    public function store()
+    public function target_tim_store(TargetStoreUpdateRequest $request)
     {
-        // logic store target tim here
-        return Inertia::render('Supervisor/TargetTim/Create', [
-            "title" => "Buat Target Baru untuk Anggota Tim",
-        ]);
+        Target::create($request->validated());
+        return redirect()
+            ->route('spv.target-tim')
+            ->with('message', 'Target Baru Berhasil Ditambahkan!');
     }
+
 
     public function team()
     {

@@ -4,7 +4,7 @@ import { FaEye, FaUserFriends, FaBoxOpen, FaEdit } from "react-icons/fa";
 import { Link, router } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
-import { FaTrash } from "react-icons/fa6";
+import { FaListUl, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { IoMdAdd } from "react-icons/io";
 
@@ -63,6 +63,8 @@ export default function Index({
         }
     }, [flash.message]);
 
+    // ANCHOR
+
     return (
         <Authenticated user={auth.user} title={title}>
             <div className="w-full px-4 pb-10 mx-auto sm:px-6 lg:px-8">
@@ -77,14 +79,24 @@ export default function Index({
                             // Config Search
                             searchConfig={{
                                 name: "search",
+                                // {viewMode === "pegawai"
+                                // ? "Daftar Target Per Pegawai"
+                                // : viewMode === "produk"
+                                // ? "Rekapitulasi Target Per Produk"
+                                // : "Daftar Semua Target"}
+
                                 label:
                                     viewMode === "pegawai"
                                         ? "Cari Pegawai"
-                                        : "Cari Produk",
+                                        : viewMode === "produk"
+                                        ? "Cari Produk"
+                                        : "Cari Pegawai/Produk",
                                 placeholder:
                                     viewMode === "pegawai"
                                         ? "Nama Pegawai..."
-                                        : "Nama Produk...",
+                                        : viewMode === "produk"
+                                        ? "Nama Produk..."
+                                        : "Nama Pegawai atau Produk...",
                                 initialValue: filtersReq.search,
                             }}
                             // Config Filter Historis (Tahun & Periode)
@@ -102,12 +114,12 @@ export default function Index({
                             ]}
                         />
                     </div>
-
                     {/* RIGHT SIDE: VIEW TOGGLE */}
-                    <div className="flex items-center p-1 bg-white border border-gray-200 rounded-lg shadow-sm mt-7">
+                    {/* VIEW TOGGLE (3 MODE) */}
+                    <div className="flex items-center p-1 bg-white border border-gray-200 rounded-lg shadow-sm mt-7 overflow-x-auto">
                         <button
                             onClick={() => handleSwitchView("pegawai")}
-                            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
                                 viewMode === "pegawai"
                                     ? "bg-primary text-white shadow-md"
                                     : "text-gray-500 hover:bg-gray-100"
@@ -115,9 +127,21 @@ export default function Index({
                         >
                             <FaUserFriends /> Per Pegawai
                         </button>
+                        {/* MODE BARU: SEMUA */}
+                        <button
+                            onClick={() => handleSwitchView("semua")}
+                            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
+                                viewMode === "semua"
+                                    ? "bg-primary text-white shadow-md"
+                                    : "text-gray-500 hover:bg-gray-100"
+                            }`}
+                        >
+                            <FaListUl /> Semua
+                        </button>
+
                         <button
                             onClick={() => handleSwitchView("produk")}
-                            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
                                 viewMode === "produk"
                                     ? "bg-primary text-white shadow-md"
                                     : "text-gray-500 hover:bg-gray-100"
@@ -125,22 +149,36 @@ export default function Index({
                         >
                             <FaBoxOpen /> Per Produk
                         </button>
-                    </div>
+                    </div>{" "}
                 </section>
 
                 <section className="pt-2">
                     {/* TITLE & SUBTITLE */}
-                    <div className="mb-4">
-                        <h2 className="text-xl font-bold text-gray-700">
-                            {viewMode === "pegawai"
-                                ? "Daftar Target Per Pegawai"
-                                : "Rekapitulasi Target Per Produk"}
-                        </h2>
-                        {subTitle && (
-                            <p className="inline-block px-2 py-1 mt-1 text-sm font-medium border rounded text-emerald-600 bg-emerald-50 border-emerald-100">
-                                {subTitle}
-                            </p>
-                        )}
+                    <div className="mb-4 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-bold text-gray-700">
+                                {viewMode === "pegawai"
+                                    ? "Rekapitulasi Target Per Pegawai"
+                                    : viewMode === "produk"
+                                    ? "Rekapitulasi Target Per Produk"
+                                    : "Rekapitulasi Semua Target"}
+                            </h2>
+                            {subTitle && (
+                                <p className="inline-block px-2 py-1 mt-1 text-sm font-medium border rounded text-emerald-600 bg-emerald-50 border-emerald-100">
+                                    {subTitle}
+                                </p>
+                            )}
+                        </div>
+                        <div className="flex-none pb-3 ">
+                            <Link
+                                as="button"
+                                href={route("spv.target-tim.create")}
+                                className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
+                            >
+                                Tambah Produk
+                                <IoMdAdd className="w-5 h-5" />
+                            </Link>
+                        </div>
                     </div>
 
                     {targets.data.length > 0 ? (
@@ -151,54 +189,60 @@ export default function Index({
                                     {/* HEADER */}
                                     <thead className="text-sm font-medium text-white bg-primary">
                                         <tr>
-                                            <th className="py-3 px-4 w-[5%]">
-                                                No
-                                            </th>
+                                            <th>No</th>
 
-                                            {viewMode === "pegawai" ? (
-                                                /* Header Mode Pegawai */
+                                            {/* HEADER MODE: SEMUA (FIELD LENGKAP) */}
+                                            {viewMode === "semua" && (
                                                 <>
-                                                    <th className="px-4 py-3 text-left">
-                                                        Nama Pegawai
+                                                    <th className=" text-left">
+                                                        Pegawai
                                                     </th>
-                                                    <th className="px-4 py-3 text-left">
-                                                        NIP Pegawai
+                                                    <th className=" text-left">
+                                                        Produk
                                                     </th>
-                                                    <th className="px-4 py-3">
-                                                        Total Target (Item)
-                                                    </th>
-                                                    <th className="px-4 py-3">
-                                                        Total Nominal
-                                                    </th>
+                                                    <th>Nilai Target</th>
+                                                    {/* <th>Tipe</th> */}
+                                                    <th>Periode</th>
+                                                    <th>Tahun</th>
+                                                    <th>Tgl Mulai</th>
+                                                    <th>Tgl Selesai</th>
+                                                    <th>Deadline</th>
                                                 </>
-                                            ) : (
-                                                /* Header Mode Produk */
+                                            )}
+                                            {/* HEADER MODE: PEGAWAI */}
+                                            {viewMode === "pegawai" && (
                                                 <>
-                                                    <th className="px-4 py-3 text-left">
-                                                        Nama Produk
-                                                    </th>
-                                                    <th className="px-4 py-3">
-                                                        Kategori Produk
-                                                    </th>
-                                                    <th className="px-4 py-3">
-                                                        Satuan
-                                                    </th>
-                                                    <th className="px-4 py-3">
-                                                        Pegawai Tertarget
-                                                    </th>
-                                                    {/* ini kok ilang total target(item ny??) */}
-                                                    <th className="px-4 py-3">
-                                                        Total Target (Item)
-                                                    </th>
-                                                    <th className="px-4 py-3">
-                                                        Total Nominal
-                                                    </th>
+                                                    <th>Nama Pegawai</th>
+                                                    <th>Email</th>
+                                                    <th>NIP</th>
+                                                    <th>Total Nominal</th>
+                                                    <th>Total Target</th>
+                                                    <th>Total Akuisisi</th>
+                                                    <th>Total Transaksi Sah</th>
                                                 </>
                                             )}
 
-                                            <th className="right-0 z-10 px-4 py-3 text-center border-l bg-primary border-white/20">
-                                                Aksi
-                                            </th>
+                                            {/* HEADER MODE: PRODUK */}
+                                            {viewMode === "produk" && (
+                                                <>
+                                                    <th className=" text-left">
+                                                        Nama Produk
+                                                    </th>
+                                                    <th>Kategori</th>
+                                                    <th>Kode Produk</th>
+                                                    <th>Data Input</th>
+                                                    <th>Satuan</th>
+                                                    <th>Pegawai Tertarget</th>
+                                                    <th>Total Target</th>
+                                                    <th>Total Nominal</th>
+                                                </>
+                                            )}
+
+                                            {viewMode === "semua" && (
+                                                <th className="right-0 z-10  text-center border-l bg-primary border-white/20">
+                                                    Aksi
+                                                </th>
+                                            )}
                                         </tr>
                                     </thead>
 
@@ -217,66 +261,187 @@ export default function Index({
                                                         1}
                                                 </td>
 
-                                                {viewMode === "pegawai" ? (
-                                                    /* --- ROW: MODE PEGAWAI --- */
+                                                {/* BODY: SEMUA (LENGKAP) */}
+                                                {viewMode === "semua" && (
                                                     <>
-                                                        <td className="px-4 py-3 text-left">
+                                                        <td className=" text-left">
+                                                            <span className="font-bold block text-gray-800">
+                                                                {
+                                                                    item.pegawai
+                                                                        ?.name
+                                                                }
+                                                            </span>
+                                                            <span className="text-xs text-gray-500">
+                                                                {
+                                                                    item.pegawai
+                                                                        ?.nip
+                                                                }
+                                                            </span>
+                                                        </td>
+                                                        <td className=" text-left">
+                                                            <span className="font-medium block text-gray-700">
+                                                                {
+                                                                    item.produk
+                                                                        ?.nama_produk
+                                                                }
+                                                            </span>
+                                                            <span className="text-[10px] badge badge-ghost badge-xs">
+                                                                {
+                                                                    item.produk
+                                                                        ?.kategori_produk
+                                                                }
+                                                            </span>
+                                                        </td>
+                                                        <td className=" text-center">
                                                             <div className="flex flex-col">
-                                                                <span className="text-sm font-bold text-gray-800">
-                                                                    {item.name}
+                                                                <span className="font-bold text-gray-800">
+                                                                    {item.tipe_target ===
+                                                                    "nominal"
+                                                                        ? formatRupiah(
+                                                                              item.nilai_target
+                                                                          )
+                                                                        : item.nilai_target}
                                                                 </span>
-                                                                <span className="text-xs text-gray-500">
-                                                                    {item.email}
+                                                                <span className="text-[10px] text-gray-400 uppercase">
+                                                                    {
+                                                                        item
+                                                                            .produk
+                                                                            ?.satuan
+                                                                    }
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-3 text-left text-gray-600">
+                                                        {/* <td className=" capitalize">
+                                                            {item.tipe_target ==
+                                                            "noa"
+                                                                ? "NoA"
+                                                                : "Nominal"}
+                                                        </td> */}
+                                                        <td className=" capitalize">
+                                                            {item.periode}
+                                                        </td>
+                                                        <td>{item.tahun}</td>
+                                                        <td className=" whitespace-nowrap text-xs">
+                                                            {moment(
+                                                                item.tanggal_mulai
+                                                            ).format("LL")}
+                                                        </td>
+                                                        <td className=" whitespace-nowrap text-xs">
+                                                            {moment(
+                                                                item.tanggal_selesai
+                                                            ).format("LL")}
+                                                        </td>
+                                                        <td className=" whitespace-nowrap text-xs font-bold text-red-500">
+                                                            {moment(
+                                                                item.deadline_pencapaian
+                                                            ).format("LL")}
+                                                        </td>
+                                                    </>
+                                                )}
+
+                                                {viewMode === "pegawai" && (
+                                                    /* --- ROW: MODE PEGAWAI --- */
+                                                    <>
+                                                        <td className=" text-left">
+                                                            {item.name}
+                                                        </td>
+                                                        <td>{item.email}</td>
+                                                        <td className=" text-left text-gray-600">
                                                             {item.nip || "-"}{" "}
                                                             {/* Asumsi ada kolom nip */}
                                                         </td>
-                                                        <td className="px-4 py-3">
-                                                            <span className="font-bold text-blue-700 border-none bg-blue-50 badge badge-lg">
-                                                                {
-                                                                    item.targets_count
-                                                                }{" "}
-                                                                Target
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-4 py-3 font-mono font-medium text-emerald-600">
+                                                        <td className=" font-mono font-medium text-emerald-600">
                                                             {formatRupiah(
                                                                 item.total_nominal ||
                                                                     0
                                                             )}
                                                         </td>
-                                                    </>
-                                                ) : (
-                                                    /* --- ROW: MODE PRODUK --- */
-                                                    <>
-                                                        <td className="px-4 py-3 text-left">
-                                                            <div className="flex flex-col">
-                                                                <span className="text-sm font-bold text-gray-800">
+                                                        <td>
+                                                            <div className="flex flex-col items-center">
+                                                                <span
+                                                                    className={`font-bold text-lg ${
+                                                                        item.targets_count >
+                                                                        0
+                                                                            ? "text-blue-600"
+                                                                            : "text-disabled-color"
+                                                                    }`}
+                                                                >
                                                                     {
-                                                                        item.nama_produk
+                                                                        item.targets_count
                                                                     }
                                                                 </span>
                                                                 <span className="text-[10px] text-gray-400">
-                                                                    {
-                                                                        item.kode_produk
-                                                                    }
+                                                                    Target
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-3">
-                                                            <span className="text-gray-600 badge badge-outline">
+
+                                                        <td>
+                                                            <div className="flex flex-col items-center">
+                                                                <span
+                                                                    className={`font-bold text-lg ${
+                                                                        item.akuisisi_count >
+                                                                        0
+                                                                            ? "text-blue-600"
+                                                                            : "text-disabled-color"
+                                                                    }`}
+                                                                >
+                                                                    {
+                                                                        item.akuisisi_count
+                                                                    }
+                                                                </span>
+                                                                <span className="text-[10px] text-gray-400">
+                                                                    Akuisisi
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div className="flex flex-col items-center">
+                                                                <span
+                                                                    className={`font-bold text-lg ${
+                                                                        item.transaksi_count >
+                                                                        0
+                                                                            ? "text-blue-600"
+                                                                            : "text-disabled-color"
+                                                                    }`}
+                                                                >
+                                                                    {
+                                                                        item.transaksi_count
+                                                                    }
+                                                                </span>
+                                                                <span className="text-[10px] text-gray-400">
+                                                                    Transaksi
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                    </>
+                                                )}
+
+                                                {viewMode === "produk" && (
+                                                    /* --- ROW: MODE PRODUK --- */
+                                                    <>
+                                                        <td className=" text-left">
+                                                            <span className="text-sm font-bold text-gray-800">
                                                                 {
-                                                                    item.kategori_produk
+                                                                    item.nama_produk
                                                                 }
                                                             </span>
                                                         </td>
-                                                        <td className="px-4 py-3 text-gray-500 uppercase text-[11px]">
+                                                        <td>
+                                                            {
+                                                                item.kategori_produk
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            {item.kode_produk}
+                                                        </td>
+                                                        <td className=" text-gray-500 uppercase text-[11px]">
+                                                            {item.label_input}
+                                                        </td>
+                                                        <td className=" text-gray-500 uppercase text-[11px]">
                                                             {item.satuan}
                                                         </td>
-                                                        <td className="px-4 py-3">
+                                                        <td>
                                                             <div className="flex flex-col items-center">
                                                                 <span
                                                                     className={`font-bold text-lg ${
@@ -295,15 +460,26 @@ export default function Index({
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-3">
-                                                            <span className="font-bold text-blue-700 border-none bg-blue-50 badge badge-lg">
-                                                                {
-                                                                    item.targets_count
-                                                                }{" "}
-                                                                Target
-                                                            </span>
+                                                        <td>
+                                                            <div className="flex flex-col items-center">
+                                                                <span
+                                                                    className={`font-bold text-lg ${
+                                                                        item.targets_count >
+                                                                        0
+                                                                            ? "text-blue-600"
+                                                                            : "text-gray-300"
+                                                                    }`}
+                                                                >
+                                                                    {
+                                                                        item.targets_count
+                                                                    }
+                                                                </span>
+                                                                <span className="text-[10px] text-gray-400">
+                                                                    Target
+                                                                </span>
+                                                            </div>
                                                         </td>
-                                                        <td className="px-4 py-3">
+                                                        <td>
                                                             {item.total_team_nominal >
                                                             0 ? (
                                                                 <span className="font-mono text-sm text-emerald-600">
@@ -321,52 +497,40 @@ export default function Index({
                                                 )}
 
                                                 {/* --- KOLOM AKSI --- */}
-                                                <td className="space-x-4 text-center border-l border-gray-100 whitespace-nowrap text-nowrap">
-                                                    <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="a"
-                                                            // href={route(
-                                                            //     "admin.produk.edit",
-                                                            //     produk.id
-                                                            // )}
-                                                            className="action-btn group/button action-btn-success"
-                                                        >
-                                                            <span className="hidden mr-1 lg:inline group-hover/button:text-white">
-                                                                Lihat
-                                                            </span>
-                                                            <FaEye className=" group-hover/button:fill-white" />
-                                                        </Link>
-                                                        <TooltipHover
-                                                            message={
-                                                                "Lihat Semua Detail Target "
-                                                            }
-                                                        />
-                                                    </div>
-
-
-                                                    {viewMode === "pegawai" && (
-                                                        <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="a"
-                                                            href={route(
-                                                                "spv.target-tim.create",
-                                                                item.id
-                                                            )}
-                                                            className="action-btn group/button action-btn-primary"
-                                                        >
-                                                            <span className="hidden lg:inline group-hover/button:text-white">
-                                                                Tambah
-                                                            </span>
-                                                            <IoMdAdd className=" group-hover/button:fill-white" />
-                                                        </Link>
-                                                        <TooltipHover
-                                                            message={
-                                                                "Tambah Target untuk Pegawai ini"
-                                                            }
-                                                        />
-                                                    </div>
-                                                    )}
-                                                </td>
+                                                {viewMode === "semua" && (
+                                                    /* AKSI LENGKAP (CRUD) UTK MODE SEMUA */
+                                                    <td className=" border-l border-gray-100">
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <button
+                                                                onClick={() => {
+                                                                    /* Logic View */
+                                                                }}
+                                                                className="action-btn group/button action-btn-success"
+                                                            >
+                                                                <FaEye className="group-hover/button:fill-white" />
+                                                            </button>
+                                                            <Link
+                                                                href={route(
+                                                                    "admin.target.edit",
+                                                                    item.id
+                                                                )}
+                                                                className="action-btn group/button action-btn-bermuda"
+                                                            >
+                                                                <FaEdit className="group-hover/button:fill-white" />
+                                                            </Link>
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDelete(
+                                                                        item.id
+                                                                    )
+                                                                }
+                                                                className="action-btn action-btn-warning group/button"
+                                                            >
+                                                                <FaTrash className="group-hover/button:fill-white" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))}
                                     </tbody>
