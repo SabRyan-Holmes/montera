@@ -1,7 +1,14 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef } from "react";
 
 export default forwardRef(function SelectInput(
-    { options = [], className = '', isFocused = false, placeholder = "Pilih Opsi", ...props },
+    {
+        options = [],
+        className = "",
+        isFocused = false,
+        placeholder = "Pilih Opsi",
+        disablePlaceholder = true,
+        ...props
+    },
     ref
 ) {
     const input = ref ? ref : useRef();
@@ -13,7 +20,8 @@ export default forwardRef(function SelectInput(
     }, [isFocused]);
 
     // Mengikuti style border gradient yang kamu buat
-    const borderGradient = 'bg-slate-100/60 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50';
+    const borderGradient =
+        "bg-slate-100/60 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50";
 
     return (
         <select
@@ -22,7 +30,7 @@ export default forwardRef(function SelectInput(
             ref={input}
         >
             {/* Opsi Default / Placeholder */}
-            <option value="" disabled>
+            <option value="" disabled={disablePlaceholder}>
                 {placeholder}
             </option>
 
@@ -30,9 +38,11 @@ export default forwardRef(function SelectInput(
             {options.map((option, index) => (
                 <option
                     key={index}
-                    value={typeof option === 'object' ? option.value : option}
+                    value={typeof option === "object" ? option.value : option}
                 >
-                    {typeof option === 'object' ? option.label : option.toUpperCase()}
+                    {typeof option === "object"
+                        ? option.label
+                        : option.toUpperCase()}
                 </option>
             ))}
         </select>

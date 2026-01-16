@@ -211,12 +211,60 @@ class SupervisorController extends Controller
         ]);
     }
 
+    // Method Edit untuk menampilkan Form
+    public function target_tim_edit(Target $target)
+    {
+        // Reuse optionList yang sama dengan create
+        $optionList = [
+            "pegawai" => User::myTeam(Auth::user())->get()->map(fn($u) => [
+                'value' => $u->id,
+                'label' => $u->name . ' - ' . $u->nip
+            ]),
+            "produk" => \App\Models\Produk::all()->map(fn($p) => [
+                'value' => $p->id,
+                'label' => $p->nama_produk
+            ]),
+            "tipe_target" => [
+                ['value' => 'nominal', 'label' => 'Nominal (Rupiah)'],
+                ['value' => 'noa', 'label' => 'NoA (Number of Account)'],
+            ],
+            "periode" => [
+                ['value' => 'mingguan', 'label' => 'Mingguan'],
+                ['value' => 'bulanan', 'label' => 'Bulanan'],
+                ['value' => 'tahunan', 'label' => 'Tahunan'],
+            ],
+        ];
+
+        return Inertia::render('Supervisor/TargetTim/CreateEdit', [ // Panggil component yg sama
+            "title"         => "Edit Target Anggota Tim",
+            "optionList"    => $optionList,
+            "target"        => $target, // Kirim data target existing
+            "defaultValues" => [] // Tidak perlu default values krn target ada
+        ]);
+    }
+
+    // Method Update untuk proses simpannya
+    public function target_tim_update(TargetStoreUpdateRequest $request, Target $target)
+    {
+        $target->update($request->validated());
+
+        return redirect()
+            ->route('spv.target-tim.index')
+            ->with('message', 'Data Target Berhasil Diperbarui!');
+    }
+
     public function target_tim_store(TargetStoreUpdateRequest $request)
     {
         Target::create($request->validated());
         return redirect()
-            ->route('spv.target-tim')
+            ->route('spv.target-tim.index')
             ->with('message', 'Target Baru Berhasil Ditambahkan!');
+    }
+
+    public function target_tim_destroy(Target $target)
+    {
+        $target->delete();
+        return redirect()->back()->with('message', 'Data Target Berhasil Dihapus!');
     }
 
 

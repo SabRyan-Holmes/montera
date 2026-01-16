@@ -1,35 +1,57 @@
-import moment from "moment";
+import moment from "moment/min/moment-with-locales";
 import React, { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
 export default function DetailTarget({ target, collapse = true }) {
+    moment.locale("id"); // Pastikan locale ID
     const [isCollapsed, setIsCollapsed] = useState(collapse);
-    const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+
+    // Helper Format Rupiah
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        }).format(number);
+    };
+
+    // Helper Tampilan Nilai Target
+    const displayNilai = (item) => {
+        if (item.tipe_target === 'nominal') {
+            return formatRupiah(item.nilai_target);
+        }
+        return `${item.nilai_target} Unit/Akun (NoA)`;
+    };
+
     const RowData = ({ label, value }) => (
-        <tr>
-            <td width="50%">{label}</td>
-            <td className="text-base font-normal">{value}</td>
+        <tr className="hover:bg-gray-50">
+            <td width="40%" className="font-medium text-gray-600 align-top">
+                {label}
+            </td>
+            <td className="text-base font-normal text-gray-800 align-top">
+                {value}
+            </td>
         </tr>
     );
 
     return (
         <table className="table w-full text-base table-bordered">
             <thead
-                onClick={toggleCollapse}
-                className="text-lg cursor-pointer select-none bg-primary hover:bg-primary/80"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="text-lg text-white cursor-pointer select-none bg-primary hover:bg-primary/90"
             >
                 <tr>
                     <th colSpan={2}>
-                        Detail Jabatan
+                        Detail Data Target
                         {isCollapsed ? (
-                            <span className="float-right text-sm font-normal">
+                            <span className="flex items-center float-right gap-1 mt-1 text-sm font-normal">
                                 [Tampilkan]
-                                <HiBarsArrowDown className="inline mx-2 scale-150" />
+                                <HiBarsArrowDown className="scale-125" />
                             </span>
                         ) : (
-                            <span className="float-right text-sm font-normal ">
+                            <span className="flex items-center float-right gap-1 mt-1 text-sm font-normal">
                                 [Sembunyikan]
-                                <HiBarsArrowUp className="inline mx-2 scale-150" />
+                                <HiBarsArrowUp className="scale-125" />
                             </span>
                         )}
                     </th>
@@ -41,39 +63,68 @@ export default function DetailTarget({ target, collapse = true }) {
                     <tr>
                         <td
                             colSpan={2}
-                            className="text-base text-center text-warning"
+                            className="py-4 text-base text-center text-warning"
                         >
-                            Pilih Nama Jabatan Terlebih Dahulu!
+                            Data tidak tersedia.
                         </td>
                     </tr>
                 ) : !isCollapsed ? (
                     <>
-                        {/* TODO lengkapi */}
-                        {/* <RowData
-                            label="Nama Jabatan"
-                            value={target["nama_target"]}
+                        {/* --- INFORMASI UTAMA --- */}
+                        <RowData
+                            label="Pegawai Ditargetkan"
+                            value={target.pegawai?.name || "-"}
+                        />
+                        <RowData
+                            label="Produk"
+                            value={
+                                target.produk
+                                    ? `${target.produk.nama_produk} (${target.produk.kategori_produk})`
+                                    : "Target Umum (Non-Produk)"
+                            }
+                        />
+                        <RowData
+                            label="Nilai Target"
+                            value={<span className="font-bold text-emerald-700">{displayNilai(target)}</span>}
                         />
 
+                        {/* --- WAKTU & PERIODE --- */}
                         <RowData
-                            label="Jabatan"
-                            value={target["kode_target"]}
+                            label="Periode Target"
+                            value={
+                                <span className="capitalize">
+                                    {target.periode} - Tahun {target.tahun}
+                                </span>
+                            }
                         />
                         <RowData
-                            label="Divisi"
-                            value={target["level_otoritas"]}
+                            label="Durasi Pelaksanaan"
+                            value={`${moment(target.tanggal_mulai).format("LL")} s/d ${moment(target.tanggal_selesai).format("LL")}`}
                         />
                         <RowData
-                            label="Deskripsi Tugas"
-                            value={target["deskripsi_tugas"]}
+                            label="Deadline Pencapaian"
+                            value={
+                                <span className="font-medium text-red-600">
+                                    {moment(target.deadline_pencapaian).format("LL")}
+                                </span>
+                            }
                         />
+
+                        {/* --- INFORMASI TAMBAHAN --- */}
                         <RowData
-                            label="Tanggal Dibuat"
-                            value={moment(target["created_at"]).format("LL")}
+                            label="Keterangan Tambahan"
+                            value={target.keterangan_tambahan || "-"}
+                        />
+
+                        {/* --- METADATA --- */}
+                        <RowData
+                            label="Dibuat Pada"
+                            value={moment(target.created_at).format("LLLL")}
                         />
                         <RowData
                             label="Terakhir Diperbarui"
-                            value={moment(target["updated_at"]).format("LL")}
-                        /> */}
+                            value={moment(target.updated_at).fromNow()}
+                        />
                     </>
                 ) : null}
             </tbody>

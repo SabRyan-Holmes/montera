@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Head } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
+import useSwal from "@/Hooks/UseSwal";
 
 export default function Authenticated({ user, title, children }) {
+    useSwal();
     // 1. UBAH STATE: Cek LocalStorage dulu saat inisialisasi
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
         // Cek apakah ada simpanan state di browser?

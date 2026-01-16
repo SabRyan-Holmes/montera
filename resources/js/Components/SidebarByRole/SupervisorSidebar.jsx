@@ -22,8 +22,8 @@ export default function SupervisorSidebar({ isCollapsed }) {
                 Dashboard
             </SidebarLink>
             <SidebarLink
-                href={route("spv.target-tim")}
-                active={route().current("spv.target-tim") || route().current("spv.target-tim.create*")}
+                href={route("spv.target-tim.index")}
+                active={route().current("spv.target-tim.index") || route().current("spv.target-tim.create*")}
                 className="z-20 mx-[18px] -mb-1"
                 isCollapsed={isCollapsed}
             >

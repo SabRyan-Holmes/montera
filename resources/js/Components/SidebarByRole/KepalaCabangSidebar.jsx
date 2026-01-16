@@ -24,20 +24,28 @@ import {
     HiOutlineUserPlus,
 } from "react-icons/hi2";
 
-export default function KepalaCabangSidebar() {
+export default function KepalaCabangSidebar({ isCollapsed }) {
     return (
-        <section className="scale-105 menu">
+        <ul>
+            {/* Header Kategori (Hilang saat collapsed) */}
+            {!isCollapsed && (
+                <li className="px-4 mt-4 mb-2 text-xs font-bold tracking-wider uppercase text-slate-400">
+                    Menu Utama
+                </li>
+            )}
             {/* Link Dashboard */}
             <SidebarLink
+                isCollapsed={isCollapsed}
                 href={route("dashboard")}
                 active={route().current("dashboard")}
-                className="z-20 mx-[18px] -mb-1"
+                className="z-20 mx-[21px] mb-1"
             >
                 <MdSpaceDashboard />
                 Dashboard
             </SidebarLink>
 
             <SidebarLinkCollapse
+                isCollapsed={isCollapsed}
                 submenu={[
                     {
                         label: (
@@ -72,12 +80,13 @@ export default function KepalaCabangSidebar() {
                 ]}
             >
                 <span className="flex items-center ">
-                    <MdOutlineMonitorHeart className="mr-2" />
-                    Monitoring & Analytics
+                    <MdOutlineMonitorHeart />
+                    Analytics
                 </span>
             </SidebarLinkCollapse>
 
             <SidebarLinkCollapse
+                isCollapsed={isCollapsed}
                 submenu={[
                     {
                         label: (
@@ -101,13 +110,14 @@ export default function KepalaCabangSidebar() {
                     },
                 ]}
             >
-                <span className="flex items-center ">
-                    <HiOutlineUserPlus className="mr-2" />
+                <span className="">
+                    <HiOutlineUserPlus  />
                     Evaluasi & SDM
                 </span>
             </SidebarLinkCollapse>
 
             <SidebarLinkCollapse
+                isCollapsed={isCollapsed}
                 submenu={[
                     {
                         label: (
@@ -131,13 +141,13 @@ export default function KepalaCabangSidebar() {
                     },
                 ]}
             >
-                <span className="flex items-center ">
-                    <MdOutlineDescription className="mr-2" />
+                <span className="flex">
+                    <MdOutlineDescription />
                     Laporan Resmi
                 </span>
             </SidebarLinkCollapse>
 
-            <SidebarLinkCollapse
+            {/* <SidebarLinkCollapse
                 submenu={[
                     {
                         label: (
@@ -162,10 +172,10 @@ export default function KepalaCabangSidebar() {
                 ]}
             >
                 <span className="flex items-center">
-                    <FaInfoCircle className="mr-2" />
+                    <FaInfoCircle  />
                     Info
                 </span>
-            </SidebarLinkCollapse>
-        </section>
+            </SidebarLinkCollapse> */}
+        </ul>
     );
 }

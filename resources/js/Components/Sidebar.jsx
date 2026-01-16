@@ -20,7 +20,7 @@ const Sidebar = ({ user, isCollapsed }) => {
         <aside
             className={`
                 h-screen shadow-2xl transition-all duration-300 ease-in-out flex flex-col z-20 relative
-                ${isCollapsed ? "w-20" : "w-72"}
+                ${isCollapsed ? "w-20" : "w-80"}
                 bg-secondary text-white
             `}
         >

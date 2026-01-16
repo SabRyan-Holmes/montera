@@ -18,7 +18,7 @@ import {
     HiUserGroup,
     HiTrendingUp,
     HiOfficeBuilding,
-} from "react-icons/hi"; // Pastikan install react-icons
+} from "react-icons/hi";
 
 export default function Ringkasan({
     auth,
@@ -28,6 +28,7 @@ export default function Ringkasan({
     ranking,
     divisiData,
     quickStats,
+    filters // Props filter jika mau bikin dropdown nanti
 }) {
     const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
@@ -46,17 +47,15 @@ export default function Ringkasan({
                 <div className="flex flex-col items-center justify-between mb-6 md:flex-row">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">
-                            Ringkasan Kinerja
+                            {title}
                         </h1>
                         <p className="text-sm text-gray-500 normal">
-                            Operasional & Finansial Cabang Tahun{" "}
-                            {new Date().getFullYear()}
+                            Operasional & Finansial Cabang
                         </p>
                     </div>
-                    <div className="mt-4 md:mt-0">
-                        {/* Bisa tambah filter tahun/bulan di sini nanti */}
+                    <div className="flex gap-2 mt-4 md:mt-0">
                         <span className="px-3 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">
-                            Update Real-time
+                            Data: {filters.year ? `Tahun ${filters.year}` : "Sejak Awal (All Time)"}
                         </span>
                     </div>
                 </div>
@@ -67,12 +66,10 @@ export default function Ringkasan({
                     <div className="flex items-center justify-between p-6 bg-white border-l-4 border-blue-500 shadow-sm rounded-xl">
                         <div>
                             <p className="text-sm font-medium text-gray-500 uppercase">
-                                Total Realisasi (YTD)
+                                Total Realisasi
                             </p>
                             <p className="mt-1 text-2xl font-bold text-gray-800">
-                                {formatRupiah(
-                                    quickStats.total_realisasi_tahun_ini
-                                )}
+                                {formatRupiah(quickStats.total_realisasi)}
                             </p>
                         </div>
                         <div className="p-3 rounded-full bg-blue-50">
@@ -80,14 +77,14 @@ export default function Ringkasan({
                         </div>
                     </div>
 
-                    {/* Card 2: Nasabah Baru */}
+                    {/* Card 2: Nasabah */}
                     <div className="flex items-center justify-between p-6 bg-white border-l-4 border-green-500 shadow-sm rounded-xl">
                         <div>
                             <p className="text-sm font-medium text-gray-500 uppercase">
-                                Nasabah Baru
+                                Total Nasabah
                             </p>
                             <p className="mt-1 text-2xl font-bold text-gray-800">
-                                {quickStats.total_nasabah_baru}{" "}
+                                {quickStats.total_nasabah}{" "}
                                 <span className="text-sm font-normal text-gray-400">
                                     Orang
                                 </span>
@@ -98,14 +95,14 @@ export default function Ringkasan({
                         </div>
                     </div>
 
-                    {/* Card 3: Rata-rata Transaksi */}
+                    {/* Card 3: Rata-rata */}
                     <div className="flex items-center justify-between p-6 bg-white border-l-4 border-orange-500 shadow-sm rounded-xl">
                         <div>
                             <p className="text-sm font-medium text-gray-500 uppercase">
                                 Avg. per Transaksi
                             </p>
                             <p className="mt-1 text-2xl font-bold text-gray-800">
-                                {formatRupiah(quickStats.avg_realisasi_per_trx)}
+                                {formatRupiah(quickStats.avg_per_trx)}
                             </p>
                         </div>
                         <div className="p-3 rounded-full bg-orange-50">
@@ -116,7 +113,7 @@ export default function Ringkasan({
 
                 {/* --- BAGIAN 2: GRAFIK UTAMA --- */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {/* Grafik Kiri: Tren Bulanan (Lebih Lebar) */}
+                    {/* Grafik Kiri: Tren Bulanan */}
                     <div className="p-6 bg-white border border-gray-100 shadow-sm lg:col-span-2 rounded-xl">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="flex items-center gap-2 text-lg font-bold text-gray-800">
@@ -132,15 +129,17 @@ export default function Ringkasan({
                                     stroke="#f3f4f6"
                                 />
                                 <XAxis
-                                    dataKey="bulan"
+                                    dataKey="bulan" // "Jan 2024", "Feb 2024", dst
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: "#6b7280" }}
+                                    tick={{ fill: "#6b7280", fontSize: 11 }}
+                                    interval={0} // Tampilkan semua label jika muat
                                 />
                                 <YAxis
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fill: "#6b7280" }}
+                                    width={80}
                                     tickFormatter={(val) =>
                                         `${val / 1000000}Jt`
                                     }
@@ -150,8 +149,7 @@ export default function Ringkasan({
                                     contentStyle={{
                                         borderRadius: "8px",
                                         border: "none",
-                                        boxShadow:
-                                            "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                                     }}
                                     formatter={(value) => formatRupiah(value)}
                                 />
@@ -231,12 +229,10 @@ export default function Ringkasan({
                                         </div>
                                         <div>
                                             <p className="font-semibold text-gray-800">
-                                                {item.pegawai?.name}
+                                                {item.name}
                                             </p>
                                             <p className="text-xs text-gray-500">
-                                                {item.pegawai?.divisi
-                                                    ?.nama_divisi ||
-                                                    "Tanpa Divisi"}
+                                                {item.divisi}
                                             </p>
                                         </div>
                                     </div>
@@ -248,7 +244,7 @@ export default function Ringkasan({
                         </div>
                     </div>
 
-                    {/* [BARU] Tabel Performa Divisi */}
+                    {/* Tabel Performa Divisi */}
                     <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
                         <h2 className="flex items-center gap-2 mb-4 text-lg font-bold text-gray-800">
                             <HiOfficeBuilding className="text-gray-500" />
@@ -256,11 +252,11 @@ export default function Ringkasan({
                         </h2>
                         <div className="space-y-4">
                             {divisiData.map((divisi, index) => {
-                                // Hitung persentase kontribusi (relatif thd total realisasi di quickStats)
+                                // Hitung persentase kontribusi (relatif terhadap total realisasi saat ini)
                                 const percentage =
-                                    quickStats.total_realisasi_tahun_ini > 0
+                                    quickStats.total_realisasi > 0
                                         ? (divisi.total_realisasi /
-                                              quickStats.total_realisasi_tahun_ini) *
+                                              quickStats.total_realisasi) *
                                           100
                                         : 0;
 

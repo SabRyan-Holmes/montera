@@ -1,12 +1,13 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
 import { FaEye, FaUserFriends, FaBoxOpen, FaEdit } from "react-icons/fa";
-import { Link, router } from "@inertiajs/react";
+import { Link, router, useRemember } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
 import { FaListUl, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { IoMdAdd } from "react-icons/io";
+import ShowModal from "./Partials/ShowModal";
 
 export default function Index({
     auth,
@@ -19,6 +20,7 @@ export default function Index({
     viewMode,
 }) {
     moment.locale("id");
+    const [activeModal, setActiveModal] = useState(null);
 
     // --- HELPER FORMAT RUPIAH ---
     const formatRupiah = (number) => {
@@ -32,7 +34,7 @@ export default function Index({
     // --- HANDLER SWITCH VIEW ---
     const handleSwitchView = (mode) => {
         router.get(
-            route("spv.target-tim"),
+            route("spv.target-tim.index"),
             // Reset search tapi PERTAHANKAN filter historis (tahun/periode) saat ganti view
             { ...filtersReq, view: mode, search: "" },
             { preserveState: true, preserveScroll: true }
@@ -40,30 +42,35 @@ export default function Index({
     };
 
     // --- HANDLER DELETE ---
-    function handleDelete(id, type) {
-        // Logic delete sementara
+    function handleDelete(id) {
         Swal.fire({
-            title: "Info",
-            text: "Fitur delete perlu disesuaikan dengan logic backend (hapus user target atau hapus target produk)",
-            icon: "info",
+            ...(activeModal && { target: `#${activeModal}` }),
+            icon: "warning",
+            text: "Anda yakin ingin menghapus target ini?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            confirmButtonColor: "#2D95C9",
+            cancelButtonColor: "#9ca3af",
+            customClass: {
+                actions: "my-actions",
+                cancelButton: "order-1 right-gap",
+                confirmButton: "order-2",
+                denyButton: "order-3",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(route("spv.target-tim.destroy", id), {
+                    onSuccess: () => {
+                        document.getElementById(activeModal).close();
+                    },
+                    onError: () => {
+                        alert("Gagal Menghapus Data");
+                    },
+                });
+            }
         });
     }
-
-    // --- ALERT FLASH ---
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-        }
-    }, [flash.message]);
-
-    // ANCHOR
 
     return (
         <Authenticated user={auth.user} title={title}>
@@ -79,12 +86,6 @@ export default function Index({
                             // Config Search
                             searchConfig={{
                                 name: "search",
-                                // {viewMode === "pegawai"
-                                // ? "Daftar Target Per Pegawai"
-                                // : viewMode === "produk"
-                                // ? "Rekapitulasi Target Per Produk"
-                                // : "Daftar Semua Target"}
-
                                 label:
                                     viewMode === "pegawai"
                                         ? "Cari Pegawai"
@@ -116,7 +117,7 @@ export default function Index({
                     </div>
                     {/* RIGHT SIDE: VIEW TOGGLE */}
                     {/* VIEW TOGGLE (3 MODE) */}
-                    <div className="flex items-center p-1 bg-white border border-gray-200 rounded-lg shadow-sm mt-7 overflow-x-auto">
+                    <div className="flex items-center p-1 overflow-x-auto bg-white border border-gray-200 rounded-lg shadow-sm mt-7">
                         <button
                             onClick={() => handleSwitchView("pegawai")}
                             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
@@ -154,7 +155,7 @@ export default function Index({
 
                 <section className="pt-2">
                     {/* TITLE & SUBTITLE */}
-                    <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-4">
                         <div>
                             <h2 className="text-xl font-bold text-gray-700">
                                 {viewMode === "pegawai"
@@ -194,10 +195,10 @@ export default function Index({
                                             {/* HEADER MODE: SEMUA (FIELD LENGKAP) */}
                                             {viewMode === "semua" && (
                                                 <>
-                                                    <th className=" text-left">
+                                                    <th className="text-left ">
                                                         Pegawai
                                                     </th>
-                                                    <th className=" text-left">
+                                                    <th className="text-left ">
                                                         Produk
                                                     </th>
                                                     <th>Nilai Target</th>
@@ -225,7 +226,7 @@ export default function Index({
                                             {/* HEADER MODE: PRODUK */}
                                             {viewMode === "produk" && (
                                                 <>
-                                                    <th className=" text-left">
+                                                    <th className="text-left ">
                                                         Nama Produk
                                                     </th>
                                                     <th>Kategori</th>
@@ -239,7 +240,7 @@ export default function Index({
                                             )}
 
                                             {viewMode === "semua" && (
-                                                <th className="right-0 z-10  text-center border-l bg-primary border-white/20">
+                                                <th className="right-0 z-10 text-center border-l bg-primary border-white/20">
                                                     Aksi
                                                 </th>
                                             )}
@@ -264,8 +265,8 @@ export default function Index({
                                                 {/* BODY: SEMUA (LENGKAP) */}
                                                 {viewMode === "semua" && (
                                                     <>
-                                                        <td className=" text-left">
-                                                            <span className="font-bold block text-gray-800">
+                                                        <td className="text-left ">
+                                                            <span className="block font-bold text-gray-800">
                                                                 {
                                                                     item.pegawai
                                                                         ?.name
@@ -278,8 +279,8 @@ export default function Index({
                                                                 }
                                                             </span>
                                                         </td>
-                                                        <td className=" text-left">
-                                                            <span className="font-medium block text-gray-700">
+                                                        <td className="text-left ">
+                                                            <span className="block font-medium text-gray-700">
                                                                 {
                                                                     item.produk
                                                                         ?.nama_produk
@@ -292,7 +293,7 @@ export default function Index({
                                                                 }
                                                             </span>
                                                         </td>
-                                                        <td className=" text-center">
+                                                        <td className="text-center ">
                                                             <div className="flex flex-col">
                                                                 <span className="font-bold text-gray-800">
                                                                     {item.tipe_target ===
@@ -311,27 +312,27 @@ export default function Index({
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        {/* <td className=" capitalize">
+                                                        {/* <td className="capitalize ">
                                                             {item.tipe_target ==
                                                             "noa"
                                                                 ? "NoA"
                                                                 : "Nominal"}
                                                         </td> */}
-                                                        <td className=" capitalize">
+                                                        <td className="capitalize ">
                                                             {item.periode}
                                                         </td>
                                                         <td>{item.tahun}</td>
-                                                        <td className=" whitespace-nowrap text-xs">
+                                                        <td className="text-xs whitespace-nowrap">
                                                             {moment(
                                                                 item.tanggal_mulai
                                                             ).format("LL")}
                                                         </td>
-                                                        <td className=" whitespace-nowrap text-xs">
+                                                        <td className="text-xs whitespace-nowrap">
                                                             {moment(
                                                                 item.tanggal_selesai
                                                             ).format("LL")}
                                                         </td>
-                                                        <td className=" whitespace-nowrap text-xs font-bold text-red-500">
+                                                        <td className="text-xs font-bold text-red-500 whitespace-nowrap">
                                                             {moment(
                                                                 item.deadline_pencapaian
                                                             ).format("LL")}
@@ -342,15 +343,15 @@ export default function Index({
                                                 {viewMode === "pegawai" && (
                                                     /* --- ROW: MODE PEGAWAI --- */
                                                     <>
-                                                        <td className=" text-left">
+                                                        <td className="text-left ">
                                                             {item.name}
                                                         </td>
                                                         <td>{item.email}</td>
-                                                        <td className=" text-left text-gray-600">
+                                                        <td className="text-left text-gray-600 ">
                                                             {item.nip || "-"}{" "}
                                                             {/* Asumsi ada kolom nip */}
                                                         </td>
-                                                        <td className=" font-mono font-medium text-emerald-600">
+                                                        <td className="font-mono font-medium text-emerald-600">
                                                             {formatRupiah(
                                                                 item.total_nominal ||
                                                                     0
@@ -420,7 +421,7 @@ export default function Index({
                                                 {viewMode === "produk" && (
                                                     /* --- ROW: MODE PRODUK --- */
                                                     <>
-                                                        <td className=" text-left">
+                                                        <td className="text-left ">
                                                             <span className="text-sm font-bold text-gray-800">
                                                                 {
                                                                     item.nama_produk
@@ -499,25 +500,56 @@ export default function Index({
                                                 {/* --- KOLOM AKSI --- */}
                                                 {viewMode === "semua" && (
                                                     /* AKSI LENGKAP (CRUD) UTK MODE SEMUA */
-                                                    <td className=" border-l border-gray-100">
-                                                        <div className="flex items-center justify-center gap-2">
+                                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                        <div className="relative inline-flex group">
                                                             <button
                                                                 onClick={() => {
-                                                                    /* Logic View */
+                                                                    setActiveModal(
+                                                                        `Show-${item.id}`
+                                                                    );
+                                                                    document
+                                                                        .getElementById(
+                                                                            `Show-${item.id}`
+                                                                        )
+                                                                        .showModal();
                                                                 }}
                                                                 className="action-btn group/button action-btn-success"
                                                             >
                                                                 <FaEye className="group-hover/button:fill-white" />
                                                             </button>
+                                                            <ShowModal
+                                                                handleDelete={
+                                                                    handleDelete
+                                                                }
+                                                                setActiveModal={
+                                                                    setActiveModal
+                                                                }
+                                                                target={item}
+                                                                canManage={true}
+                                                            />
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Lihat Data"
+                                                                }
+                                                            />
+                                                        </div>
+                                                        <div className="relative inline-flex group">
                                                             <Link
                                                                 href={route(
-                                                                    "admin.target.edit",
+                                                                    "spv.target-tim.edit",
                                                                     item.id
                                                                 )}
                                                                 className="action-btn group/button action-btn-bermuda"
                                                             >
                                                                 <FaEdit className="group-hover/button:fill-white" />
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Edit Data"
+                                                                    }
+                                                                />
                                                             </Link>
+                                                        </div>
+                                                        <div className="relative inline-flex group">
                                                             <button
                                                                 onClick={() =>
                                                                     handleDelete(
@@ -527,6 +559,11 @@ export default function Index({
                                                                 className="action-btn action-btn-warning group/button"
                                                             >
                                                                 <FaTrash className="group-hover/button:fill-white" />
+                                                                <TooltipHover
+                                                                    message={
+                                                                        "Hapus Data"
+                                                                    }
+                                                                />
                                                             </button>
                                                         </div>
                                                     </td>

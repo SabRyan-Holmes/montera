@@ -6,38 +6,48 @@ import {
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
-import { useState } from "react";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaPencil } from "react-icons/fa6"; // Tambah icon edit
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { HiDocumentPlus } from "react-icons/hi2";
 import TextInput from "@/Components/TextInput";
-import { IoMdAdd } from "react-icons/io";
+import { IoMdAdd, IoMdSave } from "react-icons/io";
 
-export default function Create({ auth, optionList, title, defaultValues }) {
+// Props 'target' akan dikirim dari Controller Edit method (kosong saat create)
+export default function CreateEdit({ auth, optionList, title, defaultValues, target = null }) {
 
-    // Inisialisasi form dengan default value (jika dikirim dari controller)
-    const { data, setData, post, processing, errors } = useForm({
-        user_id: defaultValues?.user_id || "",
-        produk_id: defaultValues?.produk_id || "",
-        nilai_target: "",
-        tipe_target: defaultValues?.tipe_target, // Default nominal
-        periode: defaultValues?.periode,     // Default bulanan
-        tahun: defaultValues?.tahun ,
-        tanggal_mulai: "",
-        tanggal_selesai: "",
-        deadline_pencapaian: "",
-        keterangan_tambahan: "",
+    // Tentukan Mode: Edit jika 'target' ada, Create jika null
+    const isEdit = !!target;
+
+    // Inisialisasi form
+    const { data, setData, post, patch, processing, errors } = useForm({
+        user_id: target?.user_id || defaultValues?.user_id || "",
+        produk_id: target?.produk_id || defaultValues?.produk_id || "",
+        nilai_target: target?.nilai_target || "",
+        tipe_target: target?.tipe_target || defaultValues?.tipe_target || "nominal",
+        periode: target?.periode || defaultValues?.periode || "bulanan",
+        tahun: target?.tahun || defaultValues?.tahun || new Date().getFullYear(),
+        tanggal_mulai: target?.tanggal_mulai || "",
+        tanggal_selesai: target?.tanggal_selesai || "",
+        deadline_pencapaian: target?.deadline_pencapaian || "",
+    keterangan_tambahan: target?.keterangan_tambahan || "",
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("spv.target-tim.store"));
+
+        if (isEdit) {
+            // Mode Edit: Method PUT ke route update
+            patch(route("spv.target-tim.update", target.id));
+        } else {
+            // Mode Create: Method POST ke route store
+            post(route("spv.target-tim.store"));
+        }
     };
 
     return (
         <Authenticated
             user={auth.user}
-            title={title}
+            title={title} // Title dikirim dinamis dari controller
             current={route().current()}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
@@ -47,7 +57,7 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                         <ul>
                             <li>
                                 <a
-                                    href={route("spv.target-tim")}
+                                    href={route("spv.target-tim.index")}
                                     className="inline-flex items-center gap-2 "
                                 >
                                     <HiDocumentPlus className="w-4 h-4 stroke-current" />
@@ -56,7 +66,7 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                             </li>
                             <li>
                                 <span className="inline-flex items-center gap-2">
-                                    <FaPlus className="w-4 h-4 stroke-current" />
+                                    {isEdit ? <FaPencil className="w-3 h-3" /> : <FaPlus className="w-3 h-3" />}
                                     {title}
                                 </span>
                             </li>
@@ -76,15 +86,17 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                         <div className="overflow-hidden border border-gray-200 shadow-sm rounded-xl">
                             <table className="table text-base table-bordered ">
                                 <thead>
-                                    <tr className="text-lg bg-primary/70 text-white">
-                                        <th colSpan={2}>Form Input Target Baru</th>
+                                    <tr className={`text-lg text-white bg-primary`}>
+                                        <th colSpan={2}>
+                                            {isEdit ? "Form Edit Target" : "Form Input Target Baru"}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     {/* --- 1. PEGAWAI --- */}
                                     <tr className="border">
-                                        <td className="w-1/4 bg-gray-50 font-medium">Pegawai Target</td>
+                                        <td className="w-1/4 font-medium bg-gray-50">Pegawai Target</td>
                                         <td className="p-2">
                                             <SelectInput
                                                 id="user_id"
@@ -100,7 +112,7 @@ export default function Create({ auth, optionList, title, defaultValues }) {
 
                                     {/* --- 2. PRODUK --- */}
                                     <tr className="border">
-                                        <td className="bg-gray-50 font-medium">Produk</td>
+                                        <td className="font-medium bg-gray-50">Produk</td>
                                         <td className="p-2">
                                             <SelectInput
                                                 id="produk_id"
@@ -116,7 +128,7 @@ export default function Create({ auth, optionList, title, defaultValues }) {
 
                                     {/* --- 3. NILAI TARGET & TIPE --- */}
                                     <tr className="border">
-                                        <td className="bg-gray-50 font-medium">Nilai Target</td>
+                                        <td className="font-medium bg-gray-50">Nilai Target</td>
                                         <td className="p-2">
                                             <div className="flex gap-4">
                                                 <div className="flex-1">
@@ -138,13 +150,13 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                                                 </div>
                                             </div>
                                             <InputError message={errors.nilai_target} className="mt-1" />
-                                            <p className="text-xs text-gray-400 mt-1">*Masukkan angka tanpa titik/koma</p>
+                                            <p className="mt-1 text-xs text-gray-400">*Masukkan angka tanpa titik/koma</p>
                                         </td>
                                     </tr>
 
                                     {/* --- 4. TAHUN & PERIODE --- */}
                                     <tr className="border">
-                                        <td className="bg-gray-50 font-medium">Tahun & Periode</td>
+                                        <td className="font-medium bg-gray-50">Tahun & Periode</td>
                                         <td className="p-2">
                                             <div className="flex gap-4">
                                                 <TextInput
@@ -166,11 +178,11 @@ export default function Create({ auth, optionList, title, defaultValues }) {
 
                                     {/* --- 5. RENTANG WAKTU --- */}
                                     <tr className="border">
-                                        <td className="bg-gray-50 font-medium">Rentang Waktu</td>
+                                        <td className="font-medium bg-gray-50">Rentang Waktu</td>
                                         <td className="p-2">
                                             <div className="flex items-center gap-2">
                                                 <div className="flex-1">
-                                                    <span className="text-xs text-gray-500 block mb-1">Tanggal Mulai</span>
+                                                    <span className="block mb-1 text-xs text-gray-500">Tanggal Mulai</span>
                                                     <TextInput
                                                         type="date"
                                                         value={data.tanggal_mulai}
@@ -180,7 +192,7 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                                                 </div>
                                                 <span className="pt-5 text-gray-400">s/d</span>
                                                 <div className="flex-1">
-                                                    <span className="text-xs text-gray-500 block mb-1">Tanggal Selesai</span>
+                                                    <span className="block mb-1 text-xs text-gray-500">Tanggal Selesai</span>
                                                     <TextInput
                                                         type="date"
                                                         value={data.tanggal_selesai}
@@ -198,7 +210,7 @@ export default function Create({ auth, optionList, title, defaultValues }) {
 
                                     {/* --- 6. DEADLINE --- */}
                                     <tr className="border">
-                                        <td className="bg-gray-50 font-medium">Deadline Pencapaian</td>
+                                        <td className="font-medium bg-gray-50">Deadline Pencapaian</td>
                                         <td className="p-2">
                                             <TextInput
                                                 type="date"
@@ -207,16 +219,16 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                                                 onChange={(e) => setData("deadline_pencapaian", e.target.value)}
                                             />
                                             <InputError message={errors.deadline_pencapaian} className="mt-1" />
-                                            <p className="text-xs text-red-400 mt-1">*Batas akhir perhitungan poin insentif</p>
+                                            <p className="mt-1 text-xs text-red-400">*Batas akhir perhitungan poin insentif</p>
                                         </td>
                                     </tr>
 
                                     {/* --- 7. KETERANGAN --- */}
                                     <tr className="border">
-                                        <td className="bg-gray-50 font-medium align-top pt-3">Keterangan Tambahan</td>
+                                        <td className="pt-3 font-medium align-top bg-gray-50">Keterangan Tambahan</td>
                                         <td className="p-2">
                                             <textarea
-                                                className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-24 p-2"
+                                                className="w-full h-24 p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                                 placeholder="Catatan khusus untuk target ini (Opsional)"
                                                 value={data.keterangan_tambahan}
                                                 onChange={(e) => setData("keterangan_tambahan", e.target.value)}
@@ -233,10 +245,10 @@ export default function Create({ auth, optionList, title, defaultValues }) {
                             <SuccessButton
                                 type="submit"
                                 disabled={processing}
-                                className="gap-2 text-base border px-8 py-3"
+                                className={`px-8 py-3 text-base`}
                             >
-                                <IoMdAdd className="w-5 h-5 fill-white" />
-                                <span>Simpan Target</span>
+                                <IoMdSave className="w-5 h-5 fill-white" />
+                                <span>{isEdit ? "Update Target" : "Simpan Target"}</span>
                             </SuccessButton>
                         </div>
                     </form>

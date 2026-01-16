@@ -29,7 +29,7 @@ export default function SidebarLink({
         // KONDISI 1: AKTIF
         if (isCollapsed) {
             // Pas Collapse: Warna Primary (Emas), Background transparan/tipis, TANPA GARIS
-            activeClasses = "text-primary  border-none ";
+            activeClasses = "text-primary border-none ";
         } else {
             // Pas Lebar: Warna Putih, Gradient, GARIS KIRI EMAS
             activeClasses = "bg-gradient-to-r from-white/10 to-transparent text-white border-l-4 border-primary shadow-sm";

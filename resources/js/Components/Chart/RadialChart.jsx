@@ -35,7 +35,7 @@ export default function RadialChart({ title, data, chartId }) {
                             name: { show: true, fontSize: "16px", offsetY: 10 },
                             value: {
                                 show: true,
-                                fontSize: "24px",
+                                fontSize: "20px",
                                 fontWeight: "bold",
                                 formatter: (val) => val + "%"
                             },
@@ -78,7 +78,7 @@ export default function RadialChart({ title, data, chartId }) {
         <section className="w-full max-w-sm p-4 mx-auto bg-white border shadow-sm rounded-xl border-slate-100 md:p-6">
             <div className="flex justify-between mb-4">
                 <div className="flex items-center">
-                    <h5 className="text-xl font-bold leading-none text-secondary">
+                    <h5 className="text-lg font-bold leading-none text-secondary">
                         {title}
                     </h5>
                     <svg

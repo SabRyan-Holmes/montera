@@ -71,13 +71,10 @@ Route::middleware('auth')->group(function () {
     // Pengawasan Tim & Verifikasi Akuisisi
     Route::middleware('role:Supervisor')->prefix('spv')->name('spv.')->group(function () {
         Route::resource('produk', ProdukController::class)->only(['index', 'show']);
-        Route::resource('indikator', IndikatorController::class)->only(['index', 'show']);
         Route::get('/verify-akuisisi', [SupervisorController::class, 'verify'])->name('verify'); // Monitoring Pribadi
         Route::patch('/verify/{akuisisi}/approve', [SupervisorController::class, 'approve'])->name('verify.approve');
         Route::patch('/verify/{akuisisi}/reject', [SupervisorController::class, 'reject'])->name('verify.reject');
-        Route::get('/target-tim', [SupervisorController::class, 'target_tim'])->name('target-tim');
-        Route::get('/target-tim/create', [SupervisorController::class, 'target_tim_create'])->name('target-tim.create');
-        Route::post('/target-tim/store', [SupervisorController::class, 'target_tim_store'])->name('target-tim.store');
+        Route::resource('target-tim', TargetController::class)->parameters(['target-tim' => 'target']);;
         Route::get('/report', [SupervisorController::class, 'report'])->name('report');
         Route::get('/team', [SupervisorController::class, 'team'])->name('team'); // Monitoring Tim
         Route::get('/team/{user}/transactions', [SupervisorController::class, 'memberTransactions'])
