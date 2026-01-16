@@ -7,9 +7,9 @@ export default function StatusLabel({ status, isDone = false }) {
     // alert(status)
     return (
         <div className="group/item">
-            {(status === "diusulkan" || status === "diajukan") && (
+            {(status === "pending" ) && (
                 <div className="transition-all duration-150 label-base bg-accent/50 text-slate-500 group-hover/item:text-slate-100">
-                    {status}
+                    {"Menunggu Validasi"}
                     <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
                 </div>
             )}
@@ -23,21 +23,21 @@ export default function StatusLabel({ status, isDone = false }) {
                 </div>
             )}
 
-            {(status == "disetujui" ||
+            {(status == "verified" ||
                 status === "divalidasi" ||
                 status === "selesai") && (
                 <div                    className="inline-flex items-center transition-all duration-150 label-base bg-hijau/10 text-hijau/80 group-hover/item:text-hijau/60"
                 >
-                    {status}
+                    {"Disetujui"}
                     <FaCheck className="ml-1 scale-125 fill-hijau/80 stroke-hijau/80 group-hover/item:fill-hijau" />
                 </div>
             )}
 
-            {status === "ditolak" && (
+            {status === "rejected" && (
                 <div
                     className="inline-flex items-center transition-all duration-150 label-base bg-warning/10 text-warning/80 group-hover/item:text-warning/60"
                 >
-                    {status}
+                    {"ditolak"}
                     <IoClose className="ml-1 scale-125 fill-warning/80 stroke-warning/80 group-hover/item:fill-warning" />
                 </div>
             )}

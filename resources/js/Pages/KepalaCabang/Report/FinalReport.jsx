@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
 import { FaFileImage, FaEyeSlash } from "react-icons/fa6";
 import { HiOutlineDownload } from "react-icons/hi";
-
 export default function FinalReport({
     auth,
     title,
@@ -89,8 +88,8 @@ export default function FinalReport({
 
                     {/* --- TABLE DATA --- */}
                     {reports.data.length > 0 ? (
-                        <div className="overflow-hidden border border-gray-300 rounded-lg shadow-md">
-                            <div className="overflow-x-auto">
+                        <div className="overflow-hidden">
+                            <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-md">
                                 <table className="table w-full text-xs text-left border-collapse">
                                     {/* HEADER WARNA UNGU (Sesuai Gambar Excel) */}
                                     <thead className="text-white uppercase bg-[#5c4087] tracking-wide text-[11px]">

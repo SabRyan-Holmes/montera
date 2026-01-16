@@ -47,7 +47,7 @@ class AkuisisiController extends Controller
             "title" => "Data Akuisisi",
             "subTitle"  => $subTitle,
             "canCreate" => in_array($role, ['Administrator', 'Pegawai']),
-            "canManage" => $isAdmin,
+            "canManage" => $role === "Administrator",
             'akuisisis' => $query->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
@@ -64,18 +64,26 @@ class AkuisisiController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+    // PegawaiController.php
     public function create()
     {
-        // tambah logic auto generate no transaksi
+        $produks = Produk::where('status', 'tersedia')
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'value' => $p->id,
+                    'label' => $p->nama_produk,
+
+                    // INI WAJIB ADA BUAT LOGIC DI BAWAH:
+                    'kategori' => $p->kategori_produk,
+                ];
+            });
+
         return Inertia::render('Administrator/Akuisisi/Create', [
             'title' => 'Input Laporan Akuisisi',
-            'filtersList' => [
-                // Mengambil daftar produk untuk dipilih di dropdown
-                'produks' => Produk::all()->map(fn($p) => [
-                    'value' => $p->id,
-                    'label' => $p->nama_produk
-                ]),
-            ]
+            'filtersList' => ['produks' => $produks],
+            // ... props lain
         ]);
     }
 
@@ -104,7 +112,7 @@ class AkuisisiController extends Controller
         }
 
         Akuisisi::create($validated);
-        $routeName = $this->user->jabatan->nama_jabatan === 'Pegawai' ? 'pegawai.akuisisi.index' : 'admin.akuisisi.index' ;
+        $routeName = $this->user->jabatan->nama_jabatan === 'Pegawai' ? 'pegawai.akuisisi.index' : 'admin.akuisisi.index';
         return redirect()->route($routeName)->with('message', 'Laporan berhasil dikirim!');
     }
 
@@ -158,6 +166,4 @@ class AkuisisiController extends Controller
         $akuisisi->delete();
         return redirect()->back()->with('message', 'Data Akuisisi Berhasil DiHapus!');
     }
-
-
 }

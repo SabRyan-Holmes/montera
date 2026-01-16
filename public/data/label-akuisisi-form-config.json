@@ -1,0 +1,30 @@
+{
+    "PRODUK FUNDING": {
+        "nama": "Nama Nasabah",
+        "identitas": "Nomor Rekening Tabungan",
+        "placeholder_identitas": "Masukkan Nomor Rekening",
+        "nominal": "Jumlah Dana yang Dihimpun",
+        "tanggal": "Tanggal Pembukaan Rekening"
+    },
+    "PRODUK KREDIT": {
+        "nama": "Nama Debitur",
+        "identitas": "Nomor Aplikasi Kredit",
+        "placeholder_identitas": "Masukkan No. Aplikasi",
+        "nominal": "Jumlah Kredit yang Disetujui",
+        "tanggal": "Tanggal Pencairan Kredit"
+    },
+    "PRODUK ANAK PERUSAHAAN": {
+        "nama": "Nama Pelanggan",
+        "identitas": "Nomor Polis / Akun",
+        "placeholder_identitas": "Masukkan No. Polis atau Akun",
+        "nominal": "Nilai Investasi / Premi",
+        "tanggal": "Tanggal Pembelian"
+    },
+    "DEFAULT": {
+        "nama": "Nama Nasabah",
+        "identitas": "No. Identitas / Rekening",
+        "placeholder_identitas": "NIK atau Nomor Rekening",
+        "nominal": "Nominal Realisasi (Rp)",
+        "tanggal": "Tanggal Akuisisi"
+    }
+}

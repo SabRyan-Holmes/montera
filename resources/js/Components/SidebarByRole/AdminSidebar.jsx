@@ -41,6 +41,7 @@ export default function AdminSidebar({ isCollapsed }) {
                 Dashboard
             </SidebarLink>
             <SidebarLinkCollapse
+                isCollapsed={isCollapsed}
                 submenu={[
                     {
                         label: (
@@ -55,21 +56,6 @@ export default function AdminSidebar({ isCollapsed }) {
                             "admin.produk.edit",
                             "admin.produk.create",
                             "admin.produk.show",
-                        ],
-                    },
-                    {
-                        label: (
-                            <>
-                                <HiOutlineAdjustmentsVertical />
-                                <span className="text-nowrap">Indikator</span>
-                            </>
-                        ),
-                        route: "admin.indikator.index",
-                        actives: [
-                            "admin.indikator.index",
-                            "admin.indikator.edit",
-                            "admin.indikator.create",
-                            "admin.indikator.show",
                         ],
                     },
                     {
@@ -117,12 +103,13 @@ export default function AdminSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="flex items-center">
-                    <RiAppsFill className="mr-2 scale-105" />
+                    <RiAppsFill />
                     Main
                 </span>
             </SidebarLinkCollapse>
 
             <SidebarLinkCollapse
+                isCollapsed={isCollapsed}
                 submenu={[
                     {
                         label: (
@@ -172,12 +159,13 @@ export default function AdminSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="flex items-center ">
-                    <FaDatabase className="mr-2" />
+                    <FaDatabase />
                     Data Master
                 </span>
             </SidebarLinkCollapse>
 
             <SidebarLinkCollapse
+                isCollapsed={isCollapsed}
                 submenu={[
                     {
                         label: (
@@ -202,11 +190,10 @@ export default function AdminSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="flex items-center">
-                    <FaInfoCircle className="mr-2" />
+                    <FaInfoCircle />
                     Info
                 </span>
             </SidebarLinkCollapse>
-            <div className="h-10" />
         </ul>
     );
 }

@@ -88,21 +88,69 @@ class DashboardController extends Controller
                     }),
             ];
         } else if ($role === "Pegawai") {
+            $userId = $this->user->id;
+            $currentYear = date('Y');
+
+            // --- 1. Query Dasar ---
+            $totalTarget = Target::where('user_id', $userId)->where('tahun', $currentYear)->count();
+            $totalAkuisisi = Akuisisi::where('user_id', $userId)->count();
+            $akuisisiVerified = Akuisisi::where('user_id', $userId)->where('status_verifikasi', 'verified')->count();
+            $akuisisiRejected = Akuisisi::where('user_id', $userId)->where('status_verifikasi', 'rejected')->count();
+
+            // Hitung Pending (Total - Verified - Rejected) atau query langsung
+            $akuisisiPending = Akuisisi::where('user_id', $userId)->where('status_verifikasi', 'pending')->count();
+
+            // --- 2. Perbandingan Nominal ---
+            $transaksiCount = Transaksi::where('user_id', $userId)->whereYear('tanggal_realisasi', $currentYear)->count();
+            $totalNominalTarget = Target::where('user_id', $userId)->where('tahun', $currentYear)->sum('nilai_target');
+            $totalNominalRealisasi = Transaksi::where('user_id', $userId)->whereYear('tanggal_realisasi', $currentYear)->sum('nilai_realisasi');
+
+            // --- 3. Grafik Tren Kinerja (Monthly Trend - Tahun Ini) ---
+            // Mengelompokkan total realisasi berdasarkan bulan
+            $trendData = Transaksi::where('user_id', $userId)
+                ->whereYear('tanggal_realisasi', $currentYear)
+                ->selectRaw('MONTH(tanggal_realisasi) as bulan, SUM(nilai_realisasi) as total')
+                ->groupBy('bulan')
+                ->orderBy('bulan')
+                ->pluck('total', 'bulan')
+                ->toArray();
+
+            // Mapping agar bulan 1-12 lengkap (isi 0 jika tidak ada data)
+            $grafikTren = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $grafikTren[] = $trendData[$i] ?? 0;
+            }
+
+            // --- 4. Breakdown Per Jenis Produk (Pie Chart) ---
+            $breakdownProduk = Transaksi::where('user_id', $userId)
+                ->join('produks', 'transaksis.produk_id', '=', 'produks.id')
+                ->selectRaw('produks.kategori_produk as kategori, COUNT(*) as jumlah')
+                ->groupBy('kategori')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'label' => $item->kategori,
+                        'value' => $item->jumlah
+                    ];
+                });
+
             $dataByRole = [
-                // Counter Dasar
-                'totalTarget' => Target::where('user_id', $this->user->id)->count(),
-                'akuisisiVerified' => Akuisisi::where('user_id', $this->user->id)->where('status_verifikasi', 'verified')->count(),
-                'akuisisiRejected' => Akuisisi::where('user_id', $this->user->id)->where('status_verifikasi', 'rejected')->count(),
-                'totalAkuisisi' => Akuisisi::where('user_id', $this->user->id)->count(),
-                'transaksiCount' => Transaksi::where('user_id', $this->user->id)->count(), // Total Transaksi Sah
+                'totalTarget' => $totalTarget,
+                'akuisisiVerified' => $akuisisiVerified,
+                'akuisisiRejected' => $akuisisiRejected,
+                'akuisisiPending' => $akuisisiPending, // Tambahan variable
+                'totalAkuisisi' => $totalAkuisisi,
+                'transaksiCount' => $transaksiCount,
+                'totalNominalTarget' => $totalNominalTarget,
+                'totalNominalRealisasi' => $totalNominalRealisasi,
 
-                // Perbandingan Nominal (Penting!)
-                'totalNominalTarget' => Target::where('user_id', $this->user->id)->sum('nilai_target'),
-                'totalNominalRealisasi' => Transaksi::where('user_id', $this->user->id)->sum('nilai_realisasi'),
+                // Data Presentase untuk Radial Chart (Handle division by zero)
+                'persenNasabah' => $totalTarget > 0 ? round(($transaksiCount / $totalTarget) * 100) : 0,
+                'persenNominal' => $totalNominalTarget > 0 ? round(($totalNominalRealisasi / $totalNominalTarget) * 100) : 0,
 
-                // Data Grafik Progres
-                'progresTargetNasabah' => 75, // (Total Transaksi / Total Target) * 100
-                'progresTargetNominal' => 60, // (Total Realisasi / Total Target Nominal) * 100
+                // Data Grafik
+                'grafikTren' => $grafikTren, // Array [12000, 50000, 0, ...]
+                'breakdownProduk' => $breakdownProduk, // Array Object [{label: 'Funding', value: 10}, ...]
             ];
         } else if ($role === "Supervisor") {
             $divisiId = $this->user->divisi_id; // Ambil ID divisi supervisor

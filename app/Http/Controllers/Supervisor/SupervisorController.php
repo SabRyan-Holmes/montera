@@ -12,16 +12,18 @@ use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class SupervisorController extends Controller
 {
 
-    protected $user;
+    protected $user, $role;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $this->user = auth_sso();
+            $this->role = $this->user->jabatan->nama_jabatan;
             return $next($request);
         });
     }
@@ -36,6 +38,7 @@ class SupervisorController extends Controller
         return Inertia::render('Supervisor/Verifikasi/Index', [
             "title" => "Verifikasi Data Akuisisi Tim Saya",
             "subTitle"  => $subTitle,
+            "canApprove" => $this->role === "Supervisor",
             "akuisisis" => Akuisisi::query()
                 ->with(['pegawai:id,name', 'produk:id,nama_produk,kategori_produk', 'verifikator:id,name'])
                 ->inSupervisorDivisi() // <--- 1. Filter Divisi Supervisor
@@ -77,219 +80,29 @@ class SupervisorController extends Controller
         ]);
     }
 
-    public function target_tim(Request $request)
+    public function reject(Request $request, Akuisisi $akuisisi)
     {
-        $user = Auth::user();
-
-        // --- 1. FILTER PARAMS ---
-        $viewMode = $request->input('view', 'semua'); // Default: semua
-        $search   = $request->input('search');
-
-        // Filter Historis: Tahun & Periode
-        $tahunFilter   = $request->input('tahun', date('Y'));
-        $periodeFilter = $request->input('periode');
-
-        // Params untuk pagination link agar filter tidak hilang saat ganti page
-        $params = $request->all(['search', 'view', 'tahun', 'periode']);
-
-        $data = null;
-
-
-
-        // --- CLOSURE UNTUK TARGET (Pakai kolom 'tahun' & 'periode') ---
-        $applyHistorisTarget = function ($query) use ($tahunFilter, $periodeFilter) {
-            $query->where('tahun', $tahunFilter);
-            if ($periodeFilter) {
-                $query->where('periode', $periodeFilter);
-            }
-        };
-
-        // --- CLOSURE UNTUK AKUISISI/TRANSAKSI (Pakai kolom Tanggal) ---
-        // Kita konversi filter tahun ke rentang tanggal
-        $applyHistorisReal = function ($query) use ($tahunFilter) {
-            // Filter berdasarkan TAHUN saja (karena transaksi gapunya kolom 'periode' enum)
-            // Asumsi kolom tanggal di tabel akuisisi adalah 'tanggal_akuisisi'
-            // Jika tabel transaksi pakai 'created_at', sesuaikan nama kolomnya
-            $query->whereYear('tanggal_akuisisi', $tahunFilter);
-        };
-
-        // Khusus Transaksi jika kolomnya created_at
-        $applyHistorisTransaksi = function ($query) use ($tahunFilter) {
-            $query->whereYear('created_at', $tahunFilter);
-        };
-        // --- 2. QUERY DATA BERDASARKAN MODE VIEW ---
-        if ($viewMode === 'semua') {
-            // --- MODE 3: SEMUA (LIST DETAIL / CRUD LOG) ---
-            // Ini logic yang Anda minta tambahkan
-            $data = Target::targetInDivision($user)
-                ->tap($applyHistorisTarget)
-                ->when($search, function ($q, $s) {
-                    $q->where(function ($sub) use ($s) {
-                        $sub->whereHas('pegawai', fn($sq) => $sq->where('name', 'like', "%{$s}%"))
-                            ->orWhereHas('produk', fn($sq) => $sq->where('nama_produk', 'like', "%{$s}%"));
-                    });
-                })->latest()
-                ->paginate(10)
-                ->appends($params);
-        } else if ($viewMode === 'pegawai') {
-            // --- MODE 1: PER PEGAWAI ---
-            $data = User::myTeam($user) // Exclude Supervisor sendiri
-                ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
-
-                // Hitung jumlah target pegawai ini (sesuai filter tahun/periode)
-                ->withCount(['targets' => fn($q) => $applyHistorisTarget($q)])
-                ->withCount(['akuisisi' => fn($q) => $applyHistorisReal($q)])
-                ->withCount(['transaksi' => fn($q) => $applyHistorisTransaksi($q)])
-
-                // Hitung total nominal target pegawai ini (sesuai filter tahun/periode)
-                ->withSum(['targets as total_nominal' => fn($q) => $applyHistorisTarget($q)], 'nilai_target')
-
-                ->paginate(10)
-                ->appends($params);
-        } else {
-            // --- MODE 2: PER PRODUK (FOKUS PERBAIKAN DISINI) ---
-            $data = Produk::query()
-                ->where('status', 'tersedia')
-                ->when($search, fn($q) => $q->where('nama_produk', 'like', "%{$search}%"))
-
-                // 1. Hitung Total Target (Item) - INI YANG ANDA MINTA
-                ->withCount(['targets as targets_count' => function ($q) use ($user, $applyHistorisTarget) {
-                    $applyHistorisTarget($q); // Filter Tahun/Periode
-                    $q->whereHas('pegawai', fn($sq) => $sq->where('divisi_id', $user->divisi_id));
-                }])
-
-                // 2. Hitung Pegawai Terpengaruh (Sama logicnya, tapi beda nama alias biar jelas di frontend)
-                ->withCount(['targets as impacted_employees_count' => function ($q) use ($user, $applyHistorisTarget) {
-                    $applyHistorisTarget($q);
-                    $q->whereHas('pegawai', fn($sq) => $sq->where('divisi_id', $user->divisi_id));
-                }])
-
-                // 3. Hitung Total Nominal Tim
-                ->withSum(['targets as total_team_nominal' => function ($q) use ($user, $applyHistorisTarget) {
-                    $applyHistorisTarget($q);
-                    $q->whereHas('pegawai', fn($sq) => $sq->where('divisi_id', $user->divisi_id));
-                }], 'nilai_target')
-
-                ->paginate(20)
-                ->appends($params);
-        }
-
-        return Inertia::render('Supervisor/TargetTim/Index', [
-            "title"      => "Target Kerja Tim",
-            "subTitle"   => "Periode Aktif: " . $tahunFilter . ($periodeFilter ? " (" . ucfirst($periodeFilter) . ")" : ""),
-            "targets"    => $data,
-            "viewMode"   => $viewMode,
-
-            // Kirim state filter ke frontend agar input terisi
-            "filtersReq" => [
-                "search"  => $search ?? "",
-                "view"    => $viewMode,
-                "tahun"   => $tahunFilter,
-                "periode" => $periodeFilter ?? "",
-            ],
-
-            // List opsi dropdown filter
-            "filtersList" => [
-                "periode" => ['mingguan', 'bulanan', 'tahunan'],
-                // Generate tahun dinamis (misal 5 tahun ke belakang + 1 tahun ke depan)
-                "tahun"   => range(date('Y') + 1, date('Y') - 4),
-            ],
+        // 1. Validasi: Catatan revisi WAJIB diisi jika menolak
+        $request->validate([
+            'catatan_revisi' => 'required|string|min:5|max:255',
+        ], [
+            'catatan_revisi.required' => 'Alasan penolakan wajib diisi agar pegawai tahu apa yang perlu diperbaiki.',
+            'catatan_revisi.min' => 'Alasan penolakan terlalu singkat.',
         ]);
-    }
 
-
-    public function target_tim_create(Request $request)
-    {
-        // Input dari URL (misal klik + dari index)
-
-        return Inertia::render('Supervisor/TargetTim/Create', [
-            "title" => "Buat Target Baru untuk Anggota Tim",
-            "optionList" => [
-                "pegawai" => User::myTeam($this->user)->get()->map(fn($u) => [
-                    'value' => $u->id,
-                    'label' => $u->name . ' - ' . $u->nip
-                ]),
-                "produk" => Produk::all()->map(fn($p) => [
-                    'value' => $p->id,
-                    'label' => $p->nama_produk
-                ]),
-                "tipe_target" => [
-                    ['value' => 'nominal', 'label' => 'Nominal (Rupiah)'],
-                    ['value' => 'noa', 'label' => 'NoA (Number of Account)'],
-                ],
-                "periode" => [
-                    ['value' => 'mingguan', 'label' => 'Mingguan'],
-                    ['value' => 'bulanan', 'label' => 'Bulanan'],
-                    ['value' => 'tahunan', 'label' => 'Tahunan'],
-                ],
-            ],
-
-            // Kirim default value jika ada
-            "defaultValues" => [
-                "user_id"   => $request->input('pegawai_id'),
-                "produk_id" => $request->input('produk_id'),
-                "tahun" => date('Y'),
-                "tipe_target" => 'nominal',
-                "periode"    => 'bulanan',
-            ]
+        // 2. Update Data Akuisisi
+        $akuisisi->update([
+            'status_verifikasi' => 'rejected',
+            'catatan_revisi'    => $request->catatan_revisi, // Simpan input dari Modal
+            'verifikator_id'    => $this->user->id(), // ID Supervisor yang login
+            'verified_at'       => now(), // Waktu penolakan
         ]);
+
+        // 3. Kembali dengan pesan sukses
+        return Redirect::back()->with('success', 'Pengajuan berhasil ditolak dan dikembalikan ke pegawai.');
     }
 
-    // Method Edit untuk menampilkan Form
-    public function target_tim_edit(Target $target)
-    {
-        // Reuse optionList yang sama dengan create
-        $optionList = [
-            "pegawai" => User::myTeam(Auth::user())->get()->map(fn($u) => [
-                'value' => $u->id,
-                'label' => $u->name . ' - ' . $u->nip
-            ]),
-            "produk" => \App\Models\Produk::all()->map(fn($p) => [
-                'value' => $p->id,
-                'label' => $p->nama_produk
-            ]),
-            "tipe_target" => [
-                ['value' => 'nominal', 'label' => 'Nominal (Rupiah)'],
-                ['value' => 'noa', 'label' => 'NoA (Number of Account)'],
-            ],
-            "periode" => [
-                ['value' => 'mingguan', 'label' => 'Mingguan'],
-                ['value' => 'bulanan', 'label' => 'Bulanan'],
-                ['value' => 'tahunan', 'label' => 'Tahunan'],
-            ],
-        ];
 
-        return Inertia::render('Supervisor/TargetTim/CreateEdit', [ // Panggil component yg sama
-            "title"         => "Edit Target Anggota Tim",
-            "optionList"    => $optionList,
-            "target"        => $target, // Kirim data target existing
-            "defaultValues" => [] // Tidak perlu default values krn target ada
-        ]);
-    }
-
-    // Method Update untuk proses simpannya
-    public function target_tim_update(TargetStoreUpdateRequest $request, Target $target)
-    {
-        $target->update($request->validated());
-
-        return redirect()
-            ->route('spv.target-tim.index')
-            ->with('message', 'Data Target Berhasil Diperbarui!');
-    }
-
-    public function target_tim_store(TargetStoreUpdateRequest $request)
-    {
-        Target::create($request->validated());
-        return redirect()
-            ->route('spv.target-tim.index')
-            ->with('message', 'Target Baru Berhasil Ditambahkan!');
-    }
-
-    public function target_tim_destroy(Target $target)
-    {
-        $target->delete();
-        return redirect()->back()->with('message', 'Data Target Berhasil Dihapus!');
-    }
 
 
     public function team()
@@ -382,10 +195,83 @@ class SupervisorController extends Controller
         return response()->json($history);
     }
 
-    public function report()
+    public function report(Request $request)
     {
+        // 1. OPSI FILTER
+        // Format array simple untuk dropdown
+        $yearsList = collect(range(date('Y'), date('Y') - 4))->map(fn($y) => (string)$y)->toArray();
+
+        // Format array object untuk dropdown (Value & Label)
+        // Note: FilterSearchCustom Anda merender option.label jika object, atau option itu sendiri jika string.
+        // Jadi kita buat array simple string untuk bulan agar aman, atau sesuaikan komponen.
+        // Agar aman dengan komponen Anda yang sekarang, kita pakai string value saja dulu untuk bulan (angka 1-12)
+        // Atau kita kirim array of strings: "Januari", "Februari" lalu di backend convert balik.
+        // TAPI, lebih baik kita kirim array of objects {value, label} dan sesuaikan komponen sedikit.
+
+        // SEMENTARA: Kita pakai array string "1" sampai "12" agar tidak error "Object not valid as child"
+        // Nanti di frontend kita mapping labelnya.
+        $monthsList = collect(range(1, 12))->map(fn($m) => (string)$m)->toArray();
+
+        $kategoriList = Produk::select('kategori_produk')
+            ->distinct()
+            ->pluck('kategori_produk')
+            ->toArray();
+
+        // ... (Bagian Filter options sama) ...
+        $filtersReq = $request->all();
+
+        // Query Data
+        $rawData = Akuisisi::query()
+            ->with(['pegawai:id,name,nip', 'produk:id,nama_produk,kategori_produk'])
+            ->where('status_verifikasi', 'verified')
+            ->when($request->year, fn($q) => $q->whereYear('tanggal_akuisisi', $request->year))
+            ->when($request->month, fn($q) => $q->whereMonth('tanggal_akuisisi', $request->month))
+            // Filter byKategori dihapus dari query utama, karena kita mau tampilkan SEMUA kategori yang ada
+            // Kecuali user spesifik minta 1 kategori aja.
+            ->when($request->byKategori, fn($q) => $q->whereHas('produk', fn($p) => $p->where('kategori_produk', $request->byKategori)))
+            ->when($request->search, function ($q, $search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nama_nasabah', 'like', "%{$search}%")
+                        ->orWhereHas('pegawai', fn($p) => $p->where('name', 'like', "%{$search}%")->orWhere('nip', 'like', "%{$search}%"));
+                });
+            })
+            ->orderByDesc('tanggal_akuisisi')
+            ->get(); // Gunakan GET, bukan paginate
+
+        // Grouping Data by Kategori
+        $groupedReports = $rawData->groupBy(function ($item) {
+            return $item->produk->kategori_produk; // Group by 'PRODUK FUNDING', 'PRODUK KREDIT', dll
+        })->map(function ($items, $kategori) {
+            return [
+                'kategori' => $kategori,
+                'data' => $items->map(function ($item) {
+                    return [
+                        'id'                => $item->id,
+                        'timestamp'         => $item->created_at->format('d/m/Y H:i'),
+                        'nama_pegawai'      => $item->pegawai->name,
+                        'nip_pegawai'       => $item->pegawai->nip,
+                        'produk'            => $item->produk->nama_produk,
+                        'kategori'          => $item->produk->kategori_produk,
+                        'tanggal_akuisisi'  => \Carbon\Carbon::parse($item->tanggal_akuisisi)->format('d-M-Y'),
+                        'bukti_url'         => $item->lampiran_bukti ? asset('storage/' . $item->lampiran_bukti) : null,
+                        'no_rekening'       => $item->no_identitas_nasabah, // Value asli
+                        'nama_nasabah'      => $item->nama_nasabah,
+                        'nominal'           => $item->nominal_realisasi, // Perlu kirim nominal juga
+                    ];
+                })
+            ];
+        })->values(); // Reset keys jadi array index 0,1,2...
+
         return Inertia::render('Supervisor/Report', [
-            "title" => "Laporan dan Evaluasi ",
+            "title"       => "Laporan Sah",
+            "subTitle"    => "Detail Transaksi Tervalidasi Per Kategori",
+            "groupedReports" => $groupedReports, // Kirim data yang sudah digroup
+            "filtersReq"  => $filtersReq,
+            "filtersList" => [
+                "year"     => $yearsList,
+                "month"    => $monthsList,
+                "kategori" => $kategoriList,
+            ],
         ]);
     }
 }

@@ -89,7 +89,7 @@ export default function Index({
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1">
                         <FilterSearchCustom
-                            routeName={ `/pegawai/target-pegawai`}
+                            routeName={`/pegawai/target`}
                             initialFilters={{
                                 byTipe: filtersReq.tipe,
                                 byStatus: filtersReq.status,
@@ -135,25 +135,57 @@ export default function Index({
                                 <table className="table text-xs text-center min-w-max table-bordered">
                                     <thead className="text-sm font-medium text-white bg-primary">
                                         <tr className="text-center">
-                                            <th scope="col" width="5%" className="py-3">No</th>
-                                            <th scope="col" className="py-3">Nama Produk</th>
-                                            <th scope="col" className="py-3">Kategori</th>
-                                            <th scope="col" className="py-3">Nilai Target</th>
-                                            <th scope="col" className="py-3">Tipe Target</th>
-                                            <th scope="col" className="py-3">Periode</th>
-                                            <th scope="col" className="py-3">Tahun</th>
-                                            <th scope="col" className="py-3">Tanggal Mulai</th>
-                                            <th scope="col" className="py-3">Tanggal Selesai</th>
-                                            <th scope="col" className="py-3">Deadline Pencapaian</th>
+                                            <th
+                                                scope="col"
+                                                width="5%"
+                                                className="py-3"
+                                            >
+                                                No
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Nama Produk
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Kategori
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Nilai Target
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Tipe Target
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Periode
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Tahun
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Tanggal Mulai
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Tanggal Selesai
+                                            </th>
+                                            <th scope="col" className="py-3">
+                                                Deadline Pencapaian
+                                            </th>
 
                                             {/* Header Aksi & Updated */}
                                             <>
-                                                <th scope="col" width="10%" className="py-3 text-center cursor-pointer">
+                                                <th
+                                                    scope="col"
+                                                    width="10%"
+                                                    className="py-3 text-center cursor-pointer"
+                                                >
                                                     <div className="flex items-center justify-center gap-2">
                                                         {showLastUpdated ? (
                                                             <button
                                                                 className="action-btn hover:scale-[1.15] hover:bg-bermuda"
-                                                                onClick={() => setShowLastUpdated(!showLastUpdated)}
+                                                                onClick={() =>
+                                                                    setShowLastUpdated(
+                                                                        !showLastUpdated
+                                                                    )
+                                                                }
                                                             >
                                                                 <FaEyeSlash className="mr-1 text-white" />
                                                                 Diperbarui
@@ -162,17 +194,28 @@ export default function Index({
                                                             <div className="flex items-center justify-center gap-2">
                                                                 <button
                                                                     className="action-btn hover:scale-125 hover:bg-bermuda"
-                                                                    onClick={() => setShowLastUpdated(!showLastUpdated)}
+                                                                    onClick={() =>
+                                                                        setShowLastUpdated(
+                                                                            !showLastUpdated
+                                                                        )
+                                                                    }
                                                                 >
                                                                     <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
                                                                 </button>
-                                                                <span>Aksi</span>
+                                                                <span>
+                                                                    Aksi
+                                                                </span>
                                                             </div>
                                                         )}
                                                     </div>
                                                 </th>
                                                 {showLastUpdated && (
-                                                    <th scope="col" className="py-3 text-center">Aksi</th>
+                                                    <th
+                                                        scope="col"
+                                                        className="py-3 text-center"
+                                                    >
+                                                        Aksi
+                                                    </th>
                                                 )}
                                             </>
                                         </tr>
@@ -181,21 +224,32 @@ export default function Index({
                                     {/* BODY: Overflow dihapus dari sini biar ga error */}
                                     <tbody>
                                         {targets.data?.map((target, i) => (
-                                            <tr key={target.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                            <tr
+                                                key={target.id}
+                                                className="border-b border-gray-100 hover:bg-gray-50"
+                                            >
                                                 <td className="py-3 text-center">
-                                                    {i + 1 + (targets.meta?.from || 1) - 1}
+                                                    {i +
+                                                        1 +
+                                                        (targets.meta?.from ||
+                                                            1) -
+                                                        1}
                                                 </td>
-                                                <td className="px-2 py-3 text-left">
+                                                <td className="relative px-2 py-3 text-left group ">
                                                     <span className="block font-semibold">
-                                                        {target.produk?.nama_produk ?? "-"}
-                                                    </span>
-                                                </td>
-                                                <td className="relative px-2 py-3 text-center group">
-                                                    <span className="block mb-1">
-                                                        {target.produk?.kategori_produk ?? "-"}
+                                                        {target.produk
+                                                            ?.nama_produk ??
+                                                            "-"}
                                                     </span>
                                                     <span className="badge-xs-accent">
                                                         {target.produk?.satuan}
+                                                    </span>
+                                                </td>
+                                                <td className="px-2 py-3 text-center ">
+                                                    <span className="block mb-1">
+                                                        {target.produk
+                                                            ?.kategori_produk ??
+                                                            "-"}
                                                     </span>
                                                 </td>
                                                 <td className="py-3">
@@ -220,27 +274,42 @@ export default function Index({
                                                 </td>
                                                 <td className="py-3 whitespace-nowrap">
                                                     <span className="block">
-                                                        {moment(target.tanggal_mulai).format("LL")}
+                                                        {moment(
+                                                            target.tanggal_mulai
+                                                        ).format("LL")}
                                                     </span>
                                                 </td>
                                                 <td className="py-3 whitespace-nowrap">
                                                     <span className="block">
-                                                        {moment(target.tanggal_selesai).format("LL")}
+                                                        {moment(
+                                                            target.tanggal_selesai
+                                                        ).format("LL")}
                                                     </span>
                                                 </td>
                                                 <td className="py-3 whitespace-nowrap">
                                                     <span className="block font-medium text-red-500">
-                                                        {moment(target.deadline_pencapaian).format("LL")}
+                                                        {moment(
+                                                            target.deadline_pencapaian
+                                                        ).format("LL")}
                                                     </span>
                                                 </td>
 
                                                 {/* Last Updated */}
-                                                <td className={`font-normal text-center whitespace-nowrap ${!showLastUpdated && "hidden"}`}>
+                                                <td
+                                                    className={`font-normal text-center whitespace-nowrap ${
+                                                        !showLastUpdated &&
+                                                        "hidden"
+                                                    }`}
+                                                >
                                                     <span className="block">
-                                                        {moment(target.updated_at).format("LL")}
+                                                        {moment(
+                                                            target.updated_at
+                                                        ).format("LL")}
                                                     </span>
                                                     <span className="block text-[12px] text-gray-400">
-                                                        {moment(target.updated_at).fromNow()}
+                                                        {moment(
+                                                            target.updated_at
+                                                        ).fromNow()}
                                                     </span>
                                                 </td>
 
@@ -249,15 +318,26 @@ export default function Index({
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             onClick={() => {
-                                                                setActiveModal(`Show-${target.id}`);
-                                                                setTimeout(() => {
-                                                                    const el = document.getElementById(`Show-${target.id}`);
-                                                                    if (el) el.showModal();
-                                                                }, 50);
+                                                                setActiveModal(
+                                                                    `Show-${target.id}`
+                                                                );
+                                                                setTimeout(
+                                                                    () => {
+                                                                        const el =
+                                                                            document.getElementById(
+                                                                                `Show-${target.id}`
+                                                                            );
+                                                                        if (el)
+                                                                            el.showModal();
+                                                                    },
+                                                                    50
+                                                                );
                                                             }}
                                                             className="action-btn group/button action-btn-success"
                                                         >
-                                                            <span className="block mr-1 group-hover/button:text-white">Lihat</span>
+                                                            <span className="block mr-1 group-hover/button:text-white">
+                                                                Lihat
+                                                            </span>
                                                             <FaEye className="scale-125 group-hover/button:fill-white" />
                                                         </button>
                                                     </div>
@@ -270,7 +350,7 @@ export default function Index({
 
                             <Pagination
                                 datas={targets}
-                                urlRoute={`/target-pegawai`}
+                                urlRoute={`/pegawai/target`}
                                 filters={{
                                     search: filtersReq.search,
                                     byTipe: filtersReq.tipe_target,
@@ -281,7 +361,9 @@ export default function Index({
                     ) : (
                         <div className="flex flex-col items-center justify-center h-96">
                             <h2 className="text-2xl font-bold text-gray-600">
-                                {!subTitle ? "Belum Ada Data Target Terbaru Untuk Saat Ini" : "Tidak Ditemukan"}
+                                {!subTitle
+                                    ? "Belum Ada Data Target Terbaru Untuk Saat Ini"
+                                    : "Tidak Ditemukan"}
                             </h2>
                         </div>
                     )}

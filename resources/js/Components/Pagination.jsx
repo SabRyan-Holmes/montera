@@ -7,9 +7,11 @@ import { TiArrowRight } from "react-icons/ti";
 import ReactPaginate from "react-paginate";
 
 const DEFAULT_CATEGORY = "Semua Kategori";
+
 export default function Paginations({ datas, urlRoute, filters }) {
     const handlePageClick = (event) => {
-        event?.event?.preventDefault(); // 👈 INI PENTING
+        // ... (Logic handlePageClick sama seperti sebelumnya) ...
+        event?.event?.preventDefault();
         const selectedPage = event.selected + 1;
 
         const filteredQuery = Object.fromEntries(
@@ -20,56 +22,51 @@ export default function Paginations({ datas, urlRoute, filters }) {
 
         router.get(
             urlRoute,
-            {
-                page: selectedPage,
-                ...filteredQuery,
-            },
-            {
-                replace: true,
-                preserveState: true,
-            }
+            { page: selectedPage, ...filteredQuery },
+            { replace: true, preserveState: true }
         );
     };
 
     return (
-        <div className="mb-8 text-sm box-footer">
-            <div className="items-center justify-between sm:flex">
-                <div className="flex items-center text-xs">
-                    showing {datas.data.length} Entries{" "}
-                    <TiArrowRight className="w-5 h-5" />
+        <div className="py-4 text-sm border-t border-gray-200 pb-11">
+            {/* Gunakan Flex-col di mobile, Flex-row di desktop biar responsif */}
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+
+                {/* Info Entries */}
+                <div className="flex items-center text-xs text-gray-500">
+                    Showing {datas.from} to {datas.to} of {datas.total} Entries
+                    <TiArrowRight className="w-4 h-4 ml-1" />
                 </div>
+
+                {/* Komponen Pagination */}
                 <ReactPaginate
-                    breakLabel={<span>...</span>}
+                    breakLabel={<span className="px-2 text-gray-400">...</span>}
                     nextLabel={
-                        datas.next_page_url && (
-                            <a
-                                className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                            >
-                                <span className="sr-only">Next</span>
-                                <span aria-hidden="true">Next</span>
-                                <MdOutlineKeyboardDoubleArrowRight className="w-4 h-4 -ml-1 fill-primary group-hover/next:fill-white" />
-                            </a>
-                        )
+                        datas.next_page_url ? (
+                            <span className="flex items-center justify-center w-8 h-8 transition-colors border rounded-md hover:bg-primary hover:text-white border-primary text-primary">
+                                <MdOutlineKeyboardDoubleArrowRight className="w-5 h-5" />
+                            </span>
+                        ) : null
+                    }
+                    previousLabel={
+                        datas.prev_page_url ? (
+                            <span className="flex items-center justify-center w-8 h-8 transition-colors border rounded-md hover:bg-primary hover:text-white border-primary text-primary">
+                                <MdOutlineKeyboardDoubleArrowLeft className="w-5 h-5" />
+                            </span>
+                        ) : null
                     }
                     onPageChange={handlePageClick}
                     pageRangeDisplayed={1}
+                    marginPagesDisplayed={1} // Tambah ini biar rapi (1 ... 5)
                     pageCount={datas.last_page}
-                    previousLabel={
-                        datas.prev_page_url && (
-                            <a
-                                className="inline-flex items-center gap-2 px-2 py-1 font-semibold leading-none border rounded-md group/next dark:text-white/70 text-primary hover:text-white hover:border hover:bg-primary/75 border-primary"
-                            >
-                                <MdOutlineKeyboardDoubleArrowLeft className="w-4 h-4 -mr-1 fill-primary group-hover/next:fill-white" />
-                                <span className="sr-only">Prev</span>
-                                <span aria-hidden="true">Prev</span>
-                            </a>
-                        )
-                    }
                     renderOnZeroPageCount={null}
-                    containerClassName="flex items-center text-center justify-center mt-8 mb-4 gap-4"
-                    pageClassName="border border-solid border-primary text-center hover:bg-primary hover:text-base-100 w-6 h-6 flex items-center text-primary justify-center rounded-md"
-                    activeClassName="bg-primary text-white"
-                    className="flex justify-end gap-2"
+
+                    // --- CLASS YANG DIPERBAIKI ---
+                    containerClassName="flex items-center gap-1" // Container UL
+                    pageClassName="block" // Item LI
+                    pageLinkClassName="flex items-center justify-center w-8 h-8 text-xs font-medium border rounded-md hover:bg-primary hover:text-white border-gray-300 text-gray-600 transition-colors" // Link A
+                    activeLinkClassName="!bg-primary !text-white !border-primary" // State Aktif
+                    disabledClassName="opacity-50 cursor-not-allowed"
                 />
             </div>
         </div>

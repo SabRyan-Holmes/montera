@@ -4,7 +4,12 @@ import { FaEye, FaEdit } from "react-icons/fa";
 import { Link, router } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
+import {
+    FilterSearchCustom,
+    Pagination,
+    StatusLabel,
+    TooltipHover,
+} from "@/Components";
 import { FaCheck, FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
@@ -15,30 +20,12 @@ export default function Index({
     auth,
     akuisisis,
     title,
-    flash,
+    canApprove,
     subTitle,
     filtersReq,
     filtersList,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
-    const [activeModal, setActiveModal] = useState(null);
-
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
 
     // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
@@ -50,6 +37,105 @@ export default function Index({
 
     // ===========================================Other Logics===========================================
 
+    // 1. State untuk menyimpan data yang sedang dibuka
+    const [activeModal, setActiveModal] = useState(null);
+
+    const [activeData, setActiveData] = useState(null);
+
+    // 2. Logic Handler Approve (Langsung tembak API)
+    const handleApprove = (id) => {
+        router.patch(
+            route("spv.verify.approve", id),
+            {},
+            {
+                onSuccess: () => {
+                    setActiveData(null); // Tutup modal
+                    Swal.fire("Berhasil", "Data berhasil disetujui", "success");
+                },
+            }
+        );
+    };
+
+    // 3. Logic Handler Reject (Menerima 'reason' dari Modal)
+    const handleReject = (id, reason) => {
+        router.patch(
+            route("spv.verify.reject", id),
+            {
+                catatan_revisi: reason, // Kirim data dari textarea modal
+            },
+            {
+                onSuccess: () => {
+                    setActiveData(null); // Tutup modal
+                    Swal.fire("Ditolak", "Data berhasil ditolak", "info");
+                },
+            }
+        );
+    };
+
+    // Handler untuk Approve
+    // const handleApprove = (id) => {
+    //     router.patch(
+    //         route("supervisor.verify.approve", id), // Sesuaikan dengan nama route Anda: 'verify.approve'
+    //         {},
+    //         {
+    //             onStart: () => {
+    //                 // Opsional: Tampilkan loading state jika perlu
+    //             },
+    //             onError: (errors) => {
+    //                 console.error("Error approving:", errors);
+    //                 Swal.fire({
+    //                     title: "Gagal!",
+    //                     text: "Terjadi kesalahan saat menyetujui data.",
+    //                     icon: "error",
+    //                     confirmButtonColor: "#EF4444",
+    //                 });
+    //             },
+    //             onSuccess: () => {
+    //                 setActiveModal(null); // Tutup modal setelah sukses
+    //                 Swal.fire({
+    //                     title: "Berhasil Disetujui!",
+    //                     text: "Data akuisisi telah diverifikasi dan poin berhasil ditambahkan ke pegawai.",
+    //                     icon: "success",
+    //                     confirmButtonColor: "#2D95C9", // Warna biru sesuai tema
+    //                 });
+    //             },
+    //         }
+    //     );
+    // };
+
+    // Handler untuk Reject
+    // Menerima parameter 'reason' (catatan revisi) dari modal
+    // const handleReject = (id, reason) => {
+    //     router.patch(
+    //         route("supervisor.verify.reject", id), // Sesuaikan dengan nama route Anda: 'verify.reject'
+    //         {
+    //             catatan_revisi: reason, // Kirim alasan penolakan ke backend
+    //         },
+    //         {
+    //             onStart: () => {
+    //                 // Opsional: Tampilkan loading state
+    //             },
+    //             onError: (errors) => {
+    //                 console.error("Error rejecting:", errors);
+    //                 Swal.fire({
+    //                     title: "Gagal!",
+    //                     text: "Terjadi kesalahan saat menolak data.",
+    //                     icon: "error",
+    //                     confirmButtonColor: "#EF4444",
+    //                 });
+    //             },
+    //             onSuccess: () => {
+    //                 setActiveModal(null); // Tutup modal setelah sukses
+    //                 Swal.fire({
+    //                     title: "Berhasil Ditolak",
+    //                     text: "Data akuisisi telah ditolak dan dikembalikan ke pegawai untuk revisi.",
+    //                     icon: "info", // Icon info atau warning cocok untuk reject
+    //                     confirmButtonColor: "#EF4444", // Warna merah untuk reject
+    //                 });
+    //             },
+    //         }
+    //     );
+    // };
     return (
         <Authenticated user={auth.user} title={title}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
@@ -117,7 +203,6 @@ export default function Index({
                                             Status
                                         </th>
 
-
                                         <th
                                             scope="col"
                                             width="10%"
@@ -175,7 +260,6 @@ export default function Index({
                                         const isPending =
                                             akuisisi.status_verifikasi ===
                                             "pending";
-
                                         return (
                                             <tr key={akuisisi.id}>
                                                 <td>{i + 1}</td>
@@ -221,12 +305,24 @@ export default function Index({
                                                     </span>
                                                 </td>
                                                 {/* Status */}
-                                                <td>
-                                                    <span className="block capitalize">
-                                                        {
+                                                <td className="p-0 m-0">
+                                                    <StatusLabel
+                                                        status={
                                                             akuisisi.status_verifikasi
                                                         }
-                                                    </span>
+                                                    />
+                                                    <div className="mt-2 font-normal">
+                                                        {/* <span className="block">
+                                                            {moment(
+                                                                akuisisi.updated_at
+                                                            ).format("LL")}
+                                                        </span> */}
+                                                        <span className="block text-[12px]">
+                                                            {moment(
+                                                                akuisisi.updated_at
+                                                            ).fromNow()}
+                                                        </span>
+                                                    </div>
                                                 </td>
 
                                                 {/* Last Updated */}
@@ -251,9 +347,17 @@ export default function Index({
                                                 {/* AKSI */}
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
-                                                        <a className="action-btn group action-btn-success text">
+                                                        <button
+                                                            onClick={() =>
+                                                                setActiveData(
+                                                                    akuisisi
+                                                                )
+                                                            }
+                                                            className="action-btn group action-btn-success text"
+                                                        >
                                                             <FaEye className="scale-125 group-hover:text-white" />
-                                                        </a>
+                                                        </button>
+
                                                         <TooltipHover
                                                             message={
                                                                 "Lihat Detail"
@@ -276,7 +380,10 @@ export default function Index({
                                                         </button>
                                                         <TooltipHover
                                                             message={
-                                                                "Setujui Akuisisi"
+                                                                "Setujui Akuisisi" +
+                                                                (!isPending
+                                                                    ? `(Telah ${akuisisi.status_verifikasi})`
+                                                                    : "")
                                                             }
                                                         />
                                                     </div>
@@ -297,9 +404,8 @@ export default function Index({
                                                         <TooltipHover
                                                             message={
                                                                 "Tolak Akuisisi" +
-                                                                (akuisisi.status !==
-                                                                "diajukan"
-                                                                    ? `(Telah ${akuisisi.status})`
+                                                                (!isPending
+                                                                    ? `(Telah ${akuisisi.status_verifikasi})`
                                                                     : "")
                                                             }
                                                         />
@@ -331,6 +437,22 @@ export default function Index({
                         </div>
                     )}
                 </section>
+
+                {/* 4. PANGGIL MODAL DISINI */}
+                {/* Modal hanya dirender jika activeData tidak null */}
+                {activeData && (
+                    <ShowModal
+                        akuisisi={activeData} // Data yang dilempar
+                        onClose={() => setActiveData(null)} // Fungsi tutup modal
+                        canApprove={canApprove} // Cek role
+                        // Masukkan Handler
+                        handleApprove={() => handleApprove(activeData.id)}
+                        // Handler Reject menerima parameter reason dari dalam modal
+                        handleReject={(reason) =>
+                            handleReject(activeData.id, reason)
+                        }
+                    />
+                )}
             </main>
         </Authenticated>
     );

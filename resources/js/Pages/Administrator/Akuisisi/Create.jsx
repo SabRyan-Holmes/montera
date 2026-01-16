@@ -13,6 +13,7 @@ import { RiArrowGoBackFill } from "react-icons/ri";
 import { HiDocumentPlus } from "react-icons/hi2";
 import TextInput from "@/Components/TextInput";
 import axios from "axios";
+import useDynamicLabels from "@/Hooks/UseDynamicLabels";
 
 export default function Create({ auth, filtersList, title }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -25,12 +26,35 @@ export default function Create({ auth, filtersList, title }) {
         lampiran_bukti: null,
     });
 
+    console.error("tess")
+    console.error(useDynamicLabels())
     const submit = (e) => {
         e.preventDefault();
         // Gunakan forceFormData jika mengirim file lampiran
         post(route("pegawai.akuisisi.store"), {
             forceFormData: true,
         });
+    };
+
+    // 1. State untuk Label Dinamis (Default general)
+    const { labels, setCategory } = useDynamicLabels();
+
+    // 2. Handler saat Produk Dipilih
+    const handleProductChange = (e) => {
+        const selectedId = e.target.value;
+        setData("produk_id", selectedId);
+
+        // Cari data produk
+        const selectedProduct = filtersList.produks.find(
+            (p) => String(p.value) === String(selectedId)
+        );
+
+        // Panggil function dari hooks
+        if (selectedProduct) {
+            setCategory(selectedProduct.kategori); // Kirim kategori (misal: "Produk Funding")
+        } else {
+            setCategory("DEFAULT");
+        }
     };
 
     const [generating, setGenerating] = useState(false);
@@ -197,12 +221,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 className="w-full mt-1"
                                                 placeholder="-- Pilih Produk Perbankan --"
                                                 options={filtersList.produks}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "produk_id",
-                                                        e.target.value
-                                                    )
-                                                }
+                                               onChange={handleProductChange}
                                             />
                                             <InputError
                                                 message={errors.produk_id}
@@ -212,7 +231,7 @@ export default function Create({ auth, filtersList, title }) {
                                     </tr>
 
                                     <tr className="border">
-                                        <td className="">Nama Nasabah</td>
+                                        <td className="">{labels.nama}</td>
                                         <td className="border-x">
                                             <TextInput
                                                 type="text"
@@ -235,7 +254,7 @@ export default function Create({ auth, filtersList, title }) {
 
                                     <tr className="border">
                                         <td className="">
-                                            No. Identitas / Rekening
+                                            {labels.identitas}
                                         </td>
                                         <td className="border-x">
                                             <TextInput
@@ -243,7 +262,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 value={
                                                     data.no_identitas_nasabah
                                                 }
-                                                placeholder="NIK atau Nomor Rekening (Opsional)"
+                                                placeholder={labels.placeholder_identitas}
                                                 className="w-full px-2 h-9"
                                                 onChange={(e) =>
                                                     setData(
@@ -263,14 +282,14 @@ export default function Create({ auth, filtersList, title }) {
 
                                     <tr className="border">
                                         <td className="">
-                                            Nominal Realisasi (Rp)
+                                            {labels.nominal}
                                         </td>
                                         <td className="border-x">
                                             <TextInput
                                                 type="number"
                                                 value={data.nominal_realisasi}
                                                 className="w-full px-2 h-9"
-                                                placeholder="Contoh: 5000000"
+                                                placeholder={"Contoh: 5000000"}
                                                 onChange={(e) =>
                                                     setData(
                                                         "nominal_realisasi",
@@ -288,7 +307,7 @@ export default function Create({ auth, filtersList, title }) {
                                     </tr>
 
                                     <tr className="border">
-                                        <td className="">Tanggal Akuisisi</td>
+                                        <td className="">{labels.tanggal}</td>
                                         <td className="border-x">
                                             <TextInput
                                                 type="date"
@@ -312,7 +331,7 @@ export default function Create({ auth, filtersList, title }) {
 
                                     <tr className="border">
                                         <td className="">
-                                            Lampiran Bukti (PDF)
+                                            Lampiran Bukti (Opsional)
                                         </td>
                                         <td className="p-4 border-x">
                                             {" "}

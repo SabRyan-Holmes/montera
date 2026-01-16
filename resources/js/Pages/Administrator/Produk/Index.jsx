@@ -9,7 +9,6 @@ import { FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import ShowModal from "./Show";
-
 export default function Index({
     auth,
     produks,
@@ -18,10 +17,8 @@ export default function Index({
     subTitle,
     filtersReq,
     filtersList,
-    isDivisiSDM,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
-    console.log("filtersList ", filtersList);
     const [activeModal, setActiveModal] = useState(null);
     function handleDelete(id) {
         Swal.fire({
@@ -53,44 +50,21 @@ export default function Index({
         });
     }
 
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
-
     // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
     const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
-
     // ===========================================Other Logics===========================================
-
     return (
         <Authenticated
             user={auth.user}
             title={(role === "Admnistrator" ? "Kelola " : "Daftar ") + title}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
-
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/master/produk`}
+                            routeName={`/admin/produk`}
                             initialFilters={{
                                 byKategori: filtersReq.kategori,
                                 byStatus: filtersReq.status,
@@ -102,7 +76,6 @@ export default function Index({
                                     label: "Kategori",
                                     options: filtersList.kategori,
                                 },
-
                                 {
                                     name: "byStatus",
                                     label: "Status ",
@@ -117,7 +90,6 @@ export default function Index({
                             }}
                         />
                     </div>
-
                     {role === "Administrator" && (
                         <div className="flex-none pb-3 ">
                             <Link
@@ -131,7 +103,6 @@ export default function Index({
                         </div>
                     )}
                 </section>
-
                 <section className="pt-3 ">
                     {subTitle && (
                         <div className="my-4">
@@ -153,23 +124,13 @@ export default function Index({
                                         >
                                             No
                                         </th>
-                                        <th scope="col" width="15%">
-                                            Nama Produk
-                                        </th>
-
-                                        <th scope="col" width="15%">
-                                            Kategori
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Harga Satuan
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Komisi Poin
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Deskripsi
-                                        </th>
-
+                                        <th scope="col">Nama Produk</th>
+                                        <th scope="col">Kategori</th>
+                                        <th scope="col">Input Data</th>
+                                        <th scope="col">Satuan</th>
+                                        <th scope="col">Bobot Front Liner</th>
+                                        <th scope="col">Bobot Kredit</th>
+                                        <th scope="col">Status</th>
                                         <>
                                             <th
                                                 scope="col"
@@ -236,34 +197,18 @@ export default function Index({
                                                 <span className="block">
                                                     {produk["nama_produk"]}
                                                 </span>
-
                                                 <span className="badge-xs-accent">
                                                     {produk["kode_produk"]}
                                                 </span>
                                             </td>
+                                            <td>{produk["kategori_produk"]}</td>
+                                            <td>{produk["label_input"]}</td>
+                                            <td>{produk["satuan"]}</td>
                                             <td>
-                                                <span className="block">
-                                                    {produk["kategori"]}
-                                                </span>
+                                                {produk["bobot_frontliner"]}
                                             </td>
-                                            <td>
-                                                <span className="block">
-                                                    {produk["harga_satuan"]}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span className="block">
-                                                    {produk["komisi_poin"]}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span className="block">
-                                                    {produk[
-                                                        "deskripsi_produk"
-                                                    ] ?? "Tidak ada deskripsi"}
-                                                </span>
-                                            </td>
-
+                                            <td>{produk["bobot_kredit"]}</td>
+                                            <td>{produk["status"]}</td>
                                             <td
                                                 className={`font-normal text-center ${
                                                     !showLastUpdated && "hidden"
@@ -315,9 +260,7 @@ export default function Index({
                                                             }
                                                         />
                                                     </div>
-
                                                     {/* EDIT */}
-
                                                     <div className="relative inline-flex group">
                                                         <Link
                                                             as="a"
@@ -335,7 +278,6 @@ export default function Index({
                                                             }
                                                         />
                                                     </div>
-
                                                     {/* DELETE */}
                                                     <div className="relative inline-flex group">
                                                         <button

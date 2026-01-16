@@ -1,3 +1,4 @@
+import { StatusLabel } from "@/Components";
 import { usePage } from "@inertiajs/react";
 import moment from "moment";
 import React, { useState } from "react";
@@ -91,6 +92,18 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
                         />
 
                         {/* Status */}
+
+                        <tr>
+                            <td>Status</td>
+                            <td className="text-base font-normal ">
+                                <div className="-ml-3">
+                                    <StatusLabel
+                                        status={akuisisi.status_verifikasi}
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+
                         <RowData
                             label="Status Verifikasi"
                             value={akuisisi.status_verifikasi ?? "-"}

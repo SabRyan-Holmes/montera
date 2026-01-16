@@ -87,7 +87,9 @@ export default function Index({
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/admin/akuisisi`}
+                            routeName={`/${
+                                canManage ? "admin" : "pegawai"
+                            }/akuisisi`}
                             initialFilters={{
                                 byStatus: filtersReq.status,
                             }}
@@ -184,7 +186,7 @@ export default function Index({
                                             <div className="flex items-center justify-center gap-2">
                                                 {showLastUpdated ? (
                                                     <button
-                                                        className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                        className="action-btn hover:scale-[1.15] hover:bg-primary/90"
                                                         onClick={() =>
                                                             setShowLastUpdated(
                                                                 !showLastUpdated
@@ -197,7 +199,7 @@ export default function Index({
                                                 ) : (
                                                     <div className="flex items-center gap-2">
                                                         <button
-                                                            className="action-btn hover:scale-125 hover:bg-bermuda"
+                                                            className="action-btn hover:scale-125 hover:bg-primary/90"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
                                                                     !showLastUpdated
@@ -330,7 +332,7 @@ export default function Index({
                                                                     }}
                                                                     className="action-btn group/button action-btn-success "
                                                                 >
-                                                                    <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                                    <FaEye className="scale-125 group-hover/button:fill-white group-hover/button:text-white " />
                                                                 </button>
                                                                 <ShowModal
                                                                     handleDelete={
@@ -410,12 +412,12 @@ export default function Index({
                                                                         )
                                                                         .showModal();
                                                                 }}
-                                                                className="action-btn group/button action-btn-success "
+                                                                className="action-btn group action-btn-success "
                                                             >
-                                                                <span className="mr-1">
+                                                                <span className="mr-1 group-hover:text-white">
                                                                     Lihat
                                                                 </span>
-                                                                <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                                <FaEye className="scale-125 group-hover:fill-white " />
                                                             </button>
                                                             <ShowModal
                                                                 handleDelete={

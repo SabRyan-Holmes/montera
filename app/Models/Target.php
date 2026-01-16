@@ -36,7 +36,7 @@ class Target extends Model
         $query->when(
             $filters['search'] ?? false,
             fn($query, $search) =>
-            $query->whereHas('user', function ($q) use ($search) {
+            $query->whereHas('pegawai', function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%');
             })->orWhereHas('produk', function ($q2) use ($search) {
                 $q2->where('nama_produk', 'like', "%{$search}%");

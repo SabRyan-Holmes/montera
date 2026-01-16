@@ -24,7 +24,7 @@ export default function Authenticated({ user, title, children }) {
     };
 
     return (
-        <section className="flex h-screen overflow-hidden font-sans text-gray-900 bg-primary bg-gray-50">
+        <section className="flex h-screen overflow-hidden font-sans text-gray-900 bg-gray-50">
             <Head title={title} />
 
             {/* SIDEBAR */}

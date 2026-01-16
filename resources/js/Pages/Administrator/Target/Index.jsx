@@ -73,9 +73,7 @@ export default function Index({
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
     const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
+
 
     // ===========================================Other Logics===========================================
 

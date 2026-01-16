@@ -40,7 +40,7 @@ class Produk extends Model
         $query->when(
             $filters['byKategori'] ?? false,
             fn($query, $byKategori) =>
-            $query->where('kategori', $byKategori)
+            $query->where('kategori_produk', $byKategori)
         );
 
         // 3. Filter Berdasarkan Status Produk (Aktif/Non-aktif)

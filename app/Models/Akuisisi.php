@@ -48,7 +48,8 @@ class Akuisisi extends Model
             $query->whereHas('pegawai', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('nip', 'like', '%' . $search . '%');
-            })
+            })->OrWhere('nama_nasabah', 'like', "%{$search}%")
+                ->OrWhere('no_identitas_nasabah', 'like', "%{$search}%")
         );
 
         $query->when(

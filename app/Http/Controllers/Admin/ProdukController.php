@@ -43,8 +43,11 @@ class ProdukController extends Controller
                 "byStatus"   => $params['byStatus'] ?? "Semua Kategori",
             ],
             "filtersList"   => [
-                "kategori" => Produk::getEnumValues('kategori'),
-                "status"   => Produk::getEnumValues('status'),
+                "kategori" => Produk::select('kategori_produk')
+                    ->distinct()
+                    ->pluck('kategori_produk')
+                    ->toArray(),
+                "status"   => ['tersedia', 'discontinued'],
             ],
         ]);
     }
