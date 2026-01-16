@@ -21,7 +21,8 @@ return new class extends Migration
             $table->enum('periode', ['mingguan', 'bulanan', 'tahunan']);
 
             // Tambahkan kolom tahun untuk filter historis
-            $table->integer('tahun')->default(2026);
+            $table->integer('tahun')->index();
+            $table->integer('bulan')->nullable()->index();
 
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
@@ -29,6 +30,8 @@ return new class extends Migration
 
             $table->text('keterangan_tambahan')->nullable();
             $table->timestamps();
+
+            $table->index(['user_id', 'produk_id', 'tahun', 'bulan', 'periode' ], 'idx_target_performa');
         });
     }
 

@@ -8,6 +8,7 @@ use App\Http\Requests\TargetStoreUpdateRequest;
 use App\Models\Akuisisi;
 use App\Models\Produk;
 use App\Models\Target;
+use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +53,29 @@ class SupervisorController extends Controller
         ]);
     }
 
+    // SupervisorController.php (Method Verify)
+
+    public function approve(Akuisisi $akuisisi)
+    {
+        // 1. Update status di tabel akuisisi (Operational)
+        $akuisisi->update([
+            'status_verifikasi' => 'verified',
+            'verifikator_id' => $this->user->id(),
+            'verified_at' => now()
+        ]);
+
+        // 2. Catat ke Ledger Poin (Transactional)
+        // Hitung poin berdasarkan logika bisnis lu (misal 0.1% dari nominal)
+        $poin = $this->calculatePoint($akuisisi);
+
+        Transaksi::create([
+            'akuisisi_id' => $akuisisi->id,
+            'user_id' => $akuisisi->user_id, // Copy biar query leaderboard cepet
+            'nilai_realisasi' => $akuisisi->nominal_realisasi,
+            'poin_didapat' => $poin,
+            'tanggal_realisasi' => $akuisisi->tanggal_akuisisi, // Copy tanggal bisnisnya
+        ]);
+    }
 
     public function target_tim(Request $request)
     {
@@ -91,7 +115,7 @@ class SupervisorController extends Controller
 
         // Khusus Transaksi jika kolomnya created_at
         $applyHistorisTransaksi = function ($query) use ($tahunFilter) {
-             $query->whereYear('created_at', $tahunFilter);
+            $query->whereYear('created_at', $tahunFilter);
         };
         // --- 2. QUERY DATA BERDASARKAN MODE VIEW ---
         if ($viewMode === 'semua') {

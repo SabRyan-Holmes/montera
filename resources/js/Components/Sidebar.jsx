@@ -19,7 +19,7 @@ const Sidebar = ({ user, isCollapsed }) => {
     return (
         <aside
             className={`
-                h-screen shadow-2xl transition-all duration-300 ease-in-out flex flex-col z-20 relative
+                h-screen sticky top-0 shadow-2xl transition-all duration-300 ease-in-out flex flex-col z-20
                 ${isCollapsed ? "w-20" : "w-80"}
                 bg-secondary text-white
             `}

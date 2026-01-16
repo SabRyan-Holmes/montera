@@ -17,12 +17,12 @@ return new class extends Migration
             $table->foreignId('produk_id')->constrained('produks'); // Apa produknya
             $table->foreignId('akuisisi_id')->constrained('akuisisis'); // Referensi ke laporan aslinya
 
+            $table->date('tanggal_realisasi')->index();
             $table->decimal('nilai_realisasi', 15, 2); // Nominal duitnya
             $table->integer('poin_didapat'); // Skor poin berdasarkan bobot indikator
-            $table->integer('bulan'); // Untuk filter dashboard
-            $table->integer('tahun');
             $table->timestamps();
         });
+
     }
 
     /**

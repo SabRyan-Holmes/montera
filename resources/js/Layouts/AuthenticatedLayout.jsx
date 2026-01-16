@@ -24,11 +24,11 @@ export default function Authenticated({ user, title, children }) {
     };
 
     return (
-        <div className="flex h-screen font-sans text-gray-900 bg-gray-50">
+        <section className="flex h-screen overflow-hidden font-sans text-gray-900 bg-primary bg-gray-50">
             <Head title={title} />
 
             {/* SIDEBAR */}
-            <div className="relative z-40 flex-shrink-0 h-full">
+            <div className="relative z-40 flex-shrink-0 h-full overflow-hidden ">
                 <Sidebar
                     user={user}
                     isCollapsed={!isSidebarOpen}
@@ -48,6 +48,6 @@ export default function Authenticated({ user, title, children }) {
                     {children}
                 </main>
             </div>
-        </div>
+        </section>
     );
 }

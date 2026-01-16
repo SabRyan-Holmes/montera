@@ -13,32 +13,29 @@ return new class extends Migration
     {
         Schema::create('akuisisis', function (Blueprint $table) {
             $table->id();
-            $table->string('no_transaksi')->unique(); // Penting untuk tracking laporan manual lama
+            $table->string('no_transaksi', 30)->unique();
+            $table->foreignId('user_id')->index('idx_akuisisi_user_id')
+                ->constrained('users')
+                ->onDelete('cascade');
 
-            // Relasi Aktor
-            $table->foreignId('user_id')->constrained('users'); // Pegawai (UC-07)
-            $table->foreignId('produk_id')->constrained('produks'); // Tabungan/Kredit/Asuransi
-
-            // Data Nasabah (Wajib ada untuk objektivitas)
+            // Memberikan nama spesifik pada constraint produk_id
+            $table->foreignId('produk_id')->index('idx_akuisisi_produk_id')
+                ->constrained('produks')
+                ->onDelete('cascade');
             $table->string('nama_nasabah');
-            $table->string('no_identitas_nasabah')->nullable(); // NIK atau No. Rekening
-
-            // Data Keuangan
+            $table->string('no_identitas_nasabah', 50)->nullable()->index();
             $table->decimal('nominal_realisasi', 15, 2);
             $table->date('tanggal_akuisisi');
-
-            // Status Verifikasi (Workflow UC-11)
             $table->enum('status_verifikasi', ['pending', 'verified', 'rejected'])->default('pending');
-            $table->foreignId('verifikator_id')->nullable()->constrained('users'); // Supervisor
+            $table->foreignId('verifikator_id')->nullable()->constrained('users');
             $table->dateTime('verified_at')->nullable();
-            $table->text('catatan_revisi')->nullable(); // Alasan tolak/catatan supervisor
-
-            // Lampiran (Bukti fisik agar tidak manipulasi data)
+            $table->text('catatan_revisi')->nullable();
             $table->string('lampiran_bukti')->nullable();
             $table->timestamps();
+            $table->index(['status_verifikasi', 'tanggal_akuisisi'], 'idx_verifikasi_spv');
+            $table->index(['user_id', 'tanggal_akuisisi'], 'idx_laporan_pegawai');
         });
     }
-
     /**
      * Reverse the migrations.
      */

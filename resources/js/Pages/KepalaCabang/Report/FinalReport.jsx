@@ -30,7 +30,7 @@ export default function FinalReport({
     ];
     return (
         <Authenticated user={auth.user} title={title}>
-            <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
+            <div className="mx-auto phone:h-screen laptop:h-screen laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 {/* --- HEADER & FILTER SECTION --- */}
                 <section className="flex flex-col gap-4 mb-6 md:flex-row md:items-end md:justify-between">
                     <section className="mb-6">
@@ -244,7 +244,7 @@ export default function FinalReport({
                             <Pagination
                                 datas={reports}
                                 // Pastikan route ini benar
-                                urlRoute="/kacab/final-report"
+                                urlRoute="/kacab/report/final-report"
                                 filters={{
                                     year: filtersReq.year,
                                     month: filtersReq.month,
@@ -264,7 +264,7 @@ export default function FinalReport({
                         </div>
                     )}
                 </section>
-            </main>
+            </div>
         </Authenticated>
     );
 }

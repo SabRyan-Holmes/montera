@@ -12,7 +12,6 @@ class TargetSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil User Pegawai
         $pegawaiIds = User::whereHas('jabatan', fn($q) => $q->where('nama_jabatan', 'Pegawai'))->pluck('id');
         $produkIds = Produk::pluck('id');
 
@@ -20,31 +19,29 @@ class TargetSeeder extends Seeder
             return;
         }
 
-        // Buat 22 Target Contoh
-        for ($i = 0; $i < 22; $i++) {
-            // Tentukan periode (Bulanan)
+        // Kita bikin 30 target buat sampel data yang rame
+        for ($i = 0; $i < 30; $i++) {
             $bulan = rand(1, 12);
             $tahun = 2026;
 
-            // Hitung tanggal otomatis pakai Carbon
             $startDate = Carbon::createFromDate($tahun, $bulan, 1);
             $endDate = $startDate->copy()->endOfMonth();
+
+            // Kita asumsikan deadline adalah hari terakhir periode tersebut
+            $deadline = $endDate->copy();
 
             Target::create([
                 'user_id' => $pegawaiIds->random(),
                 'produk_id' => $produkIds->random(),
-
-                'nilai_target' => rand(5, 100) * 1000000, // Target 5jt - 100jt
+                'nilai_target' => rand(10, 100) * 1000000,
                 'tipe_target' => rand(0, 1) ? 'nominal' : 'noa',
-
-                // Field yang dikembalikan:
                 'periode' => 'bulanan',
                 'tahun' => $tahun,
+                'bulan' => $bulan,
                 'tanggal_mulai' => $startDate->format('Y-m-d'),
                 'tanggal_selesai' => $endDate->format('Y-m-d'),
-                'deadline_pencapaian' => $endDate->format('Y-m-d'), // Biasanya deadline akhir bulan
-
-                'keterangan_tambahan' => 'Target performa reguler bulan ' . $startDate->format('F'),
+                'deadline_pencapaian' => $deadline->format('Y-m-d'), // SEKARANG UDAH ADA BRO
+                'keterangan_tambahan' => 'Target performa otomatis untuk bulan ' . $startDate->format('F'),
             ]);
         }
     }

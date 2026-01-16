@@ -245,7 +245,7 @@ class KepalaCabangController extends Controller
 
         // 2. QUERY DATA DIVISI (Aggregated)
         // Kita butuh: Total Realisasi Divisi, Jumlah Transaksi, Total Pegawai, dan Top User di Divisi itu
-        $divisiStats = \App\Models\Divisi::with(['users' => function ($q) use ($dateFilter) {
+        $divisiStats = Divisi::with(['users' => function ($q) use ($dateFilter) {
                 // Eager load sum & count akuisisi per user untuk ranking internal
                 $q->withSum(['akuisisi' => fn($sq) => $dateFilter($sq)], 'nominal_realisasi')
                   ->withCount(['akuisisi' => fn($sq) => $dateFilter($sq)])
@@ -428,7 +428,7 @@ class KepalaCabangController extends Controller
 
         // 2. LOGIC DATA
         // Ambil User yang jabatannya 'Pegawai'
-        $candidates = \App\Models\User::where('status_aktif', 'aktif')
+        $candidates = User::where('status_aktif', 'aktif')
             ->whereHas('jabatan', function($q) {
                 $q->where('nama_jabatan', 'Pegawai');
             })
@@ -493,7 +493,7 @@ class KepalaCabangController extends Controller
 
         // 3. OPSI FILTER
         $yearsList = collect(range(date('Y'), date('Y') - 4))->map(fn($y) => ['value' => $y, 'label' => (string)$y]);
-        $divisiOptions = \App\Models\Divisi::select('id as value', 'nama_divisi as label')->get();
+        $divisiOptions = Divisi::select('id as value', 'nama_divisi as label')->get();
 
         return Inertia::render('KepalaCabang/EvaluasiSDM/PegawaiPromotion', [
             "title" => "Rekomendasi Promosi",
@@ -523,7 +523,7 @@ class KepalaCabangController extends Controller
         // Nanti di frontend kita mapping labelnya.
         $monthsList = collect(range(1, 12))->map(fn($m) => (string)$m)->toArray();
 
-        $kategoriList = \App\Models\Produk::select('kategori_produk')
+        $kategoriList = Produk::select('kategori_produk')
             ->distinct()
             ->pluck('kategori_produk')
             ->toArray();
@@ -538,7 +538,7 @@ class KepalaCabangController extends Controller
             ->when($request->month, fn($q) => $q->whereMonth('tanggal_akuisisi', $request->month))
             ->filter($filtersReq) // Pastikan scopeFilter di Model Akuisisi menangani 'search' dan 'byKategori'
             ->orderByDesc('tanggal_akuisisi')
-            ->paginate(20)
+            ->paginate(10)
             ->withQueryString()
             ->through(function ($item) {
                 return [
@@ -548,7 +548,7 @@ class KepalaCabangController extends Controller
                     'nip_pegawai'       => $item->pegawai->nip,
                     'produk'            => $item->produk->nama_produk,
                     'kategori'          => $item->produk->kategori_produk,
-                    'tanggal_akuisisi'  => \Carbon\Carbon::parse($item->tanggal_akuisisi)->format('d-M-Y'),
+                    'tanggal_akuisisi'  => Carbon::parse($item->tanggal_akuisisi)->format('d-M-Y'),
                     'bukti_url'         => $item->lampiran_bukti ? asset('storage/' . $item->lampiran_bukti) : null,
                     'no_rekening'       => $item->no_identitas_nasabah,
                     'nama_nasabah'      => $item->nama_nasabah,
