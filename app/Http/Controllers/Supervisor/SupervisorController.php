@@ -36,7 +36,7 @@ class SupervisorController extends Controller
             "canApprove" => $this->role === "Supervisor",
             "akuisisis" => Akuisisi::query()
                 ->with(['pegawai:id,name', 'produk:id,nama_produk,kategori_produk', 'verifikator:id,name', 'supervisor:id,name'])
-                ->ToSupervisor($this->user)
+                ->myTeamFromSPV($this->user)
                 ->latest('updated_at')
                 ->filter($params)
                 ->paginate(10)
@@ -91,53 +91,76 @@ class SupervisorController extends Controller
 
     public function team(Request $request)
     {
-        $user = $this->user;
+        $user  = $this->user;
         $tahun = $request->input('tahun', date('Y'));
-        $teamMembers = User::role('Pegawai')->whereHas('targets', function ($q) use ($user, $tahun) {
-            $q->where('supervisor_id', $user->id)
-                ->where('tahun', $tahun);
-        })
-            ->where('id', '!=', $user->id)
-            ->with([
-                'targets' => fn($q) => $q->where('supervisor_id', $user->id)->where('tahun', $tahun),
-                'transaksi' => fn($q) => $q->whereYear('created_at', $tahun)
-            ])->get()->map(function ($member) {
-                $totalTarget = $member->targets->sum('nilai_target');
+
+        // Panggil Scope User::myTeam yang baru dibuat
+        $teamMembers = User::myTeam($user)
+            ->where('id', '!=', $user->id) // Jangan masukan diri sendiri
+
+            // Eager Load Data untuk Perhitungan
+            // Kita filter targetnya: Cuma ambil target yang disupervisi oleh $user di tahun $tahun
+            ->with(['targets' => function ($q) use ($user, $tahun) {
+                $q->where('supervisor_id', $user->id)
+                    ->where('tahun', $tahun);
+            }])
+            // Kita filter transaksinya: Cuma ambil transaksi tahun ini (untuk hitung realisasi)
+            ->with(['transaksi' => function ($q) use ($tahun) {
+                $q->whereYear('created_at', $tahun);
+            }])
+            ->get()
+            // Filter Tambahan (Opsional tapi Recommended):
+            // Hanya tampilkan member yang BENAR-BENAR punya target dari kita tahun ini.
+            // Kalau logic myTeam mengambil bawahan struktural tapi tahun ini dia gak dikasih target,
+            // dia bakal muncul dengan nilai 0. Kalau mau di-hide, pakai filter ini:
+            // ->filter(function ($member) {
+            //     return $member->targets->isNotEmpty();
+            // })
+            ->map(function ($member) {
+                // Logic hitung-hitungan (SAMA PERSIS KAYA SEBELUMNYA)
+                $totalTarget    = $member->targets->sum('nilai_target');
                 $totalRealisasi = $member->transaksi->sum('nilai_realisasi');
+
+                // Hindari division by zero
                 $persentase = $totalTarget > 0
                     ? ($totalRealisasi / $totalTarget) * 100
                     : 0;
+
                 $status = match (true) {
                     $persentase >= 100 => 'Excellent',
                     $persentase >= 80  => 'Good',
                     default            => 'Warning'
                 };
+
                 return [
-                    'id' => $member->id,
-                    'name' => $member->name,
-                    'jabatan' => $member->jabatan->nama_jabatan ?? '-',
-                    'total_target' => $totalTarget,
+                    'id'              => $member->id,
+                    'name'            => $member->name,
+                    'jabatan'         => $member->jabatan->nama_jabatan ?? '-',
+                    'total_target'    => $totalTarget,
                     'total_realisasi' => $totalRealisasi,
-                    'persentase' => round($persentase, 1),
-                    'status' => $status,
-                    'ratio' => $persentase
+                    'persentase'      => round($persentase, 1),
+                    'status'          => $status,
+                    'ratio'           => $persentase // Helper buat sorting
                 ];
             })
-            ->sortByDesc('ratio')
-            ->values();
+            ->sortByDesc('ratio') // Urutkan dari yang performanya paling bagus
+            ->values(); // Reset index array
+
+        // Statistik Tim (SAMA PERSIS)
         $teamStats = [
-            'total_member' => $teamMembers->count(),
-            'total_target_tim' => $teamMembers->sum('total_target'),
+            'total_member'        => $teamMembers->count(),
+            'total_target_tim'    => $teamMembers->sum('total_target'),
             'total_realisasi_tim' => $teamMembers->sum('total_realisasi'),
-            'rata_rata_capaian' => $teamMembers->count() > 0
+            'rata_rata_capaian'   => $teamMembers->count() > 0
                 ? round($teamMembers->avg('persentase'), 1)
                 : 0,
         ];
+
         return Inertia::render('Supervisor/Team', [
-            "title" => "Monitoring Performa Tim (Tahun $tahun)",
+            "title"       => "Monitoring Performa Tim (Tahun $tahun)",
             "teamMembers" => $teamMembers,
-            "teamStats" => $teamStats,
-            "filtersReq" => ['tahun' => $tahun]
+            "teamStats"   => $teamStats,
+            "filtersReq"  => ['tahun' => $tahun]
         ]);
     }
 

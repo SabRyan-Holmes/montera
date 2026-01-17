@@ -58,34 +58,56 @@ class Akuisisi extends Model
             $query->where('status_verifikasi', $byStatus)
         );
 
-         $query->when(
+        $query->when(
             $filters['byKategori'] ?? false,
             fn($query, $byKategori) =>
             $query->whereHas('produk', function ($q) use ($byKategori) {
                 $q->where('kategori_produk', 'like', "%{$byKategori}%");
             })
         );
-
     }
 
-    public function scopeInSupervisorDivisi(Builder $query): void
+    // NOTE kalo hanya berdasarkandivisi
+    // public function scopeInSupervisorDivisi(Builder $query): void
+    // {
+    //     $user = Auth::user();
+
+    //     if ($user) {
+    //         // 1. Filter Verifikator harus User yang sedang login
+    //         // Ini ditaruh di query utama karena kolom 'verifikator_id' ada di tabel 'akuisisis'
+    //         $query->where('verifikator_id', $user->id);
+
+    //         // 2. DAN Filter Pegawainya harus satu divisi
+    //         $query->whereHas('pegawai', function ($q) use ($user) {
+    //             $q->where('divisi_id', $user->divisi_id);
+    //         });
+    //     }
+    // }
+
+    public function scopeMyTeamFromSPV($query, $currentUser)
     {
-        $user = Auth::user();
+        return $query->where(function ($q) use ($currentUser) {
 
-        if ($user) {
-            // 1. Filter Verifikator harus User yang sedang login
-            // Ini ditaruh di query utama karena kolom 'verifikator_id' ada di tabel 'akuisisis'
-            $query->where('verifikator_id', $user->id);
+            // --- 1. DIRECT SUPERVISOR ---
+            $q->where('supervisor_id', $currentUser->id)
 
-            // 2. DAN Filter Pegawainya harus satu divisi
-            $query->whereHas('pegawai', function ($q) use ($user) {
-                $q->where('divisi_id', $user->divisi_id);
-            });
-        }
+                // --- 2. DIRECT VERIFIKATOR (Baru) ---
+                ->orWhere('verifikator_id', $currentUser->id)
+
+                // --- 3 & 4. RELASI VIA USER PEMILIK (Struktural & Fungsional) ---
+                ->orWhereHas('pegawai', function ($userQuery) use ($currentUser) {
+
+                    $userQuery->where(function ($uq) use ($currentUser) {
+                        // A. Struktural: Satu Divisi & Jabatan Pegawai
+                        $uq->where('divisi_id', $currentUser->divisi_id)
+                            ->where('jabatan_id', 4)
+
+                            // B. Fungsional: User punya target dari supervisor ini
+                            ->orWhereHas('targets', function ($targetQuery) use ($currentUser) {
+                                $targetQuery->where('supervisor_id', $currentUser->id);
+                            });
+                    });
+                });
+        });
     }
-
-   public function scopeToSupervisor($query, $user)
-{
-    return $query->where('supervisor_id', $user->id);
-}
 }

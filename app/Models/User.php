@@ -18,7 +18,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-   protected $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
@@ -146,11 +146,21 @@ class User extends Authenticatable
         );
     }
 
-    public function scopeMyTeam($query, User $user)
-    {
-        return $query->where('divisi_id', $user->divisi_id)
-                     ->where('id', '!=', $user->id)
 
-                     ; // Exclude diri sendiri
+    public function scopeMyTeam($query, $currentUser)
+    {
+        return $query->where(function ($q) use ($currentUser) {
+
+            // --- LOGIC 1: STRUKTURAL ---
+            // Satu Divisi AND Jabatan Pegawai (ID 4)
+            $q->where('divisi_id', $currentUser->divisi_id)
+                ->where('jabatan_id', 4) // Cukup pakai ->where lagi (otomatis AND)
+
+                // --- LOGIC 2: FUNGSIONAL ---
+                // ATAU (OR) user yang ditargetkan oleh supervisor ini (bisa lintas divisi/jabatan)
+                ->orWhereHas('targets', function ($targetQuery) use ($currentUser) {
+                    $targetQuery->where('supervisor_id', $currentUser->id);
+                });
+        });
     }
 }
