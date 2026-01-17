@@ -24,6 +24,7 @@ class TargetStoreUpdateRequest extends FormRequest
         return [
             // Validasi Relasi
             'user_id' => ['required', 'exists:users,id'],
+            'supervisor_id' => ['required', 'exists:users,id'],
             'produk_id' => ['nullable', 'exists:produks,id'], // Boleh null jika target umum (non-produk)
 
             // Validasi Angka & Enum
@@ -49,6 +50,7 @@ class TargetStoreUpdateRequest extends FormRequest
     {
         return [
             'user_id' => 'Pegawai',
+            'supervisor_id' => 'Supervisor',
             'produk_id' => 'Produk',
             'nilai_target' => 'Nilai Target',
             'tipe_target' => 'Tipe Target',

@@ -36,7 +36,7 @@ class Akuisisi extends Model
 
     public function supervisor()
     {
-        return $this->belongsTo(User::class, 'verifikator_id'); // Aktor yang menjamin data objektif
+        return $this->belongsTo(User::class, 'supervisor_id'); //ditujukan ke supervisor yang dipilih pegawai
     }
 
 
@@ -57,6 +57,15 @@ class Akuisisi extends Model
             fn($query, $byStatus) =>
             $query->where('status_verifikasi', $byStatus)
         );
+
+         $query->when(
+            $filters['byKategori'] ?? false,
+            fn($query, $byKategori) =>
+            $query->whereHas('produk', function ($q) use ($byKategori) {
+                $q->where('kategori_produk', 'like', "%{$byKategori}%");
+            })
+        );
+
     }
 
     public function scopeInSupervisorDivisi(Builder $query): void
@@ -74,4 +83,9 @@ class Akuisisi extends Model
             });
         }
     }
+
+   public function scopeToSupervisor($query, $user)
+{
+    return $query->where('supervisor_id', $user->id);
+}
 }

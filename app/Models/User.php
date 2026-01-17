@@ -104,6 +104,8 @@ class User extends Authenticatable
         });
     }
 
+
+
     public function scopeFilter($query, array $filters): void
     {
         $query->when(

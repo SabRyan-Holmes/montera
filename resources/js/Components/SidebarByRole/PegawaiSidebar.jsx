@@ -9,7 +9,7 @@ import {
 export default function PegawaiSidebar({ isCollapsed }) {
     return (
         <ul>
-             {/* Header Kategori (Hilang saat collapsed) */}
+            {/* Header Kategori (Hilang saat collapsed) */}
             {!isCollapsed && (
                 <li className="px-4 mt-4 mb-2 text-xs font-bold tracking-wider uppercase text-slate-400">
                     Menu Utama
@@ -38,7 +38,7 @@ export default function PegawaiSidebar({ isCollapsed }) {
 
             <SidebarLink
                 href={route("pegawai.akuisisi.index")}
-                active={route().current("pegawai.akuisisi.index")}
+                active={route().current("pegawai.akuisisi.*")}
                 className="z-20 mx-[18px] -mb-1"
                 isCollapsed={isCollapsed}
             >

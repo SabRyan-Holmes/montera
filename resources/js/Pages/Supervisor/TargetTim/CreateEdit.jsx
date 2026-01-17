@@ -21,6 +21,7 @@ export default function CreateEdit({ auth, optionList, title, defaultValues, tar
     // Inisialisasi form
     const { data, setData, post, patch, processing, errors } = useForm({
         user_id: target?.user_id || defaultValues?.user_id || "",
+        supervisor_id: defaultValues?.supervisor_id ,
         produk_id: target?.produk_id || defaultValues?.produk_id || "",
         nilai_target: target?.nilai_target || "",
         tipe_target: target?.tipe_target || defaultValues?.tipe_target || "nominal",
@@ -93,6 +94,7 @@ export default function CreateEdit({ auth, optionList, title, defaultValues, tar
                                     </tr>
                                 </thead>
                                 <tbody>
+                                     <InputError message={errors.supervisor_id} className="mt-1" />
 
                                     {/* --- 1. PEGAWAI --- */}
                                     <tr className="border">

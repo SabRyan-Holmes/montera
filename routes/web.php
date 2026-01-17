@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
     // --- PEGAWAI (Operasional) ---
     Route::middleware('role:Pegawai')->prefix('pegawai')->name('pegawai.')->group(function () {
         Route::get('/target', [PegawaiController::class, 'target'])->name('target'); // Monitoring Pribadi
-        Route::resource('akuisisi', AkuisisiController::class)->only(['index', 'create', 'store']);
+        Route::resource('akuisisi', AkuisisiController::class)->only(['index', 'create', 'store', 'update']);
         Route::get('/akuisisi/generate-transaction-number', [PegawaiController::class, 'generateNoTransaksi'])
             ->name('akuisisi.generate-tn');
         Route::get('/report', [PegawaiController::class, 'report'])->name('report'); // Monitoring Pribadi

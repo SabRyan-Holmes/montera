@@ -34,7 +34,7 @@ export default function FinalReport({
                 <section className="flex flex-col gap-4 mb-6 md:flex-row md:items-end md:justify-between">
                     <section className="mb-6">
                         <FilterSearchCustom
-                            routeName="/kacab/final-report"
+                            routeName="/kacab/report/final-report"
                             initialFilters={{
                                 year: filtersReq.year,
                                 month: filtersReq.month,

@@ -1,4 +1,5 @@
-import { RadialChart, AkuisisiGraph } from "@/Components";
+import {  AkuisisiGraph } from "@/Components";
+import CapaianTargetDivisiGraph from "@/Components/Chart/CapaianTargetDivisiGraph";
 import React from "react";
 import {
     HiOutlineShieldCheck,
@@ -7,6 +8,7 @@ import {
     HiOutlineClock
 } from "react-icons/hi2";
 import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
+
 
 export default function SupervisorContent({ dataByRole }) {
     const {
@@ -86,7 +88,7 @@ export default function SupervisorContent({ dataByRole }) {
 
                 {/* Analisis Capaian Target Divisi */}
                 <div className="p-6 bg-white border shadow-sm rounded-xl">
-                    <RadialChart
+                    <CapaianTargetDivisiGraph
                         title={"Rata-rata Capaian Divisi"}
                         data={teamProgressGraph}
                         chartId={"chart-team-progress"}

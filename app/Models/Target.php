@@ -21,38 +21,37 @@ class Target extends Model
         return $this->belongsTo(Produk::class);
     }
 
-    public function scopeTargetInDivision(Builder $query, $user)
+    // public function scopeTargetInDivision(Builder $query, $user)
+    // {
+    //     return $query->with([
+    //             'pegawai:id,name,nip',
+    //             'produk:id,nama_produk,kategori_produk,satuan'
+    //         ])->whereHas('pegawai', function ($q) use ($user) {
+    //             $q->where('divisi_id', $user->divisi_id);
+    //         });
+    // }
+
+    public function scopeBySupervisor($query, $user)
     {
-        return $query->with([
-                'pegawai:id,name,nip',
-                'produk:id,nama_produk,kategori_produk,satuan'
-            ])->whereHas('pegawai', function ($q) use ($user) {
-                $q->where('divisi_id', $user->divisi_id);
-            });
+        return $query->where('supervisor_id', $user->id);
     }
 
     public function scopeFilter($query, array $filters): void
     {
         $query->when(
             $filters['search'] ?? false,
-            fn($query, $search) =>
-            $query->whereHas('pegawai', function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%');
-            })->orWhereHas('produk', function ($q2) use ($search) {
-                $q2->where('nama_produk', 'like', "%{$search}%");
-            })
+            fn($q, $search) =>
+            $q->where(
+                fn($sub) =>
+                $sub->whereHas('pegawai', fn($k) => $k->where('name', 'like', "%$search%"))
+                    ->orWhereHas('produk', fn($k) => $k->where('nama_produk', 'like', "%$search%"))
+            )
         );
 
-        $query->when(
-            $filters['byTipe'] ?? false,
-            fn($query, $byTipe) =>
-            $query->where('tipe_target', $byTipe)
-        );
+        $query->when($filters['byTipe'] ?? false, fn($q, $t) => $q->where('tipe_target', $t));
 
-        $query->when(
-            $filters['byPeriode'] ?? false,
-            fn($query, $byPeriode) =>
-            $query->where('periode', $byPeriode)
-        );
+        // Gabungkan filter periode & tahun di sini agar controller tidak perlu manual where lagi
+        $query->when($filters['periode'] ?? false, fn($q, $p) => $q->where('periode', $p));
+        $query->when($filters['tahun'] ?? false, fn($q, $y) => $q->where('tahun', $y));
     }
 }

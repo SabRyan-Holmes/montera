@@ -4,7 +4,12 @@ import { FaEye, FaEdit } from "react-icons/fa";
 import { Link, router } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { FilterSearchCustom, Pagination, TooltipHover } from "@/Components";
+import {
+    FilterSearchCustom,
+    Pagination,
+    StatusLabel,
+    TooltipHover,
+} from "@/Components";
 import { FaCheck, FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
@@ -170,7 +175,7 @@ export default function Index({
                                             Status
                                         </th>
                                         <th scope="col" width="15%">
-                                            Verifikator
+                                            Supervisor
                                         </th>
 
                                         <th
@@ -189,7 +194,7 @@ export default function Index({
                                                         className="action-btn hover:scale-[1.15] hover:bg-primary/90"
                                                         onClick={() =>
                                                             setShowLastUpdated(
-                                                                !showLastUpdated
+                                                                !showLastUpdated,
                                                             )
                                                         }
                                                     >
@@ -202,7 +207,7 @@ export default function Index({
                                                             className="action-btn hover:scale-125 hover:bg-primary/90"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
-                                                                    !showLastUpdated
+                                                                    !showLastUpdated,
                                                                 )
                                                             }
                                                         >
@@ -276,22 +281,34 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {moment(
-                                                            akuisisi.tanggal_akuisisi
+                                                            akuisisi.tanggal_akuisisi,
                                                         ).format("LL")}
                                                     </span>
                                                 </td>
                                                 {/* Status */}
-                                                <td>
-                                                    <span className="block capitalize">
-                                                        {
+                                                <td className="p-0 m-0">
+                                                    <StatusLabel
+                                                        status={
                                                             akuisisi.status_verifikasi
                                                         }
-                                                    </span>
+                                                    />
+                                                    <div className="mt-2 font-normal">
+                                                        {/* <span className="block">
+                                                                                                                {moment(
+                                                                                                                    akuisisi.updated_at
+                                                                                                                ).format("LL")}
+                                                                                                            </span> */}
+                                                        <span className="block text-[12px]">
+                                                            {moment(
+                                                                akuisisi.updated_at,
+                                                            ).fromNow()}
+                                                        </span>
+                                                    </div>
                                                 </td>
                                                 {/* Verifikator */}
                                                 <td>
                                                     <span className="block">
-                                                        {akuisisi.verifikator
+                                                        {akuisisi.supervisor
                                                             ?.name ?? "-"}
                                                     </span>
                                                 </td>
@@ -304,12 +321,12 @@ export default function Index({
                                                 >
                                                     <span className="block">
                                                         {moment(
-                                                            akuisisi.updated_at
+                                                            akuisisi.updated_at,
                                                         ).format("LL")}
                                                     </span>
                                                     <span className="block text-[12px]">
                                                         {moment(
-                                                            akuisisi.updated_at
+                                                            akuisisi.updated_at,
                                                         ).fromNow()}
                                                     </span>
                                                 </td>
@@ -322,11 +339,11 @@ export default function Index({
                                                                     as="button"
                                                                     onClick={() => {
                                                                         setActiveModal(
-                                                                            `Show-${akuisisi.id}`
+                                                                            `Show-${akuisisi.id}`,
                                                                         );
                                                                         document
                                                                             .getElementById(
-                                                                                `Show-${akuisisi.id}`
+                                                                                `Show-${akuisisi.id}`,
                                                                             )
                                                                             .showModal();
                                                                     }}
@@ -362,7 +379,7 @@ export default function Index({
                                                                     as="a"
                                                                     href={route(
                                                                         "admin.akuisisi.edit",
-                                                                        akuisisi.id
+                                                                        akuisisi.id,
                                                                     )}
                                                                     className="action-btn group/button action-btn-bermuda"
                                                                 >
@@ -382,7 +399,7 @@ export default function Index({
                                                                         handleDelete(
                                                                             akuisisi[
                                                                                 "id"
-                                                                            ]
+                                                                            ],
                                                                         )
                                                                     }
                                                                     className="action-btn action-btn-warning group/button"
@@ -404,11 +421,11 @@ export default function Index({
                                                                 as="button"
                                                                 onClick={() => {
                                                                     setActiveModal(
-                                                                        `Show-${akuisisi.id}`
+                                                                        `Show-${akuisisi.id}`,
                                                                     );
                                                                     document
                                                                         .getElementById(
-                                                                            `Show-${akuisisi.id}`
+                                                                            `Show-${akuisisi.id}`,
                                                                         )
                                                                         .showModal();
                                                                 }}
@@ -429,7 +446,9 @@ export default function Index({
                                                                 akuisisi={
                                                                     akuisisi
                                                                 }
-                                                                canManage={true}
+                                                                canManage={
+                                                                    canManage
+                                                                }
                                                             />
                                                             <TooltipHover
                                                                 message={
@@ -448,7 +467,7 @@ export default function Index({
                             {/* Pagination */}
                             <Pagination
                                 datas={akuisisis}
-                                urlRoute={`/admin/akuisisi`}
+                                urlRoute={`/${canManage ? "admin" : "pegawai"}/akuisisi`}
                                 filters={{
                                     byStatus: filtersReq.byStatus,
                                     search: filtersReq.search,

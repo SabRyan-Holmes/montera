@@ -33,7 +33,8 @@ class TransaksiController extends Controller
         return Inertia::render('Administrator/Transaksi/Index', [
             "title" => "Data Transaksi",
             "subTitle"  => $subTitle,
-            "transaksis"    => Transaksi::with(['pegawai:id,name,nip', 'produk:id,nama_produk,kode_produk', 'indikator:id,nama_kpi,satuan', 'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
+            "canManage" => $this->user->role('Administrator'),
+            "transaksis"    => Transaksi::with(['pegawai:id,name,nip', 'produk:id,nama_produk,kode_produk,kategori_produk',  'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
                 ->filter($params)->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",

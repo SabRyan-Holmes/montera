@@ -4,6 +4,7 @@ import {
     SecondaryButton,
     SelectInput,
     SuccessButton,
+    TooltipHover,
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
@@ -14,6 +15,8 @@ import { HiDocumentPlus } from "react-icons/hi2";
 import TextInput from "@/Components/TextInput";
 import axios from "axios";
 import useDynamicLabels from "@/Hooks/UseDynamicLabels";
+import CategoryModal from "./Partials/CategoryModal";
+import { FaExchangeAlt } from "react-icons/fa";
 
 export default function Create({ auth, filtersList, title }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -26,8 +29,8 @@ export default function Create({ auth, filtersList, title }) {
         lampiran_bukti: null,
     });
 
-    console.error("tess")
-    console.error(useDynamicLabels())
+    console.error("tess");
+    console.error(useDynamicLabels());
     const submit = (e) => {
         e.preventDefault();
         // Gunakan forceFormData jika mengirim file lampiran
@@ -46,12 +49,12 @@ export default function Create({ auth, filtersList, title }) {
 
         // Cari data produk
         const selectedProduct = filtersList.produks.find(
-            (p) => String(p.value) === String(selectedId)
+            (p) => String(p.value) === String(selectedId),
         );
 
         // Panggil function dari hooks
         if (selectedProduct) {
-            setCategory(selectedProduct.kategori); // Kirim kategori (misal: "Produk Funding")
+            setCategory(selectedProduct.kategori);
         } else {
             setCategory("DEFAULT");
         }
@@ -63,7 +66,9 @@ export default function Create({ auth, filtersList, title }) {
         setGenerating(true);
         try {
             // Panggil endpoint yang kita buat tadi
-            const response = await axios.get(route("pegawai.akuisisi.generate-tn"));
+            const response = await axios.get(
+                route("pegawai.akuisisi.generate-tn"),
+            );
 
             // Update data form Inertia
             setData("no_transaksi", response.data.no_transaksi);
@@ -75,12 +80,33 @@ export default function Create({ auth, filtersList, title }) {
         }
     };
 
+    const [showCategoryModal, setShowCategoryModal] = useState(true); // Default true agar muncul saat load
+    const [selectedCategory, setSelectedCategory] = useState(null); // Menyimpan kategori yang dipilih user
+
+    const filteredProducts = selectedCategory
+        ? filtersList.produks.filter(
+              (p) => p.kategori?.toUpperCase() === selectedCategory,
+          )
+        : [];
+
+    // Handler ini TETAP DISINI karena dia ngubah State milik Create
+    const handleCategorySelect = (categoryId) => {
+        setSelectedCategory(categoryId);
+        setCategory(categoryId);
+        setData("produk_id", "");
+        setShowCategoryModal(false);
+    };
+
     return (
         <Authenticated
             user={auth.user}
             title={title}
             current={route().current()}
         >
+            <CategoryModal
+                show={showCategoryModal}
+                onSelect={handleCategorySelect}
+            />
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex justify-between">
                     <div className="mt-2 text-sm breadcrumbs">
@@ -142,7 +168,7 @@ export default function Create({ auth, filtersList, title }) {
                                                         onChange={(e) =>
                                                             setData(
                                                                 "no_transaksi",
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         placeholder="Klik tombol generate..."
@@ -213,23 +239,88 @@ export default function Create({ auth, filtersList, title }) {
                                     </tr>
 
                                     <tr className="border">
-                                        <td className="">Pilih Produk</td>
-                                        <td className="border-x">
-                                            <SelectInput
-                                                id="produk_id"
-                                                value={data.produk_id}
-                                                className="w-full mt-1"
-                                                placeholder="-- Pilih Produk Perbankan --"
-                                                options={filtersList.produks}
-                                               onChange={handleProductChange}
-                                            />
-                                            <InputError
-                                                message={errors.produk_id}
-                                                className="mt-2"
-                                            />
+                                        <td className="px-4 py-2">
+                                            Pilih Produk
+                                        </td>
+                                        <td className="p-0 border-x">
+                                            <div className="flex items-center gap-2 p-3">
+                                                <div className="flex-grow">
+                                                    <SelectInput
+                                                        id="produk_id"
+                                                        value={data.produk_id}
+                                                        className="w-full"
+                                                        placeholder={`-- Pilih Produk ${selectedCategory ? `(${selectedCategory})` : ""} --`}
+                                                        options={
+                                                            filteredProducts
+                                                        } // Gunakan list yang sudah difilter
+                                                        onChange={
+                                                            handleProductChange
+                                                        }
+                                                        disabled={
+                                                            !selectedCategory
+                                                        } // Disable jika belum pilih kategori
+                                                    />
+                                                    <InputError
+                                                        message={
+                                                            errors.produk_id
+                                                        }
+                                                        className="mt-1"
+                                                    />
+                                                </div>
+                                                {/* Tombol Ganti Kategori */}
+
+                                                <div className="relative inline-flex group">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setShowCategoryModal(
+                                                                true,
+                                                            )
+                                                        }
+                                                        className="action-btn group action-btn-bermuda"
+                                                    >
+                                                         <FaExchangeAlt className="scale-125 group-hover:fill-white" />
+                                                    </button>
+                                                    <TooltipHover
+                                                        message={"Ganti Kategori Produk"}
+                                                    />
+                                                </div>
+
+                                            </div>
                                         </td>
                                     </tr>
 
+                                    <tr className="border bg-yellow-50/30">
+                                        {" "}
+                                        {/* Kasih background dikit biar beda (opsional) */}
+                                        <td className="">Verifikator</td>
+                                        <td className="border-x">
+                                            <SelectInput
+                                                id="supervisor_id"
+                                                value={data.supervisor_id}
+                                                className="w-full"
+                                                placeholder="-- Pilih Supervisor sebagai Verifikator --"
+                                                options={
+                                                    filtersList.supervisors
+                                                } // Data dari backend
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "supervisor_id",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.supervisor_id}
+                                                className="mt-2"
+                                            />
+                                            <p className="mt-1 text-xs text-gray-400">
+                                                *Pilih atasan yang akan
+                                                memvalidasi laporan ini.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    {/* ANCHOR */}
                                     <tr className="border">
                                         <td className="">{labels.nama}</td>
                                         <td className="border-x">
@@ -241,7 +332,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 onChange={(e) =>
                                                     setData(
                                                         "nama_nasabah",
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -253,21 +344,21 @@ export default function Create({ auth, filtersList, title }) {
                                     </tr>
 
                                     <tr className="border">
-                                        <td className="">
-                                            {labels.identitas}
-                                        </td>
+                                        <td className="">{labels.identitas}</td>
                                         <td className="border-x">
                                             <TextInput
                                                 type="text"
                                                 value={
                                                     data.no_identitas_nasabah
                                                 }
-                                                placeholder={labels.placeholder_identitas}
+                                                placeholder={
+                                                    labels.placeholder_identitas
+                                                }
                                                 className="w-full px-2 h-9"
                                                 onChange={(e) =>
                                                     setData(
                                                         "no_identitas_nasabah",
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -281,9 +372,7 @@ export default function Create({ auth, filtersList, title }) {
                                     </tr>
 
                                     <tr className="border">
-                                        <td className="">
-                                            {labels.nominal}
-                                        </td>
+                                        <td className="">{labels.nominal}</td>
                                         <td className="border-x">
                                             <TextInput
                                                 type="number"
@@ -293,7 +382,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 onChange={(e) =>
                                                     setData(
                                                         "nominal_realisasi",
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -316,7 +405,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 onChange={(e) =>
                                                     setData(
                                                         "tanggal_akuisisi",
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -345,7 +434,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 onChange={(file) =>
                                                     setData(
                                                         "lampiran_bukti",
-                                                        file
+                                                        file,
                                                     )
                                                 } // Update state
                                             />

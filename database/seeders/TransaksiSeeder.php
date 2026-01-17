@@ -1,20 +1,21 @@
 <?php
 namespace Database\Seeders;
 use App\Models\Akuisisi;
-use App\Models\Produk;
-use App\Models\User;
 use App\Models\Transaksi;
+use App\Services\PointCalculator;
 use Illuminate\Database\Seeder;
 class TransaksiSeeder extends Seeder
 {
     public function run(): void
     {
-        $akuisisis = Akuisisi::where('status_verifikasi', 'verified')->with(['pegawai.divisi', 'produk'])->get();
+        $akuisisis = Akuisisi::where('status_verifikasi', 'verified')
+            ->with(['pegawai.divisi', 'produk'])
+            ->get();
         foreach ($akuisisis as $ak) {
             $user = $ak->pegawai;
             $produk = $ak->produk;
-            $isKreditStaff = str_contains(strtolower($user->divisi->nama_divisi ?? ''), 'kredit');
-            $poin = $isKreditStaff ? $produk->bobot_kredit : $produk->bobot_frontliner;
+            if (!$user || !$produk) continue;
+            $poin = PointCalculator::calculate($user, $produk);
             Transaksi::create([
                 'akuisisi_id' => $ak->id,
                 'user_id' => $ak->user_id,

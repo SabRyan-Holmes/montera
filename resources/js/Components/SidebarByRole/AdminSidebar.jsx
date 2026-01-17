@@ -3,14 +3,14 @@ import { RiAppsFill } from "react-icons/ri";
 import { GrHelpBook } from "react-icons/gr";
 import { AiFillNotification } from "react-icons/ai";
 import { IoDocuments, IoSettings } from "react-icons/io5";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaUserMd } from "react-icons/fa";
 import {
     MdEditDocument,
     MdOutlineAssignmentInd,
     MdOutlineGroups,
 } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaUserTie } from "react-icons/fa6";
+import { FaDatabase, FaUserSecret, FaUserTie } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
 import {
     HiOutlineAdjustmentsVertical,
@@ -103,8 +103,8 @@ export default function AdminSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="flex items-center">
-                    <RiAppsFill />
-                    Main
+                          <FaDatabase />
+                    Main Data
                 </span>
             </SidebarLinkCollapse>
 
@@ -159,8 +159,8 @@ export default function AdminSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="flex items-center ">
-                    <FaDatabase />
-                    Data Master
+                    <FaUserMd />
+                    User Data
                 </span>
             </SidebarLinkCollapse>
 

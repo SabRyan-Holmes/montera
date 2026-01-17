@@ -176,7 +176,7 @@ export default function Index({
                                 href={route("spv.target-tim.create")}
                                 className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
-                                Tambah Produk
+                                Tambah Target
                                 <IoMdAdd className="w-5 h-5" />
                             </Link>
                         </div>

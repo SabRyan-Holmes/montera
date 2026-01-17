@@ -9,7 +9,7 @@ export default forwardRef(function TextInput({ type = 'text', className = '', is
         }
     }, [isFocused]);
 
-    const borderGradient = 'bg-slate-100/60 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50';
+    const borderGradient = 'bg-slate-100/60 border-x-primary/50  border-y-secondary/50 border-b-primary-dark focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50';
 
     return (
         <input

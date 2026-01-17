@@ -84,7 +84,7 @@ input[type="number"] {
 }
 
 .border-gradient {
-    @apply bg-slate-100/85 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50;
+    @apply bg-slate-100/85 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-secondary/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50;
 }
 
 .large-primary-button {

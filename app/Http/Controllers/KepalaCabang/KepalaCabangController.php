@@ -246,11 +246,11 @@ class KepalaCabangController extends Controller
         // 2. QUERY DATA DIVISI (Aggregated)
         // Kita butuh: Total Realisasi Divisi, Jumlah Transaksi, Total Pegawai, dan Top User di Divisi itu
         $divisiStats = Divisi::with(['users' => function ($q) use ($dateFilter) {
-                // Eager load sum & count akuisisi per user untuk ranking internal
-                $q->withSum(['akuisisi' => fn($sq) => $dateFilter($sq)], 'nominal_realisasi')
-                  ->withCount(['akuisisi' => fn($sq) => $dateFilter($sq)])
-                  ->where('status_aktif', 'aktif');
-            }])
+            // Eager load sum & count akuisisi per user untuk ranking internal
+            $q->withSum(['akuisisi' => fn($sq) => $dateFilter($sq)], 'nominal_realisasi')
+                ->withCount(['akuisisi' => fn($sq) => $dateFilter($sq)])
+                ->where('status_aktif', 'aktif');
+        }])
             ->get()
             ->map(function ($divisi) {
                 // Hitung total satu divisi
@@ -284,11 +284,13 @@ class KepalaCabangController extends Controller
 
         // 4. DATA FILTER (Dropdown Options)
         $yearsList = collect(range(date('Y'), date('Y') - 4))->map(fn($y) => [
-            'value' => $y, 'label' => (string)$y
+            'value' => $y,
+            'label' => (string)$y
         ])->values();
 
         $monthsList = collect(range(1, 12))->map(fn($m) => [
-            'value' => $m, 'label' => Carbon::create()->month($m)->isoFormat('MMMM')
+            'value' => $m,
+            'label' => Carbon::create()->month($m)->isoFormat('MMMM')
         ])->values();
 
         // Label Judul
@@ -395,7 +397,8 @@ class KepalaCabangController extends Controller
         $divisiOptions = Divisi::select('id as value', 'nama_divisi as label')->get();
         $yearsList = collect(range(date('Y'), date('Y') - 4))->map(fn($y) => ['value' => $y, 'label' => (string)$y]);
         $monthsList = collect(range(1, 12))->map(fn($m) => [
-            'value' => $m, 'label' => Carbon::create()->month($m)->isoFormat('MMMM')
+            'value' => $m,
+            'label' => Carbon::create()->month($m)->isoFormat('MMMM')
         ]);
 
         // Label Periode
@@ -429,7 +432,7 @@ class KepalaCabangController extends Controller
         // 2. LOGIC DATA
         // Ambil User yang jabatannya 'Pegawai'
         $candidates = User::where('status_aktif', 'aktif')
-            ->whereHas('jabatan', function($q) {
+            ->whereHas('jabatan', function ($q) {
                 $q->where('nama_jabatan', 'Pegawai');
             })
             ->when($divisiId, fn($q) => $q->where('divisi_id', $divisiId))
@@ -529,8 +532,7 @@ class KepalaCabangController extends Controller
             ->toArray();
 
         // 2. QUERY
-        $filtersReq = $request->all();
-
+        $filtersReq = $request->all(['search', 'byKategori']);
         $reports = Akuisisi::query()
             ->with(['pegawai:id,name,nip', 'produk:id,nama_produk,kategori_produk'])
             ->where('status_verifikasi', 'verified')

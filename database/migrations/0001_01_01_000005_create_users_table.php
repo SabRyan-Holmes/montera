@@ -20,7 +20,10 @@ D<?php
 
                 // Foreign Keys
                 $table->foreignId('jabatan_id')->constrained('jabatans');
-                $table->foreignId('divisi_id')->constrained('divisis');
+                $table->foreignId('divisi_id')
+                    ->nullable()
+                    ->constrained('divisis')
+                    ->onDelete('set null');
 
                 $table->enum('status_aktif', ['aktif', 'nonaktif'])->default('aktif');
                 $table->rememberToken();

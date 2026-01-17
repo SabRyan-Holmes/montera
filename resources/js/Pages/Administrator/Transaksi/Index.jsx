@@ -71,7 +71,7 @@ export default function Index({
     }, [flash.message]);
 
     // ===========================================Handling Search & Filter===========================================
-    moment.locale("id");
+
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
     const role = auth.user.jabatan.nama_jabatan;
     function formatRole(label) {
@@ -156,7 +156,7 @@ export default function Index({
                                         </th>
 
                                         <th scope="col" width="15%">
-                                            Indikator
+                                            Kategori Produk
                                         </th>
 
                                         <th scope="col" width="15%">
@@ -172,7 +172,7 @@ export default function Index({
                                         </th>
 
                                         <th scope="col" width="10%">
-                                            Periode
+                                            Tanggal Realisasi
                                         </th>
 
                                         <th
@@ -271,10 +271,9 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {
-                                                            transaksi.indikator
-                                                                ?.nama_kpi
-                                                        }{" "}
-                                                        {`(${transaksi.indikator?.satuan})`}
+                                                            transaksi.produk?.kategori_produk
+
+                                                        }
                                                     </span>
                                                 </td>
 
@@ -312,9 +311,15 @@ export default function Index({
 
                                                 {/* Periode */}
                                                 <td>
-                                                    <span className="block">
-                                                        {transaksi.bulan}/
-                                                        {transaksi.tahun}
+                                                     <span className="block">
+                                                        {moment(
+                                                            transaksi.tanggal_realisasi
+                                                        ).format("LL")}
+                                                    </span>
+                                                    <span className="block text-[12px]">
+                                                        {moment(
+                                                            transaksi.tanggal_realisasi
+                                                        ).fromNow()}
                                                     </span>
                                                 </td>
 
@@ -354,9 +359,9 @@ export default function Index({
                                                                             )
                                                                             .showModal();
                                                                     }}
-                                                                    className="action-btn group/button action-btn-success "
+                                                                    className="action-btn group action-btn-success "
                                                                 >
-                                                                    <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                                    <FaEye className="scale-125 group-hover:fill-white " />
                                                                 </button>
                                                                 <ShowModal
                                                                     handleDelete={
@@ -438,7 +443,7 @@ export default function Index({
                                                                 }}
                                                                 className="action-btn group/button action-btn-success "
                                                             >
-                                                                <span className="mr-1">
+                                                                <span className="mr-1 group-hover/button:text-white">
                                                                     Lihat
                                                                 </span>
                                                                 <FaEye className="scale-125 group-hover/button:fill-white " />

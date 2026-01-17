@@ -15,7 +15,7 @@ import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import ShowModal from "./Partials/ShowModal";
 import { IoClose } from "react-icons/io5";
-
+import RevisionModal from "./Partials/RevisionModal";
 export default function Index({
     auth,
     akuisisis,
@@ -25,119 +25,56 @@ export default function Index({
     filtersReq,
     filtersList,
 }) {
-    // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
-
-    // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
-    const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
+    const [showLastUpdated, setShowLastUpdated] = useState(false);
     const role = auth.user.jabatan.nama_jabatan;
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
-
-    // ===========================================Other Logics===========================================
-
-    // 1. State untuk menyimpan data yang sedang dibuka
-    const [activeModal, setActiveModal] = useState(null);
-
     const [activeData, setActiveData] = useState(null);
-
-    // 2. Logic Handler Approve (Langsung tembak API)
     const handleApprove = (id) => {
         router.patch(
             route("spv.verify.approve", id),
             {},
             {
                 onSuccess: () => {
-                    setActiveData(null); // Tutup modal
+                    setActiveData(null);
                     Swal.fire("Berhasil", "Data berhasil disetujui", "success");
                 },
-            }
+            },
         );
     };
-
-    // 3. Logic Handler Reject (Menerima 'reason' dari Modal)
-    const handleReject = (id, reason) => {
+    const [rejectingId, setRejectingId] = useState(null);
+    const confirmRejection = (id, reason) => {
         router.patch(
             route("spv.verify.reject", id),
             {
-                catatan_revisi: reason, // Kirim data dari textarea modal
+                catatan_revisi: reason,
             },
             {
                 onSuccess: () => {
-                    setActiveData(null); // Tutup modal
+                    setRejectingId(null);
                     Swal.fire("Ditolak", "Data berhasil ditolak", "info");
                 },
-            }
+                onError: (errors) => {
+                    alert("Rejection error:", errors);
+                },
+            },
         );
     };
-
-    // Handler untuk Approve
-    // const handleApprove = (id) => {
-    //     router.patch(
-    //         route("supervisor.verify.approve", id), // Sesuaikan dengan nama route Anda: 'verify.approve'
-    //         {},
-    //         {
-    //             onStart: () => {
-    //                 // Opsional: Tampilkan loading state jika perlu
-    //             },
-    //             onError: (errors) => {
-    //                 console.error("Error approving:", errors);
-    //                 Swal.fire({
-    //                     title: "Gagal!",
-    //                     text: "Terjadi kesalahan saat menyetujui data.",
-    //                     icon: "error",
-    //                     confirmButtonColor: "#EF4444",
-    //                 });
-    //             },
-    //             onSuccess: () => {
-    //                 setActiveModal(null); // Tutup modal setelah sukses
-    //                 Swal.fire({
-    //                     title: "Berhasil Disetujui!",
-    //                     text: "Data akuisisi telah diverifikasi dan poin berhasil ditambahkan ke pegawai.",
-    //                     icon: "success",
-    //                     confirmButtonColor: "#2D95C9", // Warna biru sesuai tema
-    //                 });
-    //             },
-    //         }
-    //     );
-    // };
-
-    // Handler untuk Reject
-    // Menerima parameter 'reason' (catatan revisi) dari modal
-    // const handleReject = (id, reason) => {
-    //     router.patch(
-    //         route("supervisor.verify.reject", id), // Sesuaikan dengan nama route Anda: 'verify.reject'
-    //         {
-    //             catatan_revisi: reason, // Kirim alasan penolakan ke backend
-    //         },
-    //         {
-    //             onStart: () => {
-    //                 // Opsional: Tampilkan loading state
-    //             },
-    //             onError: (errors) => {
-    //                 console.error("Error rejecting:", errors);
-    //                 Swal.fire({
-    //                     title: "Gagal!",
-    //                     text: "Terjadi kesalahan saat menolak data.",
-    //                     icon: "error",
-    //                     confirmButtonColor: "#EF4444",
-    //                 });
-    //             },
-    //             onSuccess: () => {
-    //                 setActiveModal(null); // Tutup modal setelah sukses
-    //                 Swal.fire({
-    //                     title: "Berhasil Ditolak",
-    //                     text: "Data akuisisi telah ditolak dan dikembalikan ke pegawai untuk revisi.",
-    //                     icon: "info", // Icon info atau warning cocok untuk reject
-    //                     confirmButtonColor: "#EF4444", // Warna merah untuk reject
-    //                 });
-    //             },
-    //         }
-    //     );
-    // };
     return (
         <Authenticated user={auth.user} title={title}>
+            {/* Render only if rejectingId is set */}
+            {rejectingId && (
+                <RevisionModal
+                    activeModal={`RevisionModal-${rejectingId}`}
+                    dataId={rejectingId}
+                    onClose={() => setRejectingId(null)}
+                    onSubmit={confirmRejection}
+                    title="Alasan Penolakan"
+                    placeholder="Masukkan alasan penolakan..."
+                />
+            )}
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
@@ -162,7 +99,6 @@ export default function Index({
                         />
                     </div>
                 </section>
-
                 <section className="pt-3 ">
                     {subTitle && (
                         <div className="my-4">
@@ -183,7 +119,6 @@ export default function Index({
                                         >
                                             No
                                         </th>
-
                                         <th scope="col" width="15%">
                                             Pegawai
                                         </th>
@@ -202,7 +137,6 @@ export default function Index({
                                         <th scope="col" width="15%">
                                             Status
                                         </th>
-
                                         <th
                                             scope="col"
                                             width="10%"
@@ -219,7 +153,7 @@ export default function Index({
                                                         className="action-btn hover:scale-[1.15] hover:bg-bermuda"
                                                         onClick={() =>
                                                             setShowLastUpdated(
-                                                                !showLastUpdated
+                                                                !showLastUpdated,
                                                             )
                                                         }
                                                     >
@@ -232,7 +166,7 @@ export default function Index({
                                                             className="action-btn hover:scale-125 hover:bg-bermuda"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
-                                                                    !showLastUpdated
+                                                                    !showLastUpdated,
                                                                 )
                                                             }
                                                         >
@@ -243,7 +177,6 @@ export default function Index({
                                                 )}
                                             </div>
                                         </th>
-
                                         {showLastUpdated && (
                                             <th
                                                 scope="col"
@@ -254,7 +187,6 @@ export default function Index({
                                         )}
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     {akuisisis.data?.map((akuisisi, i) => {
                                         const isPending =
@@ -300,7 +232,7 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {moment(
-                                                            akuisisi.tanggal_akuisisi
+                                                            akuisisi.tanggal_akuisisi,
                                                         ).format("LL")}
                                                     </span>
                                                 </td>
@@ -319,12 +251,11 @@ export default function Index({
                                                         </span> */}
                                                         <span className="block text-[12px]">
                                                             {moment(
-                                                                akuisisi.updated_at
+                                                                akuisisi.updated_at,
                                                             ).fromNow()}
                                                         </span>
                                                     </div>
                                                 </td>
-
                                                 {/* Last Updated */}
                                                 <td
                                                     className={`text-center ${
@@ -334,30 +265,28 @@ export default function Index({
                                                 >
                                                     <span className="block">
                                                         {moment(
-                                                            akuisisi.updated_at
+                                                            akuisisi.updated_at,
                                                         ).format("LL")}
                                                     </span>
                                                     <span className="block text-[12px]">
                                                         {moment(
-                                                            akuisisi.updated_at
+                                                            akuisisi.updated_at,
                                                         ).fromNow()}
                                                     </span>
                                                 </td>
-
                                                 {/* AKSI */}
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             onClick={() =>
                                                                 setActiveData(
-                                                                    akuisisi
+                                                                    akuisisi,
                                                                 )
                                                             }
                                                             className="action-btn group action-btn-success text"
                                                         >
                                                             <FaEye className="scale-125 group-hover:text-white" />
                                                         </button>
-
                                                         <TooltipHover
                                                             message={
                                                                 "Lihat Detail"
@@ -369,7 +298,7 @@ export default function Index({
                                                             className="group action-btn action-btn-success"
                                                             onClick={() =>
                                                                 handleApprove(
-                                                                    akuisisi.id
+                                                                    akuisisi.id,
                                                                 )
                                                             }
                                                             disabled={
@@ -393,8 +322,8 @@ export default function Index({
                                                                 !isPending
                                                             }
                                                             onClick={() =>
-                                                                handleReject(
-                                                                    akuisisi.id
+                                                                setRejectingId(
+                                                                    akuisisi.id,
                                                                 )
                                                             }
                                                             className="group action-btn action-btn-warning"
@@ -416,7 +345,6 @@ export default function Index({
                                     })}
                                 </tbody>
                             </table>
-
                             {/* Pagination */}
                             <Pagination
                                 datas={akuisisis}
@@ -437,19 +365,16 @@ export default function Index({
                         </div>
                     )}
                 </section>
-
                 {/* 4. PANGGIL MODAL DISINI */}
                 {/* Modal hanya dirender jika activeData tidak null */}
                 {activeData && (
                     <ShowModal
-                        akuisisi={activeData} // Data yang dilempar
-                        onClose={() => setActiveData(null)} // Fungsi tutup modal
-                        canApprove={canApprove} // Cek role
-                        // Masukkan Handler
+                        akuisisi={activeData}
+                        onClose={() => setActiveData(null)}
+                        canApprove={canApprove}
                         handleApprove={() => handleApprove(activeData.id)}
-                        // Handler Reject menerima parameter reason dari dalam modal
                         handleReject={(reason) =>
-                            handleReject(activeData.id, reason)
+                            confirmRejection(activeData.id, reason)
                         }
                     />
                 )}

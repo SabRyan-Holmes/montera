@@ -153,46 +153,8 @@ class DashboardController extends Controller
                 'breakdownProduk' => $breakdownProduk, // Array Object [{label: 'Funding', value: 10}, ...]
             ];
         } else if ($role === "Supervisor") {
-            $divisiId = $this->user->divisi_id; // Ambil ID divisi supervisor
-
-            $dataByRole = [
-                // Antrean Verifikasi: Cari Akuisisi yang 'pegawai'-nya satu divisi dengan Supervisor
-                'pendingVerification' => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
-                    $q->where('divisi_id', $divisiId);
-                })->where('status_verifikasi', 'pending')->count(),
-
-                // Total Anggota Tim dalam satu Divisi
-                'totalTeamMembers'    => User::where('divisi_id', $divisiId)->count(),
-
-                // Laporan yang diverifikasi oleh Supervisor ini (berdasarkan verifikator_id/id supervisor)
-                'verifiedToday'       => Akuisisi::where('verifikator_id', $this->user->id)
-                    ->where('status_verifikasi', 'verified')
-                    ->whereDate('updated_at', now())->count(),
-
-                // Total Target Tim (Relasi Target biasanya ke 'user', sesuaikan jika nama relasinya berbeda)
-                'totalTeamTarget'     => Target::whereHas('pegawai', function ($q) use ($divisiId) {
-                    $q->where('divisi_id', $divisiId);
-                })->count(),
-
-                // Data Grafik: Status laporan dari anggota tim di divisi tersebut
-                'verificationRateGraph' => [
-                    'Verified' => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
-                        $q->where('divisi_id', $divisiId);
-                    })->where('status_verifikasi', 'verified')->count(),
-                    'Pending'  => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
-                        $q->where('divisi_id', $divisiId);
-                    })->where('status_verifikasi', 'pending')->count(),
-                    'Rejected' => Akuisisi::whereHas('pegawai', function ($q) use ($divisiId) {
-                        $q->where('divisi_id', $divisiId);
-                    })->where('status_verifikasi', 'rejected')->count(),
-                ],
-
-                // Progress Divisi (Gunakan data agregat tim)
-                'teamProgressGraph' => [
-                    'Tercapai' => 65,
-                    'Sisa'     => 35
-                ]
-            ];
+            // Logic dipisah ke function bawah biar clean
+            $dataByRole = $this->getDataSupervisor($this->user);
         } else if ($role === "Kepala Cabang") {
             $dataByRole = [
                 // Statistik Utama Cabang
@@ -225,6 +187,87 @@ class DashboardController extends Controller
             'title' => 'Dashboard',
             'dataByRole' => $dataByRole,
         ]);
+    }
+
+    /**
+     * Helper untuk mengambil data dashboard khusus Supervisor
+     * Logic: Berdasarkan Direct Assignment (supervisor_id), bukan Divisi.
+     */
+
+    private function getDataSupervisor($user)
+    {
+
+        // 1. ANTREAN VERIFIKASI
+        // Cari Akuisisi yang diajukan ke SAYA (supervisor_id) dan statusnya pending
+        $pendingCount = Akuisisi::where('supervisor_id', $user->id)
+            ->where('status_verifikasi', 'pending')
+            ->count();
+
+        // 2. TOTAL ANGGOTA TIM
+        // User yang punya Target aktif yang dibuat oleh SAYA tahun ini
+        $teamMembersCount = User::whereHas('targets', function ($q) use ($user) {
+            $q->where('supervisor_id', $user->id);
+        })->count();
+
+        // 3. DIVERIFIKASI HARI INI
+        // Ini tetap pakai 'verifikator_id' karena kita menghitung AKSI yang dilakukan user hari ini
+        $verifiedToday = Akuisisi::where('verifikator_id', $user->id)
+            ->where('status_verifikasi', 'verified')
+            ->whereDate('updated_at', now())
+            ->count();
+
+        // 4. TOTAL TARGET TIM (Count Item Target)
+        // Target yang dibuat oleh SAYA tahun ini
+        $totalTeamTargetCount = Target::where('supervisor_id', $user->id)
+            ->count();
+
+        // --- DATA GRAFIK STATUS ---
+        // Ambil rekap status dari Akuisisi yang ditujukan ke SAYA
+        $statusStats = Akuisisi::where('supervisor_id', $user->id)
+            ->selectRaw('status_verifikasi, count(*) as total')
+            ->groupBy('status_verifikasi')
+            ->pluck('total', 'status_verifikasi')
+            ->toArray();
+
+        // --- DATA PROGRESS NOMINAL TIM ---
+        // A. Total Nominal Target Tim Saya
+        $sumTarget = Target::where('supervisor_id', $user->id)
+            ->sum('nilai_target');
+
+        // B. Total Nominal Realisasi (Akuisisi Verified) Tim Saya
+        $sumRealisasi = Akuisisi::where('supervisor_id', $user->id)
+            ->where('status_verifikasi', 'verified')
+            ->sum('nominal_realisasi');
+
+        // Hitung Persentase Capaian
+        $persenTercapai = $sumTarget > 0 ? ($sumRealisasi / $sumTarget) * 100 : 0;
+        // Cap max 100% untuk grafik pie chart (sisanya 0)
+        $persenTercapaiGraph = $persenTercapai > 100 ? 100 : $persenTercapai;
+        $persenSisa = 100 - $persenTercapaiGraph;
+
+        return [
+            'pendingVerification' => $pendingCount,
+            'totalTeamMembers'    => $teamMembersCount,
+            'verifiedToday'       => $verifiedToday,
+            'totalTeamTarget'     => $totalTeamTargetCount,
+
+            // Data Grafik Status (Default 0 jika tidak ada data)
+            'verificationRateGraph' => [
+                'Verified' => $statusStats['verified'] ?? 0,
+                'Pending'  => $statusStats['pending']  ?? 0,
+                'Rejected' => $statusStats['rejected'] ?? 0,
+            ],
+
+            // Data Grafik Progress (Real calculation)
+            'teamProgressGraph' => [
+                'Tercapai' => round($persenTercapaiGraph, 1),
+                'Sisa'     => round($persenSisa, 1),
+                // Data tambahan untuk tooltip frontend
+                'NominalTercapai' => $sumRealisasi,
+                'NominalTarget'   => $sumTarget,
+                'PersenAsli'      => round($persenTercapai, 1) // Bisa lebih dari 100%
+            ]
+        ];
     }
 
     public function exportCsv(): StreamedResponse

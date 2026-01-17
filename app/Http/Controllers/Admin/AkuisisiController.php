@@ -1,16 +1,14 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
-
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
 use App\Models\Akuisisi;
 use App\Models\Produk;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-
 class AkuisisiController extends Controller
 {
     /**
@@ -24,25 +22,22 @@ class AkuisisiController extends Controller
             return $next($request);
         });
     }
-
-    public function index() //Admin & Pegawai
+    public function index()
     {
         $subTitle = "";
         $params = request()->all(['search', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
-
         $query = Akuisisi::with([
             'pegawai:id,name',
             'produk:id,nama_produk',
             'verifikator:id,name',
+            'supervisor:id,name',
         ])->filter($params)->latest();
-
         $role = $this->user->jabatan->nama_jabatan;
         $isAdmin = $role === "Administrator";
         if (!$isAdmin) {
             $query->where('user_id', $this->user->id);
         }
-
         return Inertia::render('Administrator/Akuisisi/Index', [
             "title" => "Data Akuisisi",
             "subTitle"  => $subTitle,
@@ -58,35 +53,34 @@ class AkuisisiController extends Controller
             ],
         ]);
     }
-
-
-
     /**
      * Show the form for creating a new resource.
      */
-
-    // PegawaiController.php
     public function create()
     {
+        $supervisors = User::role('Supervisor')->get()->map(function ($u) {
+            return [
+                'value' => $u->id,
+                'label' => $u->name,
+            ];
+        });
         $produks = Produk::where('status', 'tersedia')
             ->get()
             ->map(function ($p) {
                 return [
                     'value' => $p->id,
                     'label' => $p->nama_produk,
-
-                    // INI WAJIB ADA BUAT LOGIC DI BAWAH:
                     'kategori' => $p->kategori_produk,
                 ];
             });
-
         return Inertia::render('Administrator/Akuisisi/Create', [
             'title' => 'Input Laporan Akuisisi',
-            'filtersList' => ['produks' => $produks],
-            // ... props lain
+            'filtersList' => [
+                'produks' => $produks,
+                'supervisors' => $supervisors,
+            ],
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -101,32 +95,26 @@ class AkuisisiController extends Controller
             'tanggal_akuisisi' => 'required|date',
             'lampiran_bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
-
-        // Tambahkan user_id otomatis dari auth
         $validated['user_id'] = $this->user->id;
         $validated['status_verifikasi'] = 'pending';
-
-        // Logika upload file jika ada
+        $validated['supervisor_id'] = $request->input('supervisor_id');
         if ($request->hasFile('lampiran_bukti')) {
             $validated['lampiran_bukti'] = $request->file('lampiran_bukti')->store('bukti_akuisisi');
         }
-
         Akuisisi::create($validated);
         $routeName = $this->user->jabatan->nama_jabatan === 'Pegawai' ? 'pegawai.akuisisi.index' : 'admin.akuisisi.index';
         return redirect()->route($routeName)->with('message', 'Laporan berhasil dikirim!');
     }
-
     /**
      * Display the specified resource.
      */
-    public function show(Akuisisi $akuisisi) //Unused
+    public function show(Akuisisi $akuisisi)
     {
         return Inertia::render('Admin/Akuisisi/Show', [
             'title' => 'Detail Data Akuisisi',
             'akuisisi' => $akuisisi
         ]);
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -141,23 +129,16 @@ class AkuisisiController extends Controller
             ],
         ]);
     }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Akuisisi $akuisisi)
     {
         $validated = $request->validated();
-
-        $pegawaiOld = $akuisisi->toArray(); // ambil data lama sebelum update
-
-        $akuisisi->update($validated); // update data
-
-        // app(LogPegawaiChangesService::class)->logChanges($pegawaiOld, $validated);
-
+        $pegawaiOld = $akuisisi->toArray();
+        $akuisisi->update($validated);
         return redirect()->back()->with('message', 'Data Akuisisi Berhasil Diupdate!');
     }
-
     /**
      * Remove the specified resource from storage.
      */

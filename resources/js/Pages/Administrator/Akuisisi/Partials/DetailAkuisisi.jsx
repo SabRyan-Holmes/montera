@@ -111,6 +111,12 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
 
                         {/* Verifikator */}
                         <RowData
+                            label="Diajukan Kepada Supervisor"
+                            value={akuisisi.supervisor?.name ?? "-"}
+                        />
+
+                        {/* Verifikator */}
+                        <RowData
                             label="Verifikator"
                             value={akuisisi.verifikator?.name ?? "-"}
                         />

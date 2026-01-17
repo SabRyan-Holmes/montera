@@ -3,6 +3,7 @@ import { Head } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import useSwal from "@/Hooks/UseSwal";
+import moment from "moment/min/moment-with-locales";
 
 export default function Authenticated({ user, title, children }) {
     useSwal();
@@ -22,6 +23,7 @@ export default function Authenticated({ user, title, children }) {
             return newState;
         });
     };
+    moment.locale("id");
 
     return (
         <section className="flex h-screen overflow-hidden font-sans text-gray-900 bg-gray-50">
@@ -29,10 +31,7 @@ export default function Authenticated({ user, title, children }) {
 
             {/* SIDEBAR */}
             <div className="relative z-40 flex-shrink-0 h-full overflow-hidden ">
-                <Sidebar
-                    user={user}
-                    isCollapsed={!isSidebarOpen}
-                />
+                <Sidebar user={user} isCollapsed={!isSidebarOpen} />
             </div>
 
             {/* MAIN CONTENT */}
