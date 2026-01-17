@@ -36,10 +36,10 @@ export default function SidebarLinkCollapse({
     // Warna saat aktif vs tidak aktif (untuk Header-nya)
     const parentClasses = isAnyActive
         ? isCollapsed
-            ? "text-primary border-none " // Collapsed Aktif
-            : "mx-6" // Expanded Aktif
+            ? "text-primary border-none pr-10 " // Collapsed Aktif
+            : "mx-6  " // Expanded Aktif
         : isCollapsed
-        ? "text-slate-400 hover:text-white" // Collapsed Inaktif
+        ? "text-slate-400 hover:text-white pr-10 " // Collapsed Inaktif
         : "text-slate-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent"; // Expanded Inaktif
 
     return (

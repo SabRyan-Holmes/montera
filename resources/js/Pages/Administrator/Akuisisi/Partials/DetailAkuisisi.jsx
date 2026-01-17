@@ -1,10 +1,11 @@
 import { StatusLabel } from "@/Components";
-import { usePage } from "@inertiajs/react";
-import moment from "moment";
-import React, { useState } from "react";
+import moment from "moment/min/moment-with-locales";
+
+import { useState } from "react";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
 export default function DetailAkuisisi({ akuisisi, collapse = true }) {
+      moment.locale("id");
     const [isCollapsed, setIsCollapsed] = useState(collapse);
     const RowData = ({ label, value }) => (
         <tr>

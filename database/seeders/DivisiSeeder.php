@@ -37,17 +37,17 @@ class DivisiSeeder extends Seeder
 
             // --- KELOMPOK 2: PEGAWAI KREDIT ---
             [
-                'main_divisi' => 'kredit',
+                'main_divisi' => 'Kredit',
                 'nama'        => 'Mikro Credit Analis',
                 'kode'        => 'MCA'
             ],
             [
-                'main_divisi' => 'kredit',
+                'main_divisi' => 'Kredit',
                 'nama'        => 'Sales Generalis Produktif',
                 'kode'        => 'SGP'
             ],
             [
-                'main_divisi' => 'kredit',
+                'main_divisi' => 'Kredit',
                 'nama'        => 'Sales Generalis Konsumtif',
                 'kode'        => 'SGK'
             ],

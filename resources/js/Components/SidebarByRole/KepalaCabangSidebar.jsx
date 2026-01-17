@@ -38,7 +38,7 @@ export default function KepalaCabangSidebar({ isCollapsed }) {
                 isCollapsed={isCollapsed}
                 href={route("dashboard")}
                 active={route().current("dashboard")}
-                className="z-20 mx-[21px] mb-1"
+                className="z-20 mx-[21px] "
             >
                 <MdSpaceDashboard />
                 Dashboard

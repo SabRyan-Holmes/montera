@@ -91,13 +91,13 @@ export default function Index({
                             initialFilters={{
                                 byLevel: filtersReq.byLevel,
                             }}
-                            filtersConfig={[
-                                {
-                                    name: "byLevel",
-                                    label: "Lokasi Lantai",
-                                    options: filtersList.level,
-                                },
-                            ]}
+                            // filtersConfig={[
+                            //     {
+                            //         name: "byLevel",
+                            //         label: "Lokasi Lantai",
+                            //         options: filtersList.level,
+                            //     },
+                            // ]}
                             searchConfig={{
                                 name: "search",
                                 label: "Nama Divisi",
@@ -148,12 +148,11 @@ export default function Index({
                                         <th scope="col" width="15%">
                                             Kode Divisi
                                         </th>
-                                        <th scope="col" width="15%">
-                                            Lokasi Lantai
-                                        </th>
+
                                         <th scope="col" width="20%">
-                                            Kepala Divisi
+                                            Kategori Divisi
                                         </th>
+
                                         <th scope="col" width="15%">
                                             Dibuat
                                         </th>
@@ -219,11 +218,9 @@ export default function Index({
                                             <td>{divisi.nama_divisi}</td>
                                             <td>{divisi.kode_divisi}</td>
                                             <td>
-                                                {divisi.lokasi_lantai ?? "-"}
+                                                {divisi.main_divisi ?? "-"}
                                             </td>
-                                            <td>
-                                                {divisi.kepala_divisi ?? "-"}
-                                            </td>
+
                                             <td>
                                                 <span className="block">
                                                     {moment(

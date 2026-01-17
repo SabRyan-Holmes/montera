@@ -234,7 +234,7 @@ export default function Report({
                     </div>
                 </div>
 
-                <div className="mt-4 text-xs font-medium text-gray-500">
+                <div className="pb-20 mt-4 text-xs font-medium text-gray-500">
                     * Menampilkan rekapitulasi akuisisi produk dengan status verifikasi: Verified <span className="font-bold text-green-600">(Transaksi Sah)</span>.
                 </div>
             </section>

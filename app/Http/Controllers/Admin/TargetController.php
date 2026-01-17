@@ -49,7 +49,7 @@ class TargetController extends Controller
                 "title" => "Target Kinerja Pegawai",
                 "subTitle"  => $subTitle,
                 // Logic query dari function indexs() lama
-                "targets" => Target::with(['produk:id,nama_produk'])
+                "targets" => Target::with(['produk:id,nama_produk,kategori_produk'])
                     // Tambahkan scope filter jika diperlukan sesuai logic asli Anda
                     ->paginate(10)
                     ->withQueryString(),
@@ -157,40 +157,71 @@ class TargetController extends Controller
      */
     public function create(Request $request)
     {
-        return Inertia::render('Supervisor/TargetTim/CreateEdit', [
-            "title" => "Buat Target Baru untuk Anggota Tim",
-            "optionList" => [
-                "pegawai" => User::role('Pegawai')->get()->map(fn($u) => [
+        // 1. Definisi Base Option dulu (Biar variabel $optionList terinisialisasi)
+        $optionList = [
+            "produk" => Produk::all()->map(fn($p) => [
+                'value' => $p->id,
+                'label' => $p->nama_produk
+            ]),
+            "tipe_target" => [
+                ['value' => 'nominal', 'label' => 'Nominal (Rupiah)'],
+                ['value' => 'noa', 'label' => 'NoA (Number of Account)'],
+            ],
+            "periode" => [
+                ['value' => 'mingguan', 'label' => 'Mingguan'],
+                ['value' => 'bulanan', 'label' => 'Bulanan'],
+                ['value' => 'tahunan', 'label' => 'Tahunan'],
+            ],
+        ];
+
+        // 2. Logic Admin vs Supervisor
+        if ($this->isAdmin) {
+            // === ADMIN ===
+            // Pake scopeRole('Supervisor') sesuai kode lu
+            $optionList['supervisor'] = User::role('Supervisor')
+                ->get()
+                ->map(fn($u) => [
+                    'value' => $u->id,
+                    // Opsional: tampilin jabatan buat mastiin
+                    'label' => $u->name . ' (' . ($u->jabatan->nama_jabatan ?? '-') . ')'
+                ]);
+
+            // Admin bisa milih semua 'Pegawai'
+            $optionList['pegawai'] = User::role('Pegawai') // Asumsi nama jabatannya 'Pegawai'
+                ->get()
+                ->map(fn($u) => [
                     'value' => $u->id,
                     'label' => $u->name . ' - ' . $u->nip
-                ]),
-                "produk" => Produk::all()->map(fn($p) => [
-                    'value' => $p->id,
-                    'label' => $p->nama_produk
-                ]),
-                "tipe_target" => [
-                    ['value' => 'nominal', 'label' => 'Nominal (Rupiah)'],
-                    ['value' => 'noa', 'label' => 'NoA (Number of Account)'],
-                ],
-                "periode" => [
-                    ['value' => 'mingguan', 'label' => 'Mingguan'],
-                    ['value' => 'bulanan', 'label' => 'Bulanan'],
-                    ['value' => 'tahunan', 'label' => 'Tahunan'],
-                ],
-            ],
+                ]);
 
-            // Kirim default value jika ada
+        } else {
+            // === SUPERVISOR ===
+            // Supervisor cuma liat tim sendiri (pake scope myTeam yg lu punya)
+            $optionList['pegawai'] = User::myTeam($this->user)
+                ->get()
+                ->map(fn($u) => [
+                    'value' => $u->id,
+                    'label' => $u->name . ' - ' . $u->nip
+                ]);
+        }
+
+        return Inertia::render('Supervisor/TargetTim/CreateEdit', [
+            "canManage" => $this->isAdmin,
+            "title"     => "Buat Target Baru untuk Anggota Tim",
+            "optionList" => $optionList,
+
+            // Default Values
             "defaultValues" => [
-                "user_id"   => $request->input('pegawai_id'),
-                "supervisor_id"   => $this->user->id,
-                "produk_id" => $request->input('produk_id'),
-                "tahun" => date('Y'),
-                "tipe_target" => 'nominal',
-                "periode"    => 'bulanan',
+                "user_id"       => $request->input('pegawai_id') ?? "",
+                // Kalau admin -> Kosong (biar wajib pilih). Kalau SPV -> ID dia sendiri.
+                "supervisor_id" => $this->isAdmin ? "" : $this->user->id,
+                "produk_id"     => $request->input('produk_id') ?? "",
+                "tahun"         => date('Y'),
+                "tipe_target"   => 'nominal',
+                "periode"       => 'bulanan',
             ]
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -236,11 +267,22 @@ class TargetController extends Controller
             ],
         ];
 
+        // [TAMBAHAN] Jika Admin, inject list semua user (calon supervisor)
+        if ($this->isAdmin) {
+            $optionList['supervisor'] = User::role('Supervisor')->get()->map(fn($u) => [
+                'value' => $u->id,
+                'label' => $u->name . ' (' . $u->jabatan->nama_jabatan . ')' // Opsional: Tampilkan jabatan
+            ]);
+        }
+
         return Inertia::render('Supervisor/TargetTim/CreateEdit', [ // Panggil component yg sama
+            "canManage" => $this->isAdmin,
             "title"         => "Edit Target Anggota Tim",
             "optionList"    => $optionList,
             "target"        => $target, // Kirim data target existing
-            "defaultValues" => [] // Tidak perlu default values krn target ada
+            "defaultValues" => [
+                'supervisor_id' => $target ? $target->supervisor_id : ($this->isAdmin ? '' : $this->user->id)
+            ]
         ]);
     }
 

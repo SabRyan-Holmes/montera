@@ -34,7 +34,7 @@ export default function AdminSidebar({ isCollapsed }) {
             <SidebarLink
                 href={route("dashboard")}
                 active={route().current("dashboard")}
-                className="z-20 mx-[18px] -mb-1"
+                className="z-20 mx-[18px] "
                 isCollapsed={isCollapsed}
             >
                 <MdSpaceDashboard />
@@ -164,7 +164,7 @@ export default function AdminSidebar({ isCollapsed }) {
                 </span>
             </SidebarLinkCollapse>
 
-            <SidebarLinkCollapse
+            {/* <SidebarLinkCollapse
                 isCollapsed={isCollapsed}
                 submenu={[
                     {
@@ -175,7 +175,7 @@ export default function AdminSidebar({ isCollapsed }) {
                             </>
                         ),
                         route: "main-log",
-                        actives: ["divisi-sdm.log-aktivitas.index"],
+                        actives: ["main-log"],
                     },
                     {
                         label: (
@@ -184,7 +184,7 @@ export default function AdminSidebar({ isCollapsed }) {
                                 Panduan/Bantuan
                             </>
                         ),
-                        route: "help-and-guide",
+                        route: "main-log",
                         actives: ["help-and-guide"],
                     },
                 ]}
@@ -193,7 +193,7 @@ export default function AdminSidebar({ isCollapsed }) {
                     <FaInfoCircle />
                     Info
                 </span>
-            </SidebarLinkCollapse>
+            </SidebarLinkCollapse> */}
         </ul>
     );
 }

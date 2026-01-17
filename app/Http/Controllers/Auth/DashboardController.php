@@ -307,12 +307,25 @@ class DashboardController extends Controller
 
     public function help_and_guide()
     {
-        $filePath = public_path('storage/PANDUAN_SIPACAK.pdf');
+        // $filePath = public_path('storage/PANDUAN_SIPACAK.pdf');
 
-        if (!file_exists($filePath)) {
-            abort(404, 'File tidak ditemukan');
-        }
+        // if (!file_exists($filePath)) {
+        //     abort(404, 'File tidak ditemukan');
+        // }
 
-        return redirect('/storage/PANDUAN_SIPACAK.pdf');
+        // return redirect('/storage/PANDUAN_SIPACAK.pdf');
+    }
+
+    public function main_log()
+    {
+        return redirect()->back();
+
+        // $filePath = public_path('storage/PANDUAN_SIPACAK.pdf');
+
+        // if (!file_exists($filePath)) {
+        //     abort(404, 'File tidak ditemukan');
+        // }
+
+        // return redirect('/storage/PANDUAN_SIPACAK.pdf');
     }
 }

@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\DivisiRequest;
 use App\Models\Divisi;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class DivisiController extends Controller
@@ -17,7 +16,7 @@ class DivisiController extends Controller
     public function index()
     {
         $subTitle = "";
-        $params = request()->all(['search', 'byLevel']);
+        $params = request()->all(['search']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
 
         return Inertia::render('Administrator/Divisi/Index', [
@@ -28,9 +27,7 @@ class DivisiController extends Controller
                 "search"     => $params['search'] ?? "",
                 "byLevel"     => $params['byLevel'] ?? "", //level/lokasi lantai
             ],
-             "filtersList"   => [
-                "level" => Divisi::pluck('lokasi_lantai')->toArray()
-            ],
+
         ]);
     }
 
@@ -39,66 +36,54 @@ class DivisiController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Administrator/Divisi/Create', [
+        return Inertia::render('Administrator/Divisi/CreateEdit', [
             'title' => "Tambah Data Divisi",
+            'isEdit' => false,
         ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data baru.
      */
-    public function store(Request $request)
+    public function store(DivisiRequest $request)
     {
-        $validated = $request->validated();
-        Divisi::create($validated);
-        return Redirect::route('admin.user.index')->with('message', 'Data Divisi Berhasil Ditambahkan!');
+        Divisi::create($request->validated());
+
+        return redirect()->route('admin.divisi.index')
+            ->with('success', 'Divisi berhasil ditambahkan.');
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan form edit.
      */
-    public function show(Divisi $user) //Unused
+    public function edit(Divisi $divisi)
     {
-        return Inertia::render('Administrator/Divisi/Show', [
-            'title' => 'Detail Data Divisi',
-            'user' => $user
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Divisi $user)
-    {
-        return Inertia::render('Administrator/Divisi/Edit', [
+        return Inertia::render('Administrator/Divisi/CreateEdit', [
             'title' => "Edit Data Divisi",
-            'user' => $user,
-            "filtersList"   => [
-                "kategori" => Divisi::getEnumValues('kategori'),
-                "status"   => Divisi::getEnumValues('status'),
-            ],
+            'divisi' => $divisi,
+            'isEdit' => true,
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update data yang ada.
      */
-    public function update(Request $request, Divisi $user)
+    public function update(DivisiRequest $request, Divisi $divisi)
     {
-        $validated = $request->validated();
-        $user->update($validated); // update data
-        // $userOld = $user->toArray(); // ambil data lama sebelum update
-        // app(LoguserChangesService::class)->logChanges($userOld, $validated);
+        $divisi->update($request->validated());
 
-        return redirect()->back()->with('message', 'Data Divisi Berhasil Diupdate!');
+        return redirect()->route('admin.divisi.index')
+            ->with('success', 'Data Divisi berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data.
      */
-    public function destroy(Divisi $user)
+    public function destroy(Divisi $divisi)
     {
-        $user->delete();
-        return redirect()->back()->with('message', 'Data Divisi Berhasil DiHapus!');
+        $divisi->delete();
+
+        return redirect()->route('admin.divisi.index')
+            ->with('success', 'Divisi berhasil dihapus.');
     }
 }

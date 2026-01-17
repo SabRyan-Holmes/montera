@@ -25,12 +25,7 @@ class AuthOrSSO
             }
         }
 
-        // 2. Kalau user login sebagao pegawai
-        // if (session()->has('logged_in') && session('role') === 'Pegawai') {
-        //     return $next($request);
-        // }
-
         // 3. Kalau tidak lolos dua-duanya
-        return redirect()->route('login')->withErrors(['login' => 'Anda tidak punya akses ke dashboard.']);
+        return redirect()->route('welcome')->withErrors(['login' => 'Anda tidak punya akses ke dashboard.']);
     }
 }

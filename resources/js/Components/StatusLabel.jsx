@@ -8,8 +8,8 @@ export default function StatusLabel({ status, isDone = false }) {
     return (
         <div className="group/item">
             {(status === "pending" ) && (
-                <div className="text-xs transition-all duration-150 label-base bg-primary/40 text-slate-500 group-hover/item:text-slate-100">
-                    {"Pending"}
+                <div className="text-xs transition-all duration-150 label-base bg-primary/20 text-slate-500 group-hover/item:text-slate-100">
+                    {"Menunggu"}
                     <RiLoader2Fill className="ml-1 scale-125 fill-slate-500 stroke-slate-500 group-hover/item:fill-white" />
                 </div>
             )}

@@ -25,10 +25,6 @@ class Divisi extends Model
                 ->orWhere('kode_divisi', 'like', '%' . $search . '%')
         );
 
-        $query->when(
-            $filters['byLevel'] ?? false,
-            fn($query, $byLevel) =>
-            $query->where('lokasi_lantai', $byLevel)
-        );
+
     }
 }

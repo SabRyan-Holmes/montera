@@ -74,7 +74,6 @@ export default function Index({
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
     const role = auth.user.jabatan.nama_jabatan;
 
-
     // ===========================================Other Logics===========================================
 
     return (
@@ -146,12 +145,9 @@ export default function Index({
                                             >
                                                 No
                                             </th>
-                                            <th scope="col" width="15%">
-                                                Nama Indikator
-                                            </th>
 
                                             <th scope="col" width="15%">
-                                                Nama Produk
+                                                Nama & Kategori Produk
                                             </th>
                                             <th scope="col" width="15%">
                                                 Nilai Target
@@ -193,7 +189,7 @@ export default function Index({
                                                                     className="action-btn hover:scale-[1.15] hover:bg-bermuda"
                                                                     onClick={() =>
                                                                         setShowLastUpdated(
-                                                                            !showLastUpdated
+                                                                            !showLastUpdated,
                                                                         )
                                                                     }
                                                                 >
@@ -207,7 +203,7 @@ export default function Index({
                                                                     className=" action-btn hover:scale-125 hover:bg-bermuda"
                                                                     onClick={() =>
                                                                         setShowLastUpdated(
-                                                                            !showLastUpdated
+                                                                            !showLastUpdated,
                                                                         )
                                                                     }
                                                                 >
@@ -231,7 +227,7 @@ export default function Index({
                                             </>
                                         </tr>
                                     </thead>
-                                    <tbody >
+                                    <tbody>
                                         {targets.data?.map((target, i) => (
                                             <tr key={target.id}>
                                                 <td className="text-center">
@@ -239,29 +235,17 @@ export default function Index({
                                                 </td>
 
                                                 {/* Nama Indikator */}
-                                                <td className="relative text-center group">
-                                                    <span className="block">
-                                                        {
-                                                            target.indikator
-                                                                ?.nama_kpi
-                                                        }
+                                                <td className="text-left ">
+                                                    <span className="block font-bold text-gray-800">
+                                                        {target.produk
+                                                            ?.nama_produk}
                                                     </span>
-                                                    <span className="badge-xs-secondary">
-                                                        {
-                                                            target.indikator
-                                                                ?.satuan
-                                                        }
+                                                    <span className="text-xs text-gray-500">
+                                                        {target.produk
+                                                            ?.kategori_produk}
                                                     </span>
                                                 </td>
 
-                                                {/* Nama Produk */}
-                                                <td>
-                                                    <span className="block">
-                                                        {target.produk
-                                                            ?.nama_produk ??
-                                                            "-"}
-                                                    </span>
-                                                </td>
 
                                                 {/* Nilai Target */}
                                                 <td>
@@ -295,7 +279,7 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {moment(
-                                                            target.tanggal_mulai
+                                                            target.tanggal_mulai,
                                                         ).format("LL")}
                                                     </span>
                                                 </td>
@@ -304,7 +288,7 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {moment(
-                                                            target.tanggal_selesai
+                                                            target.tanggal_selesai,
                                                         ).format("LL")}
                                                     </span>
                                                 </td>
@@ -313,7 +297,7 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {moment(
-                                                            target.deadline_pencapaian
+                                                            target.deadline_pencapaian,
                                                         ).format("LL")}
                                                     </span>
                                                 </td>
@@ -327,12 +311,12 @@ export default function Index({
                                                 >
                                                     <span className="block">
                                                         {moment(
-                                                            target.updated_at
+                                                            target.updated_at,
                                                         ).format("LL")}
                                                     </span>
                                                     <span className="block text-[12px]">
                                                         {moment(
-                                                            target.updated_at
+                                                            target.updated_at,
                                                         ).fromNow()}
                                                     </span>
                                                 </td>
@@ -341,14 +325,14 @@ export default function Index({
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
-                                                            as="button"
+                                                            type="button"
                                                             onClick={() => {
                                                                 setActiveModal(
-                                                                    `Show-${target.id}`
+                                                                    `Show-${target.id}`,
                                                                 );
                                                                 document
                                                                     .getElementById(
-                                                                        `Show-${target.id}`
+                                                                        `Show-${target.id}`,
                                                                     )
                                                                     .showModal();
                                                             }}
@@ -380,7 +364,7 @@ export default function Index({
                                                             as="a"
                                                             href={route(
                                                                 "admin.target.edit",
-                                                                target.id
+                                                                target.id,
                                                             )}
                                                             className="action-btn group/button action-btn-bermuda"
                                                         >
@@ -398,7 +382,9 @@ export default function Index({
                                                         <button
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    target["id"]
+                                                                    target[
+                                                                        "id"
+                                                                    ],
                                                                 )
                                                             }
                                                             className="action-btn action-btn-warning group/button"

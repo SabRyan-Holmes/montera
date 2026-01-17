@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('divisis', function (Blueprint $table) {
             $table->id();
-            $table->enum('main_divisi', ['Front Liner', 'kredit']);
+            $table->enum('main_divisi', ['Front Liner', 'Kredit']);
             $table->string('nama_divisi');
             $table->string('kode_divisi', 10)->unique();
             $table->string('kepala_divisi')->nullable(); // Nama atau NIP pimpinan divisi

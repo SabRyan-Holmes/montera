@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,12 +20,25 @@ class TargetStoreUpdateRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
+
     public function rules(): array
+
     {
+        // 2. Gunakan 'user()' helper bawaan request atau Auth facade dengan null safety (?->)
+        $user = $this->user();
+
+        // Cek jabatan dengan aman. Jika jabatan null, anggap bukan administrator.
+        $isAdmin = $user->jabatan?->nama_jabatan === "Administrator";
         return [
             // Validasi Relasi
             'user_id' => ['required', 'exists:users,id'],
-            'supervisor_id' => ['required', 'exists:users,id'],
+            'supervisor_id' => [
+                // Jika user punya akses 'manage all' (admin), wajib ada di request.
+                // Jika tidak (supervisor biasa), boleh nullable (nanti diisi otomatis di controller store/update).
+                $isAdmin ? 'required' : 'nullable',
+                'exists:users,id'
+            ],
+
             'produk_id' => ['nullable', 'exists:produks,id'], // Boleh null jika target umum (non-produk)
 
             // Validasi Angka & Enum

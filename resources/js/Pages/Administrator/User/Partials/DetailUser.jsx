@@ -4,7 +4,6 @@ import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
 export default function DetailUser({ user, collapse = true }) {
     const [isCollapsed, setIsCollapsed] = useState(collapse);
-    const toggleCollapse = () => setIsCollapsed(!isCollapsed);
     const RowData = ({ label, value }) => (
         <tr>
             <td width="50%">{label}</td>
@@ -57,7 +56,7 @@ export default function DetailUser({ user, collapse = true }) {
                         />
                         <RowData
                             label="Divisi"
-                            value={user["divisi"]["nama_divisi"]}
+                            value={user.divisi?.["nama_divisi"]}
                         />
                         <RowData label="email" value={user["email"]} />
                         <RowData

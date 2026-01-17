@@ -4,13 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProdukStoreUpdateRequest;
+use App\Http\Requests\Admin\ProdukRequest;
 use Inertia\Inertia;
 use App\Models\Produk;
-use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\UpdatePegawaiRequest;
-use App\Services\LogPegawaiChangesService;
-use Illuminate\Support\Facades\Auth;
 
 
 class ProdukController extends Controller
@@ -42,6 +38,8 @@ class ProdukController extends Controller
                 "byKategori" => $params['byKategori'] ?? "Semua Kategori",
                 "byStatus"   => $params['byStatus'] ?? "Semua Kategori",
             ],
+
+
             "filtersList"   => [
                 "kategori" => Produk::select('kategori_produk')
                     ->distinct()
@@ -57,19 +55,31 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Administrator/Produk/Create', [
+        return Inertia::render('Administrator/Produk/CreateEdit', [
             'title' => "Tambah Data Produk",
-            "filtersList"   => [
-                "kategori" => Produk::getEnumValues('kategori'),
-                "status"   => Produk::getEnumValues('status'),
+            'filtersList' => [
+
+                "kategori" => \App\Models\Produk::select('kategori_produk')
+                    ->distinct()
+                    ->orderBy('kategori_produk')
+                    ->pluck('kategori_produk')
+                    ->map(fn($k) => ['value' => $k, 'label' => $k])
+                    ->values(),
+
+
+                "status" => [
+                    ['value' => 'tersedia', 'label' => 'Tersedia'],
+                    ['value' => 'discontinued', 'label' => 'Discontinued (Tidak Aktif)'],
+                ],
             ],
+
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProdukStoreUpdateRequest $request)
+    public function store(ProdukRequest $request)
     {
         Produk::create($request->validated());
 
@@ -85,25 +95,22 @@ class ProdukController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Produk $produk) //Unused
-    {
-        return Inertia::render('Administrator/Produk/Show', [
-            'title' => 'Detail Data Produk',
-            'produk' => $produk
-        ]);
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Produk $produk)
     {
-        return Inertia::render('Administrator/Produk/Edit', [
+        return Inertia::render('Administrator/Produk/CreateEdit', [
             'title' => "Edit Data Produk",
             'produk' => $produk,
+            'isEdit' => true,
             "filtersList"   => [
-                "kategori" => Produk::getEnumValues('kategori'),
-                "status"   => Produk::getEnumValues('status'),
+                "kategori" => Produk::select('kategori_produk')
+                    ->distinct()
+                    ->pluck('kategori_produk')
+                    ->toArray(),
+                "status"   => ['tersedia', 'discontinued'],
             ],
         ]);
     }
@@ -111,9 +118,8 @@ class ProdukController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProdukStoreUpdateRequest $request, Produk $produk)
+    public function update(ProdukRequest $request, Produk $produk)
     {
-        // dd($request);
         $produk->update($request->validated());
         return redirect()
             ->route('admin.produk.index')
@@ -126,6 +132,7 @@ class ProdukController extends Controller
     public function destroy(Produk $produk)
     {
         $produk->delete();
-        return redirect()->back()->with('message', 'Data Produk Berhasil DiHapus!');
+        return redirect()->route('admin.produk.index')
+            ->with('message', 'Data Produk berhasil dihapus.');
     }
 }

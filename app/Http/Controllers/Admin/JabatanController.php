@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\JabatanRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
 use Illuminate\Http\Request;
@@ -15,45 +16,84 @@ class JabatanController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    protected $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = auth_sso();
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $subTitle = "";
         $params = request()->all(['search', 'byLevel']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
-
         return Inertia::render('Administrator/Jabatan/Index', [
             "title" => "Data Jabatan",
             "subTitle"  => $subTitle,
+            "canManage" => $this->user->role('Administrator'),
             "jabatans"    => Jabatan::filter($params)->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byLevel"     => $params['byLevel'] ?? "",
             ],
-             "filtersList"   => [
-                "level" => [0,1,2,3]
+            "filtersList"   => [
+                "level" => [0, 1, 2, 3]
             ],
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        return Inertia::render('Administrator/Jabatan/Create', [
+        return Inertia::render('Administrator/Jabatan/CreateEdit', [
             'title' => "Tambah Data Jabatan",
+            'isEdit' => false,
         ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data baru.
      */
-    public function store(Request $request)
+    public function store(JabatanRequest $request)
     {
-        $validated = $request->validated();
-        Jabatan::create($validated);
-        return Redirect::route('admin.user.index')->with('message', 'Data Jabatan Berhasil Ditambahkan!');
+        Jabatan::create($request->validated());
+
+        return redirect()->route('admin.jabatan.index')
+            ->with('message', 'Jabatan berhasil ditambahkan.');
     }
+
+    /**
+     * Menampilkan form edit.
+     */
+    public function edit(Jabatan $jabatan)
+    {
+        return Inertia::render('Administrator/Jabatan/CreateEdit', [
+            'title' => "Edit Data Jabatan",
+            'jabatan' => $jabatan, // Data untuk diisi ke form
+            'isEdit' => true,
+        ]);
+    }
+
+    /**
+     * Update data yang ada.
+     */
+    public function update(JabatanRequest $request, Jabatan $jabatan)
+    {
+        $jabatan->update($request->validated());
+
+        return redirect()->route('admin.jabatan.index')
+            ->with('message', 'Data Jabatan berhasil diperbarui.');
+    }
+    /**
+     * Show the form for creating a new resource.
+     */
+
+
+
 
     /**
      * Display the specified resource.
@@ -69,37 +109,16 @@ class JabatanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Jabatan $user)
-    {
-        return Inertia::render('Administrator/Jabatan/Edit', [
-            'title' => "Edit Data Jabatan",
-            'user' => $user,
-            "filtersList"   => [
-                "kategori" => Jabatan::getEnumValues('kategori'),
-                "status"   => Jabatan::getEnumValues('status'),
-            ],
-        ]);
-    }
 
     /**
      * Update the specified resource in storage.
-     */
-    public function update(Request $request, Jabatan $user)
-    {
-        $validated = $request->validated();
-        $user->update($validated); // update data
-        // $userOld = $user->toArray(); // ambil data lama sebelum update
-        // app(LoguserChangesService::class)->logChanges($userOld, $validated);
-
-        return redirect()->back()->with('message', 'Data Jabatan Berhasil Diupdate!');
-    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Jabatan $user)
+    public function destroy(Jabatan $jabatan)
     {
-        $user->delete();
+        $jabatan->delete();
         return redirect()->back()->with('message', 'Data Jabatan Berhasil DiHapus!');
     }
 }

@@ -3,6 +3,7 @@ import Chart from "react-apexcharts"; // Import ApexCharts
 import {
     AiOutlineLoading3Quarters
 } from "react-icons/ai";
+import { FaClock } from "react-icons/fa6";
 import {
     HiOutlineDocumentPlus,
     HiOutlineCheckBadge,
@@ -129,7 +130,7 @@ export default function PegawaiContent({ dataByRole }) {
                 </div>
 
                  <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
-                    <AiOutlineLoading3Quarters className="mr-3 text-2xl text-primary animate-spin-slow" />
+                    <FaClock className="mr-3 text-2xl text-primary animate-spin-slow" />
                     <div>
                         <p className="text-[10px] font-bold text-gray-400 uppercase">Menunggu Validasi</p>
                         <p className="text-xl font-bold text-primary">{akuisisiPending}</p>

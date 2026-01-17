@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\DashboardController;
-use App\Http\Controllers\Shared\{ProfileController};
+use App\Http\Controllers\Shared\{ProfileController, GuestController};
 use App\Http\Controllers\Pegawai\{PegawaiController};
 use App\Http\Controllers\Supervisor\{SupervisorController};
 use App\Http\Controllers\KepalaCabang\{KepalaCabangController};
@@ -10,15 +10,12 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-// Route::get('/', function () {
-//     return Inertia::render('Shared/Auth/Login');
-// })->middleware('guest');
 
-// Login SSO
 Route::middleware('guest')->group(function () {
-    Route::get('/', function () {
+    Route::get('/', [GuestController::class, 'index'])->name('welcome');
+    Route::get('/login', function () {
         return Inertia::render('Shared/Auth/Login');
-    })->name('reguler-login.form');
+    })->name('login');
 });
 
 
@@ -95,7 +92,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Log Aktivitas(R)
-    Route::get('/log-aktivitas', [DashboardController::class, 'help_and_guide'])->name('main-log');
+    Route::get('/log-aktivitas', [DashboardController::class, 'main_log'])->name('main-log');
 
     // Panduan/Bantuan(R)
     Route::get('/help-and-guide', [DashboardController::class, 'help_and_guide'])->name('help-and-guide'); // Export Data Pegawai Ke csv

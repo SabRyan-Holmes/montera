@@ -51,30 +51,10 @@ export default function Index({
         });
     }
 
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
-
     // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
     const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
     console.log(filtersList);
     // ===========================================Other Logics===========================================
 
@@ -91,7 +71,7 @@ export default function Index({
                             initialFilters={{
                                 byLevel: filtersReq.byLevel,
                             }}
-                              filtersConfig={[
+                            filtersConfig={[
                                 {
                                     name: "byLevel",
                                     label: "Level Otoritas",
@@ -173,7 +153,7 @@ export default function Index({
                                                         className="action-btn hover:scale-[1.15] hover:bg-bermuda"
                                                         onClick={() =>
                                                             setShowLastUpdated(
-                                                                !showLastUpdated
+                                                                !showLastUpdated,
                                                             )
                                                         }
                                                     >
@@ -186,7 +166,7 @@ export default function Index({
                                                             className="action-btn hover:scale-125 hover:bg-bermuda"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
-                                                                    !showLastUpdated
+                                                                    !showLastUpdated,
                                                                 )
                                                             }
                                                         >
@@ -239,9 +219,9 @@ export default function Index({
                                                 </span>
                                             </td>
                                             <td>
-                                                 <span className="block">
+                                                <span className="block">
                                                     {moment(
-                                                        jabatan.created_at
+                                                        jabatan.created_at,
                                                     ).format("LL")}
                                                 </span>
                                             </td>
@@ -253,12 +233,12 @@ export default function Index({
                                             >
                                                 <span className="block">
                                                     {moment(
-                                                        jabatan.updated_at
+                                                        jabatan.updated_at,
                                                     ).format("LL")}
                                                 </span>
                                                 <span className="block text-[12px]">
                                                     {moment(
-                                                        jabatan.updated_at
+                                                        jabatan.updated_at,
                                                     ).fromNow()}
                                                 </span>
                                             </td>
@@ -268,11 +248,11 @@ export default function Index({
                                                     <button
                                                         onClick={() => {
                                                             setActiveModal(
-                                                                `Show-${jabatan.id}`
+                                                                `Show-${jabatan.id}`,
                                                             );
                                                             document
                                                                 .getElementById(
-                                                                    `Show-${jabatan.id}`
+                                                                    `Show-${jabatan.id}`,
                                                                 )
                                                                 .showModal();
                                                         }}
@@ -297,7 +277,7 @@ export default function Index({
                                                     <Link
                                                         href={route(
                                                             "admin.jabatan.edit",
-                                                            jabatan.id
+                                                            jabatan.id,
                                                         )}
                                                         className="action-btn group/button action-btn-bermuda"
                                                     >
@@ -310,7 +290,7 @@ export default function Index({
                                                     <button
                                                         onClick={() =>
                                                             handleDelete(
-                                                                jabatan.id
+                                                                jabatan.id,
                                                             )
                                                         }
                                                         className="action-btn action-btn-warning group/button"

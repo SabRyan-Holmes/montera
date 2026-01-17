@@ -9,21 +9,21 @@ import { FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import ShowModal from "./Partials/ShowModal";
-
 export default function Index({
     auth,
     users,
     title,
-    flash,
+    canManage,
     subTitle,
     filtersReq,
     filtersList,
 }) {
-    // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
     function handleDelete(id) {
         Swal.fire({
-            ...(activeModal && { target: `#${activeModal}` }),
+            ...(activeModal && {
+                target: `#${activeModal}`,
+            }),
             icon: "warning",
             text: "Anda yakin ingin menghapus data user ini?",
             showCancelButton: true,
@@ -50,44 +50,20 @@ export default function Index({
             }
         });
     }
-
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
-
-    // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
-    const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
+    const [showLastUpdated, setShowLastUpdated] = useState(false);
     const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
-    console.log(filtersList)
-    // ===========================================Other Logics===========================================
-
+    console.log(filtersList);
     return (
         <Authenticated
             user={auth.user}
-            title={(role === "Admnistrator" ? "Kelola " : "Daftar ") + title}
+            title={(canManage ? "Kelola " : "Daftar ") + title}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/master/user`}
+                            routeName={`/admin/user`}
                             initialFilters={{
                                 byJabatan: filtersReq.jabatan,
                                 byDivisi: filtersReq.divisi,
@@ -103,12 +79,6 @@ export default function Index({
                                     name: "byDivisi",
                                     label: "Divisi",
                                     options: filtersList.divisi,
-                                },
-
-                                {
-                                    name: "byStatus",
-                                    label: "Status ",
-                                    options: filtersList.status,
                                 },
                             ]}
                             searchConfig={{
@@ -193,7 +163,7 @@ export default function Index({
                                                                 className="action-btn hover:scale-[1.15] hover:bg-bermuda"
                                                                 onClick={() =>
                                                                     setShowLastUpdated(
-                                                                        !showLastUpdated
+                                                                        !showLastUpdated,
                                                                     )
                                                                 }
                                                             >
@@ -207,7 +177,7 @@ export default function Index({
                                                                 className=" action-btn hover:scale-125 hover:bg-bermuda"
                                                                 onClick={() =>
                                                                     setShowLastUpdated(
-                                                                        !showLastUpdated
+                                                                        !showLastUpdated,
                                                                     )
                                                                 }
                                                             >
@@ -237,7 +207,7 @@ export default function Index({
                                             <td className="text-center">
                                                 {i + 1}
                                             </td>
-                                            <td >
+                                            <td>
                                                 <span className="block">
                                                     {user["name"]}
                                                 </span>
@@ -249,13 +219,32 @@ export default function Index({
                                             </td>
                                             <td>
                                                 <span className="block">
-                                                    {user["jabatan"]['nama_jabatan']}
+                                                    {
+                                                        user.jabatan?.[
+                                                            "nama_jabatan"
+                                                        ]
+                                                    }
                                                 </span>
                                             </td>
-                                            <td>
-                                                <span className="block">
-                                                    {user["divisi"]['nama_divisi']}
-                                                </span>
+                                            <td className="text-center ">
+                                                {user.divisi ? (
+                                                    <>
+                                                        <span className="block text-gray-700">
+                                                            {
+                                                                user.divisi
+                                                                    ?.nama_divisi
+                                                            }
+                                                        </span>
+                                                        <span className="text-[10px] badge badge-ghost badge-xs">
+                                                            {
+                                                                user.divisi
+                                                                    ?.main_divisi
+                                                            }
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    "-"
+                                                )}
                                             </td>
                                             <td>
                                                 <span className="block">
@@ -269,18 +258,16 @@ export default function Index({
                                             </td>
 
                                             <td
-                                                className={`font-normal text-center ${
-                                                    !showLastUpdated && "hidden"
-                                                }`}
+                                                className={`font-normal text-center ${!showLastUpdated && "hidden"}`}
                                             >
                                                 <span className="block">
                                                     {moment(
-                                                        user["updated_at"]
+                                                        user["updated_at"],
                                                     ).format("LL")}
                                                 </span>
                                                 <span className="block text-[12px]">
                                                     {moment(
-                                                        user.updated_at
+                                                        user.updated_at,
                                                     ).fromNow()}
                                                 </span>
                                             </td>
@@ -291,11 +278,11 @@ export default function Index({
                                                             as="button"
                                                             onClick={() => {
                                                                 setActiveModal(
-                                                                    `Show-${user.id}`
+                                                                    `Show-${user.id}`,
                                                                 );
                                                                 document
                                                                     .getElementById(
-                                                                        `Show-${user.id}`
+                                                                        `Show-${user.id}`,
                                                                     )
                                                                     .showModal();
                                                             }}
@@ -320,13 +307,13 @@ export default function Index({
                                                         />
                                                     </div>
 
-                                                    {/* EDIT */}
+                                                    {}
                                                     <div className="relative inline-flex group">
                                                         <Link
                                                             as="a"
                                                             href={route(
                                                                 "admin.user.edit",
-                                                                user.id
+                                                                user.id,
                                                             )}
                                                             className="action-btn group/button action-btn-bermuda"
                                                         >
@@ -339,12 +326,12 @@ export default function Index({
                                                         />
                                                     </div>
 
-                                                    {/* DELETE */}
+                                                    {}
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    user["id"]
+                                                                    user["id"],
                                                                 )
                                                             }
                                                             className="action-btn action-btn-warning group/button"
@@ -363,16 +350,6 @@ export default function Index({
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             as="button"
-                                                            // onClick={() => {
-                                                            //     setActiveModal(
-                                                            //         `Show-${user.id}`
-                                                            //     );
-                                                            //     document
-                                                            //         .getElementById(
-                                                            //             `Show-${user.id}`
-                                                            //         )
-                                                            //         .showModal();
-                                                            // }}
                                                             className="action-btn group/button action-btn-success "
                                                         >
                                                             <span className="group-hover:text-white">
@@ -380,20 +357,7 @@ export default function Index({
                                                             </span>
                                                             <FaEye className="ml-2 scale-125 group-hover/button:fill-white " />
                                                         </button>
-                                                        {/* <ShowModal
-                                                            handleDelete={
-                                                                handleDelete
-                                                            }
-                                                            setActiveModal={
-                                                                setActiveModal
-                                                            }
-                                                            user={user}
-                                                        />
-                                                        <TooltipHover
-                                                            message={
-                                                                "Lihat Data"
-                                                            }
-                                                        /> */}
+                                                        {}
                                                     </div>
                                                 </td>
                                             )}
@@ -401,7 +365,7 @@ export default function Index({
                                     ))}
                                 </tbody>
                             </table>
-                            {/* Pagination */}
+                            {}
                             <Pagination
                                 datas={users}
                                 urlRoute={`/admin/user`}

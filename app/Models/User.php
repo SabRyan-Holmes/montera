@@ -18,10 +18,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
+   protected $fillable = [
         'name',
         'email',
         'password',
+        'nip',
+        'jabatan_id',
+        'divisi_id',
+        'status_aktif',
     ];
     protected $casts = ['jumlah' => 'array'];
     protected $with = ['jabatan', 'divisi:id,nama_divisi'];
@@ -145,6 +149,8 @@ class User extends Authenticatable
     public function scopeMyTeam($query, User $user)
     {
         return $query->where('divisi_id', $user->divisi_id)
-                     ->where('id', '!=', $user->id); // Exclude diri sendiri
+                     ->where('id', '!=', $user->id)
+
+                     ; // Exclude diri sendiri
     }
 }

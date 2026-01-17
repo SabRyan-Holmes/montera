@@ -60,7 +60,7 @@ class PegawaiController extends Controller
         return Inertia::render('Pegawai/Target/Index', [
             "title" => "Target Kinerja Pegawai",
             "subTitle"  => $subTitle,
-            "targets" => Target::filter($params)->latest()->with(['produk:id,nama_produk,kategori_produk,label_input,satuan'])->paginate(10)
+            "targets" => Target::filter($params)->latest()->with(['produk:id,nama_produk,kategori_produk,label_input,satuan,kode_produk'])->paginate(10)
                 ->withQueryString(),
             "canManage" => $role === "Administrator",
             "filtersReq"   => [
