@@ -13,16 +13,17 @@ export default function Index({
     auth,
     produks,
     title,
-    flash,
     subTitle,
     filtersReq,
     filtersList,
+    canManage,
 }) {
-    // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
     function handleDelete(id) {
         Swal.fire({
-            ...(activeModal && { target: `#${activeModal}` }),
+            ...(activeModal && {
+                target: `#${activeModal}`,
+            }),
             icon: "warning",
             text: "Anda yakin ingin menghapus data produk ini?",
             showCancelButton: true,
@@ -49,16 +50,12 @@ export default function Index({
             }
         });
     }
-
-    // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
-    const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
-    const role = auth.user.jabatan.nama_jabatan;
-    // ===========================================Other Logics===========================================
+    const [showLastUpdated, setShowLastUpdated] = useState(false);
     return (
         <Authenticated
             user={auth.user}
-            title={(role === "Admnistrator" ? "Kelola " : "Daftar ") + title}
+            title={(canManage ? "Kelola " : "Daftar ") + title}
         >
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
@@ -68,7 +65,6 @@ export default function Index({
                             initialFilters={{
                                 byKategori: filtersReq.kategori,
                                 byStatus: filtersReq.status,
-                                // minPoin: filtersReq.minPoin,
                             }}
                             filtersConfig={[
                                 {
@@ -90,7 +86,7 @@ export default function Index({
                             }}
                         />
                     </div>
-                    {role === "Administrator" && (
+                    {canManage && (
                         <div className="flex-none pb-3 ">
                             <Link
                                 as="button"
@@ -146,10 +142,10 @@ export default function Index({
                                                     {showLastUpdated ? (
                                                         <>
                                                             <button
-                                                                className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                                className="action-btn hover:scale-[1.15] hover:bg-primary/80"
                                                                 onClick={() =>
                                                                     setShowLastUpdated(
-                                                                        !showLastUpdated
+                                                                        !showLastUpdated,
                                                                     )
                                                                 }
                                                             >
@@ -160,10 +156,10 @@ export default function Index({
                                                     ) : (
                                                         <div className="flex items-center justify-center gap-2">
                                                             <button
-                                                                className=" action-btn hover:scale-125 hover:bg-bermuda"
+                                                                className=" action-btn hover:scale-125 hover:bg-primary/80"
                                                                 onClick={() =>
                                                                     setShowLastUpdated(
-                                                                        !showLastUpdated
+                                                                        !showLastUpdated,
                                                                     )
                                                                 }
                                                             >
@@ -210,33 +206,31 @@ export default function Index({
                                             <td>{produk["bobot_kredit"]}</td>
                                             <td>{produk["status"]}</td>
                                             <td
-                                                className={`font-normal text-center ${
-                                                    !showLastUpdated && "hidden"
-                                                }`}
+                                                className={`font-normal text-center ${!showLastUpdated && "hidden"}`}
                                             >
                                                 <span className="block">
                                                     {moment(
-                                                        produk["updated_at"]
+                                                        produk["updated_at"],
                                                     ).format("LL")}
                                                 </span>
                                                 <span className="block text-[12px]">
                                                     {moment(
-                                                        produk.updated_at
+                                                        produk.updated_at,
                                                     ).fromNow()}
                                                 </span>
                                             </td>
-                                            {role === "Administrator" ? (
+                                            {canManage ? (
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             as="button"
                                                             onClick={() => {
                                                                 setActiveModal(
-                                                                    `Show-${produk.id}`
+                                                                    `Show-${produk.id}`,
                                                                 );
                                                                 document
                                                                     .getElementById(
-                                                                        `Show-${produk.id}`
+                                                                        `Show-${produk.id}`,
                                                                     )
                                                                     .showModal();
                                                             }}
@@ -260,13 +254,13 @@ export default function Index({
                                                             }
                                                         />
                                                     </div>
-                                                    {/* EDIT */}
+
                                                     <div className="relative inline-flex group">
                                                         <Link
                                                             as="a"
                                                             href={route(
                                                                 "admin.produk.edit",
-                                                                produk.id
+                                                                produk.id,
                                                             )}
                                                             className="action-btn group/button action-btn-bermuda"
                                                         >
@@ -278,12 +272,14 @@ export default function Index({
                                                             }
                                                         />
                                                     </div>
-                                                    {/* DELETE */}
+
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    produk["id"]
+                                                                    produk[
+                                                                        "id"
+                                                                    ],
                                                                 )
                                                             }
                                                             className="action-btn action-btn-warning group/button"
@@ -302,16 +298,6 @@ export default function Index({
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             as="button"
-                                                            // onClick={() => {
-                                                            //     setActiveModal(
-                                                            //         `Show-${produk.id}`
-                                                            //     );
-                                                            //     document
-                                                            //         .getElementById(
-                                                            //             `Show-${produk.id}`
-                                                            //         )
-                                                            //         .showModal();
-                                                            // }}
                                                             className="action-btn group/button action-btn-success "
                                                         >
                                                             <span className="group-hover:text-white">
@@ -319,20 +305,6 @@ export default function Index({
                                                             </span>
                                                             <FaEye className="ml-2 scale-125 group-hover/button:fill-white " />
                                                         </button>
-                                                        {/* <ShowModal
-                                                            handleDelete={
-                                                                handleDelete
-                                                            }
-                                                            setActiveModal={
-                                                                setActiveModal
-                                                            }
-                                                            produk={produk}
-                                                        />
-                                                        <TooltipHover
-                                                            message={
-                                                                "Lihat Data"
-                                                            }
-                                                        /> */}
                                                     </div>
                                                 </td>
                                             )}
@@ -340,7 +312,7 @@ export default function Index({
                                     ))}
                                 </tbody>
                             </table>
-                            {/* Pagination */}
+
                             <Pagination
                                 datas={produks}
                                 urlRoute={`/admin/produk`}

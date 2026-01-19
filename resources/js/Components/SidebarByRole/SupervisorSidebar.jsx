@@ -1,6 +1,7 @@
 import { MdSpaceDashboard } from "react-icons/md";
 import { SidebarLink } from "..";
 import { HiOutlineDocumentChartBar, HiOutlineShieldCheck, HiOutlineUserGroup } from "react-icons/hi2";
+import { FaBullseye } from "react-icons/fa6";
 
 export default function SupervisorSidebar({ isCollapsed }) {
     return (
@@ -23,12 +24,21 @@ export default function SupervisorSidebar({ isCollapsed }) {
             </SidebarLink>
             <SidebarLink
                 href={route("spv.target-tim.index")}
-                active={route().current("spv.target-tim.index") || route().current("spv.target-tim.create*")}
+                active={route().current("spv.target-tim.*") }
                 className="z-20 mx-[18px] -mb-1"
                 isCollapsed={isCollapsed}
             >
                 <HiOutlineDocumentChartBar />
                 Target Kerja Tim
+            </SidebarLink>
+            <SidebarLink
+                href={route("spv.target-divisi")}
+                active={route().current("spv.target-divisi")}
+                className="z-20 mx-[18px] -mb-1"
+                isCollapsed={isCollapsed}
+            >
+                <FaBullseye />
+                Target Kerja Divisi
             </SidebarLink>
 
             <SidebarLink

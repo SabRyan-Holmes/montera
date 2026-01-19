@@ -42,7 +42,7 @@ export default function Report({
     // -----------------------------------------------------
 
     const currentYear = new Date().getFullYear();
-    const years = [currentYear, currentYear - 1, currentYear - 2];
+    const years = [currentYear, currentYear - 1, currentYear - 2,  currentYear - 3,  currentYear - 4] ;
     const months = [
         { v: 1, l: "Januari" }, { v: 2, l: "Februari" }, { v: 3, l: "Maret" },
         { v: 4, l: "April" }, { v: 5, l: "Mei" }, { v: 6, l: "Juni" },

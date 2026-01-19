@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -79,8 +79,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Target::class, 'user_id');
     }
-    // Ini targets gw tambhin gpp?
-    // untuk menampilkan semua targt pada pegawai yg ditargetkan
+
     public function targets()
     {
         return $this->hasMany(Target::class, 'user_id');
@@ -91,10 +90,6 @@ class User extends Authenticatable
         return $this->hasMany(Transaksi::class);
     }
 
-    // public function inputAkuisisi()
-    // {
-    //     return $this->hasMany(Akuisisi::class, 'user_id'); // Data yang diinput pegawai
-    // }
 
     public function verifikasiAkuisisi()
     {
@@ -108,6 +103,27 @@ class User extends Authenticatable
         });
     }
 
+    public function hasRole($namaRole)
+    {
+        return $this->jabatan && $this->jabatan->nama_jabatan === $namaRole;
+    }
+
+    public function scopeIsAdmin($query)
+    {
+        return $query->whereHas('jabatan', function ($q) {
+            $q->where('nama_jabatan', 'Administrator');
+        });
+    }
+
+    protected function isAdmin(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                // Cek relasi jabatan, pake null coalescing (??) biar ga error kalo jabatan kosong
+                return ($this->jabatan->nama_jabatan ?? '') === 'Administrator';
+            }
+        );
+    }
 
 
     public function scopeFilter($query, array $filters): void

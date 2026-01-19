@@ -32,15 +32,16 @@ class Transaksi extends Model
             $filters['search'] ?? false,
             fn($query, $search) =>
             $query->whereHas('pegawai', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhere('nip', 'like', '%' . $search . '%')
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', '%' . $search . '%');
+            })
         );
 
         $query->when(
             $filters['byKategori'] ?? false,
             fn($query, $byKategori) =>
             $query->whereHas('produk', function ($q) use ($byKategori) {
-                $q->where('kategori', 'like', "%{$byKategori}%");
+                $q->where('kategori_produk', 'like', "%{$byKategori}%");
             })
         );
         $query->when(
@@ -50,6 +51,5 @@ class Transaksi extends Model
                 $q->where('status', 'like', "%{$byStatus}%");
             })
         );
-
     }
 }

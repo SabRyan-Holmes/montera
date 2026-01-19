@@ -77,12 +77,12 @@ export default function FinalReport({
                                 {subTitle}
                             </strong>
                             {/* Tombol Export (Hiasan/Placeholder) */}
-                            <div className="flex-none pb-1">
+                            {/* <div className="flex-none pb-1">
                                 <button className="flex items-center gap-2 px-4 py-2 text-white transition-colors rounded-lg shadow-sm bg-success hover:bg-success/80">
                                     <HiOutlineDownload className="w-5 h-5" />
                                     <span>Export Excel</span>
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                     )}
 

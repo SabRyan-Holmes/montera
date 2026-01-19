@@ -53,31 +53,12 @@ export default function Index({
         });
     }
 
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
+
 
     // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
-    const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
-    console.log(filtersList);
+
     // ===========================================Other Logics===========================================
 
     return (
@@ -86,7 +67,7 @@ export default function Index({
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/admin/transaksi`}
+                            routeName={`/pegawai/transaksi`}
                             initialFilters={{
                                 byKategori: filtersReq.kategori,
                                 byStatus: filtersReq.status,
@@ -111,18 +92,7 @@ export default function Index({
                             }}
                         />
                     </div>
-                    {role === "Administrator" && (
-                        <div className="flex-none pb-3 ">
-                            <Link
-                                as="button"
-                                href={route("admin.transaksi.create")}
-                                className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
-                            >
-                                Tambah Data
-                                <IoMdAdd className="w-5 h-5" />
-                            </Link>
-                        </div>
-                    )}
+
                 </section>
 
                 <section className="pt-3 ">

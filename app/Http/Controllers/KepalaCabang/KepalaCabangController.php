@@ -19,6 +19,7 @@ use Inertia\Inertia;
 class KepalaCabangController extends Controller
 {
 
+
     public function summary(Request $request)
     {
         // FILTER: Ambil dari request, default NULL (artinya All Time)

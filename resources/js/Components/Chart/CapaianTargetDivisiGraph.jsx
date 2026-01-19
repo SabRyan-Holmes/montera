@@ -118,7 +118,18 @@ export default function RadialChart({ title, data, chartId }) {
                 </div>
             </div>
 
-            {/* Render Custom Legends (Grid Layout) */}
+
+
+            {/* Radial Chart Container */}
+            <div id={chartId} className="flex-grow flex items-center justify-center min-h-[250px]"></div>
+
+            <div className="flex items-center justify-center pt-4 mt-2 border-t border-slate-100">
+                <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                    Progres Realisasi Akuisisi
+                </span>
+            </div>
+
+              {/* Render Custom Legends (Grid Layout) */}
             <div className="grid grid-cols-2 gap-4 mb-2">
                 {legendItems.map((item, index) => (
                     <div key={index} className="p-3 border rounded-lg bg-slate-50 border-slate-100">
@@ -128,15 +139,6 @@ export default function RadialChart({ title, data, chartId }) {
                         </p>
                     </div>
                 ))}
-            </div>
-
-            {/* Radial Chart Container */}
-            <div id={chartId} className="flex-grow flex items-center justify-center min-h-[250px]"></div>
-
-            <div className="flex items-center justify-center pt-4 mt-2 border-t border-slate-100">
-                <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                    Progres Realisasi Akuisisi
-                </span>
             </div>
         </section>
     );

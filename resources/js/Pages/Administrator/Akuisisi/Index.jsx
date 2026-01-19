@@ -1,5 +1,5 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaEye, FaEdit } from "react-icons/fa";
 import { Link, router } from "@inertiajs/react";
 import { IoMdAdd } from "react-icons/io";
@@ -10,22 +10,21 @@ import {
     StatusLabel,
     TooltipHover,
 } from "@/Components";
-import { FaCheck, FaEyeSlash, FaTrash } from "react-icons/fa6";
+import { FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import ShowModal from "./Partials/ShowModal";
-import { IoClose } from "react-icons/io5";
 
 export default function Index({
     auth,
     akuisisis,
     title,
-    flash,
     subTitle,
     filtersReq,
     filtersList,
     canCreate,
     canManage,
+    isAdmin,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
@@ -59,31 +58,19 @@ export default function Index({
         });
     }
 
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
+    // --- HELPER FORMAT RUPIAH ---
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        }).format(number);
+    };
 
     // ===========================================Handling Search & Filter===========================================
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
-    const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
-    console.log(filtersList);
+
     // ===========================================Other Logics===========================================
 
     return (
@@ -118,15 +105,13 @@ export default function Index({
                             <Link
                                 as="button"
                                 href={
-                                    role === "Administrator"
+                                    canManage
                                         ? route("admin.akuisisi.create")
                                         : route("pegawai.akuisisi.create")
                                 }
                                 className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
-                                {role === "Administrator"
-                                    ? "Tambah Data"
-                                    : "Ajukan Akuisisi"}
+                                {canManage ? "Tambah Data" : "Ajukan Akuisisi"}
                                 <IoMdAdd className="w-5 h-5" />
                             </Link>
                         </div>
@@ -143,326 +128,348 @@ export default function Index({
                     )}
                     {akuisisis.data.length > 0 ? (
                         <>
-                            <table className="table overflow-x-scroll text-xs text-center table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
-                                    <tr className="text-center">
-                                        <th
-                                            scope="col"
-                                            width="5%"
-                                            className="rounded-tl-xl"
-                                        >
-                                            No
-                                        </th>
-                                        {role === "Administrator" && (
-                                            <th scope="col" width="15%">
-                                                Pegawai
+                            <div className="overflow-x-scroll">
+                                <table className="table overflow-x-scroll text-xs text-center table-bordered">
+                                    <thead className="text-sm font-medium text-white bg-primary ">
+                                        <tr className="text-center">
+                                            <th
+                                                scope="col"
+                                                width="5%"
+                                                className="rounded-tl-xl"
+                                            >
+                                                No
                                             </th>
-                                        )}
+                                            {canManage && (
+                                                <th scope="col" width="15%">
+                                                    Pegawai
+                                                </th>
+                                            )}
 
-                                        <th scope="col" width="15%">
-                                            Produk
-                                        </th>
-                                        <th scope="col" width="20%">
-                                            Nasabah
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Nominal
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Tanggal Akuisisi
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Status
-                                        </th>
-                                        <th scope="col" width="15%">
-                                            Supervisor
-                                        </th>
+                                            <th scope="col">Produk</th>
+                                            <th scope="col" width="15%">
+                                                Nasabah
+                                            </th>
+                                            <th scope="col" width="15%">
+                                                Nominal
+                                            </th>
+                                            <th scope="col">
+                                                Tanggal Akuisisi
+                                            </th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Supervisor</th>
 
-                                        <th
-                                            scope="col"
-                                            width="10%"
-                                            className={
-                                                "text-center cursor-pointer " +
-                                                (!showLastUpdated
-                                                    ? "rounded-tr-xl"
-                                                    : "")
-                                            }
-                                        >
-                                            <div className="flex items-center justify-center gap-2">
-                                                {showLastUpdated ? (
-                                                    <button
-                                                        className="action-btn hover:scale-[1.15] hover:bg-primary/90"
-                                                        onClick={() =>
-                                                            setShowLastUpdated(
-                                                                !showLastUpdated,
-                                                            )
-                                                        }
-                                                    >
-                                                        <FaEyeSlash className="mr-1 text-white " />
-                                                        Diperbarui
-                                                    </button>
-                                                ) : (
-                                                    <div className="flex items-center gap-2">
+                                            <th
+                                                scope="col"
+                                                width="10%"
+                                                className={
+                                                    "text-center cursor-pointer " +
+                                                    (!showLastUpdated
+                                                        ? "rounded-tr-xl"
+                                                        : "")
+                                                }
+                                            >
+                                                <div className="flex items-center justify-center gap-2">
+                                                    {showLastUpdated ? (
                                                         <button
-                                                            className="action-btn hover:scale-125 hover:bg-primary/90"
+                                                            className="action-btn hover:scale-[1.15] hover:bg-primary/90"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
                                                                     !showLastUpdated,
                                                                 )
                                                             }
                                                         >
-                                                            <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
+                                                            <FaEyeSlash className="mr-1 text-white " />
+                                                            Diperbarui
                                                         </button>
-                                                        <span>Aksi</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </th>
-
-                                        {showLastUpdated && (
-                                            <th
-                                                scope="col"
-                                                className="text-center rounded-tr-xl"
-                                            >
-                                                Aksi
+                                                    ) : (
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                className="action-btn hover:scale-125 hover:bg-primary/90"
+                                                                onClick={() =>
+                                                                    setShowLastUpdated(
+                                                                        !showLastUpdated,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
+                                                            </button>
+                                                            <span>Aksi</span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </th>
-                                        )}
-                                    </tr>
-                                </thead>
 
-                                <tbody>
-                                    {akuisisis.data?.map((akuisisi, i) => {
-                                        const isPending =
-                                            akuisisi.status_verifikasi ===
-                                            "pending";
+                                            {showLastUpdated && (
+                                                <th
+                                                    scope="col"
+                                                    className="text-center rounded-tr-xl"
+                                                >
+                                                    Aksi
+                                                </th>
+                                            )}
+                                        </tr>
+                                    </thead>
 
-                                        return (
-                                            <tr key={akuisisi.id}>
-                                                <td>{i + 1}</td>
-                                                {/* Pegawai */}
-                                                {role === "Administrator" && (
+                                    <tbody>
+                                        {akuisisis.data?.map((akuisisi, i) => {
+                                            const isPending =
+                                                akuisisi.status_verifikasi ===
+                                                "pending";
+                                            const isRejected =
+                                                akuisisi.status_verifikasi ===
+                                                "rejected";
+
+                                            return (
+                                                <tr key={akuisisi.id}>
+                                                    <td>{i + 1}</td>
+                                                    {/* Pegawai */}
+                                                    {canManage && (
+                                                        <td>
+                                                            <span className="block">
+                                                                {
+                                                                    akuisisi
+                                                                        .pegawai
+                                                                        ?.name
+                                                                }
+                                                            </span>
+                                                        </td>
+                                                    )}
+                                                    {/* Produk */}
                                                     <td>
                                                         <span className="block">
                                                             {
-                                                                akuisisi.pegawai
-                                                                    ?.name
+                                                                akuisisi.produk
+                                                                    ?.nama_produk
                                                             }
                                                         </span>
                                                     </td>
-                                                )}
-                                                {/* Produk */}
-                                                <td>
-                                                    <span className="block">
-                                                        {
-                                                            akuisisi.produk
-                                                                ?.nama_produk
-                                                        }
-                                                    </span>
-                                                </td>
-                                                {/* Nasabah (digabung) */}
-                                                <td>
-                                                    <span className="block font-medium">
-                                                        {akuisisi.nama_nasabah}
-                                                    </span>
-                                                    <span className="text-[11px] text-gray-500">
-                                                        {akuisisi.no_identitas_nasabah ??
-                                                            "-"}
-                                                    </span>
-                                                </td>
-                                                {/* Nominal */}
-                                                <td>
-                                                    <span className="block">
-                                                        {
-                                                            akuisisi.nominal_realisasi
-                                                        }
-                                                    </span>
-                                                </td>
-                                                {/* Tanggal Akuisisi */}
-                                                <td>
-                                                    <span className="block">
-                                                        {moment(
-                                                            akuisisi.tanggal_akuisisi,
-                                                        ).format("LL")}
-                                                    </span>
-                                                </td>
-                                                {/* Status */}
-                                                <td className="p-0 m-0">
-                                                    <StatusLabel
-                                                        status={
-                                                            akuisisi.status_verifikasi
-                                                        }
-                                                    />
-                                                    <div className="mt-2 font-normal">
-                                                        {/* <span className="block">
-                                                                                                                {moment(
-                                                                                                                    akuisisi.updated_at
-                                                                                                                ).format("LL")}
-                                                                                                            </span> */}
+                                                    {/* Nasabah (digabung) */}
+                                                    <td>
+                                                        <span className="block font-medium">
+                                                            {
+                                                                akuisisi.nama_nasabah
+                                                            }
+                                                        </span>
+                                                        <span className="text-[11px] text-gray-500">
+                                                            {akuisisi.no_identitas_nasabah ??
+                                                                "-"}
+                                                        </span>
+                                                    </td>
+                                                    {/* Nominal */}
+                                                    <td>
+                                                        <span className="block">
+                                                            {
+                                                                // akuisisi.nominal_realisasi,
+                                                                akuisisi.display_nominal
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    {/* Tanggal Akuisisi */}
+                                                    <td>
+                                                        <span className="block">
+                                                            {moment(
+                                                                akuisisi.tanggal_akuisisi,
+                                                            ).format("LL")}
+                                                        </span>
+                                                    </td>
+                                                    {/* Status */}
+                                                    <td className="p-0 m-0">
+                                                        <StatusLabel
+                                                            status={
+                                                                akuisisi.status_verifikasi
+                                                            }
+                                                        />
+                                                        <div className="mt-2 font-normal">
+                                                            {/* <span className="block">
+                                                                {moment(
+                                                                    akuisisi.updated_at,
+                                                                ).format("LL")}
+                                                            </span> */}
+                                                            <span className="block text-[12px]">
+                                                                {moment(
+                                                                    akuisisi.updated_at,
+                                                                ).fromNow()}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    {/* Verifikator */}
+                                                    <td>
+                                                        <span className="block">
+                                                            {akuisisi.supervisor
+                                                                ?.name ?? "-"}
+                                                        </span>
+                                                    </td>
+                                                    {/* Last Updated */}
+                                                    <td
+                                                        className={`text-center ${
+                                                            !showLastUpdated &&
+                                                            "hidden"
+                                                        }`}
+                                                    >
+                                                        <span className="block">
+                                                            {moment(
+                                                                akuisisi.updated_at,
+                                                            ).format("LL")}
+                                                        </span>
                                                         <span className="block text-[12px]">
                                                             {moment(
                                                                 akuisisi.updated_at,
                                                             ).fromNow()}
                                                         </span>
-                                                    </div>
-                                                </td>
-                                                {/* Verifikator */}
-                                                <td>
-                                                    <span className="block">
-                                                        {akuisisi.supervisor
-                                                            ?.name ?? "-"}
-                                                    </span>
-                                                </td>
-                                                {/* Last Updated */}
-                                                <td
-                                                    className={`text-center ${
-                                                        !showLastUpdated &&
-                                                        "hidden"
-                                                    }`}
-                                                >
-                                                    <span className="block">
-                                                        {moment(
-                                                            akuisisi.updated_at,
-                                                        ).format("LL")}
-                                                    </span>
-                                                    <span className="block text-[12px]">
-                                                        {moment(
-                                                            akuisisi.updated_at,
-                                                        ).fromNow()}
-                                                    </span>
-                                                </td>
-                                                {/* AKSI */}
-                                                {canManage ? (
-                                                    <>
-                                                        <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                            <div className="relative inline-flex group">
-                                                                <button
-                                                                    as="button"
-                                                                    onClick={() => {
-                                                                        setActiveModal(
-                                                                            `Show-${akuisisi.id}`,
-                                                                        );
-                                                                        document
-                                                                            .getElementById(
-                                                                                `Show-${akuisisi.id}`,
-                                                                            )
-                                                                            .showModal();
-                                                                    }}
-                                                                    className="action-btn group/button action-btn-success "
-                                                                >
-                                                                    <FaEye className="scale-125 group-hover/button:fill-white group-hover/button:text-white " />
-                                                                </button>
-                                                                <ShowModal
-                                                                    handleDelete={
-                                                                        handleDelete
-                                                                    }
-                                                                    setActiveModal={
-                                                                        setActiveModal
-                                                                    }
-                                                                    akuisisi={
-                                                                        akuisisi
-                                                                    }
-                                                                    canManage={
-                                                                        true
-                                                                    }
-                                                                />
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Lihat Data"
-                                                                    }
-                                                                />
-                                                            </div>
-
-                                                            {/* EDIT */}
-
-                                                            <div className="relative inline-flex group">
-                                                                <Link
-                                                                    as="a"
-                                                                    href={route(
-                                                                        "admin.akuisisi.edit",
-                                                                        akuisisi.id,
-                                                                    )}
-                                                                    className="action-btn group/button action-btn-bermuda"
-                                                                >
-                                                                    <FaEdit className=" group-hover/button:fill-white" />
-                                                                </Link>
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Edit Data"
-                                                                    }
-                                                                />
-                                                            </div>
-
-                                                            {/* DELETE */}
-                                                            <div className="relative inline-flex group">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleDelete(
-                                                                            akuisisi[
-                                                                                "id"
-                                                                            ],
-                                                                        )
-                                                                    }
-                                                                    className="action-btn action-btn-warning group/button"
-                                                                >
-                                                                    <FaTrash className="scale-125 group-hover/button:fill-white" />
-                                                                </button>
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Hapus Data"
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                    </>
-                                                ) : (
-                                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                        <div className="relative inline-flex group">
-                                                            <button
-                                                                as="button"
-                                                                onClick={() => {
-                                                                    setActiveModal(
-                                                                        `Show-${akuisisi.id}`,
-                                                                    );
-                                                                    document
-                                                                        .getElementById(
-                                                                            `Show-${akuisisi.id}`,
-                                                                        )
-                                                                        .showModal();
-                                                                }}
-                                                                className="action-btn group action-btn-success "
-                                                            >
-                                                                <span className="mr-1 group-hover:text-white">
-                                                                    Lihat
-                                                                </span>
-                                                                <FaEye className="scale-125 group-hover:fill-white " />
-                                                            </button>
-                                                            <ShowModal
-                                                                handleDelete={
-                                                                    handleDelete
-                                                                }
-                                                                setActiveModal={
-                                                                    setActiveModal
-                                                                }
-                                                                akuisisi={
-                                                                    akuisisi
-                                                                }
-                                                                canManage={
-                                                                    canManage
-                                                                }
-                                                            />
-                                                            <TooltipHover
-                                                                message={
-                                                                    "Lihat Data"
-                                                                }
-                                                            />
-                                                        </div>
                                                     </td>
-                                                )}
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                                    {/* AKSI */}
+                                                    {canManage ? (
+                                                        <>
+                                                            <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                                <div className="relative inline-flex group">
+                                                                    <button
+                                                                        as="button"
+                                                                        onClick={() => {
+                                                                            setActiveModal(
+                                                                                `Show-${akuisisi.id}`,
+                                                                            );
+                                                                            document
+                                                                                .getElementById(
+                                                                                    `Show-${akuisisi.id}`,
+                                                                                )
+                                                                                .showModal();
+                                                                        }}
+                                                                        className="action-btn group/button action-btn-success "
+                                                                    >
+                                                                        <FaEye className="scale-125 group-hover/button:fill-white group-hover/button:text-white " />
+                                                                    </button>
+                                                                    <ShowModal
+                                                                        handleDelete={
+                                                                            handleDelete
+                                                                        }
+                                                                        setActiveModal={
+                                                                            setActiveModal
+                                                                        }
+                                                                        akuisisi={
+                                                                            akuisisi
+                                                                        }
+                                                                        canManage={
+                                                                            true
+                                                                        }
+                                                                    />
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            "Lihat Data"
+                                                                        }
+                                                                    />
+                                                                </div>
+
+                                                                {/* EDIT */}
+
+                                                                <div className="relative inline-flex group">
+                                                                    <Link
+                                                                        as="a"
+                                                                        href={route(
+                                                                            "admin.akuisisi.edit",
+                                                                            akuisisi.id,
+                                                                        )}
+                                                                        className="action-btn group/button action-btn-bermuda"
+                                                                    >
+                                                                        <FaEdit className=" group-hover/button:fill-white" />
+                                                                    </Link>
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            "Edit Data"
+                                                                        }
+                                                                    />
+                                                                </div>
+
+                                                                {/* DELETE */}
+                                                                <div className="relative inline-flex group">
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            handleDelete(
+                                                                                akuisisi[
+                                                                                    "id"
+                                                                                ],
+                                                                            )
+                                                                        }
+                                                                        className="action-btn action-btn-warning group/button"
+                                                                    >
+                                                                        <FaTrash className="scale-125 group-hover/button:fill-white" />
+                                                                    </button>
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            "Hapus Data"
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                                <div className="relative inline-flex group">
+                                                                    <button
+                                                                        as="button"
+                                                                        onClick={() => {
+                                                                            setActiveModal(
+                                                                                `Show-${akuisisi.id}`,
+                                                                            );
+                                                                            document
+                                                                                .getElementById(
+                                                                                    `Show-${akuisisi.id}`,
+                                                                                )
+                                                                                .showModal();
+                                                                        }}
+                                                                        className="action-btn group action-btn-success "
+                                                                    >
+
+                                                                        <FaEye className="scale-125 group-hover:fill-white " />
+                                                                    </button>
+                                                                    <ShowModal
+                                                                        handleDelete={
+                                                                            handleDelete
+                                                                        }
+                                                                        setActiveModal={
+                                                                            setActiveModal
+                                                                        }
+                                                                        akuisisi={
+                                                                            akuisisi
+                                                                        }
+                                                                        canManage={
+                                                                            canManage
+                                                                        }
+                                                                    />
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            "Lihat Data"
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                                {/* EDIT */}
+                                                                <div className="relative inline-flex group">
+                                                                    <Link
+                                                                        as="button"
+                                                                        href={route(
+                                                                            `${isAdmin ? "admin" : "pegawai"}.akuisisi.edit`,
+                                                                            akuisisi.id,
+                                                                        )}
+                                                                        disabled={!isRejected}
+                                                                        className="action-btn group/button action-btn-bermuda"
+                                                                    >
+                                                                        <FaEdit className=" group-hover/button:fill-white" />
+                                                                    </Link>
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            `Revisi Data ${!isRejected && '(setelah ditolak)'}`
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                        </>
+                                                    )}
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
 
                             {/* Pagination */}
                             <Pagination

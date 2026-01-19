@@ -21,7 +21,7 @@ export default forwardRef(function SelectInput(
 
     // Mengikuti style border gradient yang kamu buat
     const borderGradient =
-        "bg-slate-100/60 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-hijau/50 focus:outline-none focus:border-primary/50/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50";
+        "bg-slate-100/60 border-t-primary/50 border-l-primary/50 border-r-secondary/50 border-b-primary/20 focus:outline-none focus:border-primary/50/40 focus:ring-1 focus:ring-opacity-60 focus:ring-primary/50";
 
     return (
         <select

@@ -28,16 +28,29 @@ class TargetStoreUpdateRequest extends FormRequest
         $user = $this->user();
 
         // Cek jabatan dengan aman. Jika jabatan null, anggap bukan administrator.
-        $isAdmin = $user->jabatan?->nama_jabatan === "Administrator";
+        $isAdmin = $user->isAdmin;
+        $isAdminOrKacab = $user->isAdmin || ($user->hasRole('Kepala Cabang') ?? false);
         return [
             // Validasi Relasi
-            'user_id' => ['required', 'exists:users,id'],
+            'user_id' => [
+                $isAdminOrKacab ? 'nullable' : 'required',
+                $isAdminOrKacab ? 'required_without:divisi_id' : '',
+                'exists:users,id'
+            ],
+            'divisi_id' => [
+                // Jika Admin/Kacab: Wajib diisi HANYA JIKA user_id kosong
+                // Jika Supervisor: Boleh kosong (nullable)
+                $isAdminOrKacab ? 'required_without:user_id' : 'nullable',
+                'nullable',
+                'exists:divisis,id' // Pastikan nama tabel benar
+            ],
             'supervisor_id' => [
                 // Jika user punya akses 'manage all' (admin), wajib ada di request.
                 // Jika tidak (supervisor biasa), boleh nullable (nanti diisi otomatis di controller store/update).
                 $isAdmin ? 'required' : 'nullable',
                 'exists:users,id'
             ],
+
 
             'produk_id' => ['nullable', 'exists:produks,id'], // Boleh null jika target umum (non-produk)
 
@@ -63,7 +76,8 @@ class TargetStoreUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'user_id' => 'Pegawai',
+            'user_id' => 'Pegawai Target',
+            'divisi_id' => 'Divisi Target',
             'supervisor_id' => 'Supervisor',
             'produk_id' => 'Produk',
             'nilai_target' => 'Nilai Target',
@@ -83,17 +97,21 @@ class TargetStoreUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
+            // General
             'required' => ':attribute wajib diisi.',
-            'exists' => 'Data :attribute yang dipilih tidak valid.',
-            'numeric' => ':attribute harus berupa angka.',
-            'min' => ':attribute tidak boleh kurang dari :min.',
-            'in' => 'Pilihan :attribute tidak valid.',
-            'date' => 'Format :attribute tidak valid.',
-            'digits' => ':attribute harus terdiri dari :digits digit.',
+            'numeric'  => ':attribute harus berupa angka.',
+            'date'     => 'Format :attribute tidak valid.',
 
-            // Custom logic tanggal
-            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
-            'deadline_pencapaian.after_or_equal' => 'Deadline tidak boleh sebelum tanggal mulai.',
+            // Logic Silang (Pesan ini yang akan muncul kalau user_id & divisi_id kosong dua-duanya)
+            'user_id.required_without'   => 'Mohon pilih salah satu: Target untuk Pegawai atau Target untuk Divisi.',
+            'divisi_id.required_without' => 'Mohon pilih salah satu: Target untuk Divisi atau Target untuk Pegawai.',
+
+            // Logic Supervisor
+            'supervisor_id.required' => 'Sebagai Administrator, Anda wajib menentukan Supervisor untuk target ini.',
+
+            // Logic Tanggal
+            'tanggal_selesai.after_or_equal'     => 'Tanggal selesai tidak boleh lebih dulu dari tanggal mulai.',
+            'deadline_pencapaian.after_or_equal' => 'Deadline tidak boleh lebih dulu dari tanggal mulai.',
         ];
     }
 }

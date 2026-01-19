@@ -33,7 +33,7 @@ class AdminController extends Controller
             "searchReq" => request('search') ?? "",
             "byDaerahReq" => request('byDaerah') ?? "Semua Kategori",
             "byJabatanReq" => request('byJabatan') ?? "Semua Kategori",
-            // 'isDivisiSDM' => $this->user->role === 'Divisi SDM',
+            // 'isDivisiSDM' => $this->user->hasRole === 'Divisi SDM',
             // 'jabatanList' => collect($koefisien_per_tahun)->pluck('jabatan')->toArray()
         ]);
     }

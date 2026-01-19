@@ -10,8 +10,7 @@ export default function Report({
     title,
     subTitle,
     groupedReports, // Terima data grouped
-    filtersReq,
-    filtersList,
+
 }) {
     // ... (Options bulan sama) ...
 
@@ -43,10 +42,10 @@ export default function Report({
                             data transaksi.
                         </p>
                     </div>
-                    <button className="flex items-center gap-2 px-4 py-2 text-white transition-colors rounded-lg shadow-sm bg-success hover:bg-success/80">
+                    {/* <button className="flex items-center gap-2 px-4 py-2 text-white transition-colors rounded-lg shadow-sm bg-success hover:bg-success/80">
                         <HiOutlineDownload className="w-5 h-5" />
                         <span>Export Excel</span>
-                    </button>
+                    </button> */}
                 </section>
 
                 {/* --- LOOPING TABEL PER KATEGORI --- */}
@@ -170,6 +169,7 @@ export default function Report({
                                                         </td>
 
                                                         {/* BUKTI */}
+                                                        {/* TODO bikin agar bisa mengarahkan ke pdf kalo emg ad bukti file ny  */}
                                                         <td className="px-3 py-2 text-center">
                                                             {item.bukti_url ? (
                                                                 <a

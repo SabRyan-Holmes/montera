@@ -1,19 +1,8 @@
-import React from "react";
-import { RiAppsFill } from "react-icons/ri";
-import { GrHelpBook } from "react-icons/gr";
-import { AiFillNotification } from "react-icons/ai";
-import { IoDocuments, IoSettings } from "react-icons/io5";
-import { FaInfoCircle, FaUserMd } from "react-icons/fa";
-import {
-    MdEditDocument,
-    MdOutlineAssignmentInd,
-    MdOutlineGroups,
-} from "react-icons/md";
+import { MdOutlineGroups } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaUserSecret, FaUserTie } from "react-icons/fa6";
+import { FaDatabase, FaUserShield } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
 import {
-    HiOutlineAdjustmentsVertical,
     HiOutlineBriefcase,
     HiOutlineBuildingLibrary,
     HiOutlineCheckBadge,
@@ -159,7 +148,7 @@ export default function AdminSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="flex items-center ">
-                    <FaUserMd />
+                    <FaUserShield />
                     User Data
                 </span>
             </SidebarLinkCollapse>

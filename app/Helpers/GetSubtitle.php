@@ -13,8 +13,10 @@ class GetSubtitle
         ?string $byPeriode = null,
         ?string $search = null,
         ?string $searchLabel = "Mencari data dengan kata kunci : ",
-        ?string $byTipe = null,
+        ?string $byTipeTarget = null,
+        ?string $byTipeSatuan = null,
         ?string $byLevel = null,
+        ?string $byTahun = null,
         ?string $byCustom2 = null
     ): ?string {
         $filters = [];
@@ -25,7 +27,9 @@ class GetSubtitle
         if ($byIndikator) $filters[] = "Indikator: $byIndikator";
         if ($byStatus) $filters[] = "Status Verifikasi: " . ucfirst($byStatus);
         if ($byPeriode) $filters[] = "Periode: " . ucfirst($byPeriode);
-        if ($byTipe) $filters[] = "Tipe Target: $byTipe";
+        if ($byTipeTarget) $filters[] = "Tipe Target: $byTipeTarget";
+        if ($byTipeSatuan) $filters[] = "Tipe Satuan: $byTipeSatuan";
+        if ($byTahun) $filters[] = "Tahun: $byTahun";
         if ($byLevel) $filters[] = "Level Otoritas: $byLevel";
 
         if (!empty($filters)) {

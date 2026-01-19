@@ -61,20 +61,19 @@ export default function DetailTarget({ target, collapse = true }) {
                     </tr>
                 ) : !isCollapsed ? (
                     <>
-                        {/* 1. Nama & Kode Produk */}
-
-                        {target.pegawai ? (
-                            <RowData
-                                label="Pegawai Ditargetkan"
-                                value={target.pegawai?.name || "-"}
-                            />
-                        ) : (
-                            <RowData
-                                label="Divisi Ditargetkan"
-                                value={target.divisi?.nama_divisi || "-"}
-                            />
-                        )}
-
+                        <RowData
+                            label="Pegawai"
+                            value={
+                                <>
+                                    <div className="font-bold text-gray-800">
+                                        {target.pegawai?.name ?? "-"}
+                                    </div>
+                                    <span className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">
+                                        {target.pegawai?.nip ?? "-"}
+                                    </span>
+                                </>
+                            }
+                        />
                         <RowData
                             label="Produk"
                             value={
@@ -99,6 +98,17 @@ export default function DetailTarget({ target, collapse = true }) {
                             }
                         />
 
+                           {/* SUPERVISOR */}
+                        <RowData
+                            label="Supervisor/Pembuat Target"
+                            value={
+                                <span className="inline-block px-2 py-1 text-xs font-semibold text-blue-600 border border-blue-100 rounded-full bg-blue-50">
+                                    {target.supervisor?.name ?? "-"}
+                                </span>
+                            }
+                        />
+
+
                         {/* 3. Nilai Target */}
                         <RowData
                             label="Nilai Target"
@@ -111,7 +121,7 @@ export default function DetailTarget({ target, collapse = true }) {
 
                         {/* 4. Tipe Target (Nominal / NOA) */}
                         <RowData
-                            label="Tipe Target"
+                            label="Tipe Satuan"
                             value={
                                 <span className="font-medium text-gray-700 capitalize">
                                     {target.tipe_target ?? "-"}
@@ -183,6 +193,27 @@ export default function DetailTarget({ target, collapse = true }) {
                         />
 
                         {/* 9. Meta Data (Dibuat & Diupdate) */}
+                        <RowData
+                            label="Tanggal Diajukan"
+                            value={
+                                target.updated_at ? (
+                                    <div className="flex flex-col text-sm">
+                                        <span>
+                                            {moment(target.created_at).format(
+                                                "D MMM YYYY, HH:mm",
+                                            )}
+                                        </span>
+                                        <span className="text-xs italic text-gray-400">
+                                            {moment(
+                                                target.created_at,
+                                            ).fromNow()}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    "-"
+                                )
+                            }
+                        />
                         <RowData
                             label="Terakhir Diperbarui"
                             value={

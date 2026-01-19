@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 class Akuisisi extends Model
 {
     protected $guarded = ['id'];
-
+    protected $casts = [
+        'nominal_realisasi' => 'integer', // <--- INI KUNCINYA
+    ];
     public function pegawai(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -39,6 +42,45 @@ class Akuisisi extends Model
         return $this->belongsTo(User::class, 'supervisor_id'); //ditujukan ke supervisor yang dipilih pegawai
     }
 
+    protected function displayNominal(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                // [FIX 1] Paksa cast ke FLOAT biar aman pas masuk number_format
+                // Kalau null, jadiin 0.
+                $nominal = (float) ($attributes['nominal_realisasi'] ?? 0);
+
+                if (!$this->relationLoaded('produk')) {
+                    // Balikin nominal asli tapi dalam bentuk string/int biar ga error
+                    return $nominal;
+                }
+
+                $kategori = strtoupper($this->produk->kategori_produk);
+
+                // [FIX 2] Pastikan nama kategori SAMA PERSIS dengan di database/seeder
+                // Cek apakah di DB tulisannya 'E-CHANEL' (N satu) atau 'E-CHANNEL' (N dua)
+
+                // KELOMPOK DUIT
+                if (in_array($kategori, [
+                    'PRODUK FUNDING',
+                    'PRODUK KREDIT',
+                    'PRODUK ANAK PERUSAHAAN'
+                ])) {
+                    // Karena $nominal sudah (float), number_format pasti jalan
+                    return 'Rp ' . number_format($nominal, 0, ',', '.');
+                }
+
+                // KELOMPOK UNIT
+                // [TIPS] Gunakan str_contains biar lebih aman kalau ada typo spasi/huruf
+                if (str_contains($kategori, 'E-CHANEL') || str_contains($kategori, 'PRODUK E-CHANNEL')) {
+                    return (int) $nominal;
+                }
+
+                // Default fallback
+                return $nominal;
+            }
+        );
+    }
 
     public function scopeFilter($query, array $filters): void
     {

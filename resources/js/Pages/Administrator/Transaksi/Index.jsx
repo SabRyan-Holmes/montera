@@ -19,7 +19,7 @@ export default function Index({
     subTitle,
     filtersReq,
     filtersList,
-    canManage
+    canManage,
 }) {
     // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
@@ -53,31 +53,12 @@ export default function Index({
         });
     }
 
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
+
 
     // ===========================================Handling Search & Filter===========================================
 
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
-    const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
-    console.log(filtersList);
+
     // ===========================================Other Logics===========================================
 
     return (
@@ -111,7 +92,7 @@ export default function Index({
                             }}
                         />
                     </div>
-                    {role === "Administrator" && (
+                    {canManage && (
                         <div className="flex-none pb-3 ">
                             <Link
                                 as="button"
@@ -146,7 +127,6 @@ export default function Index({
                                             No
                                         </th>
 
-
                                         <th scope="col" width="15%">
                                             Nama & NIP Pegawai
                                         </th>
@@ -159,21 +139,13 @@ export default function Index({
                                             Kategori Produk
                                         </th>
 
-                                        <th scope="col" width="15%">
-                                            Nasabah
-                                        </th>
+                                        <th scope="col">Nasabah</th>
 
-                                        <th scope="col" width="15%">
-                                            Nilai Realisasi
-                                        </th>
+                                        <th scope="col">Nilai Realisasi</th>
 
-                                        <th scope="col" width="10%">
-                                            Poin
-                                        </th>
+                                        <th scope="col">Poin</th>
 
-                                        <th scope="col" width="10%">
-                                            Tanggal Realisasi
-                                        </th>
+                                        <th scope="col">Tanggal Realisasi</th>
 
                                         <th
                                             scope="col"
@@ -188,10 +160,10 @@ export default function Index({
                                             <div className="flex items-center justify-center gap-2">
                                                 {showLastUpdated ? (
                                                     <button
-                                                        className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                        className="action-btn hover:scale-[1.15] hover:bg-primary/80"
                                                         onClick={() =>
                                                             setShowLastUpdated(
-                                                                !showLastUpdated
+                                                                !showLastUpdated,
                                                             )
                                                         }
                                                     >
@@ -201,10 +173,10 @@ export default function Index({
                                                 ) : (
                                                     <div className="flex items-center gap-2">
                                                         <button
-                                                            className="action-btn hover:scale-125 hover:bg-bermuda"
+                                                            className="action-btn hover:scale-125 hover:bg-primary/80"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
-                                                                    !showLastUpdated
+                                                                    !showLastUpdated,
                                                                 )
                                                             }
                                                         >
@@ -271,8 +243,8 @@ export default function Index({
                                                 <td>
                                                     <span className="block">
                                                         {
-                                                            transaksi.produk?.kategori_produk
-
+                                                            transaksi.produk
+                                                                ?.kategori_produk
                                                         }
                                                     </span>
                                                 </td>
@@ -311,14 +283,14 @@ export default function Index({
 
                                                 {/* Periode */}
                                                 <td>
-                                                     <span className="block">
+                                                    <span className="block">
                                                         {moment(
-                                                            transaksi.tanggal_realisasi
+                                                            transaksi.tanggal_realisasi,
                                                         ).format("LL")}
                                                     </span>
                                                     <span className="block text-[12px]">
                                                         {moment(
-                                                            transaksi.tanggal_realisasi
+                                                            transaksi.tanggal_realisasi,
                                                         ).fromNow()}
                                                     </span>
                                                 </td>
@@ -332,12 +304,12 @@ export default function Index({
                                                 >
                                                     <span className="block">
                                                         {moment(
-                                                            transaksi.updated_at
+                                                            transaksi.updated_at,
                                                         ).format("LL")}
                                                     </span>
                                                     <span className="block text-[12px]">
                                                         {moment(
-                                                            transaksi.updated_at
+                                                            transaksi.updated_at,
                                                         ).fromNow()}
                                                     </span>
                                                 </td>
@@ -351,11 +323,11 @@ export default function Index({
                                                                     as="button"
                                                                     onClick={() => {
                                                                         setActiveModal(
-                                                                            `Show-${transaksi.id}`
+                                                                            `Show-${transaksi.id}`,
                                                                         );
                                                                         document
                                                                             .getElementById(
-                                                                                `Show-${transaksi.id}`
+                                                                                `Show-${transaksi.id}`,
                                                                             )
                                                                             .showModal();
                                                                     }}
@@ -391,7 +363,7 @@ export default function Index({
                                                                     as="a"
                                                                     href={route(
                                                                         "admin.transaksi.edit",
-                                                                        transaksi.id
+                                                                        transaksi.id,
                                                                     )}
                                                                     className="action-btn group/button action-btn-bermuda"
                                                                 >
@@ -411,7 +383,7 @@ export default function Index({
                                                                         handleDelete(
                                                                             transaksi[
                                                                                 "id"
-                                                                            ]
+                                                                            ],
                                                                         )
                                                                     }
                                                                     className="action-btn action-btn-warning group/button"
@@ -433,11 +405,11 @@ export default function Index({
                                                                 as="button"
                                                                 onClick={() => {
                                                                     setActiveModal(
-                                                                        `Show-${transaksi.id}`
+                                                                        `Show-${transaksi.id}`,
                                                                     );
                                                                     document
                                                                         .getElementById(
-                                                                            `Show-${transaksi.id}`
+                                                                            `Show-${transaksi.id}`,
                                                                         )
                                                                         .showModal();
                                                                 }}

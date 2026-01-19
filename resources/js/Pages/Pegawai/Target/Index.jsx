@@ -1,5 +1,4 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { useState } from "react";
 import { FilterSearchCustom, Pagination } from "@/Components";
 import moment from "moment/min/moment-with-locales";
 import ShowModal from "./Show";
@@ -7,6 +6,7 @@ export default function Index({
     auth,
     targets,
     title,
+    isPegawai,
     subTitle,
     filtersReq,
     filtersList,
@@ -21,12 +21,12 @@ export default function Index({
                         <FilterSearchCustom
                             routeName={`/pegawai/target`}
                             initialFilters={{
-                                byTipe: filtersReq.tipe,
+                                byTipeSatuan: filtersReq.tipe,
                                 byStatus: filtersReq.status,
                             }}
                             filtersConfig={[
                                 {
-                                    name: "byTipe",
+                                    name: "byTipeSatuan",
                                     label: "Tipe Target ",
                                     options: filtersList.tipe_target,
                                 },
@@ -117,6 +117,7 @@ export default function Index({
                                             >
                                                 <td className="py-3 text-center">
                                                     <ShowModal
+                                                        isPegawai = {isPegawai}
                                                         target={target}
                                                     />
                                                     {i +
@@ -199,7 +200,7 @@ export default function Index({
                                 urlRoute={`/pegawai/target`}
                                 filters={{
                                     search: filtersReq.search,
-                                    byTipe: filtersReq.tipe_target,
+                                    byTipeSatuan: filtersReq.tipe_target,
                                     byPeriode: filtersReq.periode,
                                 }}
                             />

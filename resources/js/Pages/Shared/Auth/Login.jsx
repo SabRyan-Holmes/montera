@@ -91,7 +91,7 @@ export default function Login({ status, canResetPassword }) {
                         <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-[#001f3f] transition-all shadow-sm">
                             <IoArrowBack className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                         </div>
-                        <span>Kembali ke Beranda</span>
+                        <span>Kembali</span>
                     </Link>
 
                     <div className="w-full max-w-md">

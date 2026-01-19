@@ -1,18 +1,10 @@
-import React from "react";
-import { RiAppsFill } from "react-icons/ri";
-import { GrHelpBook } from "react-icons/gr";
-import { AiFillNotification } from "react-icons/ai";
-import { IoDocuments, IoSettings } from "react-icons/io5";
-import { FaInfoCircle } from "react-icons/fa";
 import {
-    MdEditDocument,
-    MdOutlineAssignmentInd,
     MdOutlineDescription,
     MdOutlineMonitorHeart,
     MdOutlineSummarize,
 } from "react-icons/md";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaDatabase, FaUserTie } from "react-icons/fa6";
+import { FaBullseye } from "react-icons/fa6";
 import { SidebarLink, SidebarLinkCollapse } from "..";
 import {
     HiOutlineArrowDownTray,
@@ -23,17 +15,16 @@ import {
     HiOutlineTrophy,
     HiOutlineUserPlus,
 } from "react-icons/hi2";
-
 export default function KepalaCabangSidebar({ isCollapsed }) {
     return (
         <ul>
-            {/* Header Kategori (Hilang saat collapsed) */}
+            {}
             {!isCollapsed && (
                 <li className="px-4 mt-4 mb-2 text-xs font-bold tracking-wider uppercase text-slate-400">
                     Menu Utama
                 </li>
             )}
-            {/* Link Dashboard */}
+            {}
             <SidebarLink
                 isCollapsed={isCollapsed}
                 href={route("dashboard")}
@@ -42,6 +33,16 @@ export default function KepalaCabangSidebar({ isCollapsed }) {
             >
                 <MdSpaceDashboard />
                 Dashboard
+            </SidebarLink>
+
+            <SidebarLink
+                isCollapsed={isCollapsed}
+                href={route("kacab.target.index")}
+                active={route().current("kacab.target.*")}
+                className="z-20 mx-[21px] "
+            >
+                <FaBullseye />
+                Target
             </SidebarLink>
 
             <SidebarLinkCollapse
@@ -111,7 +112,7 @@ export default function KepalaCabangSidebar({ isCollapsed }) {
                 ]}
             >
                 <span className="">
-                    <HiOutlineUserPlus  />
+                    <HiOutlineUserPlus />
                     Evaluasi & SDM
                 </span>
             </SidebarLinkCollapse>
@@ -147,35 +148,7 @@ export default function KepalaCabangSidebar({ isCollapsed }) {
                 </span>
             </SidebarLinkCollapse>
 
-            {/* <SidebarLinkCollapse
-                submenu={[
-                    {
-                        label: (
-                            <>
-                                <AiFillNotification />
-                                Log Aktivitas
-                            </>
-                        ),
-                        route: "main-log",
-                        actives: ["main-log"],
-                    },
-                    {
-                        label: (
-                            <>
-                                <GrHelpBook />
-                                Panduan/Bantuan
-                            </>
-                        ),
-                        route: "help-and-guide",
-                        actives: ["help-and-guide"],
-                    },
-                ]}
-            >
-                <span className="flex items-center">
-                    <FaInfoCircle  />
-                    Info
-                </span>
-            </SidebarLinkCollapse> */}
+            {}
         </ul>
     );
 }

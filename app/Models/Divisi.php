@@ -16,6 +16,11 @@ class Divisi extends Model
         return $this->hasMany(User::class, 'divisi_id');
     }
 
+    public function targets(): HasMany
+    {
+        return $this->hasMany(Target::class, 'divisi_id');
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query->when(

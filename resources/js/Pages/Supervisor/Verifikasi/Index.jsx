@@ -27,10 +27,6 @@ export default function Index({
 }) {
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false);
-    const role = auth.user.jabatan.nama_jabatan;
-    function formatRole(label) {
-        return label.trim().toLowerCase().replace(/\s+/g, "-");
-    }
     const [activeData, setActiveData] = useState(null);
     const handleApprove = (id) => {
         router.patch(
@@ -79,7 +75,7 @@ export default function Index({
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/verify-akuisisi`}
+                            routeName={`/spv/verify-akuisisi`}
                             initialFilters={{
                                 byStatus: filtersReq.status,
                             }}
@@ -150,7 +146,7 @@ export default function Index({
                                             <div className="flex items-center justify-center gap-2">
                                                 {showLastUpdated ? (
                                                     <button
-                                                        className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                        className="action-btn hover:scale-[1.15] hover:bg-primary/80"
                                                         onClick={() =>
                                                             setShowLastUpdated(
                                                                 !showLastUpdated,
@@ -163,7 +159,7 @@ export default function Index({
                                                 ) : (
                                                     <div className="flex items-center gap-2">
                                                         <button
-                                                            className="action-btn hover:scale-125 hover:bg-bermuda"
+                                                            className="action-btn hover:scale-125 hover:bg-primary/80"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
                                                                     !showLastUpdated,
@@ -348,7 +344,7 @@ export default function Index({
                             {/* Pagination */}
                             <Pagination
                                 datas={akuisisis}
-                                urlRoute={`verify-akuisisi`}
+                                urlRoute={`/spv/verify-akuisisi`}
                                 filters={{
                                     byStatus: filtersReq.byStatus,
                                     search: filtersReq.search,

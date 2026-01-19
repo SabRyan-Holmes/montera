@@ -31,7 +31,7 @@
         src="{{ asset('build/' . $manifest['resources/js/Pages/' . $page['component'] . '.jsx']['file']) }}"></script>
 
     <!-- Import CSS -->
-    <link rel="stylesheet" href="{{ asset('build/assets/CIKpBp9r.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-ZBGJYvDZ.css') }}">
     <!----------------------------------------------- NOTE:  FOR HOSTING!! --------------------------------------------------->
 
 </head>

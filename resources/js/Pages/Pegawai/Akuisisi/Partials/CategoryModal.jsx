@@ -1,4 +1,9 @@
-import { FaMoneyBillWave, FaCreditCard, FaHandshake } from "react-icons/fa";
+import {
+    FaMoneyBillWave,
+    FaCreditCard,
+    FaHandshake,
+    FaMobileAlt,
+} from "react-icons/fa";
 
 export default function CategoryModal({ show, onSelect }) {
     // 1. Kalau show false, jangan render apa-apa
@@ -26,10 +31,21 @@ export default function CategoryModal({ show, onSelect }) {
             icon: <FaHandshake className="w-8 h-8 text-purple-500" />,
             color: "hover:border-purple-500 hover:bg-purple-50",
         },
+        // --- KATEGORI BARU (E-CHANNEL) ---
+        {
+            // PERHATIKAN ID INI: Harus sama persis dengan di Database Seeder
+            // Di seeder kamu tertulis "PRODUK E-CHANEL" (N satu)
+            id: "PRODUK E-CHANEL",
+            label: "E-Channel",
+            desc: "Mobile Banking, QRIS, EDC, ATM",
+            icon: <FaMobileAlt className="w-8 h-8 text-orange-500" />,
+            color: "hover:border-orange-500 hover:bg-orange-50",
+        },
     ];
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            {/* max-w-2xl sudah cukup ideal untuk layout 2x2 */}
             <div className="w-full max-w-2xl overflow-hidden bg-white shadow-2xl rounded-2xl animate-fade-in-up">
                 <div className="p-6 text-center border-b bg-gray-50">
                     <h3 className="text-xl font-bold text-gray-800">
@@ -40,12 +56,12 @@ export default function CategoryModal({ show, onSelect }) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 p-6 md:grid-cols-3">
+                {/* UPDATE: Ubah md:grid-cols-3 menjadi md:grid-cols-2 biar jadi 2x2 */}
+                <div className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
                     {categories.map((cat) => (
                         <button
                             key={cat.id}
                             type="button"
-                            // Saat diklik, panggil fungsi dari Parent lewat props
                             onClick={() => onSelect(cat.id)}
                             className={`flex flex-col items-center p-6 border-2 border-gray-100 rounded-xl transition-all duration-200 group ${cat.color}`}
                         >

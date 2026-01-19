@@ -312,12 +312,7 @@ export default function Index({
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        {/* <td className="capitalize ">
-                                                            {item.tipe_target ==
-                                                            "noa"
-                                                                ? "NoA"
-                                                                : "Nominal"}
-                                                        </td> */}
+
                                                         <td className="capitalize ">
                                                             {item.periode}
                                                         </td>

@@ -38,7 +38,7 @@ class UserController extends Controller
             "title" => "Data User",
             "subTitle"  => $subTitle,
             "users"    => User::latest()->with(['jabatan:id,nama_jabatan', 'divisi:id,nama_divisi,main_divisi'])->filter($params)->paginate(10)->withQueryString(),
-            "canManage" => $this->user->role('Administrator'),
+            "canManage" => $this->user->hasRole('Administrator'),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byJabatan" => $params['byJabatan'] ?? "Semua Kategori",

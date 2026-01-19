@@ -36,7 +36,7 @@ export default function RevisionModal({
         >
             <section className="w-full max-w-md p-6 mx-auto rounded-lg">
                 <h2 className="mb-4 text-xl font-bold text-gray-800">
-                    {title ?? "Alasan Penolakan/Catatan Perbaikan"}
+                    {"Alasan Penolakan/Catatan Perbaikan"}
                 </h2>
                 <form onSubmit={handleSubmit}>
                     <fieldset>

@@ -9,22 +9,24 @@ import { FaEyeSlash, FaTrash } from "react-icons/fa6";
 import moment from "moment/min/moment-with-locales";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import ShowModal from "./Partials/ShowModal";
-
 export default function Index({
     auth,
     targets,
     title,
-    flash,
+    canManage,
     subTitle,
     filtersReq,
     filtersList,
-    isDivisiSDM,
+    isAdmin,
+    isAdminOrKacab,
 }) {
-    // ===========================================Pop Up, Modal, Dialog Swal Message===========================================
     const [activeModal, setActiveModal] = useState(null);
+    canManage = isAdminOrKacab
     function handleDelete(id) {
         Swal.fire({
-            ...(activeModal && { target: `#${activeModal}` }),
+            ...(activeModal && {
+                target: `#${activeModal}`,
+            }),
             icon: "warning",
             text: "Anda yakin ingin menghapus data target ini?",
             showCancelButton: true,
@@ -40,7 +42,7 @@ export default function Index({
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("admin.target.destroy", id), {
+                router.delete(route( `${isAdmin? 'admin' : 'kacab'}.target.destroy`, id), {
                     onSuccess: () => {
                         document.getElementById(activeModal).close();
                     },
@@ -51,49 +53,38 @@ export default function Index({
             }
         });
     }
-
-    useEffect(() => {
-        if (flash.message) {
-            Swal.fire({
-                ...(activeModal && { target: `#${activeModal}` }),
-                title: "Berhasil!",
-                text: `${flash.message}`,
-                icon: "success",
-                iconColor: "#50C878",
-                confirmButtonText: "Oke",
-                confirmButtonColor: "#2D95C9",
-            });
-            setTimeout(() => {
-                flash.message = null;
-            }, 3000);
-        }
-    }, [flash.message]);
-
-    // ===========================================Handling Search & Filter===========================================
+    const formatRupiah = (angka) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        }).format(angka);
+    };
     moment.locale("id");
-    const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
-    const role = auth.user.jabatan.nama_jabatan;
-
-    // ===========================================Other Logics===========================================
-
+    const [showLastUpdated, setShowLastUpdated] = useState(false);
     return (
         <Authenticated user={auth.user} title={`Kelola ${title}`}>
             <main className="mx-auto phone:h-screen laptop:h-full laptop:w-screen-laptop laptop:px-7 max-w-screen-desktop">
                 <section className="flex items-end justify-between gap-4">
                     <div className="flex-1 ">
                         <FilterSearchCustom
-                            routeName={`/admin/target`}
+                            routeName={`/${isAdmin ? "admin" : "kacab"}/target`}
                             initialFilters={{
-                                byTipe: filtersReq.tipe,
+                                byTipeSatuan: filtersReq.tipe,
+                                byTipeSatuan: filtersReq.tipe,
                                 byStatus: filtersReq.status,
                             }}
                             filtersConfig={[
                                 {
-                                    name: "byTipe",
+                                    name: "byTipeTarget",
                                     label: "Tipe Target ",
                                     options: filtersList.tipe_target,
                                 },
-
+                                {
+                                    name: "byTipeSatuan",
+                                    label: "Tipe Satuan ",
+                                    options: filtersList.tipe_satuan,
+                                },
                                 {
                                     name: "byPeriode",
                                     label: "Periode ",
@@ -109,11 +100,11 @@ export default function Index({
                         />
                     </div>
 
-                    {role === "Administrator" && (
+                    {isAdminOrKacab && (
                         <div className="flex-none pb-3 ">
                             <Link
                                 as="button"
-                                href={route("admin.target.create")}
+                                href={route(`${isAdmin ? 'admin' : 'kacab'}.target.create`)}
                                 className="flex items-center mx-2 text-white btn glass bg-primary hover:bg-primary/80"
                             >
                                 Tambah Data
@@ -146,28 +137,17 @@ export default function Index({
                                                 No
                                             </th>
 
-                                            <th scope="col" width="15%">
+                                            <th scope="col">Pegawai/Divisi</th>
+                                            <th scope="col">
                                                 Nama & Kategori Produk
                                             </th>
-                                            <th scope="col" width="15%">
-                                                Nilai Target
-                                            </th>
-                                            <th scope="col" width="15%">
-                                                Tipe Target
-                                            </th>
-                                            <th scope="col" width="15%">
-                                                Periode
-                                            </th>
-                                            <th scope="col" width="15%">
-                                                Tahun
-                                            </th>
-                                            <th scope="col" width="15%">
-                                                Tanggal Mulai
-                                            </th>
-                                            <th scope="col" width="15%">
-                                                Tanggal Selesai
-                                            </th>
-                                            <th scope="col" width="15%">
+                                            <th scope="col">Nilai Target</th>
+                                            <th scope="col">Tipe Target</th>
+                                            <th scope="col">Periode</th>
+                                            <th scope="col">Tahun</th>
+                                            <th scope="col">Tanggal Mulai</th>
+                                            <th scope="col">Tanggal Selesai</th>
+                                            <th scope="col">
                                                 Deadline Pencapaian
                                             </th>
 
@@ -186,7 +166,7 @@ export default function Index({
                                                         {showLastUpdated ? (
                                                             <>
                                                                 <button
-                                                                    className="action-btn hover:scale-[1.15] hover:bg-bermuda"
+                                                                    className="action-btn hover:scale-[1.15] hover:bg-primary/80"
                                                                     onClick={() =>
                                                                         setShowLastUpdated(
                                                                             !showLastUpdated,
@@ -200,7 +180,7 @@ export default function Index({
                                                         ) : (
                                                             <div className="flex items-center justify-center gap-2">
                                                                 <button
-                                                                    className=" action-btn hover:scale-125 hover:bg-bermuda"
+                                                                    className=" action-btn hover:scale-125 hover:bg-primary/80"
                                                                     onClick={() =>
                                                                         setShowLastUpdated(
                                                                             !showLastUpdated,
@@ -234,48 +214,82 @@ export default function Index({
                                                     {i + 1}
                                                 </td>
 
-                                                {/* Nama Indikator */}
+                                                {target.pegawai ? (
+                                                    <td className="text-left ">
+                                                        <span className="block font-bold text-gray-800">
+                                                            {
+                                                                target.pegawai
+                                                                    ?.name
+                                                            }
+                                                        </span>
+                                                        <span className="text-xs text-gray-500">
+                                                            {
+                                                                target.pegawai
+                                                                    ?.nip
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                ) : (
+                                                    <td className="text-left">
+                                                        <span className="block text-gray-700">
+                                                            {
+                                                                target.divisi
+                                                                    ?.nama_divisi
+                                                            }
+                                                        </span>
+                                                        <span className="text-[10px] badge badge-ghost badge-xs">
+                                                            {
+                                                                target.divisi
+                                                                    ?.main_divisi
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                )}
+
                                                 <td className="text-left ">
                                                     <span className="block font-bold text-gray-800">
-                                                        {target.produk
-                                                            ?.nama_produk}
+                                                        {
+                                                            target.produk
+                                                                ?.nama_produk
+                                                        }
                                                     </span>
                                                     <span className="text-xs text-gray-500">
-                                                        {target.produk
-                                                            ?.kategori_produk}
+                                                        {
+                                                            target.produk
+                                                                ?.kategori_produk
+                                                        }
                                                     </span>
                                                 </td>
 
-
-                                                {/* Nilai Target */}
                                                 <td>
                                                     <span className="block">
-                                                        {target.nilai_target}
+                                                        {target.tipe_target ===
+                                                        "nominal"
+                                                            ? formatRupiah(
+                                                                  target.nilai_target,
+                                                              )
+                                                            : target.nilai_target}
                                                     </span>
                                                 </td>
 
-                                                {/* Tipe Target */}
                                                 <td>
                                                     <span className="block capitalize">
                                                         {target.tipe_target}
                                                     </span>
                                                 </td>
 
-                                                {/* Periode */}
                                                 <td>
                                                     <span className="block capitalize">
                                                         {target.periode}
                                                     </span>
                                                 </td>
 
-                                                {/* Tahun */}
                                                 <td>
                                                     <span className="block">
                                                         {target.tahun}
                                                     </span>
                                                 </td>
 
-                                                {/* Tanggal Mulai */}
                                                 <td>
                                                     <span className="block">
                                                         {moment(
@@ -284,7 +298,6 @@ export default function Index({
                                                     </span>
                                                 </td>
 
-                                                {/* Tanggal Selesai */}
                                                 <td>
                                                     <span className="block">
                                                         {moment(
@@ -293,7 +306,6 @@ export default function Index({
                                                     </span>
                                                 </td>
 
-                                                {/* Deadline Pencapaian */}
                                                 <td>
                                                     <span className="block">
                                                         {moment(
@@ -302,12 +314,8 @@ export default function Index({
                                                     </span>
                                                 </td>
 
-                                                {/* Last Updated */}
                                                 <td
-                                                    className={`font-normal text-center ${
-                                                        !showLastUpdated &&
-                                                        "hidden"
-                                                    }`}
+                                                    className={`font-normal text-center ${!showLastUpdated && "hidden"}`}
                                                 >
                                                     <span className="block">
                                                         {moment(
@@ -321,7 +329,6 @@ export default function Index({
                                                     </span>
                                                 </td>
 
-                                                {/* Aksi */}
                                                 <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
                                                     <div className="relative inline-flex group">
                                                         <button
@@ -348,7 +355,8 @@ export default function Index({
                                                                 setActiveModal
                                                             }
                                                             target={target}
-                                                            canManage={true}
+                                                            canManage={isAdminOrKacab}
+                                                            isAdmin={isAdmin}
                                                         />
                                                         <TooltipHover
                                                             message={
@@ -357,13 +365,11 @@ export default function Index({
                                                         />
                                                     </div>
 
-                                                    {/* EDIT */}
-
                                                     <div className="relative inline-flex group">
                                                         <Link
                                                             as="a"
                                                             href={route(
-                                                                "admin.target.edit",
+                                                                `${isAdmin? 'admin' : 'kacab'}.target.edit`,
                                                                 target.id,
                                                             )}
                                                             className="action-btn group/button action-btn-bermuda"
@@ -377,7 +383,6 @@ export default function Index({
                                                         />
                                                     </div>
 
-                                                    {/* DELETE */}
                                                     <div className="relative inline-flex group">
                                                         <button
                                                             onClick={() =>
@@ -404,13 +409,13 @@ export default function Index({
                                 </table>
                             </div>
 
-                            {/* Pagination */}
                             <Pagination
                                 datas={targets}
-                                urlRoute={`/admin/target`}
+                                urlRoute={`/${isAdmin ? "admin" : "kacab"}/target`}
                                 filters={{
                                     search: filtersReq.search,
-                                    byTipe: filtersReq.tipe_target,
+                                    byTipeTarget: filtersReq.tipe_target,
+                                    byTipeSatuan: filtersReq.tipe_satuan,
                                     byPeriode: filtersReq.periode,
                                 }}
                             />

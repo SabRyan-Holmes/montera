@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TransaksiRequest;
+use App\Models\Akuisisi;
 use App\Models\Produk;
 use App\Models\Transaksi;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use App\Models\User;
+use App\Services\PointCalculator;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class TransaksiController extends Controller
@@ -29,21 +32,26 @@ class TransaksiController extends Controller
         $subTitle = "";
         $params = request()->all(['search', 'byKategori', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
-
         return Inertia::render('Administrator/Transaksi/Index', [
             "title" => "Data Transaksi",
             "subTitle"  => $subTitle,
-            "canManage" => $this->user->role('Administrator'),
-            "transaksis"    => Transaksi::with(['pegawai:id,name,nip', 'produk:id,nama_produk,kode_produk,kategori_produk',  'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
-                ->filter($params)->paginate(10)->withQueryString(),
+            "canManage" => $this->user->isAdmin,
+            "transaksis"    => Transaksi::with([
+                'pegawai:id,name,nip',
+                'produk:id,nama_produk,kode_produk,kategori_produk',
+                'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
+                ->filter($params)->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byKategori"     => $params['byKategori'] ?? "",
                 "byStatus"     => $params['byStatus'] ?? "",
             ],
             "filtersList"   => [
-                "kategori" => Produk::getEnumValues('kategori'),
-                "status"   => Produk::getEnumValues('status'),
+                "kategori" => Produk::select('kategori_produk')
+                    ->distinct()
+                    ->pluck('kategori_produk')
+                    ->toArray(),
+                "status"   => ['tersedia', 'discontinued'],
             ],
         ]);
     }
@@ -53,11 +61,39 @@ class TransaksiController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Transaksi/Create', [
-            'title' => "Tambah Data Transaksi",
-            "filtersList"   => [
-                "kategori" => Transaksi::getEnumValues('kategori'),
-                "status"   => Transaksi::getEnumValues('status'),
+        // Data pendukung untuk dropdown di form
+        $pegawais = User::role('Pegawai')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
+        $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => ['value' => $p->id, 'label' => $p->nama_produk]);
+
+        // Ambil data Akuisisi yang statusnya 'verified' untuk dijadikan referensi
+        // AMBIL AKUISISI + HITUNG POIN OTOMATIS
+        $akuisisis = Akuisisi::with(['pegawai.divisi', 'produk']) // Eager load biar kenceng
+            ->where('status_verifikasi', 'verified')
+            ->get()
+            ->map(function ($a) {
+                $hitungPoin = PointCalculator::calculate($a->user, $a->produk);
+
+                return [
+                    'value' => $a->id,
+                    'label' => $a->produk->kode_produk . ' - ' .  $a->pegawai->name . ' - ' . $a->no_transaksi . ' - ' . $a->nama_nasabah,
+                    // Data pendukung buat Auto-Fill
+                    'nominal' => $a->nominal_realisasi,
+                    'produk_id' => $a->produk_id,
+                    'user_id' => $a->user_id,
+                    'tanggal' => $a->tanggal_akuisisi,
+
+                    // INI POIN HASIL HITUNGAN BACKEND
+                    'poin_otomatis' => $hitungPoin
+                ];
+            });
+
+        return Inertia::render('Administrator/Transaksi/CreateEdit', [
+            'title' => 'Tambah Transaksi Baru',
+            'isEdit' => false,
+            'filtersList' => [
+                'pegawais' => $pegawais,
+                'produks' => $produks,
+                'akuisisis' => $akuisisis
             ],
         ]);
     }
@@ -65,19 +101,27 @@ class TransaksiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TransaksiRequest $request)
     {
         $validated = $request->validated();
-        Transaksi::create($validated);
-        return Redirect::route('admin.transaksi.index')->with('message', 'Data Transaksi Berhasil Ditambahkan!');
-    }
 
+        // Ambil data relasi lagi untuk memastikan perhitungan akurat
+        $akuisisi = Akuisisi::with(['pegawai.divisi', 'produk'])->find($validated['akuisisi_id']);
+
+        // TIMPA 'poin_didapat' DENGAN KALKULATOR BACKEND
+        // Biar kalau user iseng ganti angka di frontend, tetep kena reset pakai rumus asli.
+        $validated['poin_didapat'] = PointCalculator::calculate($akuisisi->user, $akuisisi->produk);
+
+        Transaksi::create($validated);
+
+        return redirect()->route('admin.transaksi.index')->with('message', 'Data Transaksi berhasil dibuat.');
+    }
     /**
      * Display the specified resource.
      */
     public function show(Transaksi $transaksi) //Unused
     {
-        return Inertia::render('Admin/Transaksi/Show', [
+        return Inertia::render('Administrator/Transaksi/Show', [
             'title' => 'Detail Data Transaksi',
             'transaksi' => $transaksi
         ]);
@@ -88,12 +132,39 @@ class TransaksiController extends Controller
      */
     public function edit(Transaksi $transaksi)
     {
-        return Inertia::render('Admin/Transaksi/Edit', [
-            'title' => "Edit Data Transaksi",
+        $pegawais = User::role('Pegawai')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
+        $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => ['value' => $p->id, 'label' => $p->nama_produk]);
+        // AMBIL AKUISISI + HITUNG POIN OTOMATIS
+        $akuisisis = Akuisisi::with(['pegawai.divisi', 'produk']) // Eager load biar kenceng
+            ->where('status_verifikasi', 'verified')
+            ->get()
+            ->map(function ($a) {
+                // Panggil Helper Calculator di sini
+                $hitungPoin = PointCalculator::calculate($a->user, $a->produk);
+
+                return [
+                    'value' => $a->id,
+                    'label' => $a->produk->kode_produk . ' - ' .  $a->pegawai->name . ' - ' . $a->no_transaksi . ' - ' . $a->nama_nasabah,
+
+                    // Data pendukung buat Auto-Fill
+                    'nominal' => $a->nominal_realisasi,
+                    'produk_id' => $a->produk_id,
+                    'user_id' => $a->user_id,
+                    'tanggal' => $a->tanggal_akuisisi,
+
+                    // INI POIN HASIL HITUNGAN BACKEND
+                    'poin_otomatis' => $hitungPoin
+                ];
+            });
+
+        return Inertia::render('Administrator/Transaksi/CreateEdit', [
+            'title' => 'Edit Data Transaksi',
+            'isEdit' => true,
             'transaksi' => $transaksi,
-            "filtersList"   => [
-                "kategori" => Transaksi::getEnumValues('kategori'),
-                "status"   => Transaksi::getEnumValues('status'),
+            'filtersList' => [
+                'pegawais' => $pegawais,
+                'produks' => $produks,
+                'akuisisis' => $akuisisis
             ],
         ]);
     }
@@ -101,14 +172,28 @@ class TransaksiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaksi $transaksi)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(TransaksiRequest $request, Transaksi $transaksi)
     {
         $validated = $request->validated();
-        $transaksi->update($validated); // update data
-        $pegawaiOld = $transaksi->toArray(); // ambil data lama sebelum update
-        // app(LogPegawaiChangesService::class)->logChanges($pegawaiOld, $validated);
 
-        return redirect()->back()->with('message', 'Data Transaksi Berhasil Diupdate!');
+        // 1. Ambil Data Akuisisi Terkait (Fresh dari DB)
+        // Kita butuh object User dan Produk dari akuisisi yang dipilih untuk hitung poin
+        $akuisisi = Akuisisi::with(['pegawai.divisi', 'produk'])
+            ->find($validated['akuisisi_id']);
+
+        // 2. HITUNG ULANG POIN (Server Side Calculation)
+        // Walaupun di frontend sudah ada angka poin, kita timpa lagi biar aman & akurat
+        // sesuai rumus terbaru.
+        $validated['poin_didapat'] = PointCalculator::calculate($akuisisi->user, $akuisisi->produk);
+
+        // 3. Update Data
+        $transaksi->update($validated);
+
+        return redirect()->route('admin.transaksi.index')
+            ->with('message', 'Data transaksi berhasil diperbarui.');
     }
 
     /**
@@ -116,7 +201,36 @@ class TransaksiController extends Controller
      */
     public function destroy(Transaksi $transaksi)
     {
+        // Langsung hapus (Soft delete atau Hard delete tergantung model)
         $transaksi->delete();
-        return redirect()->back()->with('message', 'Data Transaksi Berhasil DiHapus!');
+
+        return redirect()->back()
+            ->with('message', 'Data transaksi berhasil dihapus.');
+    }
+
+    public function generateNoTransaksi()
+    {
+        $today = Carbon::now()->format('Ymd');
+        $prefix = "TRX-{$today}";
+
+        // Cari transaksi terakhir hari ini
+        $lastTransaction = Akuisisi::where('no_transaksi', 'like', "{$prefix}-%")
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($lastTransaction) {
+            // Ambil 4 digit terakhir (nomor urut)
+            $lastNumber = intval(substr($lastTransaction->no_transaksi, -4));
+            $newNumber = $lastNumber + 1;
+        } else {
+            // Jika belum ada transaksi hari ini
+            $newNumber = 1;
+        }
+
+        // Format ulang menjadi 4 digit (misal: 0001)
+        $formattedNumber = sprintf("%04d", $newNumber);
+        $newNoTransaksi = "{$prefix}-{$formattedNumber}";
+
+        return response()->json(['no_transaksi' => $newNoTransaksi]);
     }
 }

@@ -20,6 +20,13 @@
         "nominal": "Nilai Investasi / Premi",
         "tanggal": "Tanggal Pembelian"
     },
+    "PRODUK E-CHANEL": {
+        "nama": "Nama User / Merchant",
+        "identitas": "User ID / Kode Merchant (MID)",
+        "placeholder_identitas": "Masukkan User ID atau MID",
+        "nominal": "Saldo Awal / Volume Transaksi",
+        "tanggal": "Tanggal Aktivasi / Approval"
+    },
     "DEFAULT": {
         "nama": "Nama Nasabah",
         "identitas": "No. Identitas / Rekening",

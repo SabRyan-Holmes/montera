@@ -7,6 +7,7 @@ import DetailTarget from "./DetailTarget";
 export default function ShowModal({
     target,
     setActiveModal,
+    isAdmin,
     handleDelete,
     canManage = false,
 }) {
@@ -37,7 +38,10 @@ export default function ShowModal({
                 <div className="fixed z-50 flex gap-4 scale-110 -translate-x-1/2 bottom-14 left-1/2">
                     <SecondaryButton
                         asLink
-                        href={route("admin.target.edit", target.id)}
+                        href={route(
+                            `${isAdmin ? "admin" : "kacab"}.target.edit`,
+                            target.id,
+                        )}
                     >
                         <FaEdit className="w-4 h-4 mr-1 " />
                         Edit Data

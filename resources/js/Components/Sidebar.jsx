@@ -46,9 +46,9 @@ const Sidebar = ({ user, isCollapsed }) => {
                     <span className="text-lg font-bold tracking-wide text-white">
                         Bank XYZ
                     </span>
-                    <span className="text-[10px] font-medium text-primary/80 uppercase tracking-widest">
+                    {/* <span className="text-[10px] font-medium text-primary/80 uppercase tracking-widest">
                         Montera
-                    </span>
+                    </span> */}
                 </div>
             </div>
 

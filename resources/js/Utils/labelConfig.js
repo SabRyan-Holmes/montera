@@ -24,13 +24,21 @@ export const LABEL_CONFIG = {
         tanggal: "Tgl Pembelian",
         extra1: "Nomor Polis",
     },
-    "DEFAULT": {
+    "PRODUK E-CHANEL": {
+        nama: "Nama User/Merchant",
+        identitas: "User ID / MID",
+        nominal: "Jumlah Transaksi (Opsional)",
+        tanggal: "Tgl Aktivasi",
+        extra1: "ID / Kode",
+    },
+
+    DEFAULT: {
         nama: "Nama Nasabah",
         identitas: "No. Identitas",
         nominal: "Nominal (Rp)",
         tanggal: "Tanggal Akuisisi",
         extra1: "No. Identitas",
-    }
+    },
 };
 
 export const getLabelByKategori = (kategori) => {

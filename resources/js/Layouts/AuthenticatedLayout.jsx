@@ -6,6 +6,8 @@ import useSwal from "@/Hooks/UseSwal";
 import moment from "moment/min/moment-with-locales";
 
 export default function Authenticated({ user, title, children }) {
+    moment.locale("id");
+
     useSwal();
     // 1. UBAH STATE: Cek LocalStorage dulu saat inisialisasi
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
@@ -23,7 +25,6 @@ export default function Authenticated({ user, title, children }) {
             return newState;
         });
     };
-    moment.locale("id");
 
     return (
         <section className="flex h-screen overflow-hidden font-sans text-gray-900 bg-gray-50">

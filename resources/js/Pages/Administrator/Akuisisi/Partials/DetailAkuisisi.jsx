@@ -2,10 +2,12 @@ import { StatusLabel } from "@/Components";
 import moment from "moment/min/moment-with-locales";
 
 import { useState } from "react";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa6";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
 
 export default function DetailAkuisisi({ akuisisi, collapse = true }) {
-      moment.locale("id");
+    moment.locale("id");
     const [isCollapsed, setIsCollapsed] = useState(collapse);
     const RowData = ({ label, value }) => (
         <tr>
@@ -13,7 +15,21 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
             <td className="text-base font-normal">{value}</td>
         </tr>
     );
-    moment.locale("id");
+
+    // Asumsi di controller sudah ada storage link atau dikirim full URL
+    const getFileUrl = (path) => {
+        if (!path) return "#";
+        // Jika path sudah full URL (http...), pakai langsung.
+        // Jika cuma 'bukti_akuisisi/abc.pdf', tambahkan prefix storage
+        return path.startsWith("http") ? path : `/storage/${path}`;
+    };
+
+    // [BARU] Helper: Ambil Nama File doang (Hapus nama folder)
+    const getFileName = (path) => {
+        if (!path) return "";
+        // Contoh: "bukti_akuisisi/file_rahasia.pdf" -> jadi "file_rahasia.pdf"
+        return path.split("/").pop();
+    };
 
     return (
         <table className="table w-full text-base table-bordered">
@@ -80,13 +96,43 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
                             value={akuisisi.nominal_realisasi ?? "-"}
                         />
 
+                        {/* --- LAMPIRAN BUKTI (NEW) --- */}
+                        <tr>
+                            <td>Lampiran Bukti</td>
+                            <td className="text-base font-normal">
+                                {akuisisi.lampiran_bukti ? (
+                                    <a
+                                        href={getFileUrl(
+                                            akuisisi.lampiran_bukti,
+                                        )}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors"
+                                        title="Buka File PDF"
+                                    >
+                                        <FaFilePdf className="w-4 h-4" />
+                                        <span>
+                                            {getFileName(
+                                                akuisisi.lampiran_bukti,
+                                            )}
+                                        </span>
+                                        <FaExternalLinkAlt className="w-3 h-3 ml-1 opacity-50" />
+                                    </a>
+                                ) : (
+                                    <span className="italic text-gray-400">
+                                        - Tidak ada lampiran -
+                                    </span>
+                                )}
+                            </td>
+                        </tr>
+
                         {/* Tanggal Akuisisi */}
                         <RowData
                             label="Tanggal Akuisisi"
                             value={
                                 akuisisi.tanggal_akuisisi
                                     ? moment(akuisisi.tanggal_akuisisi).format(
-                                          "LL"
+                                          "LL",
                                       )
                                     : "-"
                             }
@@ -102,6 +148,15 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
                                         status={akuisisi.status_verifikasi}
                                     />
                                 </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Catatan Revisi</td>
+                            <td className="text-base font-normal ">
+                                <span className="italic text-gray-400">
+                                    - Belum Ada Catatan -
+                                </span>
                             </td>
                         </tr>
 
@@ -128,9 +183,9 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
                             value={
                                 akuisisi.updated_at
                                     ? `${moment(akuisisi.updated_at).format(
-                                          "LL"
+                                          "LL",
                                       )} (${moment(
-                                          akuisisi.updated_at
+                                          akuisisi.updated_at,
                                       ).fromNow()})`
                                     : "-"
                             }

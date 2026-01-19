@@ -32,6 +32,7 @@ class ProdukController extends Controller
         return Inertia::render('Administrator/Produk/Index', [
             "title" => "Data Produk",
             "subTitle"  => $subTitle,
+            "canManage" => $this->user->isAdmin,
             "produks" => Produk::filter($params)->latest()->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
@@ -59,7 +60,7 @@ class ProdukController extends Controller
             'title' => "Tambah Data Produk",
             'filtersList' => [
 
-                "kategori" => \App\Models\Produk::select('kategori_produk')
+                "kategori" => Produk::select('kategori_produk')
                     ->distinct()
                     ->orderBy('kategori_produk')
                     ->pluck('kategori_produk')

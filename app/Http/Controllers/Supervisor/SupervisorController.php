@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TargetStoreUpdateRequest;
 use App\Models\Akuisisi;
 use App\Models\Produk;
+use App\Models\Target;
 use App\Models\Transaksi;
 use App\Models\User;
 use App\Services\PointCalculator;
@@ -16,12 +17,11 @@ use Inertia\Inertia;
 
 class SupervisorController extends Controller
 {
-    protected $user, $role;
+    protected $user;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $this->user = auth_sso();
-            $this->role = $this->user->jabatan->nama_jabatan;
             return $next($request);
         });
     }
@@ -33,7 +33,7 @@ class SupervisorController extends Controller
         return Inertia::render('Supervisor/Verifikasi/Index', [
             "title" => "Verifikasi Data Akuisisi Tim Saya",
             "subTitle"  => $subTitle,
-            "canApprove" => $this->role === "Supervisor",
+            "canApprove" => $this->user->hasRole('Supervisor'),
             "akuisisis" => Akuisisi::query()
                 ->with(['pegawai:id,name', 'produk:id,nama_produk,kategori_produk', 'verifikator:id,name', 'supervisor:id,name'])
                 ->myTeamFromSPV($this->user)
@@ -88,11 +88,51 @@ class SupervisorController extends Controller
         return Redirect::back()->with('message', 'Pengajuan berhasil ditolak dan dikembalikan ke pegawai.');
     }
 
+    public function target_divisi(Request $request)
+    {
+
+        $user = $request->user(); // Atau $this->user jika pakai middleware constructor
+
+        // 1. FILTER PARAMS
+        // Hapus default 'Semua Kategori' agar saat awal load nilainya null (tampil semua)
+
+        $filters = $request->only(['search', 'tahun', 'periode']);
+        $subTitle = GetSubtitle::getSubtitle(
+            search: $filters['search'] ?? null,
+            byPeriode: $filters['periode'] ?? null, // 'periode' masuk ke '$byPeriode'
+            byTahun: $filters['tahun'] ?? null      // 'tahun' masuk ke '$byTahun'
+        );
+
+
+
+        // 2. QUERY DATA
+        // Menggunakan scopeToDivision (filter divisi user) dan scopeFilter (pencarian/tahun/periode)
+        $data = Target::toDivision($user)
+            ->with(['divisi:id,nama_divisi,main_divisi', 'produk:id,nama_produk,kategori_produk,satuan']) // Eager load relasi
+            ->filter($filters)
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // Pengganti ->appends($params) yg lebih modern di Laravel
+
+        // 3. RETURN INERTIA
+        return Inertia::render('Supervisor/TargetDivisi/Index', [
+            "title"       => "Target Kerja Tim",
+            "targets"     => $data,
+            'subTitle' =>   $subTitle,
+            "filtersReq"  => $filters,
+            // List opsi dropdown untuk FilterSearchCustom
+            "filtersList" => [
+                "periode" => ['mingguan', 'bulanan', 'tahunan'],
+                "tahun"   => Target::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun'),
+            ],
+        ]);
+    }
+
 
     public function team(Request $request)
     {
         $user  = $this->user;
-        $tahun = $request->input('tahun', date('Y'));
+        $tahun = $request->input('tahun');
 
         // Panggil Scope User::myTeam yang baru dibuat
         $teamMembers = User::myTeam($user)
@@ -169,7 +209,7 @@ class SupervisorController extends Controller
         // 1. VALIDASI AKSES (Authorization)
         // Logic Baru: Cek apakah Saya (Supervisor) punya Target ke Pegawai ini?
         // Kita gunakan exists() agar query-nya ringan (return boolean)
-        $isMyTeam = \App\Models\Target::where('user_id', $user->id)
+        $isMyTeam = Target::where('user_id', $user->id)
             ->where('supervisor_id', $this->user->id)
             ->exists();
 
@@ -181,7 +221,7 @@ class SupervisorController extends Controller
         // 2. QUERY DATA (History Akuisisi yang Sukses)
         // Sebaiknya query ke model 'Akuisisi' langsung agar field 'nama_nasabah' valid
         // (Karena tabel Transaksi biasanya tidak menyimpan nama nasabah, melainkan relasi ke akuisisi)
-        $history = \App\Models\Akuisisi::where('user_id', $user->id)
+        $history = Akuisisi::where('user_id', $user->id)
             ->with('produk') // Eager load produk
             ->where('status_verifikasi', 'verified') // Hanya yang sudah cair
             ->latest('tanggal_akuisisi') // Urutkan berdasarkan tanggal realisasi bisnis

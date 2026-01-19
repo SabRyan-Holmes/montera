@@ -87,12 +87,12 @@ export default function Index({
                         <FilterSearchCustom
                             routeName={`/spv/target-tim`}
                             initialFilters={{
-                                byTipe: filtersReq.tipe,
+                                byTipeSatuan: filtersReq.tipe,
                                 byStatus: filtersReq.status,
                             }}
                             filtersConfig={[
                                 {
-                                    name: "byTipe",
+                                    name: "byTipeSatuan",
                                     label: "Tipe Target ",
                                     options: filtersList.tipe_target,
                                 },
@@ -397,7 +397,7 @@ export default function Index({
                                 urlRoute={`/spv/target-tim`}
                                 filters={{
                                     search: filtersReq.search,
-                                    byTipe: filtersReq.tipe_target,
+                                    byTipeSatuan: filtersReq.tipe_target,
                                     byPeriode: filtersReq.periode,
                                 }}
                             />

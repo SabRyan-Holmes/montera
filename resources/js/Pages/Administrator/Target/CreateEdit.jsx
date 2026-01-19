@@ -11,6 +11,7 @@ import { RiArrowGoBackFill } from "react-icons/ri";
 import { HiDocumentPlus } from "react-icons/hi2";
 import TextInput from "@/Components/TextInput";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
+import { useState } from "react";
 
 // Props 'target' akan dikirim dari Controller Edit method (kosong saat create)
 export default function CreateEdit({
@@ -19,15 +20,16 @@ export default function CreateEdit({
     title,
     defaultValues,
     target = null,
-    canManage,
+    isAdmin,
+    isSPV,
+    isAdminOrKacab, //baru
 }) {
-    // Tentukan Mode: Edit jika 'target' ada, Create jika null
-    // alert(canManage)
     const isEdit = !!target;
 
     // Inisialisasi form
     const { data, setData, post, patch, processing, errors } = useForm({
         user_id: target?.user_id || defaultValues?.user_id || "",
+        divisi_id: target?.divisi_id || "",
         supervisor_id: defaultValues?.supervisor_id,
         produk_id: target?.produk_id || defaultValues?.produk_id || "",
         nilai_target: target?.nilai_target || "",
@@ -45,9 +47,11 @@ export default function CreateEdit({
     const submit = (e) => {
         e.preventDefault();
 
-        // 1. Tentukan prefix route: 'admin' atau 'spv'
-        const prefix = canManage ? "admin.target" : "spv.target-tim";
-
+        const prefix = isAdmin
+        ? "admin.target"
+        : isSPV
+        ? "spv.target-tim"
+        : "kacab.target";
         if (isEdit) {
             // Mode Edit: Method PATCH ke route update
             patch(route(`${prefix}.update`, target.id));
@@ -56,6 +60,24 @@ export default function CreateEdit({
             post(route(`${prefix}.store`));
         }
     };
+
+    // [LOGIC BARU] State untuk Toggle Mode (Default 'pegawai' kecuali sedang edit data divisi)
+    const [targetScope, setTargetScope] = useState(
+        data.divisi_id ? "divisi" : "pegawai",
+    );
+
+    // Handler saat Toggle diklik
+    const handleScopeChange = (mode) => {
+        setTargetScope(mode);
+
+        // [RESET LOGIC] Otomatis hapus nilai seberang biar bersih tanpa refresh
+        if (mode === "divisi") {
+            setData((data) => ({ ...data, user_id: "", divisi_id: "" })); // Reset user, siap isi divisi
+        } else {
+            setData((data) => ({ ...data, divisi_id: "", user_id: "" })); // Reset divisi, siap isi user
+        }
+    };
+    console.error(errors)
     return (
         <Authenticated
             user={auth.user}
@@ -114,7 +136,128 @@ export default function CreateEdit({
                                 </thead>
                                 <tbody>
                                     {/* [TAMBAHAN] FIELD SUPERVISOR (Hanya Admin) */}
-                                    {canManage && (
+
+                                    {isAdminOrKacab && (
+                                        <tr className="border bg-blue-50/50">
+                                            <td className="w-1/4 font-medium text-blue-800 bg-blue-50">
+                                                Jenis Target
+                                            </td>
+                                            <td className="p-3">
+                                                <div className="flex gap-6">
+                                                    {/* Opsi 1: Individu */}
+                                                    <label className="flex items-center gap-2 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="scope"
+                                                            className="radio radio-primary radio-sm"
+                                                            checked={
+                                                                targetScope ===
+                                                                "pegawai"
+                                                            }
+                                                            onChange={() =>
+                                                                handleScopeChange(
+                                                                    "pegawai",
+                                                                )
+                                                            }
+                                                        />
+                                                        <span className="font-medium text-gray-700">
+                                                            Perorangan (Pegawai)
+                                                        </span>
+                                                    </label>
+
+                                                    {/* Opsi 2: Tim/Divisi */}
+                                                    <label className="flex items-center gap-2 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="scope"
+                                                            className="radio radio-primary radio-sm"
+                                                            checked={
+                                                                targetScope ===
+                                                                "divisi"
+                                                            }
+                                                            onChange={() =>
+                                                                handleScopeChange(
+                                                                    "divisi",
+                                                                )
+                                                            }
+                                                        />
+                                                        <span className="font-medium text-gray-700">
+                                                            Satu Tim (Divisi)
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+
+                                    {/* 1. INPUT PEGAWAI (Muncul jika scope pegawai ATAU bukan admin) */}
+                                    {(targetScope === "pegawai" ||
+                                        !isAdminOrKacab) && (
+                                        <tr className="border">
+                                            <td className="w-1/4 font-medium bg-gray-50">
+                                                Target Pegawai
+                                            </td>
+                                            <td className="p-2">
+                                                <SelectInput
+                                                    id="user_id"
+                                                    value={data.user_id}
+                                                    className="w-full"
+                                                    placeholder="-- Pilih Pegawai --"
+                                                    options={optionList.pegawai}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "user_id",
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                                <InputError
+                                                    message={errors.user_id}
+                                                    className="mt-1"
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
+
+                                    {/* 2. INPUT DIVISI (Hanya Muncul jika scope Divisi DAN Admin) */}
+                                    {targetScope === "divisi" &&
+                                        isAdminOrKacab && (
+                                            <tr className="border">
+                                                <td className="font-medium bg-gray-50">
+                                                    Target Divisi
+                                                </td>
+                                                <td className="p-2">
+                                                    <SelectInput
+                                                        id="divisi_id"
+                                                        value={data.divisi_id}
+                                                        className="w-full"
+                                                        placeholder="-- Pilih Divisi --"
+                                                        options={
+                                                            optionList.divisi
+                                                        }
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "divisi_id",
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                    />
+                                                    <InputError
+                                                        message={
+                                                            errors.divisi_id
+                                                        }
+                                                        className="mt-1"
+                                                    />
+                                                    <p className="mt-1 text-xs text-blue-500">
+                                                        *Target ini akan berlaku
+                                                        untuk satu tim divisi
+                                                        tersebut.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        )}
+
+                                    {isAdmin && (
                                         <tr className="border">
                                             <td className="w-1/4 font-medium bg-gray-50">
                                                 Supervisor
@@ -148,36 +291,6 @@ export default function CreateEdit({
                                             </td>
                                         </tr>
                                     )}
-                                    <InputError
-                                        message={errors.supervisor_id}
-                                        className="mt-1"
-                                    />
-
-                                    {/* --- 1. PEGAWAI --- */}
-                                    <tr className="border">
-                                        <td className="w-1/4 font-medium bg-gray-50">
-                                            Pegawai Target
-                                        </td>
-                                        <td className="p-2">
-                                            <SelectInput
-                                                id="user_id"
-                                                value={data.user_id}
-                                                className="w-full"
-                                                placeholder="-- Pilih Pegawai --"
-                                                options={optionList.pegawai}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "user_id",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                            <InputError
-                                                message={errors.user_id}
-                                                className="mt-1"
-                                            />
-                                        </td>
-                                    </tr>
 
                                     {/* --- 2. PRODUK --- */}
                                     <tr className="border">

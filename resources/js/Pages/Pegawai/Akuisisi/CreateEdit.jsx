@@ -8,69 +8,63 @@ import {
 } from "@/Components";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { FaCheck, FaPlus, FaFileMedical } from "react-icons/fa6";
+import { useState } from "react";
+import { FaPlus, FaFileContract, FaPenToSquare, FaLock } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
-import { HiDocumentPlus } from "react-icons/hi2";
 import TextInput from "@/Components/TextInput";
 import axios from "axios";
 import useDynamicLabels from "@/Hooks/UseDynamicLabels";
 import CategoryModal from "./Partials/CategoryModal";
-import { FaExchangeAlt } from "react-icons/fa";
-
-export default function Create({ auth, filtersList, title }) {
+import { FaExchangeAlt, FaSave } from "react-icons/fa";
+import { getFileUrl, getFileName } from "@/Utils/fileUtils";
+export default function CreateEdit({
+    auth,
+    filtersList,
+    title,
+    akuisisi = null,
+    isEdit = false,
+}) {
     const { data, setData, post, processing, errors } = useForm({
-        no_transaksi: "",
-        produk_id: "",
-        nama_nasabah: "",
-        no_identitas_nasabah: "",
-        nominal_realisasi: "",
-        tanggal_akuisisi: new Date().toISOString().split("T")[0],
+        no_transaksi: akuisisi?.no_transaksi || "",
+        user_id: akuisisi?.user_id || "",
+        produk_id: akuisisi?.produk_id || "",
+        nama_nasabah: akuisisi?.nama_nasabah || "",
+        no_identitas_nasabah: akuisisi?.no_identitas_nasabah || "",
+        nominal_realisasi: akuisisi?.nominal_realisasi || "",
+        tanggal_akuisisi:
+            akuisisi?.tanggal_akuisisi ||
+            new Date().toISOString().split("T")[0],
+        supervisor_id: akuisisi?.supervisor_id || "",
         lampiran_bukti: null,
+        _method: isEdit ? "PUT" : "POST",
+        delete_file: false,
     });
-
-    console.error("tess");
-    console.error(useDynamicLabels());
     const submit = (e) => {
         e.preventDefault();
-        // Gunakan forceFormData jika mengirim file lampiran
-        post(route("pegawai.akuisisi.store"), {
-            forceFormData: true,
-        });
+        if (isEdit) {
+            post(route("pegawai.akuisisi.update", akuisisi.id));
+        } else {
+            post(route("pegawai.akuisisi.store"));
+        }
     };
-
-    // 1. State untuk Label Dinamis (Default general)
     const { labels, setCategory } = useDynamicLabels();
-
-    // 2. Handler saat Produk Dipilih
     const handleProductChange = (e) => {
         const selectedId = e.target.value;
         setData("produk_id", selectedId);
-
-        // Cari data produk
         const selectedProduct = filtersList.produks.find(
             (p) => String(p.value) === String(selectedId),
         );
-
-        // Panggil function dari hooks
         if (selectedProduct) {
             setCategory(selectedProduct.kategori);
         } else {
             setCategory("DEFAULT");
         }
     };
-
     const [generating, setGenerating] = useState(false);
-
     const handleGenerateNumber = async () => {
         setGenerating(true);
         try {
-            // Panggil endpoint yang kita buat tadi
-            const response = await axios.get(
-                route("pegawai.akuisisi.generate-tn"),
-            );
-
-            // Update data form Inertia
+            const response = await axios.get(route("shared.generate-tn"));
             setData("no_transaksi", response.data.no_transaksi);
         } catch (error) {
             console.error("Gagal generate nomor", error);
@@ -79,24 +73,30 @@ export default function Create({ auth, filtersList, title }) {
             setGenerating(false);
         }
     };
-
-    const [showCategoryModal, setShowCategoryModal] = useState(true); // Default true agar muncul saat load
-    const [selectedCategory, setSelectedCategory] = useState(null); // Menyimpan kategori yang dipilih user
-
+    const getInitialCategory = () => {
+        if (isEdit && akuisisi && filtersList.produks) {
+            const foundProduct = filtersList.produks.find(
+                (p) => p.value === akuisisi.produk_id,
+            );
+            return foundProduct ? foundProduct.kategori : null;
+        }
+        return null;
+    };
+    const [selectedCategory, setSelectedCategory] =
+        useState(getInitialCategory());
+    const [showCategoryModal, setShowCategoryModal] = useState(!isEdit);
     const filteredProducts = selectedCategory
         ? filtersList.produks.filter(
               (p) => p.kategori?.toUpperCase() === selectedCategory,
           )
         : [];
-
-    // Handler ini TETAP DISINI karena dia ngubah State milik Create
     const handleCategorySelect = (categoryId) => {
         setSelectedCategory(categoryId);
         setCategory(categoryId);
         setData("produk_id", "");
         setShowCategoryModal(false);
     };
-
+    console.error(errors);
     return (
         <Authenticated
             user={auth.user}
@@ -114,16 +114,16 @@ export default function Create({ auth, filtersList, title }) {
                             <li>
                                 <a
                                     href={route("pegawai.akuisisi.index")}
-                                    className="inline-flex items-center gap-2 "
+                                    className="inline-flex items-center gap-2"
                                 >
-                                    <HiDocumentPlus className="w-4 h-4 stroke-current" />
-                                    <span>Laporan Akuisisi</span>
+                                    <FaFileContract className="w-4 h-4 stroke-current" />
+                                    <span>Data Akuisisi</span>
                                 </a>
                             </li>
                             <li>
-                                <span className="inline-flex items-center gap-2">
-                                    <FaPlus className="w-4 h-4 stroke-current" />
-                                    {title}
+                                <span className="inline-flex items-center gap-2 font-semibold">
+                                    {isEdit ? <FaPenToSquare /> : <FaPlus />}
+                                    <span>{title}</span>
                                 </span>
                             </li>
                         </ul>
@@ -142,102 +142,63 @@ export default function Create({ auth, filtersList, title }) {
                         <div className="overflow-hidden border border-gray-200 shadow-sm rounded-xl">
                             <table className="table text-base table-bordered ">
                                 <thead>
-                                    <tr className="text-lg bg-primary/70">
-                                        <th colSpan={2}>Form Input Akuisisi</th>
+                                    <tr
+                                        className={`text-lg text-white ${isEdit ? "bg-secondary/80" : "bg-primary/90"}`}
+                                    >
+                                        <th colSpan={2}>
+                                            {isEdit
+                                                ? "Edit Laporan Akuisisi"
+                                                : "Form Input Akuisisi"}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr className="border">
-                                        <td width="40%" className="px-4 py-2">
-                                            No. Transaksi / Referensi
+                                        <td
+                                            width="40%"
+                                            className="px-4 py-2 font-medium bg-gray-50"
+                                        >
+                                            No. Transaksi
                                         </td>
                                         <td
-                                            className="px-4 py-2 border-x"
                                             width="60%"
+                                            className="px-4 py-2 border-x"
                                         >
-                                            <div className="flex items-center gap-2">
-                                                {/* Input Field */}
-                                                <div className="flex-grow">
-                                                    <TextInput
-                                                        type="text"
-                                                        value={
-                                                            data.no_transaksi
-                                                        }
-                                                        disabled
-                                                        className="w-full px-2 h-9 bg-gray-50" // bg-gray-50 memberitahu user ini auto, tapi masih bisa diedit
-                                                        onChange={(e) =>
-                                                            setData(
-                                                                "no_transaksi",
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        placeholder="Klik tombol generate..."
-                                                    />
+                                            <div className="relative w-full">
+                                                {/* Ikon Gembok (Visual Cue) */}
+                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                                    <FaLock className="text-gray-400" />
                                                 </div>
 
-                                                {/* Tombol Generate */}
-                                                <button
-                                                    type="button"
-                                                    onClick={
-                                                        handleGenerateNumber
+                                                {/* Input Readonly */}
+                                                <input
+                                                    type="text"
+                                                    disabled
+                                                    readOnly
+                                                    className="w-full h-10 pl-10 pr-3 text-sm italic text-gray-500 bg-gray-100 border-gray-300 rounded-md cursor-not-allowed focus:ring-0 focus:border-gray-300"
+                                                    value={
+                                                        // Jika mode edit & nomor sudah ada, tampilkan. Jika create, tampilkan text otomatis
+                                                        isEdit &&
+                                                        data.no_transaksi
+                                                            ? data.no_transaksi
+                                                            : "Otomatis oleh Sistem (TRX-...)"
                                                     }
-                                                    disabled={generating}
-                                                    className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all"
-                                                    title="Generate Nomor Baru"
-                                                >
-                                                    {generating ? (
-                                                        // Spinner Loading sederhana
-                                                        <svg
-                                                            className="w-4 h-4 animate-spin"
-                                                            viewBox="0 0 24 24"
-                                                        >
-                                                            <circle
-                                                                className="opacity-25"
-                                                                cx="12"
-                                                                cy="12"
-                                                                r="10"
-                                                                stroke="currentColor"
-                                                                strokeWidth="4"
-                                                                fill="none"
-                                                            ></circle>
-                                                            <path
-                                                                className="opacity-75"
-                                                                fill="currentColor"
-                                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                            ></path>
-                                                        </svg>
-                                                    ) : (
-                                                        <>
-                                                            {/* Icon Refresh/Generate */}
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                strokeWidth={
-                                                                    1.5
-                                                                }
-                                                                stroke="currentColor"
-                                                                className="w-4 h-4 mr-1"
-                                                            >
-                                                                <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                                                                />
-                                                            </svg>
-                                                            Generate
-                                                        </>
-                                                    )}
-                                                </button>
+                                                />
                                             </div>
 
+                                            {/* Helper Text */}
+                                            <p className="mt-1 text-xs text-blue-500">
+                                                *Nomor transaksi akan digenerate
+                                                otomatis setelah data disimpan.
+                                            </p>
+
+                                            {/* Error Message (Just in case) */}
                                             <InputError
                                                 message={errors.no_transaksi}
-                                                className="mt-2"
+                                                className="mt-1"
                                             />
                                         </td>
                                     </tr>
-
                                     <tr className="border">
                                         <td className="px-4 py-2">
                                             Pilih Produk
@@ -252,13 +213,13 @@ export default function Create({ auth, filtersList, title }) {
                                                         placeholder={`-- Pilih Produk ${selectedCategory ? `(${selectedCategory})` : ""} --`}
                                                         options={
                                                             filteredProducts
-                                                        } // Gunakan list yang sudah difilter
+                                                        }
                                                         onChange={
                                                             handleProductChange
                                                         }
                                                         disabled={
                                                             !selectedCategory
-                                                        } // Disable jika belum pilih kategori
+                                                        }
                                                     />
                                                     <InputError
                                                         message={
@@ -267,7 +228,6 @@ export default function Create({ auth, filtersList, title }) {
                                                         className="mt-1"
                                                     />
                                                 </div>
-                                                {/* Tombol Ganti Kategori */}
 
                                                 <div className="relative inline-flex group">
                                                     <button
@@ -279,20 +239,18 @@ export default function Create({ auth, filtersList, title }) {
                                                         }
                                                         className="action-btn group action-btn-bermuda"
                                                     >
-                                                         <FaExchangeAlt className="scale-125 group-hover:fill-white" />
+                                                        <FaExchangeAlt className="group-hover:fill-white" />
                                                     </button>
                                                     <TooltipHover
-                                                        message={"Ganti Kategori Produk"}
+                                                        message={
+                                                            "Ganti Kategori Produk"
+                                                        }
                                                     />
                                                 </div>
-
                                             </div>
                                         </td>
                                     </tr>
-
-                                    <tr className="border bg-yellow-50/30">
-                                        {" "}
-                                        {/* Kasih background dikit biar beda (opsional) */}
+                                    <tr className="border ">
                                         <td className="">Verifikator</td>
                                         <td className="border-x">
                                             <SelectInput
@@ -302,7 +260,7 @@ export default function Create({ auth, filtersList, title }) {
                                                 placeholder="-- Pilih Supervisor sebagai Verifikator --"
                                                 options={
                                                     filtersList.supervisors
-                                                } // Data dari backend
+                                                }
                                                 onChange={(e) =>
                                                     setData(
                                                         "supervisor_id",
@@ -320,7 +278,6 @@ export default function Create({ auth, filtersList, title }) {
                                             </p>
                                         </td>
                                     </tr>
-                                    {/* ANCHOR */}
                                     <tr className="border">
                                         <td className="">{labels.nama}</td>
                                         <td className="border-x">
@@ -342,7 +299,6 @@ export default function Create({ auth, filtersList, title }) {
                                             />
                                         </td>
                                     </tr>
-
                                     <tr className="border">
                                         <td className="">{labels.identitas}</td>
                                         <td className="border-x">
@@ -370,7 +326,6 @@ export default function Create({ auth, filtersList, title }) {
                                             />
                                         </td>
                                     </tr>
-
                                     <tr className="border">
                                         <td className="">{labels.nominal}</td>
                                         <td className="border-x">
@@ -394,7 +349,6 @@ export default function Create({ auth, filtersList, title }) {
                                             />
                                         </td>
                                     </tr>
-
                                     <tr className="border">
                                         <td className="">{labels.tanggal}</td>
                                         <td className="border-x">
@@ -417,43 +371,108 @@ export default function Create({ auth, filtersList, title }) {
                                             />
                                         </td>
                                     </tr>
-
                                     <tr className="border">
-                                        <td className="">
-                                            Lampiran Bukti (Opsional)
+                                        <td>
+                                            Lampiran Bukti <br />
+                                            <span className="text-xs font-normal text-gray-400">
+                                                (Foto/PDF, Max 2MB)
+                                            </span>
                                         </td>
                                         <td className="p-4 border-x">
-                                            {" "}
-                                            {/* Tambahkan padding agar cantik */}
-                                            {/* PENGGUNAAN KOMPONEN BARU */}
+                                            {isEdit &&
+                                                akuisisi?.lampiran_bukti &&
+                                                !data.delete_file && (
+                                                    <div className="p-3 mb-4 border border-blue-100 rounded-md bg-blue-50">
+                                                        <p className="mb-2 text-xs font-semibold text-gray-500">
+                                                            File Tersimpan:
+                                                        </p>
+                                                        <div className="flex items-center gap-2">
+                                                            <a
+                                                                href={getFileUrl(
+                                                                    akuisisi.lampiran_bukti,
+                                                                )}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center flex-grow gap-2 px-3 py-2 text-sm font-medium text-blue-700 truncate transition-colors bg-white border border-blue-200 rounded-md hover:bg-blue-50"
+                                                                title="Klik untuk melihat file"
+                                                            >
+                                                                <FaFilePdf className="flex-shrink-0 w-4 h-4 text-red-500" />
+                                                                <span className="break-all truncate">
+                                                                    {getFileName(
+                                                                        akuisisi.lampiran_bukti,
+                                                                    )}
+                                                                </span>
+                                                                <FaExternalLinkAlt className="flex-shrink-0 w-3 h-3 ml-auto opacity-50" />
+                                                            </a>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={
+                                                                    handleDeleteExistingFile
+                                                                }
+                                                                className="flex-shrink-0 p-2 text-red-600 transition-colors bg-white border border-red-200 rounded-md hover:bg-red-50 hover:text-red-700"
+                                                                title="Hapus file ini"
+                                                            >
+                                                                <FaTrashAlt className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                            {data.delete_file && (
+                                                <div className="flex items-center gap-1 mb-3 text-xs italic text-red-500">
+                                                    <FaTrashAlt /> File lama
+                                                    akan dihapus saat disimpan.
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setData(
+                                                                "delete_file",
+                                                                false,
+                                                            )
+                                                        }
+                                                        className="ml-2 text-blue-600 underline hover:text-blue-800"
+                                                    >
+                                                        Batal Hapus
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            <p className="mb-1 text-xs text-gray-600">
+                                                {data.delete_file
+                                                    ? "Upload pengganti (Opsional):"
+                                                    : "Ganti file (Opsional):"}
+                                            </p>
                                             <FileInput
                                                 name="lampiran_bukti"
                                                 accept=".pdf"
-                                                file={data.lampiran_bukti} // Passing state file saat ini
-                                                error={errors.lampiran_bukti} // Passing error dari Laravel
+                                                file={data.lampiran_bukti}
+                                                error={errors.lampiran_bukti}
                                                 onChange={(file) =>
                                                     setData(
                                                         "lampiran_bukti",
                                                         file,
                                                     )
-                                                } // Update state
+                                                }
                                             />
-                                            {/* Tidak perlu InputError manual di sini jika sudah di handle komponen,
-                    tapi kalau mau double protection boleh saja dihapus props error di atas */}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="flex justify-center w-full my-4 ">
+                        <div className="flex justify-center w-full my-6">
                             <SuccessButton
                                 type="submit"
                                 disabled={processing}
-                                className="gap-1 text-base border"
+                                className={`gap-2 text-base border text-white ${isEdit ? "bg-secondary/80 hover:bg-secondary border-secondary/80" : ""}`}
                             >
-                                <span>Kirim Laporan</span>
-                                <FaCheck className="w-4 h-4 fill-white" />
+                                <FaSave className="w-4 h-4" />
+                                <span>
+                                    {isEdit
+                                        ? "Simpan Perubahan"
+                                        : "Simpan Laporan"}
+                                </span>
                             </SuccessButton>
                         </div>
                     </form>

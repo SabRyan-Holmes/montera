@@ -28,14 +28,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['authOrSSO'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     // --- SHARED (All Actor) ---
     Route::prefix('shared')->name('shared.')->group(function () {
-        Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data
-        Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/generate-transaction-number', [TransaksiController::class, 'generateNoTransaksi'])
+            ->name('generate-tn');
+        // Route::get('/dashboard/export-csv', [DashboardController::class, 'exportCsv'])->name('export-csv'); // Export Data
+        // Route::get('/dashboard/export-excel', [DashboardController::class, 'exportExcel'])->name('export-excel');
     });
 
     // --- ADMIN (Data Master) ---
@@ -56,9 +57,7 @@ Route::middleware('auth')->group(function () {
     // --- PEGAWAI (Operasional) ---
     Route::middleware('role:Pegawai')->prefix('pegawai')->name('pegawai.')->group(function () {
         Route::get('/target', [PegawaiController::class, 'target'])->name('target'); // Monitoring Pribadi
-        Route::resource('akuisisi', AkuisisiController::class)->only(['index', 'create', 'store', 'update']);
-        Route::get('/akuisisi/generate-transaction-number', [PegawaiController::class, 'generateNoTransaksi'])
-            ->name('akuisisi.generate-tn');
+        Route::resource('akuisisi', AkuisisiController::class)->only(['index', 'create', 'edit', 'store', 'update']);
         Route::get('/report', [PegawaiController::class, 'report'])->name('report'); // Monitoring Pribadi
         Route::get('/transaksi', [PegawaiController::class, 'transaksi'])->name('transaksi'); // Monitoring Pribadi
         Route::get('/stats', [PegawaiController::class, 'stats'])->name('stats'); // Monitoring Pribadi
@@ -72,6 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/verify/{akuisisi}/approve', [SupervisorController::class, 'approve'])->name('verify.approve');
         Route::patch('/verify/{akuisisi}/reject', [SupervisorController::class, 'reject'])->name('verify.reject');
         Route::resource('target-tim', TargetController::class)->parameters(['target-tim' => 'target']);;
+        Route::get('/target-divisi', [SupervisorController::class, 'target_divisi'])->name('target-divisi');
         Route::get('/report', [SupervisorController::class, 'report'])->name('report');
         Route::get('/team', [SupervisorController::class, 'team'])->name('team'); // Monitoring Tim
         Route::get('/team/{user}/transactions', [SupervisorController::class, 'memberTransactions'])
@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
     // --- KEPALA CABANG (BI Dashboard & Keputusan Strategis) ---
     Route::middleware('role:Kepala Cabang')->prefix('kacab')->name('kacab.')->group(function () {
         // Semua fungsi BI (Ranking, Historis, Tren) digabung di DashboardController
+        Route::resource('target', TargetController::class);
         Route::get('/monitoring/ringkasan', [KepalaCabangController::class, 'summary'])->name('summary');
         Route::get('/monitoring/realisasi', [KepalaCabangController::class, 'realisasi'])->name('realisasi');
         Route::get('/monitoring/divisi', [KepalaCabangController::class, 'divisi'])->name('divisi');

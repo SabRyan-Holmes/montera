@@ -2,14 +2,14 @@ import { SecondaryButton } from "@/Components";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
-import DetailTarget from "@/Pages/Administrator/Target/Partials/DetailTarget";
+import DetailTarget from "./Partials/DetailTarget";
 
 export default function ShowModal({ target, handleDelete, canManage = false }) {
     return (
         <dialog
             id={`Show-${target.id}`}
             onClose={() =>
-                document.getElementById(`Show-${target.id}`).showModal()
+                document.getElementById(`Show-${target.id}`).close()
             }
             className="modal"
         >

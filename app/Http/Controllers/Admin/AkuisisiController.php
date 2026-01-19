@@ -1,20 +1,23 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Shared\AkuisisiRequest;
 use App\Models\Akuisisi;
 use App\Models\Produk;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
+
 class AkuisisiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    protected $user;
+    protected $user, $role, $isAdmin;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -22,6 +25,7 @@ class AkuisisiController extends Controller
             return $next($request);
         });
     }
+
     public function index()
     {
         $subTitle = "";
@@ -29,21 +33,25 @@ class AkuisisiController extends Controller
         $subTitle = GetSubtitle::getSubtitle(...$params);
         $query = Akuisisi::with([
             'pegawai:id,name',
-            'produk:id,nama_produk',
+            'produk:id,nama_produk,kategori_produk',
             'verifikator:id,name',
             'supervisor:id,name',
         ])->filter($params)->latest();
         $role = $this->user->jabatan->nama_jabatan;
-        $isAdmin = $role === "Administrator";
-        if (!$isAdmin) {
+
+        if (!$this->user->isAdmin) {
             $query->where('user_id', $this->user->id);
         }
         return Inertia::render('Administrator/Akuisisi/Index', [
             "title" => "Data Akuisisi",
             "subTitle"  => $subTitle,
             "canCreate" => in_array($role, ['Administrator', 'Pegawai']),
-            "canManage" => $role === "Administrator",
-            'akuisisis' => $query->paginate(10)->withQueryString(),
+            "canManage" => $this->user->isAdmin,
+            'akuisisis' => $query->paginate(10)
+                ->through(function ($item) {
+                    return $item->append('display_nominal');
+                })
+                ->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byStatus"   => $params['byStatus'] ?? "Semua Kategori",
@@ -58,6 +66,8 @@ class AkuisisiController extends Controller
      */
     public function create()
     {
+
+        $page = ($this->user->isAdmin ? 'Administrator' : 'Pegawai') . '/Akuisisi/CreateEdit';
         $supervisors = User::role('Supervisor')->get()->map(function ($u) {
             return [
                 'value' => $u->id,
@@ -73,37 +83,47 @@ class AkuisisiController extends Controller
                     'kategori' => $p->kategori_produk,
                 ];
             });
-        return Inertia::render('Administrator/Akuisisi/Create', [
+        $pegawais = [];
+        if ($this->user->isAdmin) {
+            $pegawais = User::role('Pegawai')->get()->map(function ($u) {
+                return [
+                    'value' => $u->id,
+                    'label' => $u->name . ' - ' . $u->nip,
+                ];
+            });
+        }
+        return Inertia::render($page, [
             'title' => 'Input Laporan Akuisisi',
+            'isAdmin' => $this->user->isAdmin ,
             'filtersList' => [
                 'produks' => $produks,
                 'supervisors' => $supervisors,
+                "pegawais" => $pegawais
             ],
         ]);
     }
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AkuisisiRequest $request)
     {
-        $validated = $request->validate([
-            'no_transaksi' => 'required|unique:akuisisis,no_transaksi',
-            'produk_id' => 'required|exists:produks,id',
-            'nama_nasabah' => 'required|string|max:255',
-            'no_identitas_nasabah' => 'nullable|string|max:50',
-            'nominal_realisasi' => 'required|numeric',
-            'tanggal_akuisisi' => 'required|date',
-            'lampiran_bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        ]);
-        $validated['user_id'] = $this->user->id;
+        $validated = $request->validated();
         $validated['status_verifikasi'] = 'pending';
+        if ($this->user->isAdmin) {
+            $validated['user_id'] = $request->input('user_id');
+        } else {
+            $validated['user_id'] = $this->user->id;
+        }
         $validated['supervisor_id'] = $request->input('supervisor_id');
         if ($request->hasFile('lampiran_bukti')) {
-            $validated['lampiran_bukti'] = $request->file('lampiran_bukti')->store('bukti_akuisisi');
+            $file = $request->file('lampiran_bukti');
+            $fileName = 'bukti_akuisisi_' . date('Ymd_His') . '_' . Str::random(4) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('bukti_akuisisi', $fileName, 'public');
+            $validated['lampiran_bukti'] = $path;
         }
         Akuisisi::create($validated);
-        $routeName = $this->user->jabatan->nama_jabatan === 'Pegawai' ? 'pegawai.akuisisi.index' : 'admin.akuisisi.index';
-        return redirect()->route($routeName)->with('message', 'Laporan berhasil dikirim!');
+        $routeName = $this->user->isAdmin ? 'admin.akuisisi.index' : 'pegawai.akuisisi.index';
+        return redirect()->route($routeName)->with('message', 'Akuisisi berhasil dibuat!');
     }
     /**
      * Display the specified resource.
@@ -120,30 +140,76 @@ class AkuisisiController extends Controller
      */
     public function edit(Akuisisi $akuisisi)
     {
-        return Inertia::render('Admin/Akuisisi/Edit', [
-            'title' => "Edit Data Akuisisi",
+        $page = ($this->user->isAdmin ?  : 'Pegawai') . '/Akuisisi/CreateEdit';
+        $supervisors = User::role('Supervisor')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
+        $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => [
+            'value' => $p->id,
+            'label' => $p->nama_produk,
+            'kategori' => $p->kategori_produk
+        ]);
+        $pegawais = [];
+        if ($this->user->isAdmin) {
+            $pegawais = User::role('Pegawai')->get()->map(fn($u) => [
+                'value' => $u->id,
+                'label' => $u->name . ' - ' . $u->nip
+            ]);
+        }
+        return Inertia::render($page, [
+            'title' => 'Edit Laporan Akuisisi',
+            'isEdit' => true,
+            'isAdmin' => $this->user->isAdmin,
             'akuisisi' => $akuisisi,
-            "filtersList"   => [
-                "kategori" => Akuisisi::getEnumValues('kategori'),
-                "status"   => Akuisisi::getEnumValues('status'),
+            'filtersList' => [
+                'produks' => $produks,
+                'supervisors' => $supervisors,
+                'pegawais' => $pegawais,
             ],
         ]);
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Akuisisi $akuisisi)
+    public function update(AkuisisiRequest $request, Akuisisi $akuisisi)
     {
+        $validated['user_id'] = $this->user->isAdmin ? $request->input('user_id') : $this->user->id;
         $validated = $request->validated();
-        $pegawaiOld = $akuisisi->toArray();
+        if ($this->user->isAdmin) {
+            $validated['user_id'] = $request->input('user_id');
+        } else {
+            unset($validated['user_id']);
+        }
+
+        if ($request->boolean('delete_file')) {
+            if ($akuisisi->lampiran_bukti) {
+                Storage::disk('public')->delete($akuisisi->lampiran_bukti);
+            }
+            $validated['lampiran_bukti'] = null;
+        }
+
+        if ($request->hasFile('lampiran_bukti')) {
+            if ($akuisisi->lampiran_bukti && !$request->boolean('delete_file')) {
+                Storage::disk('public')->delete($akuisisi->lampiran_bukti);
+            }
+            $file = $request->file('lampiran_bukti');
+            $fileName = 'bukti_akuisisi_' . date('Ymd_His') . '_' . Str::random(4) . '.' . $file->getClientOriginalExtension();
+            $validated['lampiran_bukti'] = $file->storeAs('bukti_akuisisi', $fileName, 'public');
+        }
+        // kalo revisi dari pegawai
+        if(!$this->user->isAdmin) {
+            $validated['status_verifikasi'] = 'pending';
+        }
         $akuisisi->update($validated);
-        return redirect()->back()->with('message', 'Data Akuisisi Berhasil Diupdate!');
+        $routeName = $this->user->isAdmin ? 'admin.akuisisi.index' : 'pegawai.akuisisi.index';
+        return redirect()->route($routeName)->with('message', 'Akuisisi berhasil diperbarui!');
     }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Akuisisi $akuisisi)
     {
+        if ($akuisisi->lampiran_bukti) {
+            Storage::delete($akuisisi->lampiran_bukti);
+        }
         $akuisisi->delete();
         return redirect()->back()->with('message', 'Data Akuisisi Berhasil DiHapus!');
     }
