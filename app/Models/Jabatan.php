@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasSelectOptions;
 
 class Jabatan extends Model
 {
     use HasFactory;
+    use HasSelectOptions;
     protected $guarded = ['id'];
 
     public function users(): HasMany

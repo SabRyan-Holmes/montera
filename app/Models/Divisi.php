@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSelectOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Divisi extends Model
 {
+    use HasSelectOptions;
+
     protected $guarded = ['id'];
 
     public function users(): HasMany
@@ -29,7 +32,5 @@ class Divisi extends Model
             $query->where('nama_divisi', 'like', '%' . $search . '%')
                 ->orWhere('kode_divisi', 'like', '%' . $search . '%')
         );
-
-
     }
 }

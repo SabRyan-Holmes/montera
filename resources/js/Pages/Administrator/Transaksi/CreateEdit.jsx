@@ -10,6 +10,7 @@ import { FaPlus, FaSave } from "react-icons/fa";
 import { FaMoneyBillTransfer, FaPenToSquare } from "react-icons/fa6"; // Ganti icon sesuai kebutuhan
 import { RiArrowGoBackFill } from "react-icons/ri";
 import TextInput from "@/Components/TextInput";
+import { useState } from "react";
 
 export default function CreateEdit({
     auth,
@@ -17,6 +18,7 @@ export default function CreateEdit({
     title,
     transaksi = null,
     isEdit = false,
+    currentLabel = "(Rp)",
 }) {
     // 1. Setup Form
     const { data, setData, post, put, processing, errors } = useForm({
@@ -44,6 +46,7 @@ export default function CreateEdit({
             );
 
             if (selectedAkuisisi) {
+                setSatuanLabel(selectedAkuisisi.satuan_label);
                 // Auto-fill logic
                 setData((prevData) => ({
                     ...prevData,
@@ -56,6 +59,9 @@ export default function CreateEdit({
                     // AMBIL POIN DARI HASIL HITUNGAN CONTROLLER TADI
                     poin_didapat: selectedAkuisisi.poin_otomatis,
                 }));
+            } else {
+                // Opsional: Reset ke default jika user batal pilih (pilih placeholder)
+                setSatuanLabel("(Rp)");
             }
         }
     };
@@ -70,6 +76,7 @@ export default function CreateEdit({
         }
     };
 
+    const [satuanLabel, setSatuanLabel] = useState(currentLabel);
     return (
         <Authenticated
             user={auth.user}
@@ -123,7 +130,8 @@ export default function CreateEdit({
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* Referensi Akuisisi (Paling Atas karena Auto-fill) */}
+                                {/* TODO Gimana cara nya setiap akuisisi berubah label current label jg berubah sesuai dengan itu
+                                hasil get Satuan Label di backend? */}
                                 <tr className="border">
                                     <td width="30%">
                                         Referensi Laporan Akuisisi
@@ -223,7 +231,8 @@ export default function CreateEdit({
 
                                 {/* Nominal Realisasi */}
                                 <tr className="border">
-                                    <td>Nilai Realisasi (Rp)</td>
+                                    {/* TODO Saya pengen ini berubah */}
+                                    <td>Nilai Realisasi {satuanLabel}</td>
                                     <td className="border-x">
                                         <TextInput
                                             type="number"

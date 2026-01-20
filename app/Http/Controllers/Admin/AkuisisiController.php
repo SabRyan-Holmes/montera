@@ -31,12 +31,14 @@ class AkuisisiController extends Controller
         $subTitle = "";
         $params = request()->all(['search', 'byStatus']);
         $subTitle = GetSubtitle::getSubtitle(...$params);
-        $query = Akuisisi::with([
-            'pegawai:id,name',
-            'produk:id,nama_produk,kategori_produk',
-            'verifikator:id,name',
-            'supervisor:id,name',
-        ])->filter($params)->latest();
+        $query = Akuisisi::query()
+            ->when($this->user->hasRole('Pegawai'), fn($q) => $q->byPegawai($this->user))
+            ->with([
+                'pegawai:id,name',
+                'produk:id,nama_produk,kategori_produk',
+                'verifikator:id,name',
+                'supervisor:id,name',
+            ])->filter($params)->latest();
         $role = $this->user->jabatan->nama_jabatan;
 
         if (!$this->user->isAdmin) {
@@ -49,7 +51,7 @@ class AkuisisiController extends Controller
             "canManage" => $this->user->isAdmin,
             'akuisisis' => $query->paginate(10)
                 ->through(function ($item) {
-                    return $item->append('display_nominal');
+                    return $item->append('nominal_formatted');
                 })
                 ->withQueryString(),
             "filtersReq"   => [
@@ -94,7 +96,7 @@ class AkuisisiController extends Controller
         }
         return Inertia::render($page, [
             'title' => 'Input Laporan Akuisisi',
-            'isAdmin' => $this->user->isAdmin ,
+            'isAdmin' => $this->user->isAdmin,
             'filtersList' => [
                 'produks' => $produks,
                 'supervisors' => $supervisors,
@@ -108,6 +110,16 @@ class AkuisisiController extends Controller
     public function store(AkuisisiRequest $request)
     {
         $validated = $request->validated();
+        $requestNo = $request->input('no_transaksi');
+        // Cek apakah nomor yang dikirim user (dari tombol generate tadi) SUDAH dipake orang lain?
+        if (Akuisisi::where('no_transaksi', $requestNo)->exists()) {
+            // BAHAYA: Nomor udah dipake orang lain pas user lagi ngisi form!
+            // SOLUSI: Kita generate ulang paksa nomor baru yang fresh
+            $validated['no_transaksi'] = $this->getFreshNumber();
+        } else {
+            // AMAN: Nomor masih kosong, gas pake nomor pilihan user
+            $validated['no_transaksi'] = $requestNo;
+        }
         $validated['status_verifikasi'] = 'pending';
         if ($this->user->isAdmin) {
             $validated['user_id'] = $request->input('user_id');
@@ -125,6 +137,8 @@ class AkuisisiController extends Controller
         $routeName = $this->user->isAdmin ? 'admin.akuisisi.index' : 'pegawai.akuisisi.index';
         return redirect()->route($routeName)->with('message', 'Akuisisi berhasil dibuat!');
     }
+
+
     /**
      * Display the specified resource.
      */
@@ -140,7 +154,7 @@ class AkuisisiController extends Controller
      */
     public function edit(Akuisisi $akuisisi)
     {
-        $page = ($this->user->isAdmin ?  : 'Pegawai') . '/Akuisisi/CreateEdit';
+        $page = ($this->user->isAdmin ?: 'Pegawai') . '/Akuisisi/CreateEdit';
         $supervisors = User::role('Supervisor')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
         $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => [
             'value' => $p->id,
@@ -195,7 +209,7 @@ class AkuisisiController extends Controller
             $validated['lampiran_bukti'] = $file->storeAs('bukti_akuisisi', $fileName, 'public');
         }
         // kalo revisi dari pegawai
-        if(!$this->user->isAdmin) {
+        if (!$this->user->isAdmin) {
             $validated['status_verifikasi'] = 'pending';
         }
         $akuisisi->update($validated);
@@ -212,5 +226,18 @@ class AkuisisiController extends Controller
         }
         $akuisisi->delete();
         return redirect()->back()->with('message', 'Data Akuisisi Berhasil DiHapus!');
+    }
+
+    // Helper Private buat nyari nomor baru kalau tabrakan
+    private function getFreshNumber()
+    {
+        $today = now()->format('Ymd');
+        $prefix = "TRX-{$today}";
+        do {
+            $last = Akuisisi::where('no_transaksi', 'like', "{$prefix}-%")->orderBy('id', 'desc')->first();
+            $next = $last ? (intval(substr($last->no_transaksi, -4)) + 1) : 1;
+            $candidate = "{$prefix}-" . sprintf("%04d", $next);
+        } while (Akuisisi::where('no_transaksi', $candidate)->exists());
+        return $candidate;
     }
 }

@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\GetSubtitle;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserStoreUpdateRequest;
+use App\Http\Requests\Admin\UserRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -19,7 +18,7 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
 
-     protected $user;
+    protected $user;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -60,9 +59,11 @@ class UserController extends Controller
     {
         return Inertia::render('Administrator/User/CreateEdit', [
             'title' => "Tambah Data User",
-            "filtersList" => [
-                "jabatan" => Jabatan::select('id', 'nama_jabatan')->get(),
-                "divisi"  => Divisi::select('id', 'nama_divisi')->get(),
+            "optionList" => [
+                // Saya pengen ini dipper dr backedn aj ato yg buata dapetin value label itu kek dibuat
+                //bikin funsgi khsusu global karn aemg bakal sering dipake gitu
+                "jabatan" => Jabatan::getOptions('nama_jabatan'),
+                "divisi"  => Divisi::getOptions('nama_divisi'),
                 "status"  => [
                     ['id' => 'aktif', 'label' => 'Aktif'],
                     ['id' => 'nonaktif', 'label' => 'Non-Aktif'],
@@ -74,15 +75,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $validated = $request->validated();
-    //     User::create($validated);
-    //     return Redirect::route('admin.user.index')->with('message', 'Data User Berhasil Ditambahkan!');
-    // }
-
-
-    public function store(UserStoreUpdateRequest $request)
+    public function store(UserRequest $request)
     {
         // 1. Ambil data yang sudah lolos validasi
         $validated = $request->validated();
@@ -117,9 +110,9 @@ class UserController extends Controller
             'title' => "Edit Data User",
             'user' => $user, // Kirim data user yang mau diedit
             'isEdit' => true, // Flag penanda ini mode edit
-            "filtersList" => [
-                "jabatan" => Jabatan::select('id', 'nama_jabatan')->get(),
-                "divisi"  => Divisi::select('id', 'nama_divisi')->get(),
+            "optionList" => [
+                "jabatan" => Jabatan::getOptions('nama_jabatan'),
+                "divisi"  => Divisi::getOptions('nama_divisi'),
                 "status"  => [
                     ['id' => 'aktif', 'label' => 'Aktif'],
                     ['id' => 'nonaktif', 'label' => 'Non-Aktif'],
@@ -130,7 +123,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
         // Validasi manual atau buat UserUpdateRequest terpisah (Recommended)
         $rules = [

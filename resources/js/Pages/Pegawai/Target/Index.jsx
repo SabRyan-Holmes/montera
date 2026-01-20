@@ -13,7 +13,7 @@ export default function Index({
 }) {
     moment.locale("id");
     return (
-        <Authenticated user={auth.user} title={"Daftar" + title}>
+        <Authenticated user={auth.user} title={"Daftar " + title}>
             {}
             <div className="w-full pb-10 mx-auto phone:h-screen laptop:h-full laptop:px-7 max-w-screen-desktop ">
                 <section className="flex items-end justify-between gap-4">

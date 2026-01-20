@@ -12,8 +12,9 @@ class Target extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'nilai_target' => 'integer', // <--- INI KUNCINYA
+        'nilai_target' => 'integer',
     ];
+    protected $appends = ['nominal_formatted'];
     public function pegawai(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -41,18 +42,26 @@ class Target extends Model
         return $this->belongsTo(Produk::class, 'produk_id');
     }
 
-    protected function nilaiTarget(): Attribute
+    protected function nominalFormatted(): Attribute
     {
         return Attribute::make(
-            get: function (mixed $value, array $attributes) {
-                // Cek apakah tipe_target-nya 'noa'
-                if (($attributes['tipe_target'] ?? '') === 'noa') {
-                    return (int) $value; // Paksa jadi bulat
+            get: function () {
+                if ($this->tipe_target === 'noa') {
+                    return number_format($this->nilai_target);
                 }
 
-                // Kalau 'nominal', return float atau biarkan string decimal
-                // (Saran: biarkan string atau float buat uang)
-                return (float) $value;
+                return 'Rp ' . number_format($this->nilai_target, 0, ',', '.');
+            }
+        );
+    }
+
+    protected function totalTeamNominalFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (!isset($this->total_team_nominal)) return null;
+
+                return 'Rp ' . number_format($this->total_team_nominal, 0, ',', '.');
             }
         );
     }
@@ -102,6 +111,7 @@ class Target extends Model
         $query->when($filters['byTipeSatuan'] ?? false, fn($q, $t) => $q->where('tipe_target', $t));
 
         // Gabungkan filter periode & tahun di sini agar controller tidak perlu manual where lagi
+        $query->when($filters['byPeriode'] ?? false, fn($q, $p) => $q->where('periode', $p));
         $query->when($filters['periode'] ?? false, fn($q, $p) => $q->where('periode', $p));
         $query->when($filters['tahun'] ?? false, fn($q, $y) => $q->where('tahun', $y));
     }

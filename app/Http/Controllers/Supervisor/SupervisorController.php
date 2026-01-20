@@ -71,6 +71,7 @@ class SupervisorController extends Controller
             'toast_id' => uniqid(),
         ]);
     }
+
     public function reject(Request $request, Akuisisi $akuisisi)
     {
         $request->validate([
@@ -143,12 +144,9 @@ class SupervisorController extends Controller
             ->with(['targets' => function ($q) use ($user, $tahun) {
                 $q->where('supervisor_id', $user->id)
                     ->where('tahun', $tahun);
-            }])
-            // Kita filter transaksinya: Cuma ambil transaksi tahun ini (untuk hitung realisasi)
-            ->with(['transaksi' => function ($q) use ($tahun) {
+            }])->with(['transaksi' => function ($q) use ($tahun) {
                 $q->whereYear('created_at', $tahun);
-            }])
-            ->get()
+            }])->get()
             // Filter Tambahan (Opsional tapi Recommended):
             // Hanya tampilkan member yang BENAR-BENAR punya target dari kita tahun ini.
             // Kalau logic myTeam mengambil bawahan struktural tapi tahun ini dia gak dikasih target,

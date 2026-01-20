@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Route;
 
-class UserStoreUpdateRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     public function authorize(): bool
     {

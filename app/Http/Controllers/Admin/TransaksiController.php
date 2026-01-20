@@ -39,8 +39,9 @@ class TransaksiController extends Controller
             "transaksis"    => Transaksi::with([
                 'pegawai:id,name,nip',
                 'produk:id,nama_produk,kode_produk,kategori_produk',
-                'akuisisi:id,nama_nasabah,no_identitas_nasabah'])
-                ->filter($params)->latest()->paginate(10)->withQueryString(),
+                'akuisisi:id,nama_nasabah,no_identitas_nasabah,nominal_realisasi,produk_id',
+                'akuisisi.produk:id,kategori_produk'
+            ])->filter($params)->latest()->paginate(10)->withQueryString(),
             "filtersReq"   => [
                 "search"     => $params['search'] ?? "",
                 "byKategori"     => $params['byKategori'] ?? "",
@@ -69,10 +70,8 @@ class TransaksiController extends Controller
         // AMBIL AKUISISI + HITUNG POIN OTOMATIS
         $akuisisis = Akuisisi::with(['pegawai.divisi', 'produk']) // Eager load biar kenceng
             ->where('status_verifikasi', 'verified')
-            ->get()
-            ->map(function ($a) {
+            ->get()->map(function ($a) {
                 $hitungPoin = PointCalculator::calculate($a->user, $a->produk);
-
                 return [
                     'value' => $a->id,
                     'label' => $a->produk->kode_produk . ' - ' .  $a->pegawai->name . ' - ' . $a->no_transaksi . ' - ' . $a->nama_nasabah,
@@ -83,7 +82,8 @@ class TransaksiController extends Controller
                     'tanggal' => $a->tanggal_akuisisi,
 
                     // INI POIN HASIL HITUNGAN BACKEND
-                    'poin_otomatis' => $hitungPoin
+                    'poin_otomatis' => $hitungPoin,
+                    'satuan_label' => $this->getSatuanLabel($a->produk->kategori_produk) //manfaatin ini buat mengubah label satuan
                 ];
             });
 
@@ -153,7 +153,9 @@ class TransaksiController extends Controller
                     'tanggal' => $a->tanggal_akuisisi,
 
                     // INI POIN HASIL HITUNGAN BACKEND
-                    'poin_otomatis' => $hitungPoin
+                    'poin_otomatis' => $hitungPoin,
+                    'satuan_label' => $this->getSatuanLabel($a->produk->kategori_produk)
+
                 ];
             });
 
@@ -161,6 +163,7 @@ class TransaksiController extends Controller
             'title' => 'Edit Data Transaksi',
             'isEdit' => true,
             'transaksi' => $transaksi,
+            'currentLabel' => $this->getSatuanLabel($transaksi->produk->kategori_produk),
             'filtersList' => [
                 'pegawais' => $pegawais,
                 'produks' => $produks,
@@ -232,5 +235,15 @@ class TransaksiController extends Controller
         $newNoTransaksi = "{$prefix}-{$formattedNumber}";
 
         return response()->json(['no_transaksi' => $newNoTransaksi]);
+    }
+
+    private function getSatuanLabel($kategori)
+    {
+        $kategori = strtoupper($kategori);
+        // Logic sama persis dengan Model Akuisisi
+        if (str_contains($kategori, 'E-CHANEL') || str_contains($kategori, 'E-CHANNEL')) {
+            return '(Unit/NoA)';
+        }
+        return '(Rp)';
     }
 }

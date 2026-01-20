@@ -53,6 +53,23 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            // Hapus semua akuisisi milik user ini satu persatu
+            // Agar event 'deleting' di model Akuisisi juga terpanggil
+            foreach ($user->akuisisi as $akuisisi) {
+                $akuisisi->delete();
+            }
+
+            // Hapus target juga jika ada
+            foreach ($user->targets as $target) {
+                $target->delete();
+            }
+        });
+    }
     public function jabatan(): BelongsTo
     {
         return $this->belongsTo(Jabatan::class, 'jabatan_id');

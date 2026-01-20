@@ -1,8 +1,6 @@
 import React from "react";
 import Chart from "react-apexcharts"; // Import ApexCharts
-import {
-    AiOutlineLoading3Quarters
-} from "react-icons/ai";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaClock } from "react-icons/fa6";
 import {
     HiOutlineDocumentPlus,
@@ -17,7 +15,6 @@ export default function PegawaiContent({ dataByRole }) {
 
     const {
         totalTarget,
-        akuisisiVerified,
         akuisisiRejected,
         akuisisiPending, // Pastikan controller mengirim ini
         totalAkuisisi,
@@ -26,7 +23,7 @@ export default function PegawaiContent({ dataByRole }) {
         totalNominalTarget,
         persenNominal,
         grafikTren,
-        breakdownProduk
+        breakdownProduk,
     } = dataByRole;
 
     const formatRupiah = (val) =>
@@ -38,28 +35,42 @@ export default function PegawaiContent({ dataByRole }) {
 
     // --- CONFIG GRAFIK TREN (Area Chart) ---
     const trendOptions = {
-        chart: { type: 'area', toolbar: { show: false } },
-        colors: ['#5c4087'], // Warna Ungu Primary
-        xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'] },
+        chart: { type: "area", toolbar: { show: false } },
+        colors: ["#5c4087"], // Warna Ungu Primary
+        xaxis: {
+            categories: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "Mei",
+                "Jun",
+                "Jul",
+                "Agu",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Des",
+            ],
+        },
         dataLabels: { enabled: false },
-        stroke: { curve: 'smooth' },
-        tooltip: { y: { formatter: (val) => formatRupiah(val) } }
+        stroke: { curve: "smooth" },
+        tooltip: { y: { formatter: (val) => formatRupiah(val) } },
     };
-    const trendSeries = [{ name: 'Realisasi', data: grafikTren }];
+    const trendSeries = [{ name: "Realisasi", data: grafikTren }];
 
     // --- CONFIG GRAFIK KATEGORI (Donut Chart) ---
-    const kategoriLabels = breakdownProduk.map(d => d.label);
-    const kategoriSeries = breakdownProduk.map(d => d.value);
+    const kategoriLabels = breakdownProduk.map((d) => d.label);
+    const kategoriSeries = breakdownProduk.map((d) => d.value);
     const kategoriOptions = {
         labels: kategoriLabels,
-        colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'], // Biru, Hijau, Kuning, Merah
-        legend: { position: 'bottom' },
-        plotOptions: { pie: { donut: { size: '65%' } } }
+        colors: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"], // Biru, Hijau, Kuning, Merah
+        legend: { position: "bottom" },
+        plotOptions: { pie: { donut: { size: "65%" } } },
     };
 
     return (
         <main className="w-full py-6 mx-auto px-7">
-
             {/* ROW 1: KARTU UTAMA */}
             <section className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
                 {/* Realisasi Nominal */}
@@ -90,7 +101,7 @@ export default function PegawaiContent({ dataByRole }) {
                             Transaksi Sah
                         </h3>
                         <p className="text-2xl font-black text-secondary">
-                            {transaksiCount}{" "}
+                            {transaksiCount} {' '}
                             <span className="text-sm font-normal text-gray-400">
                                 Transaksi
                             </span>
@@ -111,8 +122,12 @@ export default function PegawaiContent({ dataByRole }) {
                             <p className="text-2xl font-black text-secondary">
                                 {persenNominal}%
                             </p>
-                            <span className={`text-xs font-bold px-2 py-0.5 rounded ${persenNominal >= 100 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                {persenNominal >= 100 ? 'Achieved' : 'On Progress'}
+                            <span
+                                className={`text-xs font-bold px-2 py-0.5 rounded ${persenNominal >= 100 ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                            >
+                                {persenNominal >= 100
+                                    ? "Achieved"
+                                    : "On Progress"}
                             </span>
                         </div>
                     </div>
@@ -124,59 +139,92 @@ export default function PegawaiContent({ dataByRole }) {
                 <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
                     <HiOutlineDocumentPlus className="mr-3 text-2xl text-gray-500" />
                     <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Total Pengajuan</p>
-                        <p className="text-xl font-bold text-gray-700">{totalAkuisisi}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase">
+                            Total Pengajuan
+                        </p>
+                        <p className="text-xl font-bold text-gray-700">
+                            {totalAkuisisi}
+                        </p>
                     </div>
                 </div>
 
-                 <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
+                <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
                     <FaClock className="mr-3 text-2xl text-primary animate-spin-slow" />
                     <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Menunggu Validasi</p>
-                        <p className="text-xl font-bold text-primary">{akuisisiPending}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase">
+                            Menunggu Validasi
+                        </p>
+                        <p className="text-xl font-bold text-primary">
+                            {akuisisiPending}
+                        </p>
                     </div>
                 </div>
 
                 <div className="flex items-center p-4 bg-white border rounded-lg shadow-sm">
                     <HiOutlineExclamationTriangle className="mr-3 text-2xl text-error" />
                     <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Ditolak / Revisi</p>
-                        <p className="text-xl font-bold text-error">{akuisisiRejected}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase">
+                            Ditolak / Revisi
+                        </p>
+                        <p className="text-xl font-bold text-error">
+                            {akuisisiRejected}
+                        </p>
                     </div>
                 </div>
             </section>
 
             {/* ROW 3: VISUALISASI GRAFIK */}
             <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-
                 {/* Grafik Tren (Lebar 2 Kolom) */}
                 <div className="p-6 bg-white border shadow-sm rounded-xl lg:col-span-2">
                     <div className="mb-4">
-                        <h3 className="text-lg font-bold text-gray-700">Tren Kinerja Bulanan</h3>
-                        <p className="text-xs text-gray-400">Total nominal realisasi tahun ini</p>
+                        <h3 className="text-lg font-bold text-gray-700">
+                            Tren Kinerja Bulanan
+                        </h3>
+                        <p className="text-xs text-gray-400">
+                            Total nominal realisasi tahun :
+                            <span className="rounded-md badge-xs bg-success/20">
+                                {new Date().getFullYear()}
+                            </span>
+                        </p>
                     </div>
                     <div className="w-full h-64">
-                        <Chart options={trendOptions} series={trendSeries} type="area" height="100%" />
+                        <Chart
+                            options={trendOptions}
+                            series={trendSeries}
+                            type="area"
+                            height="100%"
+                        />
                     </div>
                 </div>
 
                 {/* Grafik Breakdown Kategori (Lebar 1 Kolom) */}
                 <div className="p-6 bg-white border shadow-sm rounded-xl">
                     <div className="mb-4">
-                        <h3 className="text-lg font-bold text-gray-700">Komposisi Produk</h3>
-                        <p className="text-xs text-gray-400">Distribusi akuisisi berhasil</p>
+                        <h3 className="text-lg font-bold text-gray-700">
+                            Komposisi Produk
+                        </h3>
+                        <p className="text-xs text-gray-400">
+                            Distribusi akuisisi berhasil
+                        </p>
                     </div>
                     <div className="flex items-center justify-center w-full h-64">
                         {breakdownProduk.length > 0 ? (
-                            <Chart options={kategoriOptions} series={kategoriSeries} type="donut" width="100%" />
+                            <Chart
+                                options={kategoriOptions}
+                                series={kategoriSeries}
+                                type="donut"
+                                width="100%"
+                            />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                                <p className="text-sm">Belum ada data transaksi</p>
+                                <p className="text-sm">
+                                    Belum ada data transaksi
+                                </p>
                             </div>
                         )}
                     </div>
                 </div>
-
             </section>
         </main>
     );

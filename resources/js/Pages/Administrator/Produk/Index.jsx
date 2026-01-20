@@ -109,210 +109,222 @@ export default function Index({
                     )}
                     {produks.data.length > 0 ? (
                         <>
-                            <table className="table overflow-x-scroll text-xs text-center table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
-                                    <tr className="text-center">
-                                        <th
-                                            scope="col"
-                                            dir="rtl"
-                                            width="5%"
-                                            className=" rounded-tl-xl"
-                                        >
-                                            No
-                                        </th>
-                                        <th scope="col">Nama Produk</th>
-                                        <th scope="col">Kategori</th>
-                                        <th scope="col">Input Data</th>
-                                        <th scope="col">Satuan</th>
-                                        <th scope="col">Bobot Front Liner</th>
-                                        <th scope="col">Bobot Kredit</th>
-                                        <th scope="col">Status</th>
-                                        <>
+                            <div className="overflow-x-scroll overflow-y-hidden">
+                                <table className="table text-xs text-center table-bordered">
+                                    <thead className="text-sm font-medium text-white bg-primary ">
+                                        <tr className="text-center">
                                             <th
                                                 scope="col"
-                                                width="10%"
-                                                className={
-                                                    "text-center cursor-pointer " +
-                                                    (!showLastUpdated
-                                                        ? "rounded-tr-xl"
-                                                        : "")
-                                                }
+                                                dir="rtl"
+                                                width="5%"
+                                                className=" rounded-tl-xl"
                                             >
-                                                <div className="flex items-center justify-center gap-2">
-                                                    {showLastUpdated ? (
-                                                        <>
-                                                            <button
-                                                                className="action-btn hover:scale-[1.15] hover:bg-primary/80"
-                                                                onClick={() =>
-                                                                    setShowLastUpdated(
-                                                                        !showLastUpdated,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <FaEyeSlash className="mr-1 text-white " />
-                                                                Diperbarui
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <div className="flex items-center justify-center gap-2">
-                                                            <button
-                                                                className=" action-btn hover:scale-125 hover:bg-primary/80"
-                                                                onClick={() =>
-                                                                    setShowLastUpdated(
-                                                                        !showLastUpdated,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
-                                                            </button>
-                                                            <span className="">
-                                                                Aksi
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                No
                                             </th>
-                                            {showLastUpdated && (
+                                            <th scope="col">Nama Produk</th>
+                                            <th scope="col">Kategori</th>
+                                            <th scope="col">Input Data</th>
+                                            <th scope="col">Satuan</th>
+                                            <th scope="col">
+                                                Bobot
+                                                <span className="block">
+                                                    Front Liner
+                                                </span>
+                                            </th>
+                                            <th scope="col">Bobot Kredit</th>
+                                            <th scope="col">Status</th>
+                                            <>
                                                 <th
                                                     scope="col"
-                                                    className="text-center rounded-tr-xl"
+                                                    width="10%"
+                                                    className={
+                                                        "text-center cursor-pointer " +
+                                                        (!showLastUpdated
+                                                            ? "rounded-tr-xl"
+                                                            : "")
+                                                    }
                                                 >
-                                                    Aksi
+                                                    <div className="flex justify-center gap-2 items-ce nter">
+                                                        {showLastUpdated ? (
+                                                            <>
+                                                                <button
+                                                                    className="action-btn hover:scale-[1.15] hover:bg-primary/80"
+                                                                    onClick={() =>
+                                                                        setShowLastUpdated(
+                                                                            !showLastUpdated,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <FaEyeSlash className="mr-1 text-white " />
+                                                                    Diperbarui
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <div className="flex items-center justify-center gap-2">
+                                                                <button
+                                                                    className=" action-btn hover:scale-125 hover:bg-primary/80"
+                                                                    onClick={() =>
+                                                                        setShowLastUpdated(
+                                                                            !showLastUpdated,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
+                                                                </button>
+                                                                <span className="">
+                                                                    Aksi
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </th>
-                                            )}
-                                        </>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {produks.data?.map((produk, i) => (
-                                        <tr key={i}>
-                                            <td className="text-center">
-                                                {i + 1}
-                                            </td>
-                                            <td className="relative text-center group">
-                                                <span className="block">
-                                                    {produk["nama_produk"]}
-                                                </span>
-                                                <span className="badge-xs-accent">
-                                                    {produk["kode_produk"]}
-                                                </span>
-                                            </td>
-                                            <td>{produk["kategori_produk"]}</td>
-                                            <td>{produk["label_input"]}</td>
-                                            <td>{produk["satuan"]}</td>
-                                            <td>
-                                                {produk["bobot_frontliner"]}
-                                            </td>
-                                            <td>{produk["bobot_kredit"]}</td>
-                                            <td>{produk["status"]}</td>
-                                            <td
-                                                className={`font-normal text-center ${!showLastUpdated && "hidden"}`}
-                                            >
-                                                <span className="block">
-                                                    {moment(
-                                                        produk["updated_at"],
-                                                    ).format("LL")}
-                                                </span>
-                                                <span className="block text-[12px]">
-                                                    {moment(
-                                                        produk.updated_at,
-                                                    ).fromNow()}
-                                                </span>
-                                            </td>
-                                            {canManage ? (
-                                                <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                    <div className="relative inline-flex group">
-                                                        <button
-                                                            as="button"
-                                                            onClick={() => {
-                                                                setActiveModal(
-                                                                    `Show-${produk.id}`,
-                                                                );
-                                                                document
-                                                                    .getElementById(
-                                                                        `Show-${produk.id}`,
-                                                                    )
-                                                                    .showModal();
-                                                            }}
-                                                            className="action-btn group/button action-btn-success "
-                                                        >
-                                                            <FaEye className="scale-125 group-hover/button:fill-white " />
-                                                        </button>
-                                                        <ShowModal
-                                                            handleDelete={
-                                                                handleDelete
-                                                            }
-                                                            setActiveModal={
-                                                                setActiveModal
-                                                            }
-                                                            produk={produk}
-                                                            canManage={true}
-                                                        />
-                                                        <TooltipHover
-                                                            message={
-                                                                "Lihat Data"
-                                                            }
-                                                        />
-                                                    </div>
-
-                                                    <div className="relative inline-flex group">
-                                                        <Link
-                                                            as="a"
-                                                            href={route(
-                                                                "admin.produk.edit",
-                                                                produk.id,
-                                                            )}
-                                                            className="action-btn group/button action-btn-bermuda"
-                                                        >
-                                                            <FaEdit className=" group-hover/button:fill-white" />
-                                                        </Link>
-                                                        <TooltipHover
-                                                            message={
-                                                                "Edit Data"
-                                                            }
-                                                        />
-                                                    </div>
-
-                                                    <div className="relative inline-flex group">
-                                                        <button
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    produk[
-                                                                        "id"
-                                                                    ],
-                                                                )
-                                                            }
-                                                            className="action-btn action-btn-warning group/button"
-                                                        >
-                                                            <FaTrash className="scale-125 group-hover/button:fill-white" />
-                                                        </button>
-                                                        <TooltipHover
-                                                            message={
-                                                                "Hapus Data"
-                                                            }
-                                                        />
-                                                    </div>
-                                                </td>
-                                            ) : (
-                                                <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                    <div className="relative inline-flex group">
-                                                        <button
-                                                            as="button"
-                                                            className="action-btn group/button action-btn-success "
-                                                        >
-                                                            <span className="group-hover:text-white">
-                                                                Lihat
-                                                            </span>
-                                                            <FaEye className="ml-2 scale-125 group-hover/button:fill-white " />
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            )}
+                                                {showLastUpdated && (
+                                                    <th
+                                                        scope="col"
+                                                        className="text-center rounded-tr-xl"
+                                                    >
+                                                        Aksi
+                                                    </th>
+                                                )}
+                                            </>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {produks.data?.map((produk, i) => (
+                                            <tr key={i}>
+                                                <td className="text-center">
+                                                    {i + 1}
+                                                </td>
+                                                <td className="relative text-center group">
+                                                    <span className="block">
+                                                        {produk["nama_produk"]}
+                                                    </span>
+                                                    <span className="badge-xs-accent">
+                                                        {produk["kode_produk"]}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {produk["kategori_produk"]}
+                                                </td>
+                                                <td>{produk["label_input"]}</td>
+                                                <td>{produk["satuan"]}</td>
+                                                <td>
+                                                    {produk["bobot_frontliner"]}
+                                                </td>
+                                                <td>
+                                                    {produk["bobot_kredit"]}
+                                                </td>
+                                                <td>{produk["status"]}</td>
+                                                <td
+                                                    className={`font-normal text-center ${!showLastUpdated && "hidden"}`}
+                                                >
+                                                    <span className="block">
+                                                        {moment(
+                                                            produk[
+                                                                "updated_at"
+                                                            ],
+                                                        ).format("LL")}
+                                                    </span>
+                                                    <span className="block text-[12px]">
+                                                        {moment(
+                                                            produk.updated_at,
+                                                        ).fromNow()}
+                                                    </span>
+                                                </td>
+                                                {canManage ? (
+                                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                        <div className="relative inline-flex group">
+                                                            <button
+                                                                as="button"
+                                                                onClick={() => {
+                                                                    setActiveModal(
+                                                                        `Show-${produk.id}`,
+                                                                    );
+                                                                    document
+                                                                        .getElementById(
+                                                                            `Show-${produk.id}`,
+                                                                        )
+                                                                        .showModal();
+                                                                }}
+                                                                className="action-btn group/button action-btn-success "
+                                                            >
+                                                                <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                            </button>
+                                                            <ShowModal
+                                                                handleDelete={
+                                                                    handleDelete
+                                                                }
+                                                                setActiveModal={
+                                                                    setActiveModal
+                                                                }
+                                                                produk={produk}
+                                                                canManage={true}
+                                                            />
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Lihat Data"
+                                                                }
+                                                            />
+                                                        </div>
 
+                                                        <div className="relative inline-flex group">
+                                                            <Link
+                                                                as="a"
+                                                                href={route(
+                                                                    "admin.produk.edit",
+                                                                    produk.id,
+                                                                )}
+                                                                className="action-btn group/button action-btn-bermuda"
+                                                            >
+                                                                <FaEdit className=" group-hover/button:fill-white" />
+                                                            </Link>
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Edit Data"
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        <div className="relative inline-flex group">
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDelete(
+                                                                        produk[
+                                                                            "id"
+                                                                        ],
+                                                                    )
+                                                                }
+                                                                className="action-btn action-btn-warning group/button"
+                                                            >
+                                                                <FaTrash className="scale-125 group-hover/button:fill-white" />
+                                                            </button>
+                                                            <TooltipHover
+                                                                message={
+                                                                    "Hapus Data"
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                ) : (
+                                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                        <div className="relative inline-flex group">
+                                                            <button
+                                                                as="button"
+                                                                className="action-btn group/button action-btn-success "
+                                                            >
+                                                                <span className="group-hover:text-white">
+                                                                    Lihat
+                                                                </span>
+                                                                <FaEye className="ml-2 scale-125 group-hover/button:fill-white " />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                             <Pagination
                                 datas={produks}
                                 urlRoute={`/admin/produk`}

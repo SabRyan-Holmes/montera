@@ -37,7 +37,7 @@ export default function Index({
             route("spv.target-tim.index"),
             // Reset search tapi PERTAHANKAN filter historis (tahun/periode) saat ganti view
             { ...filtersReq, view: mode, search: "" },
-            { preserveState: true, preserveScroll: true }
+            { preserveState: true, preserveScroll: true },
         );
     };
 
@@ -90,14 +90,14 @@ export default function Index({
                                     viewMode === "pegawai"
                                         ? "Cari Pegawai"
                                         : viewMode === "produk"
-                                        ? "Cari Produk"
-                                        : "Cari Pegawai/Produk",
+                                          ? "Cari Produk"
+                                          : "Cari Pegawai/Produk",
                                 placeholder:
                                     viewMode === "pegawai"
                                         ? "Nama Pegawai..."
                                         : viewMode === "produk"
-                                        ? "Nama Produk..."
-                                        : "Nama Pegawai atau Produk...",
+                                          ? "Nama Produk..."
+                                          : "Nama Pegawai atau Produk...",
                                 initialValue: filtersReq.search,
                             }}
                             // Config Filter Historis (Tahun & Periode)
@@ -161,8 +161,8 @@ export default function Index({
                                 {viewMode === "pegawai"
                                     ? "Rekapitulasi Target Per Pegawai"
                                     : viewMode === "produk"
-                                    ? "Rekapitulasi Target Per Produk"
-                                    : "Rekapitulasi Semua Target"}
+                                      ? "Rekapitulasi Target Per Produk"
+                                      : "Rekapitulasi Semua Target"}
                             </h2>
                             {subTitle && (
                                 <p className="inline-block px-2 py-1 mt-1 text-sm font-medium border rounded text-emerald-600 bg-emerald-50 border-emerald-100">
@@ -299,7 +299,7 @@ export default function Index({
                                                                     {item.tipe_target ===
                                                                     "nominal"
                                                                         ? formatRupiah(
-                                                                              item.nilai_target
+                                                                              item.nilai_target,
                                                                           )
                                                                         : item.nilai_target}
                                                                 </span>
@@ -319,17 +319,17 @@ export default function Index({
                                                         <td>{item.tahun}</td>
                                                         <td className="text-xs whitespace-nowrap">
                                                             {moment(
-                                                                item.tanggal_mulai
+                                                                item.tanggal_mulai,
                                                             ).format("LL")}
                                                         </td>
                                                         <td className="text-xs whitespace-nowrap">
                                                             {moment(
-                                                                item.tanggal_selesai
+                                                                item.tanggal_selesai,
                                                             ).format("LL")}
                                                         </td>
                                                         <td className="text-xs font-bold text-red-500 whitespace-nowrap">
                                                             {moment(
-                                                                item.deadline_pencapaian
+                                                                item.deadline_pencapaian,
                                                             ).format("LL")}
                                                         </td>
                                                     </>
@@ -349,7 +349,7 @@ export default function Index({
                                                         <td className="font-mono font-medium text-emerald-600">
                                                             {formatRupiah(
                                                                 item.total_nominal ||
-                                                                    0
+                                                                    0,
                                                             )}
                                                         </td>
                                                         <td>
@@ -476,12 +476,12 @@ export default function Index({
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {item.total_team_nominal >
+                                                            {item.total_team_nominal_formatted >
                                                             0 ? (
                                                                 <span className="font-mono text-sm text-emerald-600">
-                                                                    {formatRupiah(
-                                                                        item.total_team_nominal
-                                                                    )}
+                                                                    {
+                                                                        item.total_team_nominal_formatted
+                                                                    }
                                                                 </span>
                                                             ) : (
                                                                 <span className="text-gray-300">
@@ -500,11 +500,11 @@ export default function Index({
                                                             <button
                                                                 onClick={() => {
                                                                     setActiveModal(
-                                                                        `Show-${item.id}`
+                                                                        `Show-${item.id}`,
                                                                     );
                                                                     document
                                                                         .getElementById(
-                                                                            `Show-${item.id}`
+                                                                            `Show-${item.id}`,
                                                                         )
                                                                         .showModal();
                                                                 }}
@@ -532,7 +532,7 @@ export default function Index({
                                                             <Link
                                                                 href={route(
                                                                     "spv.target-tim.edit",
-                                                                    item.id
+                                                                    item.id,
                                                                 )}
                                                                 className="action-btn group/button action-btn-bermuda"
                                                             >
@@ -548,7 +548,7 @@ export default function Index({
                                                             <button
                                                                 onClick={() =>
                                                                     handleDelete(
-                                                                        item.id
+                                                                        item.id,
                                                                     )
                                                                 }
                                                                 className="action-btn action-btn-warning group/button"

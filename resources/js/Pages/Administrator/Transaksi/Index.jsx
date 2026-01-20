@@ -53,8 +53,6 @@ export default function Index({
         });
     }
 
-
-
     // ===========================================Handling Search & Filter===========================================
 
     const [showLastUpdated, setShowLastUpdated] = useState(false); // Default false
@@ -116,335 +114,355 @@ export default function Index({
                     )}
                     {transaksis.data.length > 0 ? (
                         <>
-                            <table className="table overflow-x-scroll text-xs text-center table-bordered">
-                                <thead className="text-sm font-medium text-white bg-primary ">
-                                    <tr className="text-center">
-                                        <th
-                                            scope="col"
-                                            width="5%"
-                                            className="rounded-tl-xl"
-                                        >
-                                            No
-                                        </th>
+                            <div className="overflow-x-scroll overflow-y-hidden">
+                                <table className="table overflow-x-scroll text-xs text-center table-bordered">
+                                    <thead className="text-sm font-medium text-white bg-primary ">
+                                        <tr className="text-center">
+                                            <th
+                                                scope="col"
+                                                width="5%"
+                                                className="rounded-tl-xl"
+                                            >
+                                                No
+                                            </th>
 
-                                        <th scope="col" width="15%">
-                                            Nama & NIP Pegawai
-                                        </th>
+                                            <th scope="col" width="12%">
+                                                Nama & NIP Pegawai
+                                            </th>
 
-                                        <th scope="col" width="15%">
-                                            Nama & Kode Produk
-                                        </th>
+                                            <th scope="col" width="12%">
+                                                Nama & Kode Produk
+                                            </th>
 
-                                        <th scope="col" width="15%">
-                                            Kategori Produk
-                                        </th>
+                                            <th scope="col" width="10%">
+                                                Kategori Produk
+                                            </th>
 
-                                        <th scope="col">Nasabah</th>
+                                            <th scope="col">Nasabah</th>
 
-                                        <th scope="col">Nilai Realisasi</th>
+                                            <th scope="col">Nilai Realisasi</th>
 
-                                        <th scope="col">Poin</th>
+                                            <th scope="col">Poin</th>
 
-                                        <th scope="col">Tanggal Realisasi</th>
+                                            <th scope="col">
+                                                Tanggal Realisasi
+                                            </th>
 
-                                        <th
-                                            scope="col"
-                                            width="10%"
-                                            className={
-                                                "text-center cursor-pointer " +
-                                                (!showLastUpdated
-                                                    ? "rounded-tr-xl"
-                                                    : "")
-                                            }
-                                        >
-                                            <div className="flex items-center justify-center gap-2">
-                                                {showLastUpdated ? (
-                                                    <button
-                                                        className="action-btn hover:scale-[1.15] hover:bg-primary/80"
-                                                        onClick={() =>
-                                                            setShowLastUpdated(
-                                                                !showLastUpdated,
-                                                            )
-                                                        }
-                                                    >
-                                                        <FaEyeSlash className="mr-1 text-white " />
-                                                        Diperbarui
-                                                    </button>
-                                                ) : (
-                                                    <div className="flex items-center gap-2">
+                                            <th
+                                                scope="col"
+                                                width="10%"
+                                                className={
+                                                    "text-center cursor-pointer " +
+                                                    (!showLastUpdated
+                                                        ? "rounded-tr-xl"
+                                                        : "")
+                                                }
+                                            >
+                                                <div className="flex items-center justify-center gap-2">
+                                                    {showLastUpdated ? (
                                                         <button
-                                                            className="action-btn hover:scale-125 hover:bg-primary/80"
+                                                            className="action-btn hover:scale-[1.15] hover:bg-primary/80"
                                                             onClick={() =>
                                                                 setShowLastUpdated(
                                                                     !showLastUpdated,
                                                                 )
                                                             }
                                                         >
-                                                            <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
+                                                            <FaEyeSlash className="mr-1 text-white " />
+                                                            Diperbarui
                                                         </button>
-                                                        <span>Aksi</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </th>
-
-                                        {showLastUpdated && (
-                                            <th
-                                                scope="col"
-                                                className="text-center rounded-tr-xl"
-                                            >
-                                                Aksi
-                                            </th>
-                                        )}
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {transaksis.data?.map((transaksi, i) => {
-                                        const isPending =
-                                            transaksi.status_verifikasi ===
-                                            "pending";
-
-                                        return (
-                                            <tr key={transaksi.id}>
-                                                <td className="text-center">
-                                                    {i + 1}
-                                                </td>
-                                                {/* Pegawai */}
-                                                <td>
-                                                    <span className="block font-medium">
-                                                        {
-                                                            transaksi.pegawai
-                                                                ?.name
-                                                        }
-                                                    </span>
-                                                    <span className="text-[11px] text-gray-500">
-                                                        {transaksi.pegawai?.nip}
-                                                    </span>
-                                                </td>
-
-                                                {/* Produk */}
-                                                <td>
-                                                    <span className="block font-medium">
-                                                        {
-                                                            transaksi.produk
-                                                                ?.nama_produk
-                                                        }
-                                                    </span>
-                                                    <span className="text-[11px] text-gray-500">
-                                                        {
-                                                            transaksi.produk
-                                                                ?.kode_produk
-                                                        }
-                                                    </span>
-                                                </td>
-
-                                                {/* Indikator */}
-                                                <td>
-                                                    <span className="block">
-                                                        {
-                                                            transaksi.produk
-                                                                ?.kategori_produk
-                                                        }
-                                                    </span>
-                                                </td>
-
-                                                {/* Akuisisi(Nasabah) */}
-                                                <td>
-                                                    <span className="block font-medium">
-                                                        {
-                                                            transaksi.akuisisi
-                                                                ?.nama_nasabah
-                                                        }
-                                                    </span>
-                                                    <span className="text-[11px] text-gray-500">
-                                                        {
-                                                            transaksi.akuisisi
-                                                                ?.no_identitas_nasabah
-                                                        }
-                                                    </span>
-                                                </td>
-
-                                                {/* Nilai Realisasi */}
-                                                <td>
-                                                    <span className="block">
-                                                        {
-                                                            transaksi.nilai_realisasi
-                                                        }
-                                                    </span>
-                                                </td>
-
-                                                {/* Poin */}
-                                                <td>
-                                                    <span className="block">
-                                                        {transaksi.poin_didapat}
-                                                    </span>
-                                                </td>
-
-                                                {/* Periode */}
-                                                <td>
-                                                    <span className="block">
-                                                        {moment(
-                                                            transaksi.tanggal_realisasi,
-                                                        ).format("LL")}
-                                                    </span>
-                                                    <span className="block text-[12px]">
-                                                        {moment(
-                                                            transaksi.tanggal_realisasi,
-                                                        ).fromNow()}
-                                                    </span>
-                                                </td>
-
-                                                {/* Last Updated */}
-                                                <td
-                                                    className={`text-center ${
-                                                        !showLastUpdated &&
-                                                        "hidden"
-                                                    }`}
-                                                >
-                                                    <span className="block">
-                                                        {moment(
-                                                            transaksi.updated_at,
-                                                        ).format("LL")}
-                                                    </span>
-                                                    <span className="block text-[12px]">
-                                                        {moment(
-                                                            transaksi.updated_at,
-                                                        ).fromNow()}
-                                                    </span>
-                                                </td>
-
-                                                {/* AKSI */}
-                                                {canManage ? (
-                                                    <>
-                                                        <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                            <div className="relative inline-flex group">
-                                                                <button
-                                                                    as="button"
-                                                                    onClick={() => {
-                                                                        setActiveModal(
-                                                                            `Show-${transaksi.id}`,
-                                                                        );
-                                                                        document
-                                                                            .getElementById(
-                                                                                `Show-${transaksi.id}`,
-                                                                            )
-                                                                            .showModal();
-                                                                    }}
-                                                                    className="action-btn group action-btn-success "
-                                                                >
-                                                                    <FaEye className="scale-125 group-hover:fill-white " />
-                                                                </button>
-                                                                <ShowModal
-                                                                    handleDelete={
-                                                                        handleDelete
-                                                                    }
-                                                                    setActiveModal={
-                                                                        setActiveModal
-                                                                    }
-                                                                    transaksi={
-                                                                        transaksi
-                                                                    }
-                                                                    canManage={
-                                                                        true
-                                                                    }
-                                                                />
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Lihat Data"
-                                                                    }
-                                                                />
-                                                            </div>
-
-                                                            {/* EDIT */}
-
-                                                            <div className="relative inline-flex group">
-                                                                <Link
-                                                                    as="a"
-                                                                    href={route(
-                                                                        "admin.transaksi.edit",
-                                                                        transaksi.id,
-                                                                    )}
-                                                                    className="action-btn group/button action-btn-bermuda"
-                                                                >
-                                                                    <FaEdit className=" group-hover/button:fill-white" />
-                                                                </Link>
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Edit Data"
-                                                                    }
-                                                                />
-                                                            </div>
-
-                                                            {/* DELETE */}
-                                                            <div className="relative inline-flex group">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleDelete(
-                                                                            transaksi[
-                                                                                "id"
-                                                                            ],
-                                                                        )
-                                                                    }
-                                                                    className="action-btn action-btn-warning group/button"
-                                                                >
-                                                                    <FaTrash className="scale-125 group-hover/button:fill-white" />
-                                                                </button>
-                                                                <TooltipHover
-                                                                    message={
-                                                                        "Hapus Data"
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                    </>
-                                                ) : (
-                                                    <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
-                                                        <div className="relative inline-flex group">
+                                                    ) : (
+                                                        <div className="flex items-center gap-2">
                                                             <button
-                                                                as="button"
-                                                                onClick={() => {
-                                                                    setActiveModal(
-                                                                        `Show-${transaksi.id}`,
-                                                                    );
-                                                                    document
-                                                                        .getElementById(
-                                                                            `Show-${transaksi.id}`,
-                                                                        )
-                                                                        .showModal();
-                                                                }}
-                                                                className="action-btn group/button action-btn-success "
+                                                                className="action-btn hover:scale-125 hover:bg-primary/80"
+                                                                onClick={() =>
+                                                                    setShowLastUpdated(
+                                                                        !showLastUpdated,
+                                                                    )
+                                                                }
                                                             >
-                                                                <span className="mr-1 group-hover/button:text-white">
-                                                                    Lihat
-                                                                </span>
-                                                                <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                                <TbLayoutSidebarLeftCollapse className="mr-1 text-white" />
                                                             </button>
-                                                            <ShowModal
-                                                                handleDelete={
-                                                                    handleDelete
-                                                                }
-                                                                setActiveModal={
-                                                                    setActiveModal
-                                                                }
-                                                                transaksi={
-                                                                    transaksi
-                                                                }
-                                                                canManage={true}
-                                                            />
-                                                            <TooltipHover
-                                                                message={
-                                                                    "Lihat Data"
-                                                                }
-                                                            />
+                                                            <span>Aksi</span>
                                                         </div>
-                                                    </td>
-                                                )}
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                                    )}
+                                                </div>
+                                            </th>
+
+                                            {showLastUpdated && (
+                                                <th
+                                                    scope="col"
+                                                    className="text-center rounded-tr-xl"
+                                                >
+                                                    Aksi
+                                                </th>
+                                            )}
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {transaksis.data?.map(
+                                            (transaksi, i) => {
+                                                const isPending =
+                                                    transaksi.status_verifikasi ===
+                                                    "pending";
+
+                                                return (
+                                                    <tr key={transaksi.id}>
+                                                        <td className="text-center">
+                                                            {i + 1}
+                                                        </td>
+                                                        {/* Pegawai */}
+                                                        <td>
+                                                            <span className="block font-medium">
+                                                                {
+                                                                    transaksi
+                                                                        .pegawai
+                                                                        ?.name
+                                                                }
+                                                            </span>
+                                                            <span className="text-[11px] text-gray-500">
+                                                                {
+                                                                    transaksi
+                                                                        .pegawai
+                                                                        ?.nip
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Produk */}
+                                                        <td>
+                                                            <span className="block font-medium">
+                                                                {
+                                                                    transaksi
+                                                                        .produk
+                                                                        ?.nama_produk
+                                                                }
+                                                            </span>
+                                                            <span className="text-[11px] text-gray-500">
+                                                                {
+                                                                    transaksi
+                                                                        .produk
+                                                                        ?.kode_produk
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Indikator */}
+                                                        <td>
+                                                            <span className="block">
+                                                                {
+                                                                    transaksi
+                                                                        .produk
+                                                                        ?.kategori_produk
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Akuisisi(Nasabah) */}
+                                                        <td>
+                                                            <span className="block font-medium">
+                                                                {
+                                                                    transaksi
+                                                                        .akuisisi
+                                                                        ?.nama_nasabah
+                                                                }
+                                                            </span>
+                                                            <span className="text-[11px] text-gray-500">
+                                                                {
+                                                                    transaksi
+                                                                        .akuisisi
+                                                                        ?.no_identitas_nasabah
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Nilai Realisasi */}
+                                                        <td>
+                                                            <span className="block">
+                                                                {
+                                                                    transaksi.nominal_formatted
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Poin */}
+                                                        <td>
+                                                            <span className="block">
+                                                                {
+                                                                    transaksi.poin_didapat
+                                                                }
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Periode */}
+                                                        <td>
+                                                            <span className="block">
+                                                                {moment(
+                                                                    transaksi.tanggal_realisasi,
+                                                                ).format("LL")}
+                                                            </span>
+                                                            <span className="block text-[12px]">
+                                                                {moment(
+                                                                    transaksi.tanggal_realisasi,
+                                                                ).fromNow()}
+                                                            </span>
+                                                        </td>
+
+                                                        {/* Last Updated */}
+                                                        <td
+                                                            className={`text-center ${
+                                                                !showLastUpdated &&
+                                                                "hidden"
+                                                            }`}
+                                                        >
+                                                            <span className="block">
+                                                                {moment(
+                                                                    transaksi.updated_at,
+                                                                ).format("LL")}
+                                                            </span>
+                                                            <span className="block text-[12px]">
+                                                                {moment(
+                                                                    transaksi.updated_at,
+                                                                ).fromNow()}
+                                                            </span>
+                                                        </td>
+
+                                                        {/* AKSI */}
+                                                        {canManage ? (
+                                                            <>
+                                                                <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                                    <div className="relative inline-flex group">
+                                                                        <button
+                                                                            as="button"
+                                                                            onClick={() => {
+                                                                                setActiveModal(
+                                                                                    `Show-${transaksi.id}`,
+                                                                                );
+                                                                                document
+                                                                                    .getElementById(
+                                                                                        `Show-${transaksi.id}`,
+                                                                                    )
+                                                                                    .showModal();
+                                                                            }}
+                                                                            className="action-btn group action-btn-success "
+                                                                        >
+                                                                            <FaEye className="scale-125 group-hover:fill-white " />
+                                                                        </button>
+                                                                        <ShowModal
+                                                                            handleDelete={
+                                                                                handleDelete
+                                                                            }
+                                                                            setActiveModal={
+                                                                                setActiveModal
+                                                                            }
+                                                                            transaksi={
+                                                                                transaksi
+                                                                            }
+                                                                            canManage={
+                                                                                true
+                                                                            }
+                                                                        />
+                                                                        <TooltipHover
+                                                                            message={
+                                                                                "Lihat Data"
+                                                                            }
+                                                                        />
+                                                                    </div>
+
+                                                                    {/* EDIT */}
+
+                                                                    <div className="relative inline-flex group">
+                                                                        <Link
+                                                                            as="a"
+                                                                            href={route(
+                                                                                "admin.transaksi.edit",
+                                                                                transaksi.id,
+                                                                            )}
+                                                                            className="action-btn group/button action-btn-bermuda"
+                                                                        >
+                                                                            <FaEdit className=" group-hover/button:fill-white" />
+                                                                        </Link>
+                                                                        <TooltipHover
+                                                                            message={
+                                                                                "Edit Data"
+                                                                            }
+                                                                        />
+                                                                    </div>
+
+                                                                    {/* DELETE */}
+                                                                    <div className="relative inline-flex group">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleDelete(
+                                                                                    transaksi[
+                                                                                        "id"
+                                                                                    ],
+                                                                                )
+                                                                            }
+                                                                            className="action-btn action-btn-warning group/button"
+                                                                        >
+                                                                            <FaTrash className="scale-125 group-hover/button:fill-white" />
+                                                                        </button>
+                                                                        <TooltipHover
+                                                                            message={
+                                                                                "Hapus Data"
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                </td>
+                                                            </>
+                                                        ) : (
+                                                            <td className="space-x-2 text-center whitespace-nowrap text-nowrap">
+                                                                <div className="relative inline-flex group">
+                                                                    <button
+                                                                        as="button"
+                                                                        onClick={() => {
+                                                                            setActiveModal(
+                                                                                `Show-${transaksi.id}`,
+                                                                            );
+                                                                            document
+                                                                                .getElementById(
+                                                                                    `Show-${transaksi.id}`,
+                                                                                )
+                                                                                .showModal();
+                                                                        }}
+                                                                        className="action-btn group/button action-btn-success "
+                                                                    >
+                                                                        <span className="mr-1 group-hover/button:text-white">
+                                                                            Lihat
+                                                                        </span>
+                                                                        <FaEye className="scale-125 group-hover/button:fill-white " />
+                                                                    </button>
+                                                                    <ShowModal
+                                                                        handleDelete={
+                                                                            handleDelete
+                                                                        }
+                                                                        setActiveModal={
+                                                                            setActiveModal
+                                                                        }
+                                                                        transaksi={
+                                                                            transaksi
+                                                                        }
+                                                                        canManage={
+                                                                            true
+                                                                        }
+                                                                    />
+                                                                    <TooltipHover
+                                                                        message={
+                                                                            "Lihat Data"
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                        )}
+                                                    </tr>
+                                                );
+                                            },
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
 
                             {/* Pagination */}
                             <Pagination

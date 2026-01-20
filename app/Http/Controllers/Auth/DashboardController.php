@@ -48,7 +48,6 @@ class DashboardController extends Controller
                     'user'      => User::count(),
                     'divisi'    => Divisi::count(),
                     'jabatan'   => Jabatan::count(),
-
                 ],
 
                 // GROUP 2: Operational Stats (Highlight Utama)
@@ -101,9 +100,9 @@ class DashboardController extends Controller
             $akuisisiPending = Akuisisi::where('user_id', $userId)->where('status_verifikasi', 'pending')->count();
 
             // --- 2. Perbandingan Nominal ---
-            $transaksiCount = Transaksi::where('user_id', $userId)->whereYear('tanggal_realisasi', $currentYear)->count();
-            $totalNominalTarget = Target::where('user_id', $userId)->where('tahun', $currentYear)->sum('nilai_target');
-            $totalNominalRealisasi = Transaksi::where('user_id', $userId)->whereYear('tanggal_realisasi', $currentYear)->sum('nilai_realisasi');
+            $transaksiCount = Transaksi::where('user_id', $userId)->count();
+            $totalNominalTarget = Target::where('user_id', $userId)->sum('nilai_target');
+            $totalNominalRealisasi = Transaksi::where('user_id', $userId)->sum('nilai_realisasi');
 
             // --- 3. Grafik Tren Kinerja (Monthly Trend - Tahun Ini) ---
             // Mengelompokkan total realisasi berdasarkan bulan

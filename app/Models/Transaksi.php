@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaksi extends Model
 {
     protected $guarded = ['id'];
-
+    protected $appends = ['nominal_formatted'];
 
     public function pegawai()
     {
@@ -20,6 +21,19 @@ class Transaksi extends Model
         return $this->belongsTo(Produk::class);
     }
 
+    protected function nominalFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                // Cek apakah relasi akuisisi sudah diload agar tidak error
+                if ($this->relationLoaded('akuisisi')) {
+                    // Kita "numpang" panggil logic yang sudah capek-capek dibuat di Akuisisi
+                    return $this->akuisisi?->nominal_formatted;
+                }
+                return null; // Atau return default value
+            }
+        );
+    }
 
     public function akuisisi()
     {

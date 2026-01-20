@@ -128,7 +128,7 @@ export default function Index({
                     )}
                     {akuisisis.data.length > 0 ? (
                         <>
-                            <div className="overflow-x-scroll">
+                            <div className="overflow-x-scroll overflow-y-hidden">
                                 <table className="table overflow-x-scroll text-xs text-center table-bordered">
                                     <thead className="text-sm font-medium text-white bg-primary ">
                                         <tr className="text-center">
@@ -260,7 +260,7 @@ export default function Index({
                                                         <span className="block">
                                                             {
                                                                 // akuisisi.nominal_realisasi,
-                                                                akuisisi.display_nominal
+                                                                akuisisi.nominal_formatted
                                                             }
                                                         </span>
                                                     </td>

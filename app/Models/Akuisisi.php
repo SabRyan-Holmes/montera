@@ -14,6 +14,9 @@ class Akuisisi extends Model
     protected $casts = [
         'nominal_realisasi' => 'integer', // <--- INI KUNCINYA
     ];
+    protected $appends = ['nominal_formatted'];
+
+
     public function pegawai(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -36,13 +39,17 @@ class Akuisisi extends Model
         return $this->belongsTo(User::class, 'verifikator_id');
     }
 
-
     public function supervisor()
     {
         return $this->belongsTo(User::class, 'supervisor_id'); //ditujukan ke supervisor yang dipilih pegawai
     }
 
-    protected function displayNominal(): Attribute
+    public function scopeByPegawai($query, $user)
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    protected function nominalFormatted(): Attribute
     {
         return Attribute::make(
             get: function ($value, $attributes) {
@@ -109,22 +116,7 @@ class Akuisisi extends Model
         );
     }
 
-    // NOTE kalo hanya berdasarkandivisi
-    // public function scopeInSupervisorDivisi(Builder $query): void
-    // {
-    //     $user = Auth::user();
 
-    //     if ($user) {
-    //         // 1. Filter Verifikator harus User yang sedang login
-    //         // Ini ditaruh di query utama karena kolom 'verifikator_id' ada di tabel 'akuisisis'
-    //         $query->where('verifikator_id', $user->id);
-
-    //         // 2. DAN Filter Pegawainya harus satu divisi
-    //         $query->whereHas('pegawai', function ($q) use ($user) {
-    //             $q->where('divisi_id', $user->divisi_id);
-    //         });
-    //     }
-    // }
 
     public function scopeMyTeamFromSPV($query, $currentUser)
     {
@@ -153,3 +145,21 @@ class Akuisisi extends Model
         });
     }
 }
+
+
+// NOTE kalo hanya berdasarkandivisi
+    // public function scopeInSupervisorDivisi(Builder $query): void
+    // {
+    //     $user = Auth::user();
+
+    //     if ($user) {
+    //         // 1. Filter Verifikator harus User yang sedang login
+    //         // Ini ditaruh di query utama karena kolom 'verifikator_id' ada di tabel 'akuisisis'
+    //         $query->where('verifikator_id', $user->id);
+
+    //         // 2. DAN Filter Pegawainya harus satu divisi
+    //         $query->whereHas('pegawai', function ($q) use ($user) {
+    //             $q->where('divisi_id', $user->divisi_id);
+    //         });
+    //     }
+    // }

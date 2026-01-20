@@ -16,7 +16,7 @@ class TargetServices
 
     public function getAdminData(Request $request)
     {
-        $params = $request->only(['search', 'byTipeSatuan', 'byPeriode', 'byTipeTarget']);
+        $params = $request->only(['search', 'byTipeSatuan', '', 'byTipeTarget']);
 
         // Generate Subtitle
         $subTitle = GetSubtitle::getSubtitle(...$params);
@@ -101,8 +101,19 @@ class TargetServices
                     'targets as impacted_employees_count' => fn($q) => $filterTarget($q)->tap($divisiCheck)
                 ])
                 ->withSum(['targets as total_team_nominal' => fn($q) => $filterTarget($q)->tap($divisiCheck)], 'nilai_target')
-                ->paginate(20)
-                ->appends($params);
+                ->paginate(20)->appends($params)->through(function ($item) {
+                    // Cek logic Tipe Target berdasarkan kategori produk (sesuai logic kamu di Seeder)
+                    $kategori = strtoupper($item->kategori_produk);
+                    $isNoa = str_contains($kategori, 'E-CHANEL') || str_contains($kategori, 'E-CHANNEL');
+
+                    if ($isNoa) {
+                        $item->total_team_nominal_formatted = number_format($item->total_team_nominal ?? 0);
+                    } else {
+                        $item->total_team_nominal_formatted = 'Rp ' . number_format($item->total_team_nominal ?? 0, 0, ',', '.');
+                    }
+
+                    return $item;
+                });;
         }
         // Return Data Array yang dibutuhkan Controller
         return [

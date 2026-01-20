@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
 
         // 2. Kepala Cabang (2 Orang)
         User::create([
-            'name' => 'Kepala Cabang I Bank XYZ',
+            'name' => 'Kecab I Bank XYZ',
             'nip' => '19900102007',
             'email' => 'kacab@bankxyz.com',
             'password' => Hash::make('password'),
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Kepala Cabang II Bank XYZ',
+            'name' => 'Kacab II Bank XYZ',
             'nip' => '19940102007',
             'email' => 'kacab2@bankxyz.com',
             'password' => Hash::make('password'),
@@ -66,8 +66,8 @@ class UserSeeder extends Seeder
         }
 
         // 4. PEGAWAI (Staff Lapangan/Sales) - Tambah jadi 19 Orang
-        // Total User: 1 (Admin) + 5 (SPV) + 2 (Kacab) + 19 (Pegawai) = 27 User
-        for ($i = 1; $i <= 20; $i++) {
+        // Total User: 1 (Admin) + 5 (SPV) + 2 (Kacab) + 45 (Pegawai)
+        for ($i = 1; $i <= 45; $i++) {
             User::create([
                 'name' => "Pegawai Unit $i",
                 'nip' => "300" . str_pad($i, 3, '0', STR_PAD_LEFT), // Padding jadi 3 digit biar rapi

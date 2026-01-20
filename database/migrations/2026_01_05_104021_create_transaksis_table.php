@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users'); // Siapa pegawainya
-            $table->foreignId('produk_id')->constrained('produks'); // Apa produknya
-            $table->foreignId('akuisisi_id')->constrained('akuisisis'); // Referensi ke laporan aslinya
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Siapa pegawainya
+            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade'); // Apa produknya
+            $table->foreignId('akuisisi_id')->constrained('akuisisis')->onDelete('cascade'); // Referensi ke laporan aslinya
 
             $table->date('tanggal_realisasi')->index();
             $table->decimal('nilai_realisasi', 15, 2); // Nominal duitnya

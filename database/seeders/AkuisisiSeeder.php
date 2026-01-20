@@ -1,86 +1,243 @@
 <?php
+
 namespace Database\Seeders;
+
 use App\Models\Akuisisi;
 use App\Models\Produk;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
+
 class AkuisisiSeeder extends Seeder
 {
     public function run(): void
     {
         $pegawaiList = User::whereHas('jabatan', fn($q) => $q->where('nama_jabatan', 'Pegawai'))->get();
         $supervisorList = User::whereHas('jabatan', fn($q) => $q->where('nama_jabatan', 'Supervisor'))->get();
-        $produkIds = Produk::pluck('id');
-        if ($pegawaiList->isEmpty() || $supervisorList->isEmpty()) {
-            $this->command->info('Data Pegawai atau Supervisor kosong. Skip AkuisisiSeeder.');
+
+        // Ambil produk lengkap dengan kategorinya biar bisa main logic nominal
+        $produks = Produk::all();
+
+        if ($pegawaiList->isEmpty() || $supervisorList->isEmpty() || $produks->isEmpty()) {
+            $this->command->info('Data Pegawai, Supervisor, atau Produk kosong. Skip AkuisisiSeeder.');
             return;
         }
-        $nasabahList = [
-            'Budi Santoso', 'Siti Aminah', 'Andi Wijaya', 'Rina Pratama', 'Eko Susanto',
-            'Dewi Lestari', 'Fajar Ramadhan', 'Gita Gutawa', 'Hadi Sucipto', 'Indah Permata',
-            'Joko Widodo', 'Kartika Sari', 'Lutfi Hakim', 'Maya Ahmad', 'Nico Saputra',
-            'Oki Setiawan', 'Putri Ayu', 'Qori Iskandar', 'Rudi Hartono', 'Siska Amelia',
-            'Tono Subagyo', 'Umar Bakri', 'Vina Panduwinata', 'Wawan Hendrawan', 'Xena Warrior',
-            'Yusuf Mansur', 'Zainal Abidin', 'Agus Salim', 'Bambang Pamungkas', 'Cici Paramida',
-            'Dedi Corbuzier', 'Endang Soekamti', 'Farah Quinn', 'Gading Marten', 'Hesti Purwadinata',
-            'Irfan Hakim', 'Jessica Iskandar', 'Kevin Aprilio', 'Luna Maya', 'Melly Goeslaw',
-            'Nunung Srimulat', 'Opick Tomboati', 'Pasha Ungu', 'Qibil Changcuters', 'Raffi Ahmad',
-            'Sule Prikitiw', 'Tukul Arwana', 'Uya Kuya', 'Vicky Prasetyo', 'Wendy Cagur',
-            'Xabiru Oshe', 'Yuni Shara', 'Zaskia Gotik', 'Ade Rai', 'Baim Wong',
-            'Chika Jessica', 'Denny Cagur', 'Eko Patrio', 'Fitri Tropica', 'Gilang Dirga',
-            'Hengky Kurniawan', 'Indra Bekti', 'Jojon Pelawak', 'Komeng Uhuy', 'Lesti Kejora',
-            'Mpok Alpa', 'Nassar Sungkar', 'Olga Syahputra', 'Parto Patrio', 'Quilla Simanjuntak',
-            'Rina Nose', 'Sojimah Pancawati', 'Tora Sudiro', 'Ucok Baba', 'Vincent Rompies',
-            'Andre Taulany', 'Boris Bokir', 'Cinta Laura', 'Desta Mahendra', 'Enzy Storia',
-            'Ferry Maryadi', 'Gading Marten', 'Habib Jafar', 'Indro Warkop', 'Jerome Polin',
-            'Kiky Saputri', 'Livy Renata', 'Marshel Widianto', 'Njan Sutisna', 'Onadio Leonardo',
-            'Praz Teguh', 'Raditya Dika', 'Surya Insomnia', 'Tretan Muslim', 'Uus Biasaaja',
-            'Vindes Saja', 'Wendi Cagur', 'Yono Bakrie', 'Zarry Hendrik', 'Arief Muhammad',
-            'Bintang Emon', 'Coki Pardede', 'Dustin Tiffani', 'Eca Aura'
+
+        // --- 1. CONFIG GENERATOR ---
+        $totalTarget = 280; // Total lebih dari 250
+        $targetVerified = 96;
+        $targetPending = 137;
+        // Sisanya (280 - 96 - 137 = 47) akan jadi Rejected
+
+        $dataBuffer = [];
+        $usedIdentities = []; // Biar ga ada duplikat identitas-produk yg sama
+
+        // --- 2. GENERATOR NAMA NASABAH (Kombinasi biar banyak) ---
+        $firstNames = [
+            'Aditya',
+            'Bayu',
+            'Chandra',
+            'Dedi',
+            'Eko',
+            'Fajar',
+            'Gilang',
+            'Hendra',
+            'Indra',
+            'Joko',
+            'Kurniawan',
+            'Lukman',
+            'Muhammad',
+            'Nugroho',
+            'Oscar',
+            'Putra',
+            'Reza',
+            'Satria',
+            'Taufik',
+            'Wahyu',
+            'Anita',
+            'Bunga',
+            'Citra',
+            'Dewi',
+            'Endang',
+            'Fitri',
+            'Gita',
+            'Hesti',
+            'Indah',
+            'Julia',
+            'Kartika',
+            'Lina',
+            'Maya',
+            'Nina',
+            'Olla',
+            'Putri',
+            'Rina',
+            'Sari',
+            'Tari',
+            'Vina',
+            'Andi',
+            'Budi',
+            'Cahyo',
+            'Dian',
+            'Eka',
+            'Ferry',
+            'Guntur',
+            'Hadi',
+            'Imam',
+            'Jamal'
         ];
-        $usedIdentities = [];
-        foreach ($nasabahList as $index => $nama) {
-            $pegawai = $pegawaiList->random();
-            $produkId = $produkIds->random();
-            $noIdentitas = rand(1000000000, 9999999999);
-            $key = $noIdentitas . '-' . $produkId;
-            if (in_array($key, $usedIdentities)) continue;
-            $usedIdentities[] = $key;
-            $rand = rand(1, 100);
-            if ($rand <= 65) {
+        $lastNames = [
+            'Santoso',
+            'Wijaya',
+            'Saputra',
+            'Pratama',
+            'Hidayat',
+            'Kusuma',
+            'Ramadhan',
+            'Nugraha',
+            'Wibowo',
+            'Susanto',
+            'Permata',
+            'Lestari',
+            'Putri',
+            'Sari',
+            'Anggraini',
+            'Rahmawati',
+            'Dewi',
+            'Kusumawati',
+            'Utami',
+            'Pertiwi',
+            'Setiawan',
+            'Kurniawan',
+            'Siregar',
+            'Nasution',
+            'Simanjuntak',
+            'Sitompul',
+            'Lubis',
+            'Harahap',
+            'Ginting',
+            'Subagyo',
+            'Suharto',
+            'Supriyadi',
+            'Widodo',
+            'Yudhoyono',
+            'Megawati',
+            'Habibie',
+            'Soekarno',
+            'Hatta'
+        ];
+
+        // --- 3. LOOPING PEMBUATAN DATA ---
+        for ($i = 0; $i < $totalTarget; $i++) {
+
+            // A. Tentukan Status Sesuai Kuota
+            if ($i < $targetVerified) {
                 $status = 'verified';
-            } elseif ($rand <= 85) {
-                $status = 'rejected';
-            } else {
+            } elseif ($i < ($targetVerified + $targetPending)) {
                 $status = 'pending';
+            } else {
+                $status = 'rejected';
             }
-            $targetSupervisor = $supervisorList->random();
-            $supervisorId = $targetSupervisor->id;
+
+            // B. Pilih Aktor & Produk
+            $pegawai = $pegawaiList->random();
+            $supervisor = $supervisorList->random();
+            $produk = $produks->random();
+
+            // C. Generate Nama Unik
+            $namaNasabah = $firstNames[array_rand($firstNames)] . ' ' . $lastNames[array_rand($lastNames)];
+
+            // D. Generate No Identitas (KTP 16 Digit)
+            $noIdentitas = '1' . str_pad(mt_rand(1, 999999999999999), 15, '0', STR_PAD_LEFT);
+
+            // Cek Unik (Identitas + Produk) biar realistis (1 orang bisa beli produk beda, tapi ga produk sama double)
+            $key = $noIdentitas . '-' . $produk->id;
+            if (in_array($key, $usedIdentities)) {
+                $i--; // Ulangi iterasi ini
+                continue;
+            }
+            $usedIdentities[] = $key;
+
+            // E. Logic Nominal Cerdas
+            $kategori = strtoupper($produk->kategori_produk);
+            $nominal = 0;
+
+            if (str_contains($kategori, 'E-CHANEL') || str_contains($kategori, 'E-CHANNEL')) {
+                // E-Channel (Unit/NOA): Nominal Kecil (misal saldo awal 50rb - 1jt, atau 1 unit)
+                // Kita anggap ini 'Saldo Awal' atau 'Unit'
+                // 70% kemungkinan nominal kecil (1 unit), 30% nominal saldo (50rb - 500rb)
+                if (rand(1, 100) <= 70) {
+                    $nominal = 1; // 1 Unit
+                } else {
+                    $nominal = rand(50000, 500000); // Saldo Awal
+                }
+            } else {
+                // Funding, Kredit, Anak Perusahaan: Nominal Besar (Jutaan - Milyaran)
+                if ($kategori == 'PRODUK KREDIT') {
+                    $nominal = rand(10, 500) * 1000000; // 10jt - 500jt
+                } elseif ($kategori == 'PRODUK FUNDING') {
+                    $nominal = rand(500, 20000) * 1000; // 500rb - 20jt
+                } else {
+                    $nominal = rand(1000000, 10000000); // 1jt - 10jt
+                }
+            }
+
+            // F. Atur Verifikator & Tanggal
             $verifikatorId = null;
             $verifiedAt = null;
             $catatan = null;
+            $tanggalInput = Carbon::now()->subDays(rand(1, 60)); // Data 2 bulan terakhir
+
             if ($status !== 'pending') {
-                $verifikatorId = $supervisorId;
-                $verifiedAt = now()->subDays(rand(0, 5));
+                $verifikatorId = $supervisor->id; // Supervisor sendiri yg verifikasi
+                // Verified/Rejected 1-3 hari setelah input
+                $verifiedAt = (clone $tanggalInput)->addDays(rand(1, 3));
+
                 if ($status === 'rejected') {
-                    $catatan = 'Data nasabah kurang lengkap, mohon lampirkan KTP yang jelas.';
+                    $alasan = [
+                        'Data KTP buram / tidak terbaca.',
+                        'Tanda tangan nasabah tidak sesuai.',
+                        'Dokumen pendukung kurang lengkap.',
+                        'Nasabah tidak dapat dihubungi saat verifikasi.',
+                        'Nominal tidak sesuai dengan ketentuan produk.'
+                    ];
+                    $catatan = $alasan[array_rand($alasan)];
                 }
             }
-            Akuisisi::create([
-                'no_transaksi' => 'TRX-' . date('Ymd') . '-' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
-                'user_id' => $pegawai->id,
-                'produk_id' => $produkId,
-                'nama_nasabah' => $nama,
+
+            $lampiranBukti = null;
+
+            if ($status === 'verified' || $status === 'pending') {
+                // Saya tambahkan 'pending' juga karena logikanya orang upload dulu baru diverifikasi
+                // Format: bukti_akuisisi/bukti_akuisisi_YYYYMMDD_HHMMSS_RAND.pdf
+                $lampiranBukti = 'bukti_akuisisi/bukti_akuisisi_20260120_064832_tF9m.pdf'; //untuk template pdf doang
+            }
+            // G. Masukkan ke Buffer
+            $dataBuffer[] = [
+                'no_transaksi'       => 'TRX-' . $tanggalInput->format('Ymd') . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+                'user_id'            => $pegawai->id,
+                'produk_id'          => $produk->id,
+                'nama_nasabah'       => $namaNasabah,
                 'no_identitas_nasabah' => $noIdentitas,
-                'nominal_realisasi' => rand(1000000, 50000000),
-                'tanggal_akuisisi' => now()->subDays(rand(1, 30)),
-                'status_verifikasi' => $status,
-                'supervisor_id' => $supervisorId,
-                'verifikator_id' => $verifikatorId,
-                'verified_at' => $verifiedAt,
-                'catatan_revisi' => $catatan,
-                'created_at' => now()->subDays(rand(6, 10)),
-            ]);
+                'nominal_realisasi'  => $nominal,
+                'tanggal_akuisisi'   => $tanggalInput->format('Y-m-d'),
+                'status_verifikasi'  => $status,
+                'supervisor_id'      => $supervisor->id,
+                'verifikator_id'     => $verifikatorId,
+                'verified_at'        => $verifiedAt,
+                'catatan_revisi'     => $catatan,
+                'lampiran_bukti'     => $lampiranBukti,
+                'created_at'         => $tanggalInput,
+                'updated_at'         => $verifiedAt ?? $tanggalInput,
+            ];
         }
+
+        // H. Bulk Insert (Biar Cepat)
+        // Kita chunk per 50 data biar database ga ngos-ngosan
+        foreach (array_chunk($dataBuffer, 50) as $chunk) {
+            Akuisisi::insert($chunk);
+        }
+
+        $this->command->info("Berhasil seeding {$totalTarget} data akuisisi.");
+        $this->command->info("Verified: {$targetVerified}, Pending: {$targetPending}, Rejected: " . ($totalTarget - $targetVerified - $targetPending));
     }
 }
