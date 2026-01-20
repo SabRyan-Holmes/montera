@@ -55,7 +55,7 @@ NIP         : 300002
 Email       : staff2@bankxyz.com
 Divisi ID   : Acak (1-7)
 --------------------------------
-... (Pola berlanjut sampe 20) ...
+... (Pola berlanjut sampe 45) ...
 --------------------------------
 Nama        : Pegawai Unit 17
 NIP         : 300017
@@ -67,4 +67,4 @@ RUMUS CEPAT LOGIN:
 1. Admin    : admin@bankxyz.com
 2. Kacab    : kacab@bankxyz.com / kacab2@bankxyz.com
 3. SPV      : spv[nomor 1-7]@bankxyz.com
-4. Staff    : staff[nomor 1-20]@bankxyz.com
+4. Staff    : staff[nomor 1-45]@bankxyz.com

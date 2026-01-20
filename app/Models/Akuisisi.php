@@ -80,7 +80,7 @@ class Akuisisi extends Model
                 // KELOMPOK UNIT
                 // [TIPS] Gunakan str_contains biar lebih aman kalau ada typo spasi/huruf
                 if (str_contains($kategori, 'E-CHANEL') || str_contains($kategori, 'PRODUK E-CHANNEL')) {
-                    return (int) $nominal;
+                    return (int) $nominal . ' Unit';
                 }
 
                 // Default fallback
