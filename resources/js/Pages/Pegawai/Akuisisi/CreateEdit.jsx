@@ -96,7 +96,7 @@ export default function CreateEdit({
         setData("produk_id", "");
         setShowCategoryModal(false);
     };
-    console.error(errors);
+    // console.error(errors);
     return (
         <Authenticated
             user={auth.user}

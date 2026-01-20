@@ -169,7 +169,6 @@ export default function Report({
                                                         </td>
 
                                                         {/* BUKTI */}
-                                                        {/* TODO bikin agar bisa mengarahkan ke pdf kalo emg ad bukti file ny  */}
                                                         <td className="px-3 py-2 text-center">
                                                             {item.bukti_url ? (
                                                                 <a

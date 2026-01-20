@@ -9,8 +9,7 @@ class ProdukSeeder extends Seeder
 {
     public function run(): void
     {
-        // Format: [Nama, Kategori, Label Input, Satuan, Bobot FL (Spesialis), Bobot Kredit (Bukan Spesialis)]
-        // Ketentuan: Jika produk Funding, Kredit dapat poin lebih besar (10) dibanding FL (5).
+        // Format: [Nama, Kategori, Label Input, Satuan, Bobot FL (Spesialis), Bobot Kredit (Bukan Spesialis)].
         $data = [
             // FUNDING (Spesialisasi Frontliner)
             ['TABUNGAN ONLINE', 'PRODUK FUNDING', 'NOMOR REKENING', 'Rekening', 5, 10],

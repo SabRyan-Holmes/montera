@@ -117,7 +117,6 @@ export default function Index({
                                         </th>
                                         {/* untuk label feed relasi user , produk, indikator, akuisisi */}
 
-                                        {/* untuk label feed relasi user , produk, indikator, akuisisi */}
 
                                         <th scope="col" width="15%">
                                             Nama & NIP Pegawai

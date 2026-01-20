@@ -25,7 +25,7 @@ $akuisisiId = $this->route('akuisisi') ? $this->route('akuisisi')->id : null;
                 'string',
                 'max:30',
                 // Cek Unik: Abaikan ID ini jika sedang update
-                Rule::unique('akuisisis', 'no_transaksi')->ignore($akuisisiId),
+                // Rule::unique('akuisisis', 'no_transaksi')->ignore($akuisisiId),
             ],
             'nama_nasabah' => ['required', 'string', 'max:255'],
             'no_identitas_nasabah' => ['nullable', 'string', 'max:50'],

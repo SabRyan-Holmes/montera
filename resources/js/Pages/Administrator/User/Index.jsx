@@ -21,30 +21,67 @@ export default function Index({
     const [activeModal, setActiveModal] = useState(null);
     function handleDelete(id) {
         Swal.fire({
+            // Pastikan SWAL muncul di atas Modal jika ada modal aktif
             ...(activeModal && {
                 target: `#${activeModal}`,
             }),
+            title: "Hapus User Ini?",
+            // Menggunakan HTML agar pesan lebih rapi dan tegas
+            html: `
+            <div style="text-align: left; font-size: 0.95em;">
+                <p>Apakah Anda yakin ingin menghapus data ini secara permanen?</p>
+                <br/>
+                <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 10px; color: #991b1b;">
+                    <strong>⚠️ PERINGATAN PENTING:</strong><br/>
+                    Menghapus user ini akan <u>secara otomatis menghapus</u> seluruh data terkait:
+                    <ul style="margin-top: 5px; margin-left: 20px; list-style-type: disc;">
+                        <li>Laporan Akuisisi</li>
+                        <li>Data Target Kinerja</li>
+                        <li>Riwayat Transaksi</li>
+                    </ul>
+                </div>
+            </div>
+        `,
             icon: "warning",
-            text: "Anda yakin ingin menghapus data user ini?",
             showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: "Tidak",
-            confirmButtonColor: "#2D95C9",
-            cancelButtonColor: "#9ca3af",
+            // Tombol Konfirmasi sebaiknya MERAH (Danger) bukan Biru
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Ya, Hapus Data!",
+            cancelButtonText: "Batal",
+            // UX: Focus ke tombol Batal, supaya kalau user tekan Enter tidak langsung terhapus
+            focusCancel: true,
             customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
+                actions: "my-actions gap-2", // Tambahkan gap biar ga nempel
+                cancelButton: "order-1",
                 confirmButton: "order-2",
-                denyButton: "order-3",
             },
         }).then((result) => {
             if (result.isConfirmed) {
                 router.delete(route("admin.user.destroy", id), {
                     onSuccess: () => {
-                        document.getElementById(activeModal).close();
+                        // Tampilkan pesan sukses kecil setelah berhasil
+                        Swal.fire({
+                            title: "Terhapus!",
+                            text: "Data user dan data terkait berhasil dihapus.",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                            ...(activeModal && { target: `#${activeModal}` }),
+                        });
+
+                        // Tutup modal jika ada
+                        if (activeModal) {
+                            document.getElementById(activeModal).close();
+                        }
                     },
                     onError: () => {
-                        console.log("Gagal Menghapus Data");
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: "Terjadi kesalahan saat menghapus data.",
+                            icon: "error",
+                            ...(activeModal && { target: `#${activeModal}` }),
+                        });
                     },
                 });
             }

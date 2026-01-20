@@ -19,37 +19,74 @@ export default function Index({
     canManage,
 }) {
     const [activeModal, setActiveModal] = useState(null);
-    function handleDelete(id) {
-        Swal.fire({
-            ...(activeModal && {
-                target: `#${activeModal}`,
-            }),
-            icon: "warning",
-            text: "Anda yakin ingin menghapus data produk ini?",
-            showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: "Tidak",
-            confirmButtonColor: "#2D95C9",
-            cancelButtonColor: "#9ca3af",
-            customClass: {
-                actions: "my-actions",
-                cancelButton: "order-1 right-gap",
-                confirmButton: "order-2",
-                denyButton: "order-3",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.delete(route("admin.produk.destroy", id), {
-                    onSuccess: () => {
-                        document.getElementById(activeModal).close();
-                    },
-                    onError: () => {
-                        console.log("Gagal Menghapus Data");
-                    },
-                });
-            }
-        });
-    }
+  function handleDelete(id) {
+         Swal.fire({
+             // Pastikan SWAL muncul di atas Modal jika ada modal aktif
+             ...(activeModal && {
+                 target: `#${activeModal}`,
+             }),
+             title: "Hapus Produk Ini?",
+             // Menggunakan HTML agar pesan lebih rapi dan tegas
+             html: `
+             <div style="text-align: left; font-size: 0.95em;">
+                 <p>Apakah Anda yakin ingin menghapus data ini secara permanen?</p>
+                 <br/>
+                 <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 10px; color: #991b1b;">
+                     <strong>⚠️ PERINGATAN PENTING:</strong><br/>
+                     Menghapus user ini akan <u>secara otomatis menghapus</u> seluruh data terkait:
+                     <ul style="margin-top: 5px; margin-left: 20px; list-style-type: disc;">
+                         <li>Data Akuisisi</li>
+                         <li>Data Target Kinerja</li>
+                         <li>Riwayat Transaksi</li>
+                     </ul>
+                 </div>
+             </div>
+         `,
+             icon: "warning",
+             showCancelButton: true,
+             // Tombol Konfirmasi sebaiknya MERAH (Danger) bukan Biru
+             confirmButtonColor: "#ef4444",
+             cancelButtonColor: "#6b7280",
+             confirmButtonText: "Ya, Hapus Data!",
+             cancelButtonText: "Batal",
+             // UX: Focus ke tombol Batal, supaya kalau user tekan Enter tidak langsung terhapus
+             focusCancel: true,
+             customClass: {
+                 actions: "my-actions gap-2", // Tambahkan gap biar ga nempel
+                 cancelButton: "order-1",
+                 confirmButton: "order-2",
+             },
+         }).then((result) => {
+             if (result.isConfirmed) {
+                 router.delete(route("admin.produk.destroy", id), {
+                     onSuccess: () => {
+                         // Tampilkan pesan sukses kecil setelah berhasil
+                         Swal.fire({
+                             title: "Terhapus!",
+                             text: "Data produk dan data terkait berhasil dihapus.",
+                             icon: "success",
+                             timer: 1500,
+                             showConfirmButton: false,
+                             ...(activeModal && { target: `#${activeModal}` }),
+                         });
+
+                         // Tutup modal jika ada
+                         if (activeModal) {
+                             document.getElementById(activeModal).close();
+                         }
+                     },
+                     onError: () => {
+                         Swal.fire({
+                             title: "Gagal!",
+                             text: "Terjadi kesalahan saat menghapus data.",
+                             icon: "error",
+                             ...(activeModal && { target: `#${activeModal}` }),
+                         });
+                     },
+                 });
+             }
+         });
+     }
     moment.locale("id");
     const [showLastUpdated, setShowLastUpdated] = useState(false);
     return (

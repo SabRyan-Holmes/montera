@@ -233,11 +233,27 @@ class AkuisisiController extends Controller
     {
         $today = now()->format('Ymd');
         $prefix = "TRX-{$today}";
+
         do {
-            $last = Akuisisi::where('no_transaksi', 'like', "{$prefix}-%")->orderBy('id', 'desc')->first();
-            $next = $last ? (intval(substr($last->no_transaksi, -4)) + 1) : 1;
-            $candidate = "{$prefix}-" . sprintf("%04d", $next);
+            // Cek urutan terakhir di DB
+            $last = Akuisisi::where('no_transaksi', 'like', "{$prefix}-%")
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $next = 1;
+            if ($last) {
+                $parts = explode('-', $last->no_transaksi);
+                // Ambil bagian tengah (urutan)
+                if (isset($parts[2]) && is_numeric($parts[2])) {
+                    $next = intval($parts[2]) + 1;
+                }
+            }
+
+            // Generate lagi dengan buntut random baru
+            $random = strtoupper(Str::random(3));
+            $candidate = "{$prefix}-" . sprintf("%04d", $next) . "-{$random}";
         } while (Akuisisi::where('no_transaksi', $candidate)->exists());
+
         return $candidate;
     }
 }

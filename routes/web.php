@@ -5,7 +5,8 @@ use App\Http\Controllers\Shared\{ProfileController, GuestController};
 use App\Http\Controllers\Pegawai\{PegawaiController};
 use App\Http\Controllers\Supervisor\{SupervisorController};
 use App\Http\Controllers\KepalaCabang\{KepalaCabangController};
-use App\Http\Controllers\Admin\{UserController, AkuisisiController, TransaksiController, ProdukController, IndikatorController, TargetController, JabatanController, DivisiController};
+use App\Http\Controllers\Admin\{UserController, AkuisisiController, TransaksiController, ProdukController,  TargetController, JabatanController, DivisiController};
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,6 +19,10 @@ Route::middleware('guest')->group(function () {
     })->name('login');
 });
 
+Route::get('/link-storage', function () {
+    Artisan::call('storage:link');
+    return 'Link storage berhasil dibuat!';
+});
 
 
 // <============================================================ All Actor ============================================================>
@@ -44,10 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('user', UserController::class);
         Route::resource('jabatan', JabatanController::class);
         Route::resource('divisi', DivisiController::class);
-
         Route::resource('produk', ProdukController::class);
-        Route::resource('indikator', IndikatorController::class);
-
         Route::resource('target', TargetController::class);
         Route::resource('akuisisi', AkuisisiController::class);
         Route::resource('transaksi', TransaksiController::class);
@@ -101,13 +103,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
-
-
-    // ===============Data Master================
-
-    // Kelola Riwayat PAK(CRUD)
-    // routes/web.php
-    // Route::get('/riwayat-pak/detail/{id}', [RiwayatPAKController::class, 'show_detail'])->name('riwayat-pak.show-detail');
-    // Route::resource('riwayat-pak', RiwayatPAKController::class)
-    //     ->parameters(['riwayat-pak' => 'riwayat'])->only(['index', 'show', 'edit', 'update', 'destroy']);

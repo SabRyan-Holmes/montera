@@ -81,10 +81,6 @@ class Target extends Model
         return $query->where('divisi_id', $user->divisi_id);
     }
 
-    // TODO bikin scope ato function untuk mendapatkan semua target untuk user yg sedang login,
-    // target ini adalah target yg mepunyai user_id yg sama dengan id user yg sedang login eh ato sebenarny udah gw penggail pake with gitu ya?? idk
-    //
-
     public function scopeFilter($query, array $filters): void
     {
         $query->when(

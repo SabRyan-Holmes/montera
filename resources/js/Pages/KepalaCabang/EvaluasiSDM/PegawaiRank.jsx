@@ -35,7 +35,7 @@ export default function PegawaiRank({
     const [selectedYear, setSelectedYear] = useState(filters.year || "");
     const [selectedMonth, setSelectedMonth] = useState(filters.month || "");
     const [selectedDivisi, setSelectedDivisi] = useState(
-        filters.divisi_id || ""
+        filters.divisi_id || "",
     );
     const [search, setSearch] = useState("");
 
@@ -76,7 +76,7 @@ export default function PegawaiRank({
     const filteredList = pegawaiList.filter(
         (p) =>
             p.name.toLowerCase().includes(search.toLowerCase()) ||
-            p.nip.toLowerCase().includes(search.toLowerCase())
+            p.nip.toLowerCase().includes(search.toLowerCase()),
     );
 
     return (
@@ -130,7 +130,7 @@ export default function PegawaiRank({
                             <SelectInput
                                 value={selectedDivisi}
                                 options={options.divisi}
-                                disablePlaceholder = {false}
+                                disablePlaceholder={false}
                                 placeholder="Semua Divisi"
                                 className="w-full text-sm h-9"
                                 onChange={(e) =>
@@ -360,22 +360,42 @@ export default function PegawaiRank({
                                             </td>
                                             <td className="px-6 py-4 font-bold text-right text-blue-600">
                                                 {formatRupiah(
-                                                    pegawai.realisasi
+                                                    pegawai.realisasi,
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <span
                                                     className={`font-bold ${
-                                                        pegawai.achievement >=
-                                                        100
+                                                        // LOGIC WARNA
+                                                        // Jika Surplus (Target 0 tapi ada hasil) -> Hijau
+                                                        pegawai.target === 0 &&
+                                                        pegawai.realisasi > 0
                                                             ? "text-green-600"
                                                             : pegawai.achievement >=
-                                                              80
-                                                            ? "text-blue-600"
-                                                            : "text-red-500"
+                                                                100
+                                                              ? "text-green-600"
+                                                              : pegawai.achievement >=
+                                                                  80
+                                                                ? "text-blue-600"
+                                                                : "text-red-500"
                                                     }`}
                                                 >
-                                                    {pegawai.achievement}%
+                                                    {/* LOGIC TAMPILAN TEXT */}
+                                                    {pegawai.target === 0 &&
+                                                    pegawai.realisasi > 0 ? (
+                                                        // Kasus Target 0 (Surplus) -> Tampilkan teks/ikon khusus
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-green-50 text-[10px] uppercase tracking-wider text-green-700 border border-green-200">
+                                                            Surplus
+                                                        </span>
+                                                    ) : pegawai.achievement >
+                                                      999 ? (
+                                                        // Kasus Persen Kebablasan (>999%) -> Cap di angka tertentu
+                                                        "> 999%"
+                                                    ) : (
+                                                        // Kasus Normal
+                                                        pegawai.achievement +
+                                                        "%"
+                                                    )}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 font-mono text-center">
@@ -387,13 +407,13 @@ export default function PegawaiRank({
                                                         pegawai.status ===
                                                             "Star" ||
                                                         pegawai.status.includes(
-                                                            "Surplus"
+                                                            "Surplus",
                                                         )
                                                             ? "bg-yellow-50 text-yellow-700 border-yellow-200"
                                                             : pegawai.status ===
-                                                              "On Track"
-                                                            ? "bg-green-50 text-green-700 border-green-200"
-                                                            : "bg-red-50 text-red-700 border-red-200"
+                                                                "On Track"
+                                                              ? "bg-green-50 text-green-700 border-green-200"
+                                                              : "bg-red-50 text-red-700 border-red-200"
                                                     }`}
                                                 >
                                                     {pegawai.status}

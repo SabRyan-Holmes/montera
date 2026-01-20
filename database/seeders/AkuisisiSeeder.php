@@ -7,6 +7,7 @@ use App\Models\Produk;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class AkuisisiSeeder extends Seeder
 {
@@ -25,8 +26,8 @@ class AkuisisiSeeder extends Seeder
 
         // --- 1. CONFIG GENERATOR ---
         $totalTarget = 280; // Total lebih dari 250
-        $targetVerified = 96;
-        $targetPending = 137;
+        $targetVerified = 176;
+        $targetPending = 86;
         // Sisanya (280 - 96 - 137 = 47) akan jadi Rejected
 
         $dataBuffer = [];
@@ -211,9 +212,13 @@ class AkuisisiSeeder extends Seeder
                 // Format: bukti_akuisisi/bukti_akuisisi_YYYYMMDD_HHMMSS_RAND.pdf
                 $lampiranBukti = 'bukti_akuisisi/bukti_akuisisi_20260120_064832_tF9m.pdf'; //untuk template pdf doang
             }
+            // FORMAT BARU: TRX-YYYYMMDD-URUT-ACAK
+            $tglTransaksi = $tanggalInput->format('Ymd');
+            $urutan = str_pad($i + 1, 4, '0', STR_PAD_LEFT);
+            $acak = strtoupper(Str::random(3)); // Tambahan acak
             // G. Masukkan ke Buffer
             $dataBuffer[] = [
-                'no_transaksi'       => 'TRX-' . $tanggalInput->format('Ymd') . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+                'no_transaksi'       => "TRX-{$tglTransaksi}-{$urutan}-{$acak}",
                 'user_id'            => $pegawai->id,
                 'produk_id'          => $produk->id,
                 'nama_nasabah'       => $namaNasabah,

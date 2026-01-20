@@ -130,16 +130,16 @@ export default function KepalaCabangSidebar({ isCollapsed }) {
                         route: "kacab.final-report",
                         actives: ["kacab.final-report"],
                     },
-                    {
-                        label: (
-                            <>
-                                <HiOutlineArrowDownTray />
-                                Export Data
-                            </>
-                        ),
-                        route: "kacab.export-data",
-                        actives: ["kacab.export-data"],
-                    },
+                    // {
+                    //     label: (
+                    //         <>
+                    //             <HiOutlineArrowDownTray />
+                    //             Export Data
+                    //         </>
+                    //     ),
+                    //     route: "kacab.export-data",
+                    //     actives: ["kacab.export-data"],
+                    // },
                 ]}
             >
                 <span className="flex">

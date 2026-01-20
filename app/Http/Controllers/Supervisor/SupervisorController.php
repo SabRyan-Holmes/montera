@@ -11,6 +11,7 @@ use App\Models\Target;
 use App\Models\Transaksi;
 use App\Models\User;
 use App\Services\PointCalculator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -133,41 +134,36 @@ class SupervisorController extends Controller
     public function team(Request $request)
     {
         $user  = $this->user;
-        $tahun = $request->input('tahun');
+        $tahun = $request->input('tahun', date('Y'));
 
         // Panggil Scope User::myTeam yang baru dibuat
         $teamMembers = User::myTeam($user)
             ->where('id', '!=', $user->id) // Jangan masukan diri sendiri
-
-            // Eager Load Data untuk Perhitungan
-            // Kita filter targetnya: Cuma ambil target yang disupervisi oleh $user di tahun $tahun
             ->with(['targets' => function ($q) use ($user, $tahun) {
                 $q->where('supervisor_id', $user->id)
                     ->where('tahun', $tahun);
             }])->with(['transaksi' => function ($q) use ($tahun) {
                 $q->whereYear('created_at', $tahun);
-            }])->get()
-            // Filter Tambahan (Opsional tapi Recommended):
-            // Hanya tampilkan member yang BENAR-BENAR punya target dari kita tahun ini.
-            // Kalau logic myTeam mengambil bawahan struktural tapi tahun ini dia gak dikasih target,
-            // dia bakal muncul dengan nilai 0. Kalau mau di-hide, pakai filter ini:
-            // ->filter(function ($member) {
-            //     return $member->targets->isNotEmpty();
-            // })
-            ->map(function ($member) {
-                // Logic hitung-hitungan (SAMA PERSIS KAYA SEBELUMNYA)
+            }])->get()->map(function ($member) {
+                // Logic hitung-hitungan
                 $totalTarget    = $member->targets->sum('nilai_target');
-                $totalRealisasi = $member->transaksi->sum('nilai_realisasi');
+                $totalRealisasi = $member->transaksi ? $member->transaksi->sum('nilai_realisasi') : 0;
 
-                // Hindari division by zero
-                $persentase = $totalTarget > 0
-                    ? ($totalRealisasi / $totalTarget) * 100
-                    : 0;
+                // LOGIC BARU: MENGATASI TARGET 0 TAPI ADA REALISASI
+                if ($totalTarget > 0) {
+                    $persentase = ($totalRealisasi / $totalTarget) * 100;
+                } else {
+                    // Jika target 0, tapi ada realisasi, anggap 100% (Excellent/Bonus)
+                    // Jika tidak ada realisasi, tetap 0%
+                    $persentase = $totalRealisasi > 0 ? 100 : 0;
+                }
 
+                // LOGIC STATUS LEBIH FAIR
                 $status = match (true) {
-                    $persentase >= 100 => 'Excellent',
-                    $persentase >= 80  => 'Good',
-                    default            => 'Warning'
+                    $persentase >= 100 => 'Excellent', // 100% ke atas
+                    $persentase >= 80  => 'Good',      // 80% - 99%
+                    $persentase > 0    => 'Progress',  // Ada hasil tapi belum target
+                    default            => 'Warning'    // 0% alias belum kerja
                 };
 
                 return [
@@ -184,18 +180,30 @@ class SupervisorController extends Controller
             ->sortByDesc('ratio') // Urutkan dari yang performanya paling bagus
             ->values(); // Reset index array
 
-        // Statistik Tim (SAMA PERSIS)
+        // Statistik Tim (PERBAIKAN LOGIC RATA-RATA AGAR TIDAK MELEDAK)
+
+        // Hitung total dulu biar clean
+        $totalTargetTim    = $teamMembers->sum('total_target');
+        $totalRealisasiTim = $teamMembers->sum('total_realisasi');
+
+        // Gunakan Weighted Average (Rata-rata Terbobot)
+        if ($totalTargetTim > 0) {
+            $capaianTim = ($totalRealisasiTim / $totalTargetTim) * 100;
+        } else {
+            // Jika Target Tim 0, tapi ada Realisasi Tim -> Anggap 100% (Excellent)
+            $capaianTim = $totalRealisasiTim > 0 ? 100 : 0;
+        }
+
         $teamStats = [
             'total_member'        => $teamMembers->count(),
-            'total_target_tim'    => $teamMembers->sum('total_target'),
-            'total_realisasi_tim' => $teamMembers->sum('total_realisasi'),
-            'rata_rata_capaian'   => $teamMembers->count() > 0
-                ? round($teamMembers->avg('persentase'), 1)
-                : 0,
+            'total_target_tim'    => $totalTargetTim,
+            'total_realisasi_tim' => $totalRealisasiTim,
+            // Gunakan hasil hitungan baru di atas, BUKAN avg('persentase')
+            'rata_rata_capaian'   => round($capaianTim, 1),
         ];
 
         return Inertia::render('Supervisor/Team', [
-            "title"       => "Monitoring Performa Tim (Tahun $tahun)",
+            "title"       => "Monitoring Performa Tim",
             "teamMembers" => $teamMembers,
             "teamStats"   => $teamStats,
             "filtersReq"  => ['tahun' => $tahun]
@@ -275,7 +283,8 @@ class SupervisorController extends Controller
                         'nip_pegawai'       => $item->pegawai->nip,
                         'produk'            => $item->produk->nama_produk,
                         'kategori'          => $item->produk->kategori_produk,
-                        'tanggal_akuisisi'  => \Carbon\Carbon::parse($item->tanggal_akuisisi)->format('d-M-Y'),
+                        'tanggal_akuisisi'  => Carbon::parse($item->tanggal_akuisisi)->format('d-M-Y'),
+                        // FIXME kemungkinana bug ada disni
                         'bukti_url'         => $item->lampiran_bukti ? asset('storage/' . $item->lampiran_bukti) : null,
                         'no_rekening'       => $item->no_identitas_nasabah,
                         'nama_nasabah'      => $item->nama_nasabah,

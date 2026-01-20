@@ -11,8 +11,6 @@ import {
 import { TbTargetArrow } from "react-icons/tb";
 
 export default function PegawaiContent({ dataByRole }) {
-    console.log("Data by Role :", dataByRole);
-
     const {
         totalTarget,
         akuisisiRejected,
@@ -101,7 +99,7 @@ export default function PegawaiContent({ dataByRole }) {
                             Transaksi Sah
                         </h3>
                         <p className="text-2xl font-black text-secondary">
-                            {transaksiCount} {' '}
+                            {transaksiCount}{" "}
                             <span className="text-sm font-normal text-gray-400">
                                 Transaksi
                             </span>
@@ -120,10 +118,16 @@ export default function PegawaiContent({ dataByRole }) {
                         </h3>
                         <div className="flex items-baseline gap-2">
                             <p className="text-2xl font-black text-secondary">
-                                {persenNominal}%
+                                {persenNominal > 250
+                                    ? "250+%"
+                                    : `${persenNominal}%`}
                             </p>
                             <span
-                                className={`text-xs font-bold px-2 py-0.5 rounded ${persenNominal >= 100 ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                                className={`text-xs font-bold px-2 py-0.5 rounded ${
+                                    persenNominal >= 100
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-yellow-100 text-yellow-700"
+                                }`}
                             >
                                 {persenNominal >= 100
                                     ? "Achieved"

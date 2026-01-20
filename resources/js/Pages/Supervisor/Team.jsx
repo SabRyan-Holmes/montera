@@ -94,13 +94,15 @@ export default function Team({ title, auth, teamMembers, teamStats }) {
                                     Rata-rata Capaian
                                 </p>
                                 <p className="text-xl font-black text-secondary">
-                                    {Math.round(teamStats.rata_rata_capaian)}%
+                                    {teamStats.rata_rata_capaian > 250
+                                        ? "250+%"
+                                        : `${Math.round(teamStats.rata_rata_capaian)}%`}
                                 </p>
                                 <div className="w-full h-2 mt-1 bg-gray-200 rounded-full">
                                     <div
                                         className="h-2 rounded-full bg-success"
                                         style={{
-                                            width: `${Math.min(teamStats.rata_rata_capaian, 100)}%`,
+                                            width: `${Math.min(teamStats.rata_rata_capaian, 250)}%`,
                                         }}
                                     ></div>
                                 </div>
@@ -135,7 +137,8 @@ export default function Team({ title, auth, teamMembers, teamStats }) {
                             Leaderboard Kinerja Pegawai
                         </h3>
                         <span className="text-xs font-medium px-2.5 py-0.5 rounded bg-blue-100 text-blue-800">
-                            Update Real-time
+                            {" "}
+                            Update Real-time · {new Date().getFullYear()}
                         </span>
                     </div>
 
@@ -209,10 +212,6 @@ export default function Team({ title, auth, teamMembers, teamStats }) {
                                             {/* Kolom Progres Bar */}
                                             <td className="w-1/4 px-6 py-4">
                                                 <div className="flex items-center justify-between mb-1">
-                                                    {member.persentase > 250
-                                                        ? "250%+"
-                                                        : member.persentase +
-                                                          "%"}
                                                     <span className="text-xs font-medium text-gray-700">
                                                         {" "}
                                                         {member.persentase > 250
@@ -230,7 +229,10 @@ export default function Team({ title, auth, teamMembers, teamStats }) {
                                                                 : member.status ===
                                                                     "Good"
                                                                   ? "bg-info"
-                                                                  : "bg-warning"
+                                                                  : member.status ===
+                                                                      "Progress" // Warna baru buat Progress
+                                                                    ? "bg-blue-400"
+                                                                    : "bg-warning"
                                                         }`}
                                                         style={{
                                                             width: `${Math.min(member.persentase, 100)}%`,

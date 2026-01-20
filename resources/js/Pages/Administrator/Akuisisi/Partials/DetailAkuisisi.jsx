@@ -1,11 +1,10 @@
 import { StatusLabel } from "@/Components";
 import moment from "moment/min/moment-with-locales";
-
 import { useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa6";
 import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
-
+import { getFileUrl, getFileName } from "@/Utils/fileUtils";
 export default function DetailAkuisisi({ akuisisi, collapse = true }) {
     moment.locale("id");
     const [isCollapsed, setIsCollapsed] = useState(collapse);
@@ -16,20 +15,7 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
         </tr>
     );
 
-    // Asumsi di controller sudah ada storage link atau dikirim full URL
-    const getFileUrl = (path) => {
-        if (!path) return "#";
-        // Jika path sudah full URL (http...), pakai langsung.
-        // Jika cuma 'bukti_akuisisi/abc.pdf', tambahkan prefix storage
-        return path.startsWith("http") ? path : `/storage/${path}`;
-    };
 
-    // [BARU] Helper: Ambil Nama File doang (Hapus nama folder)
-    const getFileName = (path) => {
-        if (!path) return "";
-        // Contoh: "bukti_akuisisi/file_rahasia.pdf" -> jadi "file_rahasia.pdf"
-        return path.split("/").pop();
-    };
 
     return (
         <table className="table w-full text-base table-bordered">
@@ -178,6 +164,18 @@ export default function DetailAkuisisi({ akuisisi, collapse = true }) {
                         />
 
                         {/* Last Updated */}
+                        <RowData
+                            label="Tanggal Dibuat"
+                            value={
+                                akuisisi.created_at
+                                    ? `${moment(akuisisi.created_at).format(
+                                          "LL",
+                                      )} (${moment(
+                                          akuisisi.created_at,
+                                      ).fromNow()})`
+                                    : "-"
+                            }
+                        />
                         <RowData
                             label="Terakhir Diperbarui"
                             value={

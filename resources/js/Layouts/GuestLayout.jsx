@@ -1,14 +1,20 @@
 import { Link, Head } from "@inertiajs/react";
-
-export default function GuestLayout({ children, title, auth, activeTab, setActiveTab }) {
+export default function GuestLayout({
+    children,
+    title,
+    auth,
+    activeTab,
+    setActiveTab,
+}) {
     return (
         <>
             <Head title={title} />
 
-            {/* Load Fonts */}
-            <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+            <link
+                href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                rel="stylesheet"
+            />
 
-            {/* Global Styles - SAMA PERSIS DENGAN HTML */}
             <style>{`
                 body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fafbff; }
                 .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
@@ -19,46 +25,46 @@ export default function GuestLayout({ children, title, auth, activeTab, setActiv
             `}</style>
 
             <div className="relative flex flex-col min-h-screen overflow-x-hidden">
-                {/* Background Blobs */}
                 <div className="blob -top-20 -right-20"></div>
                 <div className="blob top-1/2 -left-20"></div>
 
-                {/* --- NAVIGATION --- */}
                 <nav className="fixed top-0 z-50 w-full px-8 py-4">
                     <div className="flex items-center justify-between px-8 py-3 mx-auto shadow-sm max-w-7xl glass rounded-2xl">
-                        {/* Logo */}
-                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+                        <div
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={() => setActiveTab("dashboard")}
+                        >
                             <div className="w-10 h-10 bg-[#001f3f] rounded-xl flex items-center justify-center">
-                                <span className="text-[#c5a059] font-black text-xl">X</span>
+                                <span className="text-[#c5a059] font-black text-xl">
+                                    X
+                                </span>
                             </div>
                             <span className="text-xl font-extrabold tracking-tight text-[#001f3f]">
                                 Bank <span className="text-[#c5a059]">XYZ</span>
                             </span>
                         </div>
 
-                        {/* Menu Items (Logic Tab) */}
                         <div className="items-center hidden gap-10 md:flex">
                             <button
-                                onClick={() => setActiveTab('dashboard')}
-                                className={`text-sm font-bold transition-all ${activeTab === 'dashboard' ? 'text-[#c5a059]' : 'text-[#001f3f] hover:text-[#c5a059]'}`}
+                                onClick={() => setActiveTab("dashboard")}
+                                className={`text-sm font-bold transition-all ${activeTab === "dashboard" ? "text-[#c5a059]" : "text-[#001f3f] hover:text-[#c5a059]"}`}
                             >
                                 Dashboard
                             </button>
                             <button
-                                onClick={() => setActiveTab('produktivitas')}
-                                className={`text-sm font-semibold transition-all ${activeTab === 'produktivitas' ? 'text-[#c5a059] font-bold' : 'text-slate-500 hover:text-[#001f3f]'}`}
+                                onClick={() => setActiveTab("produktivitas")}
+                                className={`text-sm font-semibold transition-all ${activeTab === "produktivitas" ? "text-[#c5a059] font-bold" : "text-slate-500 hover:text-[#001f3f]"}`}
                             >
                                 Produktivitas
                             </button>
                             <button
-                                onClick={() => setActiveTab('laporan')}
-                                className={`text-sm font-semibold transition-all ${activeTab === 'laporan' ? 'text-[#c5a059] font-bold' : 'text-slate-500 hover:text-[#001f3f]'}`}
+                                onClick={() => setActiveTab("laporan")}
+                                className={`text-sm font-semibold transition-all ${activeTab === "laporan" ? "text-[#c5a059] font-bold" : "text-slate-500 hover:text-[#001f3f]"}`}
                             >
                                 Laporan
                             </button>
                         </div>
 
-                        {/* Login Button */}
                         <div className="flex items-center gap-4">
                             {auth?.user ? (
                                 <Link
@@ -79,32 +85,34 @@ export default function GuestLayout({ children, title, auth, activeTab, setActiv
                     </div>
                 </nav>
 
-                {/* --- MAIN CONTENT (Dynamic) --- */}
-                {/* Padding top disesuaikan agar tidak tertutup navbar */}
-                <main className="flex-grow">
-                    {children}
-                </main>
+                <main className="flex-grow">{children}</main>
 
-                {/* --- FOOTER --- */}
                 <footer className="px-8 py-16 mt-auto bg-white border-t border-slate-100">
                     <div className="flex flex-col items-center justify-between gap-8 mx-auto max-w-7xl md:flex-row">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 bg-[#001f3f] rounded-lg flex items-center justify-center">
-                                <span className="text-[#c5a059] font-black text-sm">X</span>
+                                <span className="text-[#c5a059] font-black text-sm">
+                                    X
+                                </span>
                             </div>
                             <span className="text-lg font-bold text-[#001f3f]">
                                 Bank XYZ
                             </span>
                         </div>
                         <p className="text-sm font-medium text-slate-400">
-                            © 2026 PT. Bank XYZ (Persero) Tbk. All Rights Reserved.
+                            © 2026 PT. Bank XYZ (Persero) Tbk. All Rights
+                            Reserved.
                         </p>
                         <div className="flex gap-6">
                             <div className="flex items-center justify-center w-10 h-10 transition-all rounded-full cursor-pointer bg-slate-50 hover:bg-blue-50">
-                                <span className="text-xs font-bold text-[#001f3f]">LN</span>
+                                <span className="text-xs font-bold text-[#001f3f]">
+                                    LN
+                                </span>
                             </div>
                             <div className="flex items-center justify-center w-10 h-10 transition-all rounded-full cursor-pointer bg-slate-50 hover:bg-blue-50">
-                                <span className="text-xs font-bold text-[#001f3f]">TW</span>
+                                <span className="text-xs font-bold text-[#001f3f]">
+                                    TW
+                                </span>
                             </div>
                         </div>
                     </div>

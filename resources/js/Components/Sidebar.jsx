@@ -28,27 +28,28 @@ const Sidebar = ({ user, isCollapsed }) => {
             <div className="absolute inset-0 bg-gradient-to-b from-secondary to-slate-900 -z-10" />
 
             {/* === LOGO AREA === */}
-            {/* Tambahkan min-w-max agar konten tidak gepeng saat transisi */}
+          {/* === LOGO AREA (UPDATED) === */}
             <div className={`
-                flex items-center h-20 transition-all duration-300 border-b border-white/10
+                flex items-center h-24 transition-all duration-300 border-b border-white/10
                 ${isCollapsed ? "justify-center px-0" : "justify-start px-6 gap-3"}
             `}>
-                <div className="flex items-center justify-center flex-shrink-0">
-                    <a href="/">
-                        <ApplicationLogo className="w-8 h-8 transition-transform fill-current text-primary hover:scale-110" />
-                    </a>
-                </div>
+                {/* 1. Bagian Icon Kotak (Selalu Muncul) */}
+                <a href="/" className="flex-shrink-0 transition-transform cursor-pointer hover:scale-105">
+                    <div className="flex items-center justify-center w-10 h-10 border shadow-lg bg-secondary rounded-xl border-white/20 ">
+                        <span className="text-[#c5a059] font-black text-xl">
+                            X
+                        </span>
+                    </div>
+                </a>
 
+                {/* 2. Bagian Teks (Hilang saat Collapsed) */}
                 <div className={`
-                    flex flex-col overflow-hidden transition-all duration-300 whitespace-nowrap
+                    flex flex-col overflow-hidden transition-all duration-300 whitespace-nowrap origin-left
                     ${isCollapsed ? "w-0 opacity-0 scale-0" : "w-auto opacity-100 scale-100"}
                 `}>
-                    <span className="text-lg font-bold tracking-wide text-white">
-                        Bank XYZ
+                    <span className="text-xl font-extrabold tracking-tight text-slate-200/90">
+                        Bank <span className="text-[#c5a059]/80">XYZ</span>
                     </span>
-                    {/* <span className="text-[10px] font-medium text-primary/80 uppercase tracking-widest">
-                        Montera
-                    </span> */}
                 </div>
             </div>
 

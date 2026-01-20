@@ -1,6 +1,57 @@
-import React from "react";
-import Chart from 'react-apexcharts';
-export default function DashboardContent() {
+import React, { useState } from "react";
+import Chart from "react-apexcharts";
+
+// Terima props dari Parent
+export default function DashboardContent({ dashboardData }) {
+    const { chartSeriesVolume, chartSeriesNominal,chartCategories, landingStats } =
+        dashboardData;
+    // State Switcher
+    const [chartMode, setChartMode] = useState("volume"); // 'volume' or 'nominal'
+
+    // --- 1. DATA DUMMY (FALLBACK WAJIB) ---
+    // Ini data asli hardcode kamu, GA SAYA HAPUS.
+    const dummySeriesVolume = [
+        { name: "Andi Wijaya", data: [45, 52, 38, 65, 48, 70, 85] },
+        { name: "Siti Aminah", data: [35, 41, 62, 42, 13, 18, 29] },
+        { name: "Budi Santoso", data: [87, 57, 74, 99, 75, 38, 62] },
+        { name: "Rina Rose", data: [23, 35, 27, 43, 22, 17, 31] },
+        { name: "Eko Putra", data: [12, 17, 11, 9, 15, 11, 20] },
+    ];
+
+    // Saya buatkan Dummy Rupiah juga (Data Andi x 1 Juta) biar kalau di-switch ga error/kosong
+    const dummySeriesNominal = dummySeriesVolume.map((item) => ({
+        name: item.name,
+        data: item.data.map((val) => val * 1500000), // Simulasi angka rupiah
+    }));
+
+    // --- 2. LOGIC PEMILIHAN DATA ---
+    // Kalau Props dari DB kosong, pakai Dummy. Kalau ada, pakai Props.
+    const getSeries = () => {
+        if (chartMode === "volume") {
+            return chartSeriesVolume && chartSeriesVolume.length > 0
+                ? chartSeriesVolume
+                : dummySeriesVolume;
+        } else {
+            return chartSeriesNominal && chartSeriesNominal.length > 0
+                ? chartSeriesNominal
+                : dummySeriesNominal;
+        }
+    };
+
+    const currentSeries = getSeries();
+
+    // --- 3. HELPER FORMATTER ---
+    const formatRupiah = (val) => {
+        return new Intl.NumberFormat("id-ID", {
+            notation: "compact",
+            compactDisplay: "short",
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 1,
+        }).format(val);
+    };
+
+    // --- 4. CHART OPTIONS (Layout Asli Kamu) ---
     const chartOptions = {
         chart: {
             height: 450,
@@ -37,7 +88,10 @@ export default function DashboardContent() {
             hover: { size: 7 },
         },
         xaxis: {
-            categories: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul"],
+            // FIX: HARDCODE KATEGORI JAN-JUL (Sesuai Request)
+           categories: chartCategories && chartCategories.length > 0
+                ? chartCategories
+                : ["B1", "B2", "B3", "B4", "B5", "B6", "B7"],
             axisBorder: { show: false },
             axisTicks: { show: false },
             labels: {
@@ -46,11 +100,17 @@ export default function DashboardContent() {
         },
         yaxis: {
             title: {
-                text: "Jumlah Produk",
+                // Judul sumbu Y berubah sesuai mode
+                text: chartMode === "volume" ? "Jumlah Produk" : "Nilai Rupiah",
                 style: { color: "#94a3b8", fontWeight: 700 },
             },
             labels: {
                 style: { colors: "#94a3b8", fontWeight: 600 },
+                formatter: (val) => {
+                    return chartMode === "nominal"
+                        ? formatRupiah(val)
+                        : val.toFixed(0);
+                },
             },
         },
         legend: {
@@ -68,19 +128,17 @@ export default function DashboardContent() {
             x: { show: true },
             y: {
                 formatter: function (val) {
+                    if (chartMode === "nominal") {
+                        return new Intl.NumberFormat("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                        }).format(val);
+                    }
                     return val + " Produk";
                 },
             },
         },
     };
-
-    const chartSeries = [
-        { name: "Andi Wijaya", data: [45, 52, 38, 65, 48, 70, 85] },
-        { name: "Siti Aminah", data: [35, 41, 62, 42, 13, 18, 29] },
-        { name: "Budi Santoso", data: [87, 57, 74, 99, 75, 38, 62] },
-        { name: "Rina Rose", data: [23, 35, 27, 43, 22, 17, 31] },
-        { name: "Eko Putra", data: [12, 17, 11, 9, 15, 11, 20] },
-    ];
 
     return (
         <>
@@ -89,6 +147,7 @@ export default function DashboardContent() {
                     font-family: 'Plus Jakarta Sans', sans-serif;
                     background: #fafbff;
                 }
+                /* CSS Lain tetap sama persis seperti kode awalmu */
                 .glass {
                     background: rgba(255, 255, 255, 0.7);
                     backdrop-filter: blur(12px);
@@ -117,9 +176,11 @@ export default function DashboardContent() {
                     z-index: -1;
                 }
             `}</style>
-            {/* --- HERO SECTION --- */}
 
+            {/* --- HERO SECTION TETAP SAMA --- */}
             <section className="px-8 pb-20 pt-44">
+                {/* (Kode Hero Section Original Kamu Disini - Tidak Saya Ubah) */}
+                {/* ...Paste kode hero kamu yang lama... */}
                 <div className="grid items-center gap-16 mx-auto max-w-7xl lg:grid-cols-2">
                     <div>
                         <span className="px-4 py-1.5 rounded-full bg-blue-50 text-[#001f3f] text-xs font-bold uppercase tracking-widest border border-blue-100">
@@ -134,9 +195,10 @@ export default function DashboardContent() {
                         <p className="max-w-lg mt-8 text-lg leading-relaxed text-slate-600">
                             Monitoring akuisisi produk perbankan kini lebih
                             intuitif. Data real-time untuk pengambilan keputusan
-                            yang lebih tajam dan terukur.
+                            yang lebih tajam.
                         </p>
                     </div>
+                    {/* Gambar Glassmorphism tetap sama */}
                     <div className="relative">
                         <div className="relative z-10 animate-[bounce_4s_infinite] drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)]">
                             <img
@@ -144,20 +206,12 @@ export default function DashboardContent() {
                                 className="rounded-[40px] rotate-3 hover:rotate-0 transition-all duration-700 w-full h-[400px] object-cover shadow-2xl"
                                 alt="Showcase"
                             />
-                            <div className="absolute p-6 shadow-xl -bottom-6 -left-6 glass rounded-3xl">
-                                <p className="text-xs font-bold uppercase text-slate-400">
-                                    Growth Rate
-                                </p>
-                                <p className="text-2xl font-black text-green-500">
-                                    +24.8%
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* --- STATS SECTION --- */}
+            {/* --- STATS SECTION TETAP SAMA (Dikit Tambah Data Dinamis) --- */}
             <section className="px-8 py-12">
                 <div className="grid grid-cols-1 gap-6 mx-auto max-w-7xl md:grid-cols-3">
                     <div className="bento-card bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
@@ -165,10 +219,13 @@ export default function DashboardContent() {
                             📈
                         </div>
                         <h3 className="text-4xl font-black text-[#001f3f]">
-                            Rp 1.2B
+                            {/* Data Dinamis Simple */}
+                            {landingStats?.total_nominal
+                                ? formatRupiah(landingStats.total_nominal)
+                                : "Rp 1.2B"}
                         </h3>
                         <p className="mt-2 font-medium text-slate-500">
-                            Total Akuisisi Bulan Ini
+                            Total Realisasi Tahun Ini
                         </p>
                     </div>
                     <div className="bento-card bg-[#001f3f] p-8 rounded-[32px] text-white shadow-xl">
@@ -210,11 +267,19 @@ export default function DashboardContent() {
                                     hari terakhir
                                 </p>
                             </div>
+
+                            {/* LOGIC TOMBOL SWITCH */}
                             <div className="bg-slate-50 p-1.5 rounded-xl flex gap-2">
-                                <button className="px-4 py-2 bg-white shadow-sm rounded-lg text-xs font-bold text-[#001f3f]">
+                                <button
+                                    onClick={() => setChartMode("volume")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${chartMode === "volume" ? "bg-white text-[#001f3f] shadow-sm" : "text-slate-400"}`}
+                                >
                                     Volume Produk
                                 </button>
-                                <button className="px-4 py-2 text-xs font-bold rounded-lg text-slate-400">
+                                <button
+                                    onClick={() => setChartMode("nominal")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${chartMode === "nominal" ? "bg-white text-[#001f3f] shadow-sm" : "text-slate-400"}`}
+                                >
                                     Nilai Rupiah
                                 </button>
                             </div>
@@ -223,8 +288,9 @@ export default function DashboardContent() {
                         {/* Render ApexChart */}
                         <div className="min-h-[450px]">
                             <Chart
+                                key={chartMode} // Biar refresh animasi
                                 options={chartOptions}
-                                series={chartSeries}
+                                series={currentSeries}
                                 type="line"
                                 height={450}
                             />

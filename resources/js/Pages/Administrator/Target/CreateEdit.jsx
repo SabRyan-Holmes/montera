@@ -77,7 +77,6 @@ export default function CreateEdit({
             setData((data) => ({ ...data, divisi_id: "", user_id: "" })); // Reset divisi, siap isi user
         }
     };
-    console.error(errors)
     return (
         <Authenticated
             user={auth.user}

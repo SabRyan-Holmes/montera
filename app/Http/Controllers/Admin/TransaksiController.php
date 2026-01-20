@@ -11,6 +11,7 @@ use App\Models\Transaksi;
 use App\Models\User;
 use App\Services\PointCalculator;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class TransaksiController extends Controller
@@ -216,23 +217,33 @@ class TransaksiController extends Controller
         $today = Carbon::now()->format('Ymd');
         $prefix = "TRX-{$today}";
 
-        // Cari transaksi terakhir hari ini
+        // Cari yang terakhir dibuat hari ini
         $lastTransaction = Akuisisi::where('no_transaksi', 'like', "{$prefix}-%")
             ->orderBy('id', 'desc')
             ->first();
 
+        $newNumber = 1;
+
         if ($lastTransaction) {
-            // Ambil 4 digit terakhir (nomor urut)
-            $lastNumber = intval(substr($lastTransaction->no_transaksi, -4));
-            $newNumber = $lastNumber + 1;
-        } else {
-            // Jika belum ada transaksi hari ini
-            $newNumber = 1;
+            // Kita pecah string-nya.
+            // Format: TRX-20260121-0001-XYZ
+            // Index:  0   1        2    3
+            $parts = explode('-', $lastTransaction->no_transaksi);
+
+            // Ambil bagian urutan (Index ke-2)
+            if (isset($parts[2]) && is_numeric($parts[2])) {
+                $newNumber = intval($parts[2]) + 1;
+            }
         }
 
-        // Format ulang menjadi 4 digit (misal: 0001)
-        $formattedNumber = sprintf("%04d", $newNumber);
-        $newNoTransaksi = "{$prefix}-{$formattedNumber}";
+        // Format: 0001
+        $sequence = sprintf("%04d", $newNumber);
+
+        // Tambah 3 Huruf Acak di belakang (Anti Tabrakan)
+        $randomSuffix = strtoupper(Str::random(3));
+
+        // Hasil: TRX-20260121-0001-A7X
+        $newNoTransaksi = "{$prefix}-{$sequence}-{$randomSuffix}";
 
         return response()->json(['no_transaksi' => $newNoTransaksi]);
     }

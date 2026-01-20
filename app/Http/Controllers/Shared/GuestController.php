@@ -11,18 +11,104 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str; // Import Str untuk masking string
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class GuestController extends Controller
 {
     public function index()
     {
+        // dd($this->getGuestDashboardData());
         return Inertia::render('Shared/Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
+            'dashboardData' => $this->getGuestDashboardData(),
             'reportData' => $this->getGuestReportData(),
             'productivityData' => $this->getProductivityData(),
             // ... data chart/stats lainnya tetap
         ]);
+    }
+
+    private function getGuestDashboardData()
+    {
+        // 1. TENTUKAN RENTANG WAKTU DINAMIS (7 Bulan Terakhir termasuk sekarang)
+        // Contoh: Jika sekarang Jan 2026, maka Start: Jul 2025, End: Jan 2026
+        $endDate = Carbon::now()->endOfMonth();
+        $startDate = Carbon::now()->subMonths(6)->startOfMonth(); // 6 bulan lalu + bulan ini = 7 bulan
+
+        // 2. Buat Kerangka Bulan (Sumbu X Dinamis)
+        $monthKeys = []; // Format '2025-07', '2026-01' (Untuk DB)
+        $categories = []; // Format 'Jul', 'Jan' (Untuk Label Chart)
+
+        // Loop per bulan
+        $period = CarbonPeriod::create($startDate, '1 month', $endDate);
+
+        foreach ($period as $dt) {
+            $monthKeys[] = $dt->format('Y-m');
+            $categories[] = $dt->translatedFormat('M'); // Label Bahasa Indonesia (Jan, Feb...)
+        }
+
+        // 3. Query Top 5 Pegawai (Total Volume dalam Rentang Tersebut)
+        $topEmployees = Akuisisi::select('user_id', DB::raw('count(*) as total_vol'))
+            ->whereBetween('tanggal_akuisisi', [$startDate, $endDate])
+            ->where('status_verifikasi', 'verified')
+            ->groupBy('user_id')
+            ->orderByDesc('total_vol')
+            ->limit(5)
+            ->with('pegawai:id,name')
+            ->get();
+
+        // 4. Siapkan Array Series
+        $seriesVolume = [];
+        $seriesNominal = [];
+
+        foreach ($topEmployees as $emp) {
+            // Ambil Data Bulanan Pegawai
+            // GROUP BY YEAR-MONTH agar aman lintas tahun (misal Des 2025 ke Jan 2026)
+            $monthlyData = Akuisisi::select(
+                DB::raw("DATE_FORMAT(tanggal_akuisisi, '%Y-%m') as month_key"),
+                DB::raw('count(*) as volume'),
+                DB::raw('sum(nominal_realisasi) as nominal')
+            )
+                ->where('user_id', $emp->user_id)
+                ->whereBetween('tanggal_akuisisi', [$startDate, $endDate])
+                ->where('status_verifikasi', 'verified')
+                ->groupBy('month_key')
+                ->get()
+                ->keyBy('month_key');
+
+            $dataVol = [];
+            $dataNom = [];
+
+            // Loop sesuai kerangka bulan yang sudah dibuat di atas
+            foreach ($monthKeys as $key) {
+                $record = $monthlyData->get($key);
+                $dataVol[] = $record ? (int) $record->volume : 0;
+                $dataNom[] = $record ? (float) $record->nominal : 0;
+            }
+
+            $seriesVolume[] = [
+                'name' => $emp->pegawai->name,
+                'data' => $dataVol
+            ];
+
+            $seriesNominal[] = [
+                'name' => $emp->pegawai->name,
+                'data' => $dataNom
+            ];
+        }
+
+        // 5. Landing Stats (Total Rupiah Tahun Ini - Tetap YTD biasanya untuk stats utama)
+        $totalNominal = Akuisisi::whereYear('tanggal_akuisisi', Carbon::now()->year)
+            ->where('status_verifikasi', 'verified')
+            ->sum('nominal_realisasi');
+
+        return [
+            'chartSeriesVolume'  => $seriesVolume,
+            'chartSeriesNominal' => $seriesNominal,
+            // Kirim categories dinamis ke frontend biar label bawahnya ikut berubah (Jul, Agu, Sep...)
+            'chartCategories'    => $categories,
+            'landingStats'       => ['total_nominal' => $totalNominal]
+        ];
     }
 
     private function getGuestReportData()

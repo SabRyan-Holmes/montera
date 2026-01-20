@@ -356,13 +356,27 @@ class KepalaCabangController extends Controller
                 $target    = (float) $user->targets_sum_nilai_target;
 
                 // Hitung Persentase Capaian
-                $achievement = $target > 0 ? ($realisasi / $target) * 100 : 0;
+                // LOGIC BARU: HITUNG ACHIEVEMENT
+                if ($target > 0) {
+                    $achievement = ($realisasi / $target) * 100;
+                } else {
+                    // Jika target 0 (atau null), tapi ada realisasi -> Anggap 100% (Surplus)
+                    // Jika tidak ada realisasi juga -> 0%
+                    $achievement = $realisasi > 0 ? 100 : 0;
+                }
 
                 // Status Kinerja
-                $status = 'Underperfom';
-                if ($achievement >= 100) $status = 'Star';
-                elseif ($achievement >= 80) $status = 'On Track';
-                elseif ($target == 0 && $realisasi > 0) $status = 'Surplus (No Target)';
+                $status = match (true) {
+                    // Prioritas 1: Target 0 tapi ada hasil (Kasus Surplus)
+                    $target == 0 && $realisasi > 0 => 'Surplus (No Target)',
+
+                    // Prioritas 2: Capaian Tinggi
+                    $achievement >= 100 => 'Star',
+                    $achievement >= 80  => 'On Track',
+
+                    // Default
+                    default => 'Underperform'
+                };
 
                 return [
                     'id'          => $user->id,
@@ -552,6 +566,7 @@ class KepalaCabangController extends Controller
                     'produk'            => $item->produk->nama_produk,
                     'kategori'          => $item->produk->kategori_produk,
                     'tanggal_akuisisi'  => Carbon::parse($item->tanggal_akuisisi)->format('d-M-Y'),
+                    // FIXME kemungkinana bug ada disni
                     'bukti_url'         => $item->lampiran_bukti ? asset('storage/' . $item->lampiran_bukti) : null,
                     'no_rekening'       => $item->no_identitas_nasabah,
                     'nama_nasabah'      => $item->nama_nasabah,

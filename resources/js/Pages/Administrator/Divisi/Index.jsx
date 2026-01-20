@@ -44,7 +44,7 @@ export default function Index({
                         document.getElementById(activeModal).close();
                     },
                     onError: () => {
-                        console.log("Gagal Menghapus Data");
+                        console.error("Gagal Menghapus Data");
                     },
                 });
             }
@@ -75,7 +75,6 @@ export default function Index({
     function formatRole(label) {
         return label.trim().toLowerCase().replace(/\s+/g, "-");
     }
-    console.log(filtersList);
     // ===========================================Other Logics===========================================
 
     return (

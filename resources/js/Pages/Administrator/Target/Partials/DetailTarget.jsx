@@ -184,6 +184,27 @@ export default function DetailTarget({ target, collapse = true }) {
 
                         {/* 9. Meta Data (Dibuat & Diupdate) */}
                         <RowData
+                            label="Tanngal dibuat"
+                            value={
+                                target.created_at ? (
+                                    <div className="flex flex-col text-sm">
+                                        <span>
+                                            {moment(target.created_at).format(
+                                                "D MMM YYYY, HH:mm",
+                                            )}
+                                        </span>
+                                        <span className="text-xs italic text-gray-400">
+                                            {moment(
+                                                target.created_at,
+                                            ).fromNow()}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    "-"
+                                )
+                            }
+                        />
+                        <RowData
                             label="Terakhir Diperbarui"
                             value={
                                 target.updated_at ? (

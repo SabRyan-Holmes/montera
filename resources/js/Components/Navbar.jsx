@@ -42,8 +42,8 @@ const Navbar = ({ user, title, toggleSidebar, isSidebarOpen }) => {
                                         <span className="block text-sm group-hover/item:text-primary">
                                             {user.name}
                                         </span>
-                                        <span className="block text-sm group-hover/item:text-primary">
-                                            {user.jabatan?.nama_divisi ?? ""}
+                                        <span className="block text-[11px] group-hover/item:text-primary">
+                                            {user.divisi?.nama_divisi ?? ""}
                                         </span>
                                     </div>
                                     <IoIosArrowDown className="w-5 h-5 fill-slate-500 group-hover/item:fill-primary" />

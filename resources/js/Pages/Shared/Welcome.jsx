@@ -6,24 +6,12 @@ import ReportContent from "./LandingPage/ReportContent";
 
 export default function Welcome(props) {
     const [activeTab, setActiveTab] = useState("dashboard");
-    const {
-        auth,
-        chartSeries,
-        chartCategories,
-        landingStats,
-        reportData,
-        productivityData,
-    } = props;
+    const { auth, dashboardData, reportData, productivityData } = props;
+
     const renderContent = () => {
         switch (activeTab) {
             case "dashboard":
-                return (
-                    <DashboardContent
-                        chartSeries={chartSeries}
-                        chartCategories={chartCategories}
-                        landingStats={landingStats}
-                    />
-                );
+                return <DashboardContent dashboardData={dashboardData} />;
             case "produktivitas":
                 return (
                     <ProduktivitasContent productivityData={productivityData} />

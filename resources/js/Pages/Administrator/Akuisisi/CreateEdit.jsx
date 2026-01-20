@@ -14,6 +14,8 @@ import TextInput from "@/Components/TextInput";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import useDynamicLabels from "@/Hooks/useDynamicLabels";
+import { getFileUrl, getFileName } from "@/Utils/fileUtils";
+
 export default function CreateEdit({
     auth,
     filtersList,
@@ -90,16 +92,7 @@ export default function CreateEdit({
             setGenerating(false);
         }
     };
-    const getFileUrl = (path) => {
-        if (!path) return "#";
-        return path.startsWith("http") ? path : `/storage/${path}`;
-    };
 
-    // Helper untuk Nama File
-    const getFileName = (path) => {
-        if (!path) return "";
-        return path.split("/").pop();
-    };
     const handleDeleteExistingFile = () => {
         if (confirm("Yakin ingin menghapus file lampiran ini?")) {
             setData("delete_file", true);
