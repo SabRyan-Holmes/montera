@@ -154,7 +154,7 @@ class AkuisisiController extends Controller
      */
     public function edit(Akuisisi $akuisisi)
     {
-        $page = ($this->user->isAdmin ?: 'Pegawai') . '/Akuisisi/CreateEdit';
+      $page = ($this->user->isAdmin ? 'Administrator' : 'Pegawai') . '/Akuisisi/CreateEdit';
         $supervisors = User::role('Supervisor')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
         $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => [
             'value' => $p->id,
