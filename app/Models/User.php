@@ -28,7 +28,7 @@ class User extends Authenticatable
         'status_aktif',
     ];
     protected $casts = ['jumlah' => 'array'];
-    protected $with = ['jabatan', 'divisi:id,nama_divisi'];
+    protected $with = ['jabatan', 'divisi:id,nama_divisi,main_divisi'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -196,4 +196,30 @@ class User extends Authenticatable
                 });
         });
     }
+
+    public function scopeMyTeamFromSPV($query, $currentUser)
+{
+    return $query->where(function ($q) use ($currentUser) {
+
+        // LOGIC 1: STRUKTURAL (Satu Divisi & Jabatan Pegawai)
+        // Mengambil user yang satu divisi dengan SPV dan jabatannya Pegawai (id: 4)
+        $q->where(function ($sub) use ($currentUser) {
+            $sub->where('divisi_id', $currentUser->divisi_id)
+                ->where('jabatan_id', 4);
+        })
+
+        // LOGIC 2: FUNGSIONAL (Target)
+        // ATAU user yang punya target yang dibuat oleh SPV ini
+        ->orWhereHas('targets', function ($targetQuery) use ($currentUser) {
+            $targetQuery->where('supervisor_id', $currentUser->id);
+        })
+
+        // LOGIC 3: VERIFIKASI (History)
+        // ATAU user yang pernah mengajukan akuisisi ke SPV ini (sebagai verifikator atau supervisor tujuan)
+        ->orWhereHas('akuisisi', function ($akuisisiQuery) use ($currentUser) {
+            $akuisisiQuery->where('supervisor_id', $currentUser->id)
+                          ->orWhere('verifikator_id', $currentUser->id);
+        });
+    });
+}
 }

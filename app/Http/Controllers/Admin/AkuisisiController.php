@@ -69,7 +69,7 @@ class AkuisisiController extends Controller
     public function create()
     {
 
-        $page = ($this->user->isAdmin ? 'Administrator' : 'Pegawai') . '/Akuisisi/CreateEdit';
+        // $page = ($this->user->isAdmin ? 'Administrator' : 'Pegawai') . 'Administrator/Akuisisi/CreateEdit';
         $supervisors = User::role('Supervisor')->get()->map(function ($u) {
             return [
                 'value' => $u->id,
@@ -94,13 +94,42 @@ class AkuisisiController extends Controller
                 ];
             });
         }
-        return Inertia::render($page, [
+        return Inertia::render('Administrator/Akuisisi/CreateEdit', [
             'title' => 'Input Laporan Akuisisi',
             'isAdmin' => $this->user->isAdmin,
             'filtersList' => [
                 'produks' => $produks,
                 'supervisors' => $supervisors,
                 "pegawais" => $pegawais
+            ],
+        ]);
+    }
+
+    public function edit(Akuisisi $akuisisi)
+    {
+        // $page = ($this->user->isAdmin ? 'Administrator' : 'Pegawai') . '/Akuisisi/CreateEdit';
+        $supervisors = User::role('Supervisor')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
+        $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => [
+            'value' => $p->id,
+            'label' => $p->nama_produk,
+            'kategori' => $p->kategori_produk
+        ]);
+        $pegawais = [];
+        if ($this->user->isAdmin) {
+            $pegawais = User::role('Pegawai')->get()->map(fn($u) => [
+                'value' => $u->id,
+                'label' => $u->name . ' - ' . $u->nip
+            ]);
+        }
+        return Inertia::render('Administrator/Akuisisi/CreateEdit', [
+            'title' => 'Edit Laporan Akuisisi',
+            'isEdit' => true,
+            'isAdmin' => $this->user->isAdmin,
+            'akuisisi' => $akuisisi,
+            'filtersList' => [
+                'produks' => $produks,
+                'supervisors' => $supervisors,
+                'pegawais' => $pegawais,
             ],
         ]);
     }
@@ -136,49 +165,6 @@ class AkuisisiController extends Controller
         Akuisisi::create($validated);
         $routeName = $this->user->isAdmin ? 'admin.akuisisi.index' : 'pegawai.akuisisi.index';
         return redirect()->route($routeName)->with('message', 'Akuisisi berhasil dibuat!');
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Akuisisi $akuisisi)
-    {
-        return Inertia::render('Admin/Akuisisi/Show', [
-            'title' => 'Detail Data Akuisisi',
-            'akuisisi' => $akuisisi
-        ]);
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Akuisisi $akuisisi)
-    {
-      $page = ($this->user->isAdmin ? 'Administrator' : 'Pegawai') . '/Akuisisi/CreateEdit';
-        $supervisors = User::role('Supervisor')->get()->map(fn($u) => ['value' => $u->id, 'label' => $u->name]);
-        $produks = Produk::where('status', 'tersedia')->get()->map(fn($p) => [
-            'value' => $p->id,
-            'label' => $p->nama_produk,
-            'kategori' => $p->kategori_produk
-        ]);
-        $pegawais = [];
-        if ($this->user->isAdmin) {
-            $pegawais = User::role('Pegawai')->get()->map(fn($u) => [
-                'value' => $u->id,
-                'label' => $u->name . ' - ' . $u->nip
-            ]);
-        }
-        return Inertia::render($page, [
-            'title' => 'Edit Laporan Akuisisi',
-            'isEdit' => true,
-            'isAdmin' => $this->user->isAdmin,
-            'akuisisi' => $akuisisi,
-            'filtersList' => [
-                'produks' => $produks,
-                'supervisors' => $supervisors,
-                'pegawais' => $pegawais,
-            ],
-        ]);
     }
     /**
      * Update the specified resource in storage.
@@ -216,6 +202,21 @@ class AkuisisiController extends Controller
         $routeName = $this->user->isAdmin ? 'admin.akuisisi.index' : 'pegawai.akuisisi.index';
         return redirect()->route($routeName)->with('message', 'Akuisisi berhasil diperbarui!');
     }
+    /**
+     * Display the specified resource.
+     */
+    public function show(Akuisisi $akuisisi)
+    {
+        return Inertia::render('Admin/Akuisisi/Show', [
+            'title' => 'Detail Data Akuisisi',
+            'akuisisi' => $akuisisi
+        ]);
+    }
+    /**
+     * Show the form for editing the specified resource.
+     */
+
+
     /**
      * Remove the specified resource from storage.
      */

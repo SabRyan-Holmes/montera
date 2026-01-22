@@ -127,6 +127,17 @@ class PegawaiController extends Controller
             $columnTotals[$col['key']] = $sum;
             $grandTotal += $sum;
         }
+
+        $years = Akuisisi::selectRaw('YEAR(tanggal_akuisisi) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Fallback kalau DB kosong
+        if (empty($years)) {
+            $years = [date('Y')];
+        }
         return Inertia::render('Pegawai/Report', [
             'title' => 'Laporan Rekapitulasi Transaksi Produk',
             'matrix' => $matrix,
@@ -137,7 +148,10 @@ class PegawaiController extends Controller
                 'mode' => $mode,
                 'month' => $month,
                 'year' => $year
-            ]
+            ],
+            'filtersList' => [
+            'years' => $years
+        ]
         ]);
     }
     public function stats()

@@ -22,7 +22,9 @@ class TargetStoreUpdateRequest extends FormRequest
      */
 
     public function rules(): array
-
+    // if ($produk->kategori_produk === 'PRODUK E-CHANEL' && $request->tipe_target === 'nominal') {
+    //         return back()->withErrors(['tipe_target' => 'Produk E-Channel hanya boleh menggunakan target NOA (Jumlah).']);
+    //     }
     {
         // 2. Gunakan 'user()' helper bawaan request atau Auth facade dengan null safety (?->)
         $user = $this->user();

@@ -46,10 +46,16 @@ class Target extends Model
     {
         return Attribute::make(
             get: function () {
+                // Jika tipe target adalah NOA (Jumlah)
                 if ($this->tipe_target === 'noa') {
-                    return number_format($this->nilai_target);
+                    // Coba ambil satuan dari relasi produk, kalau ga ada default ke 'Unit'
+                    $satuan = $this->produk->satuan ?? 'Unit';
+
+                    // Contoh Output: "15 Merchant", "20 Debitur", "100 User"
+                    return number_format($this->nilai_target, 0, ',', '.') . ' ' . $satuan;
                 }
 
+                // Jika Nominal (Rupiah)
                 return 'Rp ' . number_format($this->nilai_target, 0, ',', '.');
             }
         );
