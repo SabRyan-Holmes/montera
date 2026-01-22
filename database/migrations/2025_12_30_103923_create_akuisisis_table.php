@@ -18,6 +18,7 @@ return new class extends Migration
                 ->constrained('produks')->onDelete('cascade');
             $table->string('nama_nasabah');
             $table->string('no_identitas_nasabah', 50)->nullable()->index('idx_nasabah_identity');
+            $table->string('no_rek_ops', 50)->nullable(); //TODO: tambahan
             $table->decimal('nominal_realisasi', 15, 2);
             $table->date('tanggal_akuisisi');
             $table->enum('status_verifikasi', ['pending', 'verified', 'rejected'])->default('pending');

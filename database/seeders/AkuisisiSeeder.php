@@ -25,10 +25,9 @@ class AkuisisiSeeder extends Seeder
         }
 
         // --- 1. CONFIG GENERATOR ---
-        $totalTarget = 280; // Total lebih dari 250
-        $targetVerified = 176;
-        $targetPending = 86;
-        // Sisanya (280 - 96 - 137 = 47) akan jadi Rejected
+        $totalTarget = 400;
+        $targetVerified = 270;
+        $targetPending = 127;
 
         $dataBuffer = [];
         $usedIdentities = []; // Biar ga ada duplikat identitas-produk yg sama
