@@ -86,24 +86,20 @@ class AkuisisiRequest extends FormRequest
             'catatan_revisi' => ['nullable', 'string'],
 
             'no_rek_ops' => [
-                // Hapus 'nullable' di sini agar validator kustom SELALU dijalankan atau gunakan logic di bawah
-                function ($attribute, $value, $fail) {
+                // 1. Logic Penentu: Kapan dia WAJIB diisi?
+                Rule::requiredIf(function () {
                     $produkId = $this->input('produk_id');
                     $produk = Produk::find($produkId);
-
                     $wajibOps = ['EDC', 'LIVIN MERCHANT/QRIS', 'KOPRA BANKING PERUSAHAAN'];
 
-                    // Cek apakah produk ini termasuk yang WAJIB isi no_rek_ops?
-                    $isWajib = $produk && in_array(strtoupper($produk->nama_produk), $wajibOps);
+                    // Return TRUE jika produk termasuk yang wajib isi
+                    return $produk && in_array(strtoupper($produk->nama_produk), $wajibOps);
+                }),
 
-                    if ($isWajib) {
-                        // Jika wajib, pastikan value TIDAK kosong
-                        if (empty($value)) {
-                            $fail('Nomor Rekening Operasional wajib diisi untuk produk ' . $produk->nama_produk);
-                        }
-                    }
-                    // Jika TIDAK wajib, maka boleh kosong (tidak perlu else fail)
-                },
+                // 2. Logic Penyelamat: Kalau kondisi diatas FALSE, maka dia boleh NULL
+                'nullable',
+
+                // 3. Validasi Tipe Data (Hanya jalan kalau tidak null)
                 'string',
                 'max:50',
             ],
